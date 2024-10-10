@@ -42,9 +42,9 @@ workflow SAMPLEEXPRESSION {
         ch_keywords = Channel.fromList(params.expression_atlas_keywords)
         ch_eatlas_search = ch_species.combine(ch_keywords)
 
-        ch_eatlas_search | EXPRESSIONATLAS_GETDATA
+        EXPRESSIONATLAS_GETDATA(ch_eatlas_search)
 
-        EXPRESSIONATLAS_GETDATA.out.csv.view()
+
     }
 
 
