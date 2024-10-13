@@ -4,6 +4,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+include { EXPRESSIONATLAS_GETACCESSIONS          } from '../modules/local/expressionatlas/getaccessions/main'
 include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expressionatlas/getdata/main'
 include { paramsSummaryMap                       } from 'plugin/nf-validation'
 
@@ -42,7 +43,14 @@ workflow SAMPLEEXPRESSION {
         ch_keywords = Channel.fromList(params.expression_atlas_keywords)
         ch_eatlas_search = ch_species.combine(ch_keywords)
 
-        EXPRESSIONATLAS_GETDATA(ch_eatlas_search)
+        EXPRESSIONATLAS_GETACCESSIONS(ch_eatlas_search)
+
+        ch_accession_list = EXPRESSIONATLAS_GETACCESSIONS.out.accession_file
+                                .splitCsv()
+                                .map{ row -> "${row[0]}"}
+
+        EXPRESSIONATLAS_GETDATA(ch_accession_list)
+
 
 
     }

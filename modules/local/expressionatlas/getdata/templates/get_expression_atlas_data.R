@@ -1,7 +1,5 @@
 #!/usr/bin/env Rscript
 
-print(getwd())
-
 library("ExpressionAtlas")
 
 #####################################################
@@ -10,33 +8,14 @@ library("ExpressionAtlas")
 #####################################################
 #####################################################
 
-download_expression_atlas_data <- function(species, properties) {
-
-    species <- tolower(sub("_", " ", species))
-
-    # searching data corresponding to the provided inputs (species & properties)
-    if (is.na(properties)) {
-        atlasRes <- searchAtlasExperiments( species = species)
-    } else {
-        atlasRes <- searchAtlasExperiments( species = species, properties = properties )
-    }
-
-    # if no data were found, raising an exception
-    if (length(atlasRes) == 0) {
-        properties_string <- paste(properties, collapse = ", ")
-        msg <- paste('No Expression Atlas experiment found with keywords', properties_string)
-        stop(msg)
-    }
-
-    # if data were found, downloading them
-    atlas_data <- getAtlasData( atlasRes\$Accession )
+download_expression_atlas_data <- function(accession) {
+    atlas_data <- getAtlasData( accession )
     return(atlas_data)
 }
 
 export_count_data <- function(atlas_data) {
-    # looping through experiments fetched
-    for (experiment_id in names(atlas_data)) {
 
+    experiment_id <- names(atlas_data)[1]
     eset <- atlas_data[[ experiment_id ]]
 
     # looping through each data type (ex: 'rnaseq') in the experiment
@@ -65,7 +44,6 @@ export_count_data <- function(atlas_data) {
         write.table(df, outfilename, sep = ',', row.names = TRUE, col.names = TRUE, quote = FALSE)
     }
 
-    }
 }
 
 #####################################################
@@ -75,7 +53,7 @@ export_count_data <- function(atlas_data) {
 #####################################################
 
 # searching and downloading expression atlas data
-atlas_data <- download_expression_atlas_data(species = '${species}', properties = '${keywords}')
+atlas_data <- download_expression_atlas_data(accession = '${accession}')
 
 # writing count data in atlas_data to specific CSV files
 export_count_data(atlas_data)

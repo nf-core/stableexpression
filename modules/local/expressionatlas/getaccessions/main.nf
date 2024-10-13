@@ -1,4 +1,4 @@
-process EXPRESSIONATLAS_GETDATA {
+process EXPRESSIONATLAS_GETACCESSIONS {
 
     // label 'error_retry'
     debug true
@@ -11,27 +11,25 @@ process EXPRESSIONATLAS_GETDATA {
         'biocontainers/bioconductor-expressionatlas:1.30.0--r43hdfd78af_0' }"
 
     input:
-    val(accession)
+    tuple val(species), val(keywords)
 
     output:
-    path("*.csv")                             , emit: csv
-    path("versions.yml")                      , emit: versions
+    path("accessions.csv")                  , emit: accession_file
+    path("found.json")                      , emit: found
 
     when:
     task.ext.when == null || task.ext.when
 
+
     script:
-    template 'get_expression_atlas_data.R'
+
+    template 'get_expression_atlas_accessions.py'
 
     stub:
     """
-    touch fake.csv
+    touch accessions.csv
+    touch found.json
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        r-base: \$(Rscript -e 'R.Version()\$version.string' | sed -n 's|\\[1\\] "R version \\(.*\\) (.*|\\1|p')
-        bioconductor-expressionatlas: \$(Rscript -e 'packageVersion("ExpressionAtlas")' | sed -n 's|\\[1\\] ‘\\(.*\\)’|\\1|p')
-    END_VERSIONS
     """
 
 }
