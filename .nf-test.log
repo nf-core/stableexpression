@@ -1,0 +1,3 @@
+Oct-14 17:35:23.418 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.0
+Oct-14 17:35:23.433 [main] INFO  com.askimed.nf.test.App - Arguments: [init]
+Oct-14 17:35:24.265 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.04.4
