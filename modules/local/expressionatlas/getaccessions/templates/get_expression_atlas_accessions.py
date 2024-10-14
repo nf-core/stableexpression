@@ -313,6 +313,7 @@ def search_keywords_in_experiment(exp_dict: dict, keywords: list[str]):
 def format_species_name(species: str):
     return species.replace('_', ' ').capitalize().strip()
 
+
 ##################################################################
 ##################################################################
 # MAIN
@@ -322,17 +323,19 @@ def format_species_name(species: str):
 
 def main():
 
-
+    # Getting arguments
     species_name = format_species_name('$species')
+    keywords = '$keywords'
+
     print(f'Getting experiments corresponding to species {species_name}')
     species_experiments = get_species_experiments(species_name)
     print(f'Found {len(species_experiments)} experiments')
 
-    print(f"Filtering experiments corresponding to keywords {'$keywords'}")
+    print(f"Filtering experiments corresponding to keywords {keywords}")
     selected_accessions = []
     found_dict = {}
     with Pool(cpu_count()) as pool:
-        items = [(exp_dict, '$keywords',) for exp_dict in species_experiments]
+        items = [(exp_dict, keywords,) for exp_dict in species_experiments]
         results = pool.starmap(search_keywords_in_experiment, items)
         for result in results:
             if result is not None:
