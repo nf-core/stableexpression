@@ -1,0 +1,28 @@
+nextflow_process {
+
+    name "Test Process EXPRESSIONATLAS_GETACCESSIONS"
+    script "modules/local/expressionatlas/getaccessions/main.nf"
+    process "EXPRESSIONATLAS_GETACCESSIONS"
+    tag "getaccessions"
+    // options "-dump-channels"
+    profile "conda"
+
+    test("Should run without failures") {
+
+        when {
+
+            process {
+                """
+                input[0] = ["solanum_tuberosum", ["potato", "phloem"]]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

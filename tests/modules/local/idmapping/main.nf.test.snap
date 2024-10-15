@@ -1,0 +1,50 @@
+{
+    "Map Ensembl IDs to themselves": {
+        "content": [
+            [
+                "counts.ensembl_ids_renamed.csv:md5,e4216c237b47e47162926e3d4a102728"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-15T12:20:49.941494532"
+    },
+    "Should run without failures": {
+        "content": [
+            [
+                "counts.raw_renamed.csv:md5,a3259fd5524222138600a571dcacdf17"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-15T12:09:11.687854667"
+    },
+    "Map Uniprot IDs": {
+        "content": [
+            [
+                "counts.uniprot_ids_renamed.csv:md5,cd88d623ff58193df380e88f772378a4"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-15T18:39:28.325984625"
+    },
+    "Map NCBI IDs": {
+        "content": [
+            [
+                "counts.ncbi_ids_renamed.csv:md5,67a0af621122757dc46ceea88e57a922"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-15T12:23:28.179560555"
+    }
+}

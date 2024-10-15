@@ -6,7 +6,7 @@
 
 include { EXPRESSIONATLAS_GETACCESSIONS          } from '../modules/local/expressionatlas/getaccessions/main'
 include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expressionatlas/getdata/main'
-include { IDMAPPING_MAPTONCBI                } from '../modules/local/idmapping/maptoncbi/main'
+include { IDMAPPING                } from '../modules/local/idmapping/main'
 include { paramsSummaryMap                       } from 'plugin/nf-validation'
 
 
@@ -52,9 +52,9 @@ workflow SAMPLEEXPRESSION {
 
         EXPRESSIONATLAS_GETDATA(ch_accession_list)
 
-        EXPRESSIONATLAS_GETDATA.out.csv.combine(ch_species) | IDMAPPING_MAPTONCBI
+        EXPRESSIONATLAS_GETDATA.out.csv.combine(ch_species) | IDMAPPING
 
-        IDMAPPING_MAPTONCBI.out.csv.view()
+        IDMAPPING.out.csv.view()
 
     }
 

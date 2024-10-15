@@ -1,10 +1,10 @@
-process IDMAPPING_MAPTONCBI {
+process IDMAPPING {
 
     // label 'error_retry'
     debug true
 
     // limiting to 1 thread at a time, otherwise there are two many requests to NCBI
-    // maxForks 1
+    maxForks 1
 
     afterScript """${baseDir}/bin/write_versions.py ${moduleDir}"""
 
@@ -21,7 +21,7 @@ process IDMAPPING_MAPTONCBI {
     task.ext.when == null || task.ext.when
 
     script:
-    template "map_ids_to_ncbi_ids.py"
+    template "map_ids.py"
 
 
     stub:

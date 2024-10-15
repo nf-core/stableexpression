@@ -1,0 +1,19 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "E-MTAB-552_rnaseq.csv:md5,315f6ab694cb809bd33f481ad326c5a7"
+                ],
+                "csv": [
+                    "E-MTAB-552_rnaseq.csv:md5,315f6ab694cb809bd33f481ad326c5a7"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-14T18:28:01.099092539"
+    }
+}

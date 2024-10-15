@@ -1,0 +1,7 @@
+name: idmapping
+channels:
+  - conda-forge
+dependencies:
+  - conda-forge::pandas==2.2.3
+  - pip:
+    - -r requirements.txt
