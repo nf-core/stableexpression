@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 
-from gprofiler import GProfiler
+import requests
 import pandas as pd
 from pathlib import Path
 
 class NoIDFoundException(Exception):
     pass
-
-
-gp = GProfiler(return_dataframe=True)
 
 
 ##################################################################
@@ -18,6 +15,7 @@ gp = GProfiler(return_dataframe=True)
 RENAMED_FILE_SUFFIX = '_renamed.csv'
 CHUNKSIZE = 2000
 
+GPROFILER_CONVERT_API_ENDPOINT = 'https://biit.cs.ut.ee/gprofiler/api/convert/convert/'
 TARGET_DATABASE = 'ENSG' # Ensembl database
 
 
@@ -58,10 +56,38 @@ def chunk_list(lst: list, chunksize: int):
     return [lst[i: i + chunksize] for i in range(0, len(lst), chunksize)]
 
 
-def convert_ids(gene_ids: list, species: str):
-
+def request_conversion(gene_ids: list, species: str, target_database: str) -> list[dict]:
     """
-    Convert a list of gene IDs to another namespace.
+    Send a request to the g:Profiler API to convert a list of gene IDs.
+
+    Parameters
+    ----------
+    gene_ids : list
+        The list of gene IDs to convert.
+    species : str
+        The species to convert the IDs for.
+    target_database : str
+        The target database to convert to.
+
+    Returns
+    -------
+    list
+        The list of dicts corresponding to the converted IDs.
+    """
+    result = requests.post(
+        url=GPROFILER_CONVERT_API_ENDPOINT,
+        json={
+            'organism': species,
+            'query': gene_ids,
+            'target': TARGET_DATABASE
+        }
+        )
+    return result.json()['result']
+
+
+def convert_ids(gene_ids: list, species: str):
+    """
+    Wrapper function that converts a list of gene IDs to another namespace.
 
     Parameters
     ----------
@@ -77,26 +103,21 @@ def convert_ids(gene_ids: list, species: str):
     dict
         A dictionary where the keys are the original IDs and the values are the converted IDs.
     """
-    df = gp.convert(
-        organism=species,
-        query=gene_ids,
-        target_namespace=TARGET_DATABASE
-        )
+
+    results = request_conversion(gene_ids, species, TARGET_DATABASE)
+    df = pd.DataFrame.from_records(results)
 
     if df.empty:
         return {}
 
     # keeping only rows where 'converted' is not null and only the columns of interest
-    df = df.loc[df['converted'].notna(), ['incoming', 'converted']]
+    df = df.loc[df['converted'] != 'None', ['incoming', 'converted']]
     df.set_index('incoming', inplace=True)
     return df.to_dict()['converted']
 
 ##################################################################
 # MAIN
 ##################################################################
-
-
-
 
 def main():
 
@@ -105,11 +126,10 @@ def main():
     count_file = Path('$count_file')
 
     df = pd.read_csv(count_file, header=0, index_col=0)
+    df.index = df.index.astype(str)
 
     gene_ids = df.index.tolist()
     mapping_dict = {}
-
-
 
     chunks = chunk_list(gene_ids, chunksize=CHUNKSIZE)
     for chunk_gene_names in chunks:
@@ -121,7 +141,7 @@ def main():
         raise NoIDFoundException(
             f'No mapping found for gene names in count file {count_file.name} '
             f'and for species {species_name}! '
-            f'Example of gene names: {count_file.index[:5]}')
+            f'Example of gene names: {df.index[:5]}')
 
     # filtering the DataFrame to keep only the rows where the index can be mapped
     df = df.loc[df.index.isin(mapping_dict)]

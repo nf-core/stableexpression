@@ -35,11 +35,12 @@ nextflow_process {
         }
 
         then {
-            assert process.successSolanum tuberosum
+            assert process.success
             assert snapshot(process.out.csv).match()
         }
 
     }
+
 
     test("Map Uniprot IDs") {
 
