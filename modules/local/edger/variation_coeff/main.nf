@@ -1,4 +1,4 @@
-process DESEQ2_VARIATIONCOEFF {
+process EDGER_VARIATIONCOEFF {
 
     debug true
 
@@ -15,7 +15,6 @@ process DESEQ2_VARIATIONCOEFF {
     task.ext.when == null || task.ext.when
 
     script:
-    template "deseq2.R"
-
+    template "edger.R"
 
 }

@@ -19,4 +19,4 @@ dds <- estimateSizeFactors(dds)
 normalized_counts <- counts(dds, normalized = TRUE)
 
 normalized_filename <- sub(".csv", "_normalized.csv", basename(count_file))
-write.csv(normalized_counts, normalized_filename, row.names = TRUE)
+write.csv(normalized_counts, normalized_filename, row.names = TRUE, quote = FALSE)

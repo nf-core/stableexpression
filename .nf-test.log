@@ -1,14 +1,18 @@
-Oct-16 18:24:36.801 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.0
-Oct-16 18:24:36.820 [main] INFO  com.askimed.nf.test.App - Arguments: [test, --tag, deseq2, --profile, conda]
-Oct-16 18:24:37.844 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.04.4
-Oct-16 18:24:37.846 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Load config from file /home/olivier/repositories/nf-core-sampleexpression/nf-test.config...
-Oct-16 18:24:39.558 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Loaded 28 files from directory /home/olivier/repositories/nf-core-sampleexpression in 1.345 sec
-Oct-16 18:24:39.559 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Found 5 tests.
-Oct-16 18:24:39.560 [main] DEBUG com.askimed.nf.test.lang.dependencies.DependencyResolver - Found tests: [/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/idmapping/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/variation_coeff/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getdata/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test]
-Oct-16 18:24:39.560 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Detected 5 test files.
-Oct-16 18:24:39.837 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Started test plan
-Oct-16 18:24:39.837 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Running testsuite 'Test Process DESEQ2_VARIATIONCOEFF' from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/variation_coeff/main.nf.test'.
-Oct-16 18:24:39.837 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test 'a086acd7: Should run without failures'. type: com.askimed.nf.test.lang.process.ProcessTest
-Oct-16 18:25:27.737 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test 'a086acd7: Should run without failures' finished. status: PASSED
-Oct-16 18:25:27.739 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Testsuite 'Test Process DESEQ2_VARIATIONCOEFF' finished. snapshot file: false, skipped tests: false, failed tests: false
-Oct-16 18:25:27.739 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Executed 1 tests. 0 tests failed. Done!
+Oct-16 19:25:06.537 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.0
+Oct-16 19:25:06.562 [main] INFO  com.askimed.nf.test.App - Arguments: [test, --tag, deseq2, --profile, conda]
+Oct-16 19:25:07.576 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.04.4
+Oct-16 19:25:07.578 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Load config from file /home/olivier/repositories/nf-core-sampleexpression/nf-test.config...
+Oct-16 19:25:09.346 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Loaded 31 files from directory /home/olivier/repositories/nf-core-sampleexpression in 1.404 sec
+Oct-16 19:25:09.347 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Found 6 tests.
+Oct-16 19:25:09.347 [main] DEBUG com.askimed.nf.test.lang.dependencies.DependencyResolver - Found tests: [/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/idmapping/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/variation_coeff/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getdata/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/edger/variation_coeff/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test]
+Oct-16 19:25:09.347 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Detected 6 test files.
+Oct-16 19:25:09.617 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Started test plan
+Oct-16 19:25:09.618 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Running testsuite 'Test Process DESEQ2_VARIATIONCOEFF' from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/variation_coeff/main.nf.test'.
+Oct-16 19:25:09.618 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test 'a086acd7: Should run without failures'. type: com.askimed.nf.test.lang.process.ProcessTest
+Oct-16 19:25:57.162 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Init new snapshot file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/variation_coeff/main.nf.test.snap'
+Oct-16 19:25:57.163 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshot 'Should run without failures' not found.
+Oct-16 19:25:57.164 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Created snapshot 'Should run without failures'
+Oct-16 19:25:57.173 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Wrote snapshots to file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/variation_coeff/main.nf.test.snap'
+Oct-16 19:25:57.173 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test 'a086acd7: Should run without failures' finished. status: PASSED
+Oct-16 19:25:57.175 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Testsuite 'Test Process DESEQ2_VARIATIONCOEFF' finished. snapshot file: true, skipped tests: false, failed tests: false
+Oct-16 19:25:57.177 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Executed 1 tests. 0 tests failed. Done!

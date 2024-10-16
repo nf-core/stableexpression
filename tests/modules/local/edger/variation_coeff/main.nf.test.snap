@@ -1,0 +1,19 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "all_counts_normalized.csv:md5,008ad1d4afd84152185753cd1e0ca5ed"
+                ],
+                "csv": [
+                    "all_counts_normalized.csv:md5,008ad1d4afd84152185753cd1e0ca5ed"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-16T19:24:47.807739457"
+    }
+}

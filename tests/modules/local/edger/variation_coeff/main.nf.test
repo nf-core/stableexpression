@@ -1,0 +1,26 @@
+nextflow_process {
+
+    name "Test Process EDGER_VARIATIONCOEFF"
+    script "modules/local/edger/variation_coeff/main.nf"
+    process "EDGER_VARIATIONCOEFF"
+    tag "edger"
+
+    test("Should run without failures") {
+
+        when {
+
+            process {
+                """
+                input[0] = file('$baseDir/tests/input/deseq2/variation_coeff/all_counts.csv')
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

@@ -1,0 +1,7 @@
+name: edger_variation_coefficient
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - conda-forge::r-base==4.3.3
+  - bioconda::bioconductor-edger==4.0.16
