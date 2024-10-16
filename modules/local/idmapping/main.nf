@@ -3,7 +3,7 @@ process IDMAPPING {
     // label 'error_retry'
     debug true
 
-    // limiting to 1 thread at a time, otherwise there are two many requests to NCBI
+    // limiting to 1 thread at a time to avoid crashing the G Profiler API server
     maxForks 1
 
     afterScript """${baseDir}/bin/write_versions.py ${moduleDir}"""

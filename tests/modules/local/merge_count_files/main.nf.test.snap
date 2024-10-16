@@ -1,0 +1,19 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "merged.csv:md5,6e3bc6b34e05d88f83a4c0c209acb2f5"
+                ],
+                "csv": [
+                    "merged.csv:md5,6e3bc6b34e05d88f83a4c0c209acb2f5"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-16T00:58:16.49303062"
+    }
+}

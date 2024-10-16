@@ -10,7 +10,7 @@ nextflow_process {
         when {
             process {
                 """
-                count_file = file("$baseDir/tests/input/counts.ensembl_ids.csv")
+                count_file = file("$baseDir/tests/input/idmapping/counts.ensembl_ids.csv")
                 input[0] = [count_file, "Solanum tuberosum"]
                 """
             }
@@ -28,7 +28,7 @@ nextflow_process {
         when {
             process {
                 """
-                count_file = file("$baseDir/tests/input/counts.ncbi_ids.csv")
+                count_file = file("$baseDir/tests/input/idmapping/counts.ncbi_ids.csv")
                 input[0] = [count_file, "Arabidopsis thaliana"]
                 """
             }
@@ -47,7 +47,7 @@ nextflow_process {
         when {
             process {
                 """
-                count_file = file("$baseDir/tests/input/counts.uniprot_ids.csv")
+                count_file = file("$baseDir/tests/input/idmapping/counts.uniprot_ids.csv")
                 input[0] = [count_file, "Arabidopsis thaliana"]
                 """
             }
