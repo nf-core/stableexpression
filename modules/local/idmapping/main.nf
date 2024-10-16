@@ -16,7 +16,6 @@ process IDMAPPING {
     output:
     path '*_renamed.csv'                     , emit: csv
 
-
     when:
     task.ext.when == null || task.ext.when
 

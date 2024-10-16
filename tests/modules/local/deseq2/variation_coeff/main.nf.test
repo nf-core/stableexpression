@@ -1,0 +1,26 @@
+nextflow_process {
+
+    name "Test Process DESEQ2_VARIATIONCOEFF"
+    script "modules/local/deseq2/variation_coeff/main.nf"
+    process "DESEQ2_VARIATIONCOEFF"
+    tag "deseq2"
+
+    test("Should run without failures") {
+
+        when {
+
+            process {
+                """
+                input[0] = file('$baseDir/tests/input/deseq2/variation_coeff/all_counts.csv')
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.csv).match()
+        }
+
+    }
+
+}

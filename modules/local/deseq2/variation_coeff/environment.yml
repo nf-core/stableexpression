@@ -1,0 +1,7 @@
+name: deseq_variation_coefficient
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::bioconductor-deseq2==1.42.0
+  - conda-forge::r-base==4.3.3

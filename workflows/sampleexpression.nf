@@ -6,7 +6,8 @@
 
 include { EXPRESSIONATLAS_GETACCESSIONS          } from '../modules/local/expressionatlas/getaccessions/main'
 include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expressionatlas/getdata/main'
-include { IDMAPPING                } from '../modules/local/idmapping/main'
+include { IDMAPPING                              } from '../modules/local/idmapping/main'
+include { MERGE_COUNT_FILES                      } from '../modules/local/merge_count_files/main'
 include { paramsSummaryMap                       } from 'plugin/nf-validation'
 
 
@@ -33,35 +34,45 @@ workflow SAMPLEEXPRESSION {
     ch_versions = Channel.empty()
 
     if (params.species) {
-        //
-        // MODULE: Run Expression Atlas - Get data
-        //
+
         ch_species = Channel.value(params.species)
-        // in case
+        // since we combine both channles, we need to ensure that the keywords channel contains at least one element
         if (params.expression_atlas_keywords == null || params.expression_atlas_keywords == []) {
             params.expression_atlas_keywords = [null]
         }
         ch_keywords = Channel.fromList(params.expression_atlas_keywords)
-        ch_eatlas_search = ch_species.combine(ch_keywords)
 
-        EXPRESSIONATLAS_GETACCESSIONS(ch_eatlas_search)
+        //
+        // MODULE: Expression Atlas - Get accessions
+        //
 
-        ch_accession_list = EXPRESSIONATLAS_GETACCESSIONS.out.accession
+        ch_species.combine(ch_keywords) | EXPRESSIONATLAS_GETACCESSIONS
+
+        //
+        // MODULE: Expression Atlas - Get data
+        //
+
+        ch_accessions = EXPRESSIONATLAS_GETACCESSIONS.out.accession
                                 .splitCsv()
                                 .map{ row -> "${row[0]}"}
 
-        EXPRESSIONATLAS_GETDATA(ch_accession_list)
+        EXPRESSIONATLAS_GETDATA(ch_accessions)
+
+        //
+        // MODULE: Id mapping
+        //
 
         EXPRESSIONATLAS_GETDATA.out.csv.combine(ch_species) | IDMAPPING
 
-        IDMAPPING.out.csv.view()
+        //
+        // MODULE: Run Merge count files
+        //
+
+        MERGE_COUNT_FILES(IDMAPPING.out.csv.toList())
+
+        MERGE_COUNT_FILES.out.csv.view()
 
     }
-
-
-    // ch_versions = ch_versions.mix(FASTQC.out.versions.first())
-
-
 
     emit:
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
