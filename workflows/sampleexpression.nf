@@ -52,7 +52,7 @@ workflow SAMPLEEXPRESSION {
         // MODULE: Expression Atlas - Get data
         //
 
-        ch_accessions = EXPRESSIONATLAS_GETACCESSIONS.out.accession
+        ch_accessions = EXPRESSIONATLAS_GETACCESSIONS.out.csv
                                 .splitCsv()
                                 .map{ row -> "${row[0]}"}
 

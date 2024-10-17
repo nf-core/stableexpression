@@ -1,9 +1,9 @@
 nextflow_process {
 
-    name "Test Process EDGER_VARIATIONCOEFF"
-    script "modules/local/edger/variation_coeff/main.nf"
-    process "EDGER_VARIATIONCOEFF"
-    tag "edger"
+    name "Test Process EDGER_NORMALIZE"
+    script "modules/local/edger/normalize/main.nf"
+    process "EDGER_NORMALIZE"
+    tag "edger_normalize"
 
     test("Should run without failures") {
 
@@ -11,7 +11,7 @@ nextflow_process {
 
             process {
                 """
-                input[0] = file('$baseDir/tests/input/deseq2/variation_coeff/all_counts.csv')
+                input[0] = file('$baseDir/tests/input/normalize/all_counts.csv')
                 """
             }
         }

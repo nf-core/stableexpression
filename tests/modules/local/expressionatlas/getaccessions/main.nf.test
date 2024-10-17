@@ -4,10 +4,30 @@ nextflow_process {
     script "modules/local/expressionatlas/getaccessions/main.nf"
     process "EXPRESSIONATLAS_GETACCESSIONS"
     tag "getaccessions"
-    // options "-dump-channels"
-    profile "conda"
 
-    test("Should run without failures") {
+    test('["solanum_tuberosum", ["potato", "phloem"]') {
+
+        tag "potato"
+
+        when {
+
+            process {
+                """
+                input[0] = ["solanum_tuberosum", ["potato", "phloem"]]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+    test('["solanum_tuberosum", [null]') {
+
+        tag "potato_no_kw"
 
         when {
 

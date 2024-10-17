@@ -1,4 +1,80 @@
 {
+    "[\"solanum_tuberosum\", [null]": {
+        "content": [
+            {
+                "0": [
+                    "accessions.csv:md5,dad63ac7a1715277fa44567bc40b5872"
+                ],
+                "1": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "python",
+                        "Python 3.13.0"
+                    ]
+                ],
+                "2": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "requests",
+                        "2.32.3"
+                    ]
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "nltk",
+                        "3.9.1"
+                    ]
+                ],
+                "csv": [
+                    "accessions.csv:md5,dad63ac7a1715277fa44567bc40b5872"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-17T00:26:46.488292622"
+    },
+    "[\"solanum_tuberosum\", [\"potato\", \"phloem\"]": {
+        "content": [
+            {
+                "0": [
+                    "accessions.csv:md5,dad63ac7a1715277fa44567bc40b5872"
+                ],
+                "1": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "python",
+                        "Python 3.13.0"
+                    ]
+                ],
+                "2": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "requests",
+                        "2.32.3"
+                    ]
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "nltk",
+                        "3.9.1"
+                    ]
+                ],
+                "csv": [
+                    "accessions.csv:md5,dad63ac7a1715277fa44567bc40b5872"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-17T00:26:09.77988473"
+    },
     "Should run without failures": {
         "content": [
             {

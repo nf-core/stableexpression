@@ -1,4 +1,133 @@
 {
+    "Transcriptome Analysis of the potato": {
+        "content": [
+            {
+                "0": [
+                    "E-MTAB-552.rnaseq.design.csv:md5,142d6bb20d784ba414fa76a6e73bb37f"
+                ],
+                "1": [
+                    "E-MTAB-552.rnaseq.raw.csv:md5,315f6ab694cb809bd33f481ad326c5a7"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "[1] \"R version 4.3.3 (2024-02-29)\""
+                    ]
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "ExpressionAtlas",
+                        "[1] \u20181.30.0\u2019"
+                    ]
+                ],
+                "metadata": [
+                    "E-MTAB-552.rnaseq.design.csv:md5,142d6bb20d784ba414fa76a6e73bb37f"
+                ],
+                "normalized": [
+                    
+                ],
+                "raw": [
+                    "E-MTAB-552.rnaseq.raw.csv:md5,315f6ab694cb809bd33f481ad326c5a7"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-17T13:31:14.414421877"
+    },
+    "Transcriptome Analysis of the potato (rnaseq)": {
+        "content": [
+            {
+                "0": [
+                    "E-MTAB-552.rnaseq.design.csv:md5,142d6bb20d784ba414fa76a6e73bb37f"
+                ],
+                "1": [
+                    "E-MTAB-552.rnaseq.raw.csv:md5,315f6ab694cb809bd33f481ad326c5a7"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "[1] \"R version 4.3.3 (2024-02-29)\""
+                    ]
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "ExpressionAtlas",
+                        "[1] \u20181.30.0\u2019"
+                    ]
+                ],
+                "metadata": [
+                    "E-MTAB-552.rnaseq.design.csv:md5,142d6bb20d784ba414fa76a6e73bb37f"
+                ],
+                "normalized": [
+                    
+                ],
+                "raw": [
+                    "E-MTAB-552.rnaseq.raw.csv:md5,315f6ab694cb809bd33f481ad326c5a7"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-17T14:47:25.125961877"
+    },
+    "Transcription profiling by array of Arabidopsis mutant for fis2": {
+        "content": [
+            {
+                "0": [
+                    "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "[1] \"R version 4.3.3 (2024-02-29)\""
+                    ]
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "ExpressionAtlas",
+                        "[1] \u20181.30.0\u2019"
+                    ]
+                ],
+                "metadata": [
+                    "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
+                ],
+                "normalized": [
+                    "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
+                ],
+                "raw": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-17T13:28:23.604650949"
+    },
     "Should run without failures": {
         "content": [
             {
@@ -15,5 +144,48 @@
             "nextflow": "24.04.4"
         },
         "timestamp": "2024-10-14T18:28:01.099092539"
+    },
+    "Transcription profiling by array of Arabidopsis mutant for fis2 (microarray)": {
+        "content": [
+            {
+                "0": [
+                    "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "[1] \"R version 4.3.3 (2024-02-29)\""
+                    ]
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "ExpressionAtlas",
+                        "[1] \u20181.30.0\u2019"
+                    ]
+                ],
+                "metadata": [
+                    "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
+                ],
+                "normalized": [
+                    "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
+                ],
+                "raw": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-17T14:48:01.356607119"
     }
 }

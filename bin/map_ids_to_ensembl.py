@@ -3,6 +3,7 @@
 import requests
 import pandas as pd
 from pathlib import Path
+import argparse
 
 class NoIDFoundException(Exception):
     pass
@@ -22,6 +23,13 @@ TARGET_DATABASE = 'ENSG' # Ensembl database
 ##################################################################
 # FUNCTIONS
 ##################################################################
+
+def parse_args():
+    parser = argparse.ArgumentParser('Map IDs to Ensembl')
+    parser.add_argument('--count-file', type=Path, help='Input file containing counts')
+    parser.add_argument('--species', type=str, help='Species to convert IDs for')
+    return parser.parse_args()
+
 
 def format_species_name(species: str):
 
@@ -122,9 +130,11 @@ def convert_ids(gene_ids: list, species: str):
 
 def main():
 
-    # getting arguments
-    species_name = format_species_name('$species')
-    count_file = Path('$count_file')
+    args = parse_args()
+
+    count_file = args.count_file
+    species_name = format_species_name(args.species)
+    print(f'Converting IDs for species {species_name} and count file {count_file.name}...')
 
     df = pd.read_csv(count_file, header=0, index_col=0)
     df.index = df.index.astype(str)

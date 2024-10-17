@@ -1,0 +1,125 @@
+#!/usr/bin/env Rscript
+
+library(ExpressionAtlas)
+library(optparse)
+
+#####################################################
+#####################################################
+# FUNCTIONS
+#####################################################
+#####################################################
+
+get_args <- function() {
+    option_list <- list(
+        make_option("--accession", type = "character", help = "Accession number of expression atlas experiment. Example: E-MTAB-552")
+    )
+
+    args <- parse_args(OptionParser(
+        option_list = option_list,
+        description = "Get expression atlas data"
+        ))
+    return(args)
+}
+
+download_expression_atlas_data <- function(accession) {
+    atlas_data <- getAtlasData( accession )
+    return(atlas_data)
+}
+
+get_rnaseq_data <- function(data) {
+
+    return(list(
+        count_data = assays( data )$counts,
+        count_type = 'raw',
+        sample_groups = colData(data)$AtlasAssayGroup
+        ))
+}
+
+get_one_colour_microarray_data <- function(data) {
+
+    return(list(
+        count_data = exprs( data ),
+        count_type = 'normalized',
+        sample_groups = phenoData(data)$AtlasAssayGroup
+    ))
+}
+
+export_count_data <- function(result, experiment_id, data_type) {
+
+    outfilename <- paste0(experiment_id, '.', data_type, '.', result$count_type, '.csv')
+
+    # exporting to CSV file
+    # index represents gene names
+    print(paste('Exporting count data to file', outfilename))
+    write.table(result$count_data, outfilename, sep = ',', row.names = TRUE, col.names = TRUE, quote = FALSE)
+}
+
+export_metadata <- function(result, experiment_id, data_type) {
+
+    batch_id <- paste0(experiment_id, '.', data_type)
+    batch_list <- rep(batch_id, length(samples))
+
+    df <- data.frame(batch = batch_list, group = result$sample_groups, sample = colnames(result$count_data))
+
+    outfilename <- paste0(experiment_id, '.', data_type, '.design.csv')
+    print(paste('Exporting metadata to file', outfilename))
+    write.table(df, outfilename, sep = ',', row.names = FALSE, col.names = TRUE, quote = FALSE)
+}
+
+
+process_data <- function(atlas_data) {
+
+    experiment_id <- names(atlas_data)[1]
+    eset <- atlas_data[[ experiment_id ]]
+
+    # looping through each data type (ex: 'rnaseq') in the experiment
+    for (data_type in names(eset)) {
+
+        data <- eset[[ data_type ]]
+
+        skip_iteration <- FALSE
+        # getting count dataframe
+        tryCatch({
+
+            if (data_type == 'rnaseq') {
+                result <- get_rnaseq_data(data)
+            } else if (startsWith(data_type, 'A-AFFY-')) {
+                result <- get_one_colour_microarray_data(data)
+            } else {
+                stop(paste('ERROR: Unknown data type:', data_type))
+            }
+
+        }, error = function(e) {
+            print(paste("Caught an error: ", e$message))
+            print(paste('ERROR: Could not get assay data for experiment ID', experiment_id, 'and data type', data_type))
+            skip_iteration <- TRUE
+        })
+
+        # If an error occurred, skip to the next iteration
+        if (skip_iteration) {
+            next
+        }
+
+        # exporting count data to CSV
+        export_count_data(result, experiment_id, data_type)
+
+        # exporting metadata to CSV
+        export_metadata(result, experiment_id, data_type)
+    }
+
+}
+
+#####################################################
+#####################################################
+# MAIN
+#####################################################
+#####################################################
+
+args <- get_args()
+
+# searching and downloading expression atlas data
+atlas_data <- download_expression_atlas_data(accession = args$accession)
+
+# writing count data in atlas_data to specific CSV files
+process_data(atlas_data)
+

@@ -5,13 +5,35 @@ nextflow_process {
     process "EXPRESSIONATLAS_GETDATA"
     tag "getdata"
 
-    test("Should run without failures") {
+    test("Transcriptome Analysis of the potato (rnaseq)") {
+
+        tag "getdata_potato"
 
         when {
 
             process {
                 """
                 input[0] = "E-MTAB-552"
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+    test("Transcription profiling by array of Arabidopsis mutant for fis2 (microarray)") {
+
+        tag "getdata_arabido"
+
+        when {
+
+            process {
+                """
+                input[0] = "E-TABM-1007"
                 """
             }
         }

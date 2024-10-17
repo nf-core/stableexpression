@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from pathlib import Path
+import argparse
 import requests
 from os import cpu_count
 import json
@@ -30,6 +30,13 @@ stemmer = nltk.PorterStemmer()
 # FUNCTIONS
 ##################################################################
 ##################################################################
+
+
+def parse_args():
+    parser = argparse.ArgumentParser('Get expression atlas accessions')
+    parser.add_argument('--species', type=str, help='Species to convert IDs for')
+    parser.add_argument('--keywords', type=str, nargs='+', help='Keywords to search for in experiment description')
+    return parser.parse_args()
 
 
 def get_wordnet_pos(token: str):
@@ -323,9 +330,11 @@ def format_species_name(species: str):
 
 def main():
 
+    args = parse_args()
+
     # Getting arguments
-    species_name = format_species_name('$species')
-    keywords = '$keywords'
+    species_name = format_species_name(args.species)
+    keywords = args.keywords
 
     print(f'Getting experiments corresponding to species {species_name}')
     species_experiments = get_species_experiments(species_name)
@@ -346,11 +355,11 @@ def main():
     if not selected_accessions:
         raise RuntimeError('Could not find experiments for species {args.species} and keywords {args.keywords}')
     else:
-        print(f'Kept {len(selected_accessions)} experiments:\\n{selected_accessions}')
+        print(f'Kept {len(selected_accessions)} experiments:\n{selected_accessions}')
 
     print(f"Writing accessions to {ACCESSION_OUTFILE_NAME}")
     with open(ACCESSION_OUTFILE_NAME, 'w') as fout:
-        fout.writelines([f'{acc}\\n' for acc in selected_accessions])
+        fout.writelines([f'{acc}\n' for acc in selected_accessions])
 
     print(f"Writing logs of found keywords to {JSON_OUTFILE_NAME}")
     with open(JSON_OUTFILE_NAME, 'w') as fout:
