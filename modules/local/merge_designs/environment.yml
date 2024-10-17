@@ -1,0 +1,5 @@
+name: merge_count_files
+channels:
+  - conda-forge
+dependencies:
+  - conda-forge::pandas==2.2.3

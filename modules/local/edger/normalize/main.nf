@@ -6,6 +6,7 @@ process EDGER_NORMALIZE {
 
     input:
     path count_file
+    path design_file
 
     output:
     path '*_normalized.csv',                                                                    emit: csv
@@ -18,7 +19,7 @@ process EDGER_NORMALIZE {
 
     script:
     """
-    edger_normalize.R --count-file "$count_file"
+    edger_normalize.R --counts "$count_file" --design "$design_file"
     """
 
 }

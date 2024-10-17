@@ -1,0 +1,26 @@
+nextflow_process {
+
+    name "Test Process MERGE_DESIGNS"
+    script "modules/local/merge_designs/main.nf"
+    process "MERGE_DESIGNS"
+    tag "merge_designs"
+
+    test("Should run without failures") {
+
+        when {
+
+            process {
+                """
+                ch_csv_files = Channel.fromPath( '$baseDir/tests/input/merge_designs/design_*.csv', checkIfExists: true)
+                input[0] = ch_csv_files.collect()
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+}

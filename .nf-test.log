@@ -1,22 +1,16 @@
-Oct-17 15:32:20.609 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.0
-Oct-17 15:32:20.632 [main] INFO  com.askimed.nf.test.App - Arguments: [test, --tag, idmapping, --profile, conda, --update-snapshot]
-Oct-17 15:32:21.676 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.04.4
-Oct-17 15:32:21.678 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Load config from file /home/olivier/repositories/nf-core-sampleexpression/nf-test.config...
-Oct-17 15:32:22.862 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Loaded 32 files from directory /home/olivier/repositories/nf-core-sampleexpression in 0.722 sec
-Oct-17 15:32:22.863 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Found 6 tests.
-Oct-17 15:32:22.863 [main] DEBUG com.askimed.nf.test.lang.dependencies.DependencyResolver - Found tests: [/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/idmapping/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getdata/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/edger/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test]
-Oct-17 15:32:22.863 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Detected 6 test files.
-Oct-17 15:32:23.140 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Started test plan
-Oct-17 15:32:23.140 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Running testsuite 'Test Process IDMAPPING' from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/idmapping/main.nf.test'.
-Oct-17 15:32:23.140 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test 'fe43ad74: Map Ensembl IDs to themselves'. type: com.askimed.nf.test.lang.process.ProcessTest
-Oct-17 15:32:57.609 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Load snapshots from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/idmapping/main.nf.test.snap'
-Oct-17 15:32:57.616 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshots 'Map Ensembl IDs to themselves' match.
-Oct-17 15:32:57.617 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test 'fe43ad74: Map Ensembl IDs to themselves' finished. status: PASSED
-Oct-17 15:32:57.618 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test '708e7372: Map NCBI IDs'. type: com.askimed.nf.test.lang.process.ProcessTest
-Oct-17 15:33:22.230 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshots 'Map NCBI IDs' match.
-Oct-17 15:33:22.230 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test '708e7372: Map NCBI IDs' finished. status: PASSED
-Oct-17 15:33:22.230 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test '811c15a9: Map Uniprot IDs'. type: com.askimed.nf.test.lang.process.ProcessTest
-Oct-17 15:33:47.550 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshots 'Map Uniprot IDs' match.
-Oct-17 15:33:47.550 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test '811c15a9: Map Uniprot IDs' finished. status: PASSED
-Oct-17 15:33:47.550 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Testsuite 'Test Process IDMAPPING' finished. snapshot file: true, skipped tests: false, failed tests: false
-Oct-17 15:33:47.550 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Executed 3 tests. 0 tests failed. Done!
+Oct-17 17:44:24.191 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.0
+Oct-17 17:44:24.212 [main] INFO  com.askimed.nf.test.App - Arguments: [test, --tag, merge_count_files, --profile, conda, --update-snapshot]
+Oct-17 17:44:25.238 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.04.4
+Oct-17 17:44:25.240 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Load config from file /home/olivier/repositories/nf-core-sampleexpression/nf-test.config...
+Oct-17 17:44:26.436 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Loaded 34 files from directory /home/olivier/repositories/nf-core-sampleexpression in 0.784 sec
+Oct-17 17:44:26.437 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Found 7 tests.
+Oct-17 17:44:26.438 [main] DEBUG com.askimed.nf.test.lang.dependencies.DependencyResolver - Found tests: [/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/idmapping/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getdata/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_designs/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/edger/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test]
+Oct-17 17:44:26.438 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Detected 7 test files.
+Oct-17 17:44:26.750 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Started test plan
+Oct-17 17:44:26.750 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Running testsuite 'Test Process MERGE_COUNT_FILES' from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test'.
+Oct-17 17:44:26.750 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test '685ff215: Should run without failures'. type: com.askimed.nf.test.lang.process.ProcessTest
+Oct-17 17:44:50.424 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Load snapshots from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test.snap'
+Oct-17 17:44:50.431 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshots 'Should run without failures' match.
+Oct-17 17:44:50.431 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test '685ff215: Should run without failures' finished. status: PASSED
+Oct-17 17:44:50.433 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Testsuite 'Test Process MERGE_COUNT_FILES' finished. snapshot file: true, skipped tests: false, failed tests: false
+Oct-17 17:44:50.433 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Executed 1 tests. 0 tests failed. Done!

@@ -35,6 +35,12 @@
                     "fa_icon": "fas fa-folder-open",
                     "pattern": "([a-zA-Z,]+)"
                 },
+                "normalization_method": {
+                    "type": "string",
+                    "description": "Tool to use for normalization.",
+                    "fa_icon": "fas fa-folder-open",
+                    "enum": ["deseq2", "edger"]
+                },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",

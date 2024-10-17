@@ -11,8 +11,8 @@ nextflow_process {
 
             process {
                 """
-                ch_csv_files = Channel.fromPath( '$baseDir/tests/input/merge_count_files/*_renamed.csv', checkIfExists: true).toList()
-                input[0] = ch_csv_files
+                ch_csv_files = Channel.fromPath( '$baseDir/tests/input/merge_count_files/*_renamed.csv', checkIfExists: true)
+                input[0] = ch_csv_files.collect()
                 """
             }
         }
