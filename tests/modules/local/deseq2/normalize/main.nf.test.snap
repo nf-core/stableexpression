@@ -2,13 +2,13 @@
     "Should run without failures": {
         "content": [
             [
-                "all_counts_normalized.csv:md5,b999d6fd44fb54c8b311d7e84d64ce9f"
+                "E-MTAB-552.log_cpm.csv:md5,e47e9239ac9b6acdd44e9f4dc1c9c107"
             ]
         ],
         "meta": {
             "nf-test": "0.9.0",
             "nextflow": "24.04.4"
         },
-        "timestamp": "2024-10-17T15:03:47.124237706"
+        "timestamp": "2024-11-02T11:56:36.944016398"
     }
 }

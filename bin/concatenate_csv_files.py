@@ -12,7 +12,9 @@ def parse_args():
 
 args = parse_args()
 
+print('Concatenating design CSV files')
 dfs = [pd.read_csv(file, header=0) for file in args.files]
 concatenated_df = pd.concat(dfs, ignore_index=True)
 
+print(f'Writing concatenated CSV file to {args.outfile}')
 concatenated_df.to_csv(args.outfile, index=False)

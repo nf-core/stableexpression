@@ -13,8 +13,7 @@ get_args <- function() {
 
     option_list <- list(
         make_option("--counts", dest = 'count_file', help = "Path to input count file"),
-        make_option("--design", dest = 'design_file', help = "Path to input design file"),
-        make_option("--accession", help = "Accession number of expression atlas experiment. Example: E-MTAB-552")
+        make_option("--design", dest = 'design_file', help = "Path to input design file")
     )
 
     args <- parse_args(OptionParser(
@@ -25,7 +24,7 @@ get_args <- function() {
     return(args)
 }
 
-get_normalized_counts <- function(count_file, design_file) {
+get_variation_coefficient <- function(count_file, design_file) {
 
     print(paste('Normalizing counts in:', count_file))
 
@@ -34,7 +33,7 @@ get_normalized_counts <- function(count_file, design_file) {
 
     design_data <- design_data[design_data$sample %in% colnames(count_data), ]
 
-    group <- factor(design_data$condition)
+    group <- factor(design_data$group)
 
     count_data_matrix <- as.matrix(count_data)
 
@@ -52,16 +51,32 @@ get_normalized_counts <- function(count_file, design_file) {
 
     #normalization
     dge <- calcNormFactors(dge, method="TMM")
+    normalized_counts <- cpm(dge, normalized.lib.sizes = TRUE)
 
-    cpm_counts <- cpm(dge, normalized.lib.sizes = TRUE, log = TRUE)
+    # estimating dispersion
+    dge <- estimateCommonDisp(dge)
+    dge <- estimateTagwiseDisp(dge)
 
-    return(cpm_counts)
+    # getting the coefficient of variation as the sqrt of the tagwise dispersion
+    cv_df <- data.frame(
+        gene = rownames(dge),
+        variation_coefficient = sqrt(dge$tagwise.dispersion),
+        average_log_cpm = dge$AveLogCPM
+    )
+
+    cv_df <- cv_df[order(cv_df$variation_coefficient, decreasing = FALSE), ]
+
+    return(cv_df, normalized_counts)
 }
 
-export_data <- function(cpm_counts, accession) {
-    filename <- paste0(accession, ".log_cpm.csv")
-    print(paste('Exporting normalized counts per filename <- paste0(accession, ".log_cpm.csv", )million to:', filename))
-    write.table(cpm_counts, filename, sep = ',', row.names = TRUE, quote = FALSE)
+export_data <- function(cv_df, normalized_counts) {
+    cv_filename <- "variation_coefficient.csv"
+    print(paste('Exporting coefficients of variation to:', cv_filename))
+    write.table(cv_df, cv_filename, sep = ',', row.names = TRUE, quote = FALSE)
+
+    normalized_filename <- "all_counts.normalized.csv"
+    print(paste('Exporting normalized counts to:', normalized_filename))
+    write.table(normalized_counts, normalized_filename, sep = ',', row.names = TRUE, quote = FALSE)
 }
 
 #####################################################
@@ -72,6 +87,6 @@ export_data <- function(cpm_counts, accession) {
 
 args <- get_args()
 
-cpm_counts <- get_normalized_counts(args$count_file, args$design_file)
+cv_df, normalized_counts <- get_variation_coefficient(args$count_file, args$design_file)
 
-export_data(cpm_counts, args$accession)
+export_data(cv_df, normalized_counts)

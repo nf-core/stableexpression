@@ -11,6 +11,7 @@ include { EDGER_NORMALIZE                        } from '../modules/local/edger/
 include { IDMAPPING                              } from '../modules/local/idmapping/main'
 include { MERGE_COUNT_FILES                      } from '../modules/local/merge_count_files/main'
 include { MERGE_DESIGNS                          } from '../modules/local/merge_designs/main'
+include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
 include { paramsSummaryMap                       } from 'plugin/nf-validation'
 
 
@@ -33,8 +34,6 @@ workflow SAMPLEEXPRESSION {
     if (!params.count_dataset && !params.species) {
         error('You must provide at least either count datasets or a species name')
     }
-
-    ch_versions = Channel.empty()
 
     if (params.species) {
 
@@ -70,37 +69,27 @@ workflow SAMPLEEXPRESSION {
         MERGE_DESIGNS(EXPRESSIONATLAS_GETDATA.out.design.collect())
         ch_design = MERGE_DESIGNS.out.csv
 
-        // separating raw and normalized counts
-        EXPRESSIONATLAS_GETDATA
-            .out
-            .csv
-            .branch {
-                raw: { file -> file.name.endsWith('raw.csv') }
-                normalized: { file -> file.name.endsWith('normalized.csv') }
-            }
-            .set{ ch_datasets }
-
         //
         // MODULE: Normalization of raw count datasets
         //
 
         if (params.normalization_method == 'deseq2') {
             DESEQ2_NORMALIZE(
-                ch_datasets.raw,
+                EXPRESSIONATLAS_GETDATA.out.raw,
                 ch_design
             )
             ch_norm = DESEQ2_NORMALIZE.out.csv
 
         } else {
             EDGER_NORMALIZE(
-                ch_datasets.raw,
+                EXPRESSIONATLAS_GETDATA.out.raw,
                 ch_design
             )
             ch_norm = EDGER_NORMALIZE.out.csv
         }
 
         // putting all normalized count datasets together
-        ch_normalized_datasets = ch_datasets.normalized.concat(ch_norm)
+        ch_normalized_datasets = EXPRESSIONATLAS_GETDATA.out.normalized.concat(ch_norm)
 
         //
         // MODULE: Id mapping
@@ -114,13 +103,20 @@ workflow SAMPLEEXPRESSION {
 
         MERGE_COUNT_FILES(IDMAPPING.out.csv.collect())
 
-        MERGE_COUNT_FILES.out.csv.view()
+        //
+        // MODULE: Compute variation coefficient for each gene
+        //
+
+        VARIATION_COEFFICIENT(MERGE_COUNT_FILES.out.csv)
+        ch_var_coeff = VARIATION_COEFFICIENT.out.csv
 
     }
 
 
+
+
     emit:
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    ch_var_coeff
 }
 
 /*

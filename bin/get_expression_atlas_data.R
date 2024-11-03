@@ -44,9 +44,24 @@ get_one_colour_microarray_data <- function(data) {
     ))
 }
 
-export_count_data <- function(result, experiment_id, data_type) {
+get_batch_id <- function(accession, data_type) {
+    batch_id <- paste0(accession, '_', data_type)
+    # cleaning
+    batch_id <- gsub("-", "_", batch_id)
+    return(batch_id)
+}
 
-    outfilename <- paste0(experiment_id, '.', data_type, '.', result$count_type, '.csv')
+get_new_sample_names <- function(result, batch_id) {
+    new_colnames <- paste0(batch_id, '_', colnames(result$count_data))
+    return(new_colnames)
+}
+
+export_count_data <- function(result, batch_id) {
+
+    # renaming columns, to make them specific to accession and data type
+    colnames(result$count_data) <- get_new_sample_names(result, batch_id)
+
+    outfilename <- paste0(batch_id, '.', result$count_type, '.csv')
 
     # exporting to CSV file
     # index represents gene names
@@ -54,23 +69,22 @@ export_count_data <- function(result, experiment_id, data_type) {
     write.table(result$count_data, outfilename, sep = ',', row.names = TRUE, col.names = TRUE, quote = FALSE)
 }
 
-export_metadata <- function(result, experiment_id, data_type) {
+export_metadata <- function(result, batch_id) {
 
-    batch_id <- paste0(experiment_id, '.', data_type)
-    batch_list <- rep(batch_id, length(samples))
+    new_colnames <- get_new_sample_names(result, batch_id)
+    batch_list <- rep(batch_id, length(new_colnames))
 
-    df <- data.frame(batch = batch_list, group = result$sample_groups, sample = colnames(result$count_data))
+    df <- data.frame(batch = batch_list, condition = result$sample_groups, sample = new_colnames)
 
-    outfilename <- paste0(experiment_id, '.', data_type, '.design.csv')
+    outfilename <- paste0(batch_id, '.design.csv')
     print(paste('Exporting metadata to file', outfilename))
     write.table(df, outfilename, sep = ',', row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
 
 
-process_data <- function(atlas_data) {
+process_data <- function(atlas_data, accession) {
 
-    experiment_id <- names(atlas_data)[1]
-    eset <- atlas_data[[ experiment_id ]]
+    eset <- atlas_data[[ accession ]]
 
     # looping through each data type (ex: 'rnaseq') in the experiment
     for (data_type in names(eset)) {
@@ -91,7 +105,7 @@ process_data <- function(atlas_data) {
 
         }, error = function(e) {
             print(paste("Caught an error: ", e$message))
-            print(paste('ERROR: Could not get assay data for experiment ID', experiment_id, 'and data type', data_type))
+            print(paste('ERROR: Could not get assay data for experiment ID', accession, 'and data type', data_type))
             skip_iteration <- TRUE
         })
 
@@ -100,11 +114,13 @@ process_data <- function(atlas_data) {
             next
         }
 
+        batch_id <- get_batch_id(accession, data_type)
+
         # exporting count data to CSV
-        export_count_data(result, experiment_id, data_type)
+        export_count_data(result, batch_id)
 
         # exporting metadata to CSV
-        export_metadata(result, experiment_id, data_type)
+        export_metadata(result, batch_id)
     }
 
 }
@@ -118,8 +134,8 @@ process_data <- function(atlas_data) {
 args <- get_args()
 
 # searching and downloading expression atlas data
-atlas_data <- download_expression_atlas_data(accession = args$accession)
+atlas_data <- download_expression_atlas_data(args$accession)
 
 # writing count data in atlas_data to specific CSV files
-process_data(atlas_data)
+process_data(atlas_data, args$accession)
 

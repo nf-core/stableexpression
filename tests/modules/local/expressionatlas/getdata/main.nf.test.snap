@@ -46,16 +46,16 @@
         "content": [
             {
                 "0": [
-                    "E-MTAB-552.rnaseq.design.csv:md5,142d6bb20d784ba414fa76a6e73bb37f"
-                ],
-                "1": [
                     [
                         "E-MTAB-552",
-                        "E-MTAB-552.rnaseq.raw.csv:md5,315f6ab694cb809bd33f481ad326c5a7"
+                        "E_MTAB_552_rnaseq.raw.csv:md5,830f50b60b17b62f9ca2f6a163a2879f"
                     ]
                 ],
-                "2": [
+                "1": [
                     
+                ],
+                "2": [
+                    "E_MTAB_552_rnaseq.design.csv:md5,39c277eb6c24d7753f934be0cb743472"
                 ],
                 "3": [
                     [
@@ -71,8 +71,8 @@
                         "[1] \u20181.30.0\u2019"
                     ]
                 ],
-                "metadata": [
-                    "E-MTAB-552.rnaseq.design.csv:md5,142d6bb20d784ba414fa76a6e73bb37f"
+                "design": [
+                    "E_MTAB_552_rnaseq.design.csv:md5,39c277eb6c24d7753f934be0cb743472"
                 ],
                 "normalized": [
                     
@@ -80,7 +80,7 @@
                 "raw": [
                     [
                         "E-MTAB-552",
-                        "E-MTAB-552.rnaseq.raw.csv:md5,315f6ab694cb809bd33f481ad326c5a7"
+                        "E_MTAB_552_rnaseq.raw.csv:md5,830f50b60b17b62f9ca2f6a163a2879f"
                     ]
                 ]
             }
@@ -89,7 +89,7 @@
             "nf-test": "0.9.0",
             "nextflow": "24.04.4"
         },
-        "timestamp": "2024-10-17T16:04:38.422861372"
+        "timestamp": "2024-10-27T20:34:29.182541795"
     },
     "Transcription profiling by array of Arabidopsis mutant for fis2": {
         "content": [
@@ -155,42 +155,48 @@
         "content": [
             {
                 "0": [
-                    "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
-                ],
-                "1": [
-                    
-                ],
-                "2": [
                     [
                         "E-TABM-1007",
-                        "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
+                        "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
                     ]
                 ],
-                "3": [
+                "1": [
+                    [
+                        "E-TABM-1007",
+                        [
+                            "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a",
+                            "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
+                        ]
+                    ]
+                ],
+                "2": [
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "R",
                         "[1] \"R version 4.3.3 (2024-02-29)\""
                     ]
                 ],
-                "4": [
+                "3": [
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "ExpressionAtlas",
                         "[1] \u20181.30.0\u2019"
                     ]
                 ],
-                "metadata": [
-                    "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
-                ],
-                "normalized": [
+                "csv": [
                     [
                         "E-TABM-1007",
-                        "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
+                        [
+                            "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a",
+                            "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
+                        ]
                     ]
                 ],
-                "raw": [
-                    
+                "design": [
+                    [
+                        "E-TABM-1007",
+                        "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
+                    ]
                 ]
             }
         ],
@@ -198,6 +204,6 @@
             "nf-test": "0.9.0",
             "nextflow": "24.04.4"
         },
-        "timestamp": "2024-10-17T16:05:15.990089136"
+        "timestamp": "2024-10-17T22:51:22.039416279"
     }
 }

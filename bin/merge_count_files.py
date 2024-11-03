@@ -13,17 +13,7 @@ def parse_args():
 
 args = parse_args()
 
-dfs = []
-for file in args.files:
-
-    # parsing dataframes
-    df = pd.read_csv(file, header=0, index_col=0)
-
-    # renaming columns, to avoid possible conflicts during concatenation (and especially subsequent modules)
-    filename = file.stem.replace('_renamed', '').replace(',', '_').replace('.', '_')
-    df.rename(columns={col: f'{filename}_{col}' for col in df.columns}, inplace=True)
-
-    dfs.append(df)
+dfs = [pd.read_csv(file, header=0, index_col=0) for file in args.files]
 
 concat_df = pd.concat(dfs, axis=1)
 

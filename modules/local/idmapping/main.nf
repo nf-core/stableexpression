@@ -11,7 +11,7 @@ process IDMAPPING {
     tuple path(count_file), val(species)
 
     output:
-    path '*_renamed.csv',                                                                                             emit: csv
+    path '*.csv',                                                                                                     emit: csv
     tuple val("${task.process}"), val('python'),   eval('python3 --version'),                                         topic: versions
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),     topic: versions
     tuple val("${task.process}"), val('requests'), eval('python3 -c "import requests; print(requests.__version__)"'), topic: versions

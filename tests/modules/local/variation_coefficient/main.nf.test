@@ -1,0 +1,26 @@
+nextflow_process {
+
+    name "Test Process VARIATION_COEFFICIENT"
+    script "modules/local/variation_coefficient/main.nf"
+    process "VARIATION_COEFFICIENT"
+    tag "var_coeff"
+
+    test("Should run without failures") {
+
+        when {
+
+            process {
+                """
+                input[0] = file('$baseDir/tests/input/variation_coefficient/all_counts.log_cpm.csv')
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

@@ -1,16 +1,18 @@
-Oct-17 17:44:24.191 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.0
-Oct-17 17:44:24.212 [main] INFO  com.askimed.nf.test.App - Arguments: [test, --tag, merge_count_files, --profile, conda, --update-snapshot]
-Oct-17 17:44:25.238 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.04.4
-Oct-17 17:44:25.240 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Load config from file /home/olivier/repositories/nf-core-sampleexpression/nf-test.config...
-Oct-17 17:44:26.436 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Loaded 34 files from directory /home/olivier/repositories/nf-core-sampleexpression in 0.784 sec
-Oct-17 17:44:26.437 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Found 7 tests.
-Oct-17 17:44:26.438 [main] DEBUG com.askimed.nf.test.lang.dependencies.DependencyResolver - Found tests: [/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/idmapping/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getdata/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_designs/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/edger/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test]
-Oct-17 17:44:26.438 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Detected 7 test files.
-Oct-17 17:44:26.750 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Started test plan
-Oct-17 17:44:26.750 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Running testsuite 'Test Process MERGE_COUNT_FILES' from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test'.
-Oct-17 17:44:26.750 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test '685ff215: Should run without failures'. type: com.askimed.nf.test.lang.process.ProcessTest
-Oct-17 17:44:50.424 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Load snapshots from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test.snap'
-Oct-17 17:44:50.431 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshots 'Should run without failures' match.
-Oct-17 17:44:50.431 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test '685ff215: Should run without failures' finished. status: PASSED
-Oct-17 17:44:50.433 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Testsuite 'Test Process MERGE_COUNT_FILES' finished. snapshot file: true, skipped tests: false, failed tests: false
-Oct-17 17:44:50.433 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Executed 1 tests. 0 tests failed. Done!
+Nov-02 11:55:41.403 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.0
+Nov-02 11:55:41.422 [main] INFO  com.askimed.nf.test.App - Arguments: [test, --tag, deseq2_normalize, --profile, conda, --update-snapshot]
+Nov-02 11:55:42.434 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.04.4
+Nov-02 11:55:42.437 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Load config from file /home/olivier/repositories/nf-core-sampleexpression/nf-test.config...
+Nov-02 11:55:44.527 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Loaded 37 files from directory /home/olivier/repositories/nf-core-sampleexpression in 1.675 sec
+Nov-02 11:55:44.528 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Found 8 tests.
+Nov-02 11:55:44.528 [main] DEBUG com.askimed.nf.test.lang.dependencies.DependencyResolver - Found tests: [/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/idmapping/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getdata/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_designs/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/variation_coefficient/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/edger/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test]
+Nov-02 11:55:44.528 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Detected 8 test files.
+Nov-02 11:55:44.975 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Started test plan
+Nov-02 11:55:44.976 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Running testsuite 'Test Process DESEQ2_NORMALIZE' from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/normalize/main.nf.test'.
+Nov-02 11:55:44.977 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test 'c175f25e: Should run without failures'. type: com.askimed.nf.test.lang.process.ProcessTest
+Nov-02 11:56:36.928 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Load snapshots from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/normalize/main.nf.test.snap'
+Nov-02 11:56:36.943 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshots 'Should run without failures' do not match. Update snapshots flag set.
+Nov-02 11:56:36.944 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Updated snapshot 'Should run without failures'
+Nov-02 11:56:36.950 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Wrote snapshots to file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/normalize/main.nf.test.snap'
+Nov-02 11:56:36.950 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test 'c175f25e: Should run without failures' finished. status: PASSED
+Nov-02 11:56:36.953 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Testsuite 'Test Process DESEQ2_NORMALIZE' finished. snapshot file: true, skipped tests: false, failed tests: false
+Nov-02 11:56:36.956 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Executed 1 tests. 0 tests failed. Done!

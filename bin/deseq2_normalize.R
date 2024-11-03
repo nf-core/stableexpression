@@ -13,8 +13,9 @@ library(optparse)
 get_args <- function() {
 
     option_list <- list(
-        make_option("--counts", dest = 'count_file', help = "Path to input count file")
-        make_option("--design", dest = 'design_file', help = "Path to input design file")
+        make_option("--counts", dest = 'count_file', help = "Path to input count file"),
+        make_option("--design", dest = 'design_file', help = "Path to input design file"),
+        make_option("--accession", help = "Accession number of expression atlas experiment. Example: E-MTAB-552")
     )
 
     args <- parse_args(OptionParser(
@@ -27,15 +28,18 @@ get_args <- function() {
 
 get_normalized_counts <- function(count_file, design_file) {
 
+    print(paste('Normalizing counts in:', count_file))
+
     count_data <- read.csv(count_file, row.names = 1)
-    design_data <- read.csv(design_file, row.names = 1)
+    design_data <- read.csv(design_file)
+
+    design_data <- design_data[design_data$sample %in% colnames(count_data), ]
 
     count_matrix <- as.matrix(count_data)
 
-    # Ensure the row names of the colData match the sample names in the count matrix
     col_data <- data.frame(
-        row.names = design_data$sample_names,  # Assuming 'sample_names' is the column name
-        condition = factor(design_data$groups)  # Assuming 'groups' is the column name
+        row.names = design_data$sample,
+        condition = factor(design_data$condition)
     )
 
     # Check if the column names of count_matrix match the row names of col_data
@@ -49,20 +53,29 @@ get_normalized_counts <- function(count_file, design_file) {
     dds <- DESeqDataSetFromMatrix(countData = count_matrix, colData = col_data, design = ~ condition)
 
     # Filter genes with low counts
-    # Keep genes that have at least 10 counts in at least two samples
-    dds_filtered <- dds[rowSums(counts(dds) >= 2) >= 2, ]
+    # Keep genes that have at least 5 counts in at least two samples
+    dds_filtered <- dds[rowSums(counts(dds) >= 5) >= 2, ]
 
     # perform normalization
     dds <- estimateSizeFactors(dds)
 
     normalized_counts <- counts(dds, normalized = TRUE)
 
-    return(normalized_counts)
+    # Calculate total counts per sample (library size)
+    library_sizes <- colSums(count_data)
+
+    # Convert normalized counts to CPM
+    cpm_counts <- t(t(normalized_counts) / library_sizes * 1e6)
+
+    cpm_counts <- log2(cpm_counts + 1)
+
+    return(cpm_counts)
 }
 
-export_data <- function(normalized_counts, file_stem) {
-    normalized_filename <- sub(".csv", "_normalized.csv", file_stem)
-    write.table(normalized_counts, normalized_filename,, row.names = TRUE, quote = FALSE)
+export_data <- function(cpm_counts, accession) {
+    filename <- paste0(accession, ".log_cpm.csv")
+    print(paste('Exporting normalized counts per million to:', filename))
+    write.table(cpm_counts, filename, sep = ',', row.names = TRUE, quote = FALSE)
 }
 
 #####################################################
@@ -73,6 +86,6 @@ export_data <- function(normalized_counts, file_stem) {
 
 args <- get_args()
 
-normalized_counts <- get_normalized_counts(args$count_file)
+cpm_counts <- get_normalized_counts(args$count_file, args$design_file)
 
-export_data(normalized_counts, file_stem = basename(args$count_file))
+export_data(cpm_counts, args$accession)
