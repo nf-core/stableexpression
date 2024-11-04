@@ -30,7 +30,7 @@
                     "pattern": "([a-zA-Z]+)[_ ]([a-zA-Z]+)"
                 },
                 "expression_atlas_keywords": {
-                    "type": "array",
+                    "type": "string",
                     "description": "Keywords to use when retrieving specific experiments from Expression Atlas.",
                     "fa_icon": "fas fa-folder-open",
                     "pattern": "([a-zA-Z,]+)"

@@ -5,15 +5,16 @@ nextflow_process {
     process "EXPRESSIONATLAS_GETACCESSIONS"
     tag "getaccessions"
 
-    test('["solanum_tuberosum", ["potato", "phloem"]') {
+    test('["solanum_tuberosum", ["potato"]]') {
 
-        tag "potato"
+        tag "potato_two_kw"
 
         when {
 
             process {
                 """
-                input[0] = ["solanum_tuberosum", ["potato", "phloem"]]
+                input[0] = "solanum_tuberosum"
+                input[1] = "potato"
                 """
             }
         }
@@ -25,7 +26,28 @@ nextflow_process {
 
     }
 
-    test('["solanum_tuberosum", [null]') {
+    test('["solanum_tuberosum", ["potato", "phloem"]]') {
+
+        tag "potato_two_kw"
+
+        when {
+
+            process {
+                """
+                input[0] = "solanum_tuberosum"
+                input[1] = ["potato", "phloem"]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+    test('["solanum_tuberosum", null]') {
 
         tag "potato_no_kw"
 
@@ -33,7 +55,8 @@ nextflow_process {
 
             process {
                 """
-                input[0] = ["solanum_tuberosum", ["potato", "phloem"]]
+                input[0] = "solanum_tuberosum"
+                input[1] = ""
                 """
             }
         }

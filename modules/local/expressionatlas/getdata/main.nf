@@ -1,6 +1,13 @@
 process EXPRESSIONATLAS_GETDATA {
 
-    debug true
+    // debug true
+
+    // when there are network issues, we retry the download with a backoff
+    // errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+    // maxRetries 5
+
+    // limiting to 1 thread at a time to avoid crashing the G Profiler API server
+    maxForks 4
 
     tag "$accession"
 

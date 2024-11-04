@@ -27,6 +27,15 @@ stemmer = nltk.PorterStemmer()
 
 ##################################################################
 ##################################################################
+# EXCEPTIONS
+##################################################################
+##################################################################
+
+class ExpressionAtlasNothingFoundError(Exception):
+    pass
+
+##################################################################
+##################################################################
 # FUNCTIONS
 ##################################################################
 ##################################################################
@@ -35,7 +44,7 @@ stemmer = nltk.PorterStemmer()
 def parse_args():
     parser = argparse.ArgumentParser('Get expression atlas accessions')
     parser.add_argument('--species', type=str, help='Species to convert IDs for')
-    parser.add_argument('--keywords', type=str, nargs='+', help='Keywords to search for in experiment description')
+    parser.add_argument('--keywords', type=str, nargs='*', help='Keywords to search for in experiment description')
     return parser.parse_args()
 
 
@@ -177,6 +186,8 @@ def get_data(url: str):
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
+    elif response.status_code == 500:
+        raise ExpressionAtlasNothingFoundError
     else:
         raise RuntimeError(f"Failed to retrieve data: {response.status_code}")
 
@@ -335,35 +346,42 @@ def main():
     # Getting arguments
     species_name = format_species_name(args.species)
     keywords = args.keywords
+    print(keywords)
 
     print(f'Getting experiments corresponding to species {species_name}')
     species_experiments = get_species_experiments(species_name)
     print(f'Found {len(species_experiments)} experiments')
 
-    print(f"Filtering experiments corresponding to keywords {keywords}")
-    selected_accessions = []
-    found_dict = {}
-    with Pool(cpu_count()) as pool:
-        items = [(exp_dict, keywords,) for exp_dict in species_experiments]
-        results = pool.starmap(search_keywords_in_experiment, items)
-        for result in results:
-            if result is not None:
-                accession = result['data']['experiment']['accession']
-                selected_accessions.append(accession)
-                found_dict[accession] = result['found']
+    if keywords:
+        print(f"Filtering experiments corresponding to keywords {keywords}")
+        selected_accessions = []
+        found_dict = {}
+        with Pool(cpu_count()) as pool:
+            items = [(exp_dict, keywords,) for exp_dict in species_experiments]
+            results = pool.starmap(search_keywords_in_experiment, items)
+            for result in results:
+                if result is not None:
+                    accession = result['data']['experiment']['accession']
+                    selected_accessions.append(accession)
+                    found_dict[accession] = result['found']
 
-    if not selected_accessions:
-        raise RuntimeError('Could not find experiments for species {args.species} and keywords {args.keywords}')
+        if not selected_accessions:
+            raise RuntimeError('Could not find experiments for species {args.species} and keywords {args.keywords}')
+        else:
+            print(f'Kept {len(selected_accessions)} experiments:\n{selected_accessions}')
+
+        print(f"Writing logs of found keywords to {JSON_OUTFILE_NAME}")
+        with open(JSON_OUTFILE_NAME, 'w') as fout:
+            json.dump(found_dict, fout)
+
     else:
-        print(f'Kept {len(selected_accessions)} experiments:\n{selected_accessions}')
+        print('No keywords specified. Keeping all experiments')
+        selected_accessions = [exp_dict['experimentAccession'] for exp_dict in species_experiments]
+        print(selected_accessions)
 
     print(f"Writing accessions to {ACCESSION_OUTFILE_NAME}")
     with open(ACCESSION_OUTFILE_NAME, 'w') as fout:
         fout.writelines([f'{acc}\n' for acc in selected_accessions])
-
-    print(f"Writing logs of found keywords to {JSON_OUTFILE_NAME}")
-    with open(JSON_OUTFILE_NAME, 'w') as fout:
-        json.dump(found_dict, fout)
 
 
 if __name__ == '__main__':

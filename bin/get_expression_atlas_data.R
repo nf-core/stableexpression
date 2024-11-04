@@ -21,9 +21,28 @@ get_args <- function() {
     return(args)
 }
 
-download_expression_atlas_data <- function(accession) {
-    atlas_data <- getAtlasData( accession )
-    return(atlas_data)
+download_expression_atlas_data_with_retries <- function(accession, max_retries = 3, wait_time = 5) {
+  success <- FALSE
+  attempts <- 0
+
+  while (!success && attempts < max_retries) {
+    attempts <- attempts + 1
+    tryCatch({
+      atlas_data <- getAtlasData( accession )
+      success <- TRUE
+      message("Download successful on attempt ", attempts)
+    }, error = function(e) {
+      message("Attempt ", attempts, " failed: ", e$message)
+      if (attempts < max_retries) {
+        message("Retrying in ", wait_time, " seconds...")
+        Sys.sleep(wait_time)
+      } else {
+        message("All attempts failed. Please check the URL or your connection.")
+      }
+    })
+  }
+
+  return(atlas_data)
 }
 
 get_rnaseq_data <- function(data) {
@@ -134,7 +153,7 @@ process_data <- function(atlas_data, accession) {
 args <- get_args()
 
 # searching and downloading expression atlas data
-atlas_data <- download_expression_atlas_data(args$accession)
+atlas_data <- download_expression_atlas_data_with_retries(args$accession)
 
 # writing count data in atlas_data to specific CSV files
 process_data(atlas_data, args$accession)

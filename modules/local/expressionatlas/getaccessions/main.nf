@@ -6,7 +6,8 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
 
     input:
-    tuple val(species), val(keywords)
+    val species
+    val keywords
 
     output:
     path 'accessions.csv',                                                                                            emit: csv
@@ -15,18 +16,21 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     tuple val("${task.process}"), val('nltk'),     eval('python3 -c "import nltk; print(nltk.__version__)"'),         topic: versions
 
 
-
     when:
     task.ext.when == null || task.ext.when
 
+
     script:
-    if (keywords == null) {
+
+    def keywords_string = keywords.split(',').collect { it.trim() }.join(' ')
+
+    if (keywords_string == "") {
         """
         get_expression_atlas_accessions.py --species $species
         """
     } else {
         """
-        get_expression_atlas_accessions.py --species "$species" --keywords $keywords
+        get_expression_atlas_accessions.py --species $species --keywords $keywords_string
         """
     }
 
@@ -34,7 +38,6 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     stub:
     """
     touch accessions.csv
-    touch found.json
     """
 
 }

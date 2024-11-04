@@ -37,19 +37,17 @@ workflow SAMPLEEXPRESSION {
 
     if (params.species) {
 
-        ch_species = Channel.value(params.species)
-        // since we combine both channles, we need to ensure that the keywords channel contains at least one element
-        if (params.expression_atlas_keywords == null || params.expression_atlas_keywords == []) {
-            params.expression_atlas_keywords = [null]
-        }
-        ch_keywords = Channel.fromList(params.expression_atlas_keywords)
+        def species = params.species.split(' ').join('_')
+
+        ch_species = Channel.value(species)
+        ch_keywords = Channel.value(params.expression_atlas_keywords)
 
         //
         // MODULE: Expression Atlas - Get accessions
         //
 
-        ch_species.combine(ch_keywords) | EXPRESSIONATLAS_GETACCESSIONS
-
+        EXPRESSIONATLAS_GETACCESSIONS(ch_species, ch_keywords)
+        EXPRESSIONATLAS_GETACCESSIONS.out.csv.view()
         //
         // MODULE: Expression Atlas - Get data
         //
@@ -70,7 +68,7 @@ workflow SAMPLEEXPRESSION {
         ch_design = MERGE_DESIGNS.out.csv
 
         //
-        // MODULE: Normalization of raw count datasets
+        // MODULE: Normalization of raw count datasets (including RNA-seq datasets)
         //
 
         if (params.normalization_method == 'deseq2') {

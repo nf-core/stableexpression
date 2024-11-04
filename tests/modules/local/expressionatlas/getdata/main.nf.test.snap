@@ -42,20 +42,20 @@
         },
         "timestamp": "2024-10-17T13:31:14.414421877"
     },
-    "Transcriptome Analysis of the potato (rnaseq)": {
+    "arabidopsis issue": {
         "content": [
             {
                 "0": [
-                    [
-                        "E-MTAB-552",
-                        "E_MTAB_552_rnaseq.raw.csv:md5,830f50b60b17b62f9ca2f6a163a2879f"
-                    ]
-                ],
-                "1": [
                     
                 ],
+                "1": [
+                    [
+                        "E-GEOD-62537",
+                        "E_GEOD_62537_A_AFFY_2.normalized.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                    ]
+                ],
                 "2": [
-                    "E_MTAB_552_rnaseq.design.csv:md5,39c277eb6c24d7753f934be0cb743472"
+                    "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88"
                 ],
                 "3": [
                     [
@@ -72,7 +72,56 @@
                     ]
                 ],
                 "design": [
-                    "E_MTAB_552_rnaseq.design.csv:md5,39c277eb6c24d7753f934be0cb743472"
+                    "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88"
+                ],
+                "normalized": [
+                    [
+                        "E-GEOD-62537",
+                        "E_GEOD_62537_A_AFFY_2.normalized.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                    ]
+                ],
+                "raw": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-11-03T19:19:10.505238238"
+    },
+    "Transcriptome Analysis of the potato (rnaseq)": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "E-MTAB-552",
+                        "E_MTAB_552_rnaseq.raw.csv:md5,830f50b60b17b62f9ca2f6a163a2879f"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c"
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "[1] \"R version 4.3.3 (2024-02-29)\""
+                    ]
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "ExpressionAtlas",
+                        "[1] \u20181.30.0\u2019"
+                    ]
+                ],
+                "design": [
+                    "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c"
                 ],
                 "normalized": [
                     
@@ -89,7 +138,7 @@
             "nf-test": "0.9.0",
             "nextflow": "24.04.4"
         },
-        "timestamp": "2024-10-27T20:34:29.182541795"
+        "timestamp": "2024-11-03T19:15:37.361390416"
     },
     "Transcription profiling by array of Arabidopsis mutant for fis2": {
         "content": [
@@ -155,48 +204,42 @@
         "content": [
             {
                 "0": [
-                    [
-                        "E-TABM-1007",
-                        "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
-                    ]
+                    
                 ],
                 "1": [
                     [
                         "E-TABM-1007",
-                        [
-                            "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a",
-                            "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
-                        ]
+                        "E_TABM_1007_A_AFFY_2.normalized.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
                     ]
                 ],
                 "2": [
+                    "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1"
+                ],
+                "3": [
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "R",
                         "[1] \"R version 4.3.3 (2024-02-29)\""
                     ]
                 ],
-                "3": [
+                "4": [
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "ExpressionAtlas",
                         "[1] \u20181.30.0\u2019"
                     ]
                 ],
-                "csv": [
+                "design": [
+                    "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1"
+                ],
+                "normalized": [
                     [
                         "E-TABM-1007",
-                        [
-                            "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a",
-                            "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
-                        ]
+                        "E_TABM_1007_A_AFFY_2.normalized.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
                     ]
                 ],
-                "design": [
-                    [
-                        "E-TABM-1007",
-                        "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
-                    ]
+                "raw": [
+                    
                 ]
             }
         ],
@@ -204,6 +247,6 @@
             "nf-test": "0.9.0",
             "nextflow": "24.04.4"
         },
-        "timestamp": "2024-10-17T22:51:22.039416279"
+        "timestamp": "2024-11-03T19:16:18.231999364"
     }
 }
