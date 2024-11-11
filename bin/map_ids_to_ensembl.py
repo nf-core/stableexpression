@@ -160,6 +160,11 @@ def main():
     # renaming gene names to mapped ids using mapping dict
     df.index = df.index.map(mapping_dict)
 
+    # TODO: check is there is another way to avoid duplicate gene names
+    # sometime different gene names have the same ensembl ID
+    # for now, we just get the mean of values, but this is not a good practice
+    df = df.groupby(df.index).mean()
+
     # writing to output file
     outfile = count_file.with_name(count_file.stem + RENAMED_FILE_SUFFIX)
     df.to_csv(outfile, index=True, header=True)

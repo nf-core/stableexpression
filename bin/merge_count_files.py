@@ -13,8 +13,10 @@ def parse_args():
 
 args = parse_args()
 
-dfs = [pd.read_csv(file, header=0, index_col=0) for file in args.files]
 
-concat_df = pd.concat(dfs, axis=1)
+concat_df = pd.DataFrame()
+for file in args.files:
+    df = pd.read_csv(file, header=0, index_col=0)
+    concat_df = concat_df.merge(df, how='outer', left_index=True, right_index=True)
 
 concat_df.to_csv(args.outfile, index=True, header=True)

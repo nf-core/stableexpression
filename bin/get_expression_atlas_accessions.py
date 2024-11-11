@@ -2,6 +2,7 @@
 
 import argparse
 import requests
+from retry import retry
 from os import cpu_count
 import json
 from multiprocessing import Pool
@@ -164,6 +165,7 @@ def word_in_sentence(word: str, sentence: str):
     return False
 
 
+@retry(ExpressionAtlasNothingFoundError, tries=3, delay=2, backoff=2)
 def get_data(url: str):
     """
     Queries a URL and returns the data as a JSON object
@@ -346,7 +348,6 @@ def main():
     # Getting arguments
     species_name = format_species_name(args.species)
     keywords = args.keywords
-    print(keywords)
 
     print(f'Getting experiments corresponding to species {species_name}')
     species_experiments = get_species_experiments(species_name)

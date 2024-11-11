@@ -47,7 +47,7 @@ workflow SAMPLEEXPRESSION {
         //
 
         EXPRESSIONATLAS_GETACCESSIONS(ch_species, ch_keywords)
-        EXPRESSIONATLAS_GETACCESSIONS.out.csv.view()
+
         //
         // MODULE: Expression Atlas - Get data
         //
@@ -59,6 +59,7 @@ workflow SAMPLEEXPRESSION {
                             .map{ row -> "${row[0]}"}
 
         EXPRESSIONATLAS_GETDATA(ch_accessions)
+        EXPRESSIONATLAS_GETDATA.out.normalized.set { ch_normalized }
 
         //
         // MODULE: Merge the design CSV files into one single file
@@ -76,24 +77,25 @@ workflow SAMPLEEXPRESSION {
                 EXPRESSIONATLAS_GETDATA.out.raw,
                 ch_design
             )
-            ch_norm = DESEQ2_NORMALIZE.out.csv
+            ch_raw_normalized = DESEQ2_NORMALIZE.out.csv
 
         } else {
             EDGER_NORMALIZE(
                 EXPRESSIONATLAS_GETDATA.out.raw,
                 ch_design
             )
-            ch_norm = EDGER_NORMALIZE.out.csv
+            ch_raw_normalized = EDGER_NORMALIZE.out.csv
         }
 
         // putting all normalized count datasets together
-        ch_normalized_datasets = EXPRESSIONATLAS_GETDATA.out.normalized.concat(ch_norm)
+        ch_all_normalized = ch_normalized.concat(ch_raw_normalized).map { it -> it[1]}
+        ch_all_normalized.view()
 
         //
         // MODULE: Id mapping
         //
 
-        ch_normalized_datasets.combine(ch_species) | IDMAPPING
+        ch_all_normalized.combine(ch_species) | IDMAPPING
 
         //
         // MODULE: Run Merge count files

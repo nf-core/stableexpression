@@ -9,7 +9,7 @@ process EDGER_NORMALIZE {
     path design_file
 
     output:
-    path '*.log_cpm.csv',                                                                    emit: csv
+    tuple val(accession), path('*.log_cpm.csv'),                                                emit: csv
     tuple val("${task.process}"), val('R'),     eval('Rscript -e "R.version.string"'),          topic: versions
     tuple val("${task.process}"), val('edgeR'), eval('Rscript -e "packageVersion(\'edgeR\')"'), topic: versions
 

@@ -1,19 +1,18 @@
-Nov-03 21:22:03.273 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.0
-Nov-03 21:22:03.295 [main] INFO  com.askimed.nf.test.App - Arguments: [test, --tag, potato_no_kw, --profile, conda, --update-snapshot]
-Nov-03 21:22:04.342 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.04.4
-Nov-03 21:22:04.345 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Load config from file /home/olivier/repositories/nf-core-sampleexpression/nf-test.config...
-Nov-03 21:22:07.108 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Loaded 37 files from directory /home/olivier/repositories/nf-core-sampleexpression in 2.383 sec
-Nov-03 21:22:07.109 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Found 8 tests.
-Nov-03 21:22:07.109 [main] DEBUG com.askimed.nf.test.lang.dependencies.DependencyResolver - Found tests: [/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/idmapping/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getdata/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_designs/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/variation_coefficient/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/edger/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test]
-Nov-03 21:22:07.109 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Detected 8 test files.
-Nov-03 21:22:07.439 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Started test plan
-Nov-03 21:22:07.440 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Running testsuite 'Test Process EXPRESSIONATLAS_GETACCESSIONS' from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test'.
-Nov-03 21:22:07.440 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test '134b8dc4: ["solanum_tuberosum", ["potato", "phloem"]]' skipped.
-Nov-03 21:22:07.440 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test 'c095e5a1: ["solanum_tuberosum", null]'. type: com.askimed.nf.test.lang.process.ProcessTest
-Nov-03 21:22:41.805 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Load snapshots from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test.snap'
-Nov-03 21:22:41.807 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshot '["solanum_tuberosum", null]' not found.
-Nov-03 21:22:41.807 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Created snapshot '["solanum_tuberosum", null]'
-Nov-03 21:22:41.823 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Wrote snapshots to file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test.snap'
-Nov-03 21:22:41.823 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test 'c095e5a1: ["solanum_tuberosum", null]' finished. status: PASSED
-Nov-03 21:22:41.825 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Testsuite 'Test Process EXPRESSIONATLAS_GETACCESSIONS' finished. snapshot file: true, skipped tests: true, failed tests: false
-Nov-03 21:22:41.828 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Executed 1 tests. 0 tests failed. Done!
+Nov-11 22:06:59.727 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.0
+Nov-11 22:06:59.741 [main] INFO  com.askimed.nf.test.App - Arguments: [test, --tag, potato_no_kw, --profile, conda, --update-snapshot]
+Nov-11 22:07:00.553 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.04.4
+Nov-11 22:07:00.555 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Load config from file /home/olivier/repositories/nf-core-sampleexpression/nf-test.config...
+Nov-11 22:07:01.993 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Loaded 37 files from directory /home/olivier/repositories/nf-core-sampleexpression in 1.037 sec
+Nov-11 22:07:01.994 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Found 8 tests.
+Nov-11 22:07:01.995 [main] DEBUG com.askimed.nf.test.lang.dependencies.DependencyResolver - Found tests: [/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/idmapping/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getdata/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_designs/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/merge_count_files/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/deseq2/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/variation_coefficient/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/edger/normalize/main.nf.test, /home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test]
+Nov-11 22:07:01.995 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Detected 8 test files.
+Nov-11 22:07:02.362 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Started test plan
+Nov-11 22:07:02.363 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Running testsuite 'Test Process EXPRESSIONATLAS_GETACCESSIONS' from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test'.
+Nov-11 22:07:02.363 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test '17ee9a5f: ["solanum_tuberosum", ["potato"]]' skipped.
+Nov-11 22:07:02.363 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test '134b8dc4: ["solanum_tuberosum", ["potato", "phloem"]]' skipped.
+Nov-11 22:07:02.363 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test 'c095e5a1: ["solanum_tuberosum", null]'. type: com.askimed.nf.test.lang.process.ProcessTest
+Nov-11 22:08:23.085 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Load snapshots from file '/home/olivier/repositories/nf-core-sampleexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test.snap'
+Nov-11 22:08:23.095 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshots '["solanum_tuberosum", null]' match.
+Nov-11 22:08:23.095 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test 'c095e5a1: ["solanum_tuberosum", null]' finished. status: PASSED
+Nov-11 22:08:23.097 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Testsuite 'Test Process EXPRESSIONATLAS_GETACCESSIONS' finished. snapshot file: true, skipped tests: true, failed tests: false
+Nov-11 22:08:23.097 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Executed 1 tests. 0 tests failed. Done!

@@ -37,9 +37,9 @@ get_variation_coefficient <- function(count_data) {
 
     # filter the dataframe to exclude rows where row mean is in the top 5% or bottom 5%
     # determine the percentile thresholds
-    row_means <- rowMeans(count_data)
-    lower_threshold <- quantile(row_means, 0.05)
-    upper_threshold <- quantile(row_means, 0.95)
+    row_means <- rowMeans(count_data, na.rm = TRUE)
+    lower_threshold <- quantile(row_means, 0.05, na.rm = TRUE)
+    upper_threshold <- quantile(row_means, 0.95, na.rm = TRUE)
 
     count_data <- count_data[row_means >= lower_threshold & row_means <= upper_threshold, ]
 
