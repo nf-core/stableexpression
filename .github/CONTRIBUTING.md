@@ -1,23 +1,23 @@
-# nf-core/sampleexpression: Contributing Guidelines
+# nf-core/stableexpression: Contributing Guidelines
 
 Hi there!
-Many thanks for taking an interest in improving nf-core/sampleexpression.
+Many thanks for taking an interest in improving nf-core/stableexpression.
 
-We try to manage the required tasks for nf-core/sampleexpression using GitHub issues, you probably came to this page when creating one.
+We try to manage the required tasks for nf-core/stableexpression using GitHub issues, you probably came to this page when creating one.
 Please use the pre-filled template to save time.
 
 However, don't be put off by this template - other more general issues and suggestions are welcome!
 Contributions to the code are even more welcome ;)
 
 > [!NOTE]
-> If you need help using or modifying nf-core/sampleexpression then the best place to ask is on the nf-core Slack [#sampleexpression](https://nfcore.slack.com/channels/sampleexpression) channel ([join our Slack here](https://nf-co.re/join/slack)).
+> If you need help using or modifying nf-core/stableexpression then the best place to ask is on the nf-core Slack [#stableexpression](https://nfcore.slack.com/channels/stableexpression) channel ([join our Slack here](https://nf-co.re/join/slack)).
 
 ## Contribution workflow
 
-If you'd like to write some code for nf-core/sampleexpression, the standard workflow is as follows:
+If you'd like to write some code for nf-core/stableexpression, the standard workflow is as follows:
 
-1. Check that there isn't already an issue about your idea in the [nf-core/sampleexpression issues](https://github.com/nf-core/sampleexpression/issues) to avoid duplicating work. If there isn't one already, please create one so that others know you're working on this
-2. [Fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the [nf-core/sampleexpression repository](https://github.com/nf-core/sampleexpression) to your GitHub account
+1. Check that there isn't already an issue about your idea in the [nf-core/stableexpression issues](https://github.com/nf-core/stableexpression/issues) to avoid duplicating work. If there isn't one already, please create one so that others know you're working on this
+2. [Fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the [nf-core/stableexpression repository](https://github.com/nf-core/stableexpression) to your GitHub account
 3. Make the necessary changes / additions within your forked repository following [Pipeline conventions](#pipeline-contribution-conventions)
 4. Use `nf-core schema build` and add any new parameters to the pipeline JSON schema (requires [nf-core tools](https://github.com/nf-core/tools) >= 1.10).
 5. Submit a Pull Request against the `dev` branch and wait for the code to be reviewed and merged
@@ -61,11 +61,11 @@ These tests are run both with the latest available version of `Nextflow` and als
 
 ## Getting help
 
-For further information/help, please consult the [nf-core/sampleexpression documentation](https://nf-co.re/sampleexpression/usage) and don't hesitate to get in touch on the nf-core Slack [#sampleexpression](https://nfcore.slack.com/channels/sampleexpression) channel ([join our Slack here](https://nf-co.re/join/slack)).
+For further information/help, please consult the [nf-core/stableexpression documentation](https://nf-co.re/stableexpression/usage) and don't hesitate to get in touch on the nf-core Slack [#stableexpression](https://nfcore.slack.com/channels/stableexpression) channel ([join our Slack here](https://nf-co.re/join/slack)).
 
 ## Pipeline contribution conventions
 
-To make the nf-core/sampleexpression code and processing logic more understandable for new contributors and to ensure quality, we semi-standardise the way the code and other contributions are written.
+To make the nf-core/stableexpression code and processing logic more understandable for new contributors and to ensure quality, we semi-standardise the way the code and other contributions are written.
 
 ### Adding a new step
 
@@ -115,7 +115,7 @@ This repo includes a devcontainer configuration which will create a GitHub Codes
 
 To get started:
 
-- Open the repo in [Codespaces](https://github.com/nf-core/sampleexpression/codespaces)
+- Open the repo in [Codespaces](https://github.com/nf-core/stableexpression/codespaces)
 - Tools installed
   - nf-core
   - Nextflow

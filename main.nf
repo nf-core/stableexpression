@@ -1,11 +1,11 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/sampleexpression
+    nf-core/stableexpression
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/sampleexpression
-    Website: https://nf-co.re/sampleexpression
-    Slack  : https://nfcore.slack.com/channels/sampleexpression
+    Github : https://github.com/nf-core/stableexpression
+    Website: https://nf-co.re/stableexpression
+    Slack  : https://nfcore.slack.com/channels/stableexpression
 ----------------------------------------------------------------------------------------
 */
 
@@ -17,9 +17,9 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { SAMPLEEXPRESSION  } from './workflows/sampleexpression'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_sampleexpression_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_sampleexpression_pipeline'
+include { STABLEEXPRESSION  } from './workflows/stableexpression'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_stableexpression_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -30,8 +30,8 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_samp
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow NFCORE_SAMPLEEXPRESSION {
-    SAMPLEEXPRESSION()
+workflow NFCORE_STABLEEXPRESSION {
+    STABLEEXPRESSION()
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,7 +58,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_SAMPLEEXPRESSION ()
+    NFCORE_STABLEEXPRESSION ()
 
     //
     // SUBWORKFLOW: Run completion tasks

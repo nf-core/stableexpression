@@ -13,8 +13,7 @@ get_args <- function() {
 
     option_list <- list(
         make_option("--counts", dest = 'count_file', help = "Path to input count file"),
-        make_option("--design", dest = 'design_file', help = "Path to input design file"),
-        make_option("--accession", help = "Accession number of expression atlas experiment. Example: E-MTAB-552")
+        make_option("--design", dest = 'design_file', help = "Path to input design file")
     )
 
     args <- parse_args(OptionParser(
@@ -58,9 +57,9 @@ get_normalized_counts <- function(count_file, design_file) {
     return(cpm_counts)
 }
 
-export_data <- function(cpm_counts, accession) {
-    filename <- paste0(accession, ".log_cpm.csv")
-    print(paste('Exporting normalized counts per filename <- paste0(accession, ".log_cpm.csv", )million to:', filename))
+export_data <- function(cpm_counts, filename) {
+    filename <- sub("\\.csv$", ".log_cpm.csv", filename)
+    print(paste('Exporting normalized counts per million to:', filename))
     write.table(cpm_counts, filename, sep = ',', row.names = TRUE, quote = FALSE)
 }
 
@@ -74,4 +73,4 @@ args <- get_args()
 
 cpm_counts <- get_normalized_counts(args$count_file, args$design_file)
 
-export_data(cpm_counts, args$accession)
+export_data(cpm_counts, basename(args$count_file))

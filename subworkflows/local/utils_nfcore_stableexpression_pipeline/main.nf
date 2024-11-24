@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the nf-core/sampleexpression pipeline
+// Subworkflow with functionality specific to the nf-core/stableexpression pipeline
 //
 
 /*

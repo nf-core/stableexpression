@@ -11,8 +11,8 @@ nextflow_process {
 
             process {
                 """
-                input[0] = ["E-MTAB-552", file('$baseDir/tests/input/normalize/all_counts.csv')]
-                input[1] = file('$baseDir/tests/input/normalize/design.csv')
+                meta = [accession: "accession", design: file('$baseDir/tests/input/normalize/design.csv')]
+                input[0] = [meta, file('$baseDir/tests/input/normalize/all_counts.csv')]
                 """
             }
         }

@@ -1,4 +1,4 @@
-# nf-core/sampleexpression: Output
+# nf-core/stableexpression: Output
 
 ## Introduction
 

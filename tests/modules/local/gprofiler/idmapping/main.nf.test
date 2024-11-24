@@ -1,7 +1,7 @@
 nextflow_process {
 
     name "Test Process IDMAPPING"
-    script "modules/local/idmapping/main.nf"
+    script "modules/local/gprofiler/idmapping/main.nf"
     process "IDMAPPING"
     tag "idmapping"
 

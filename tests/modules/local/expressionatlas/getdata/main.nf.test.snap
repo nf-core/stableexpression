@@ -97,6 +97,7 @@
                 "0": [
                     [
                         "E-MTAB-552",
+                        "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c",
                         "E_MTAB_552_rnaseq.raw.csv:md5,830f50b60b17b62f9ca2f6a163a2879f"
                     ]
                 ],
@@ -104,24 +105,18 @@
                     
                 ],
                 "2": [
-                    "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c"
-                ],
-                "3": [
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "R",
                         "[1] \"R version 4.3.3 (2024-02-29)\""
                     ]
                 ],
-                "4": [
+                "3": [
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "ExpressionAtlas",
                         "[1] \u20181.30.0\u2019"
                     ]
-                ],
-                "design": [
-                    "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c"
                 ],
                 "normalized": [
                     
@@ -129,6 +124,7 @@
                 "raw": [
                     [
                         "E-MTAB-552",
+                        "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c",
                         "E_MTAB_552_rnaseq.raw.csv:md5,830f50b60b17b62f9ca2f6a163a2879f"
                     ]
                 ]
@@ -138,7 +134,7 @@
             "nf-test": "0.9.0",
             "nextflow": "24.04.4"
         },
-        "timestamp": "2024-11-03T19:15:37.361390416"
+        "timestamp": "2024-11-24T18:38:32.605845207"
     },
     "Transcription profiling by array of Arabidopsis mutant for fis2": {
         "content": [

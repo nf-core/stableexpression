@@ -10,7 +10,7 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     val keywords
 
     output:
-    path 'accessions.csv',                                                                                            emit: csv
+    path 'accessions.txt',                                                                                            emit: txt
     tuple val("${task.process}"), val('python'),   eval('python3 --version'),                                         topic: versions
     tuple val("${task.process}"), val('requests'), eval('python3 -c "import requests; print(requests.__version__)"'), topic: versions
     tuple val("${task.process}"), val('nltk'),     eval('python3 -c "import nltk; print(nltk.__version__)"'),         topic: versions

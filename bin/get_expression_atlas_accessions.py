@@ -10,7 +10,7 @@ import nltk
 from nltk.corpus import wordnet
 
 ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
-ACCESSION_OUTFILE_NAME = 'accessions.csv'
+ACCESSION_OUTFILE_NAME = 'accessions.txt'
 JSON_OUTFILE_NAME = 'found.json'
 
 ##################################################################

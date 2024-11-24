@@ -1,6 +1,6 @@
 {
-    "name": "nf-core/sampleexpression",
-    "homePage": "https://github.com/nf-core/sampleexpression",
+    "name": "nf-core/stableexpression",
+    "homePage": "https://github.com/nf-core/stableexpression",
     "repos": {
         "https://github.com/nf-core/modules.git": {
             "modules": {

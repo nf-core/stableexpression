@@ -32,7 +32,6 @@ def parse_args():
 
 
 def format_species_name(species: str):
-
     """
     Format a species name into a format accepted by g:Profiler.
     Example: Arabidopsis thaliana -> athaliana
@@ -82,15 +81,16 @@ def request_conversion(gene_ids: list, species: str, target_database: str) -> li
     list
         The list of dicts corresponding to the converted IDs.
     """
-    result = requests.post(
+    response = requests.post(
         url=GPROFILER_CONVERT_API_ENDPOINT,
         json={
-            'organism': species,
-            'query': gene_ids,
-            'target': TARGET_DATABASE
-        }
+                'organism': species,
+                'query': gene_ids,
+                'target': TARGET_DATABASE
+            }
         )
-    return result.json()['result']
+    response.raise_for_status()
+    return response.json()['result']
 
 
 def convert_ids(gene_ids: list, species: str):
@@ -152,7 +152,7 @@ def main():
         raise NoIDFoundException(
             f'No mapping found for gene names in count file {count_file.name} '
             f'and for species {species_name}! '
-            f'Example of gene names: {df.index[:5]}')
+            f'Example of gene names found in the provided dataframe: {df.index[:5]}')
 
     # filtering the DataFrame to keep only the rows where the index can be mapped
     df = df.loc[df.index.isin(mapping_dict)]
@@ -161,7 +161,7 @@ def main():
     df.index = df.index.map(mapping_dict)
 
     # TODO: check is there is another way to avoid duplicate gene names
-    # sometime different gene names have the same ensembl ID
+    # sometimes different gene names have the same ensembl ID
     # for now, we just get the mean of values, but this is not a good practice
     df = df.groupby(df.index).mean()
 
