@@ -33,8 +33,8 @@ workflow STABLEEXPRESSION {
         error('You must provide a species name if you specify expression atlas keywords')
     }
 
-    if (!params.input && !params.fetch_from_expression_atlas) {
-        error('You must provide at least either input datasets or a species name')
+    if (!params.input && !params.expression_atlas_accessions && !params.fetch_from_expression_atlas) {
+        error('You must provide at least either input datasets or geo accessions or fetch data from expression atlas')
     }
 
     def species = params.species.split(' ').join('_')
@@ -42,12 +42,13 @@ workflow STABLEEXPRESSION {
 
     ch_normalized = Channel.empty()
     ch_raw = Channel.empty()
+    ch_accessions = Channel.empty()
 
     if (params.input) {
 
         log.info "Parsing input data"
 
-        Channel.fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
+        Channel.fromList( samplesheetToList(params.input, "${projectDir}/assets/schema_input.json") )
             .map {
                 item ->
                     def (count_file, design_file, normalized) = item
@@ -71,45 +72,52 @@ workflow STABLEEXPRESSION {
 
     }
 
+    if (params.expression_atlas_accessions) {
+
+        ch_accessions = Channel.fromList( params.expression_atlas_accessions.tokenize(',') )
+
+    }
+
     if (params.fetch_from_expression_atlas) {
-
-        ch_keywords = Channel.value(params.expression_atlas_keywords)
-
-        log.info "Fetching count dataset from Expression Atlas"
 
         //
         // MODULE: Expression Atlas - Get accessions
         //
 
+        // keeping the keywords (separated by spaces) as a single string
+        ch_keywords = Channel.value( params.expression_atlas_keywords )
+
         EXPRESSIONATLAS_GETACCESSIONS(ch_species, ch_keywords)
 
-        //
-        // MODULE: Expression Atlas - Get data
-        //
-
-        ch_accessions = EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText()
-
-        EXPRESSIONATLAS_GETDATA(ch_accessions)
-
-        ch_normalized = ch_normalized.concat(
-            EXPRESSIONATLAS_GETDATA.out.normalized.map {
-                tuple ->
-                    def (accession, design_file, count_file) = tuple
-                    meta = [accession: accession, design: design_file]
-                    [meta, count_file]
-            }
-        )
-
-        ch_raw = ch_raw.concat(
-            EXPRESSIONATLAS_GETDATA.out.raw.map {
-                tuple ->
-                    def (accession, design_file, count_file) = tuple
-                    meta = [accession: accession, design: design_file]
-                    [meta, count_file]
-                }
-        )
+        // appending to accessions provided by the user
+        ch_accessions = ch_accessions.concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
 
     }
+
+    //
+    // MODULE: Expression Atlas - Get data
+    //
+
+    EXPRESSIONATLAS_GETDATA(ch_accessions)
+
+    ch_normalized = ch_normalized.concat(
+        EXPRESSIONATLAS_GETDATA.out.normalized.map {
+            tuple ->
+                def (accession, design_file, count_file) = tuple
+                meta = [accession: accession, design: design_file]
+                [meta, count_file]
+        }
+    )
+
+    ch_raw = ch_raw.concat(
+        EXPRESSIONATLAS_GETDATA.out.raw.map {
+            tuple ->
+                def (accession, design_file, count_file) = tuple
+                meta = [accession: accession, design: design_file]
+                [meta, count_file]
+            }
+    )
+
 
     //
     // MODULE: Normalization of raw count datasets (including RNA-seq datasets)
@@ -131,19 +139,19 @@ workflow STABLEEXPRESSION {
     // MODULE: Id mapping
     //
 
-    IDMAPPING(ch_all_normalized.combine(ch_species))
+    IDMAPPING( ch_all_normalized.combine(ch_species) )
 
     //
     // MODULE: Run Merge count files
     //
 
-    MERGE_COUNT_FILES(IDMAPPING.out.csv.collect())
+    MERGE_COUNT_FILES( IDMAPPING.out.csv.collect() )
 
     //
     // MODULE: Compute variation coefficient for each gene
     //
 
-    VARIATION_COEFFICIENT(MERGE_COUNT_FILES.out.csv)
+    VARIATION_COEFFICIENT( MERGE_COUNT_FILES.out.csv )
     ch_var_coeff = VARIATION_COEFFICIENT.out.csv
 
 

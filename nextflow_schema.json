@@ -69,6 +69,12 @@
                     "description": "Keywords to use when retrieving specific experiments from Expression Atlas.",
                     "fa_icon": "fas fa-folder-open",
                     "pattern": "([a-zA-Z,]+)"
+                },
+                "expression_atlas_accessions": {
+                    "type": "string",
+                    "pattern": "([A-Z0-9-]+,?)+",
+                    "description": "Geo dataset accession(s), separated by commas.",
+                    "fa_icon": "fas fa-file-csv"
                 }
             }
         },
