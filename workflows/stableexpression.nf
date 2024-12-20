@@ -10,7 +10,6 @@ include { DESEQ2_NORMALIZE                       } from '../modules/local/deseq2
 include { EDGER_NORMALIZE                        } from '../modules/local/edger/normalize/main'
 include { IDMAPPING                              } from '../modules/local/gprofiler/idmapping/main'
 include { MERGE_COUNT_FILES                      } from '../modules/local/merge_count_files/main'
-include { MERGE_DESIGNS                          } from '../modules/local/merge_designs/main'
 include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
 
 include { paramsSummaryMap                       } from 'plugin/nf-validation'
@@ -29,11 +28,18 @@ workflow STABLEEXPRESSION {
     // Checking input parameters
     //
 
-    if (params.expression_atlas_keywords && !params.fetch_from_expression_atlas) {
+    if (
+        params.expression_atlas_keywords
+        && !params.fetch_from_expression_atlas
+        ) {
         error('You must provide a species name if you specify expression atlas keywords')
     }
 
-    if (!params.input && !params.expression_atlas_accessions && !params.fetch_from_expression_atlas) {
+    if (
+        !params.input
+        && !params.expression_atlas_accessions
+        && !params.fetch_from_expression_atlas
+        ) {
         error('You must provide at least either input datasets or geo accessions or fetch data from expression atlas')
     }
 
@@ -48,6 +54,8 @@ workflow STABLEEXPRESSION {
 
         log.info "Parsing input data"
 
+        // reads list of input datasets from input file
+        // and splits them in normalized and raw sub-channels
         Channel.fromList( samplesheetToList(params.input, "${projectDir}/assets/schema_input.json") )
             .map {
                 item ->

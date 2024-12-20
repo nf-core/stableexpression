@@ -19,7 +19,7 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline that ...
+**nf-core/stableexpression** is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / private count datasets. All datasets must refer to the same species.
 
 <!-- TODO nf-core:
    Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
@@ -57,12 +57,10 @@ Each row represents a fastq file (single-end) or a pair of fastq files (paired e
 
 Now, you can run the pipeline using:
 
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
-
 ```bash
 nextflow run nf-core/stableexpression \
    -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
+   --species <SPECIES_NAME> \
    --outdir <OUTDIR>
 ```
 
@@ -82,9 +80,7 @@ For more details about the output files and reports, please refer to the
 
 nf-core/stableexpression was originally written by Olivier Coen.
 
-We thank the following people for their extensive assistance in the development of this pipeline:
-
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+<!-- TODO nf-core: We thank the following people for their extensive assistance in the development of this pipeline: <If applicable, make list of people who have also contributed> -->
 
 ## Contributions and Support
 

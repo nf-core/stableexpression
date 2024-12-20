@@ -3,7 +3,9 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     debug true
 
     conda "${moduleDir}/environment.yml"
-
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e4/e40fdee15db481a7c9018d85d73fde63235faad794513039a198f3343f2b0e04/data':
+        'community.wave.seqera.io/library/nltk_retry_pip_requests:0e24055eb62456ae' }"
 
     input:
     val species
@@ -24,13 +26,14 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     def keywords_string = keywords.split(',').collect { it.trim() }.join(' ')
 
+    // the folder where nltk will download data needs to be writable (necessary for singularity)
     if (keywords_string == "") {
         """
-        get_expression_atlas_accessions.py --species $species
+        NLTK_DATA=$PWD get_expression_atlas_accessions.py --species $species
         """
     } else {
         """
-        get_expression_atlas_accessions.py --species $species --keywords $keywords_string
+        NLTK_DATA=$PWD get_expression_atlas_accessions.py --species $species --keywords $keywords_string
         """
     }
 

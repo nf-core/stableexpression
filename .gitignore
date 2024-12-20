@@ -9,3 +9,6 @@ testing*
 .nf-test*
 null/
 *.csv
+tokenizers/
+taggers/
+corpora/

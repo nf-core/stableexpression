@@ -26,7 +26,7 @@ nextflow_process {
 
     }
 
-    test('["solanum_tuberosum", ["potato", "phloem"]]') {
+    test('["solanum_tuberosum", "potato,phloem"]') {
 
         tag "potato_two_kw"
 
@@ -35,7 +35,7 @@ nextflow_process {
             process {
                 """
                 input[0] = "solanum_tuberosum"
-                input[1] = ["potato", "phloem"]
+                input[1] = "potato,phloem"
                 """
             }
         }

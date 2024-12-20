@@ -136,6 +136,51 @@
         },
         "timestamp": "2024-11-24T18:38:32.605845207"
     },
+    "Arabidopsis Geo dataset": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    [
+                        "E-GEOD-62537",
+                        "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88",
+                        "E_GEOD_62537_A_AFFY_2.normalized.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                    ]
+                ],
+                "2": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "[1] \"R version 4.3.3 (2024-02-29)\""
+                    ]
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "ExpressionAtlas",
+                        "[1] \u20181.30.0\u2019"
+                    ]
+                ],
+                "normalized": [
+                    [
+                        "E-GEOD-62537",
+                        "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88",
+                        "E_GEOD_62537_A_AFFY_2.normalized.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                    ]
+                ],
+                "raw": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2024-12-20T23:47:18.37472125"
+    },
     "Transcription profiling by array of Arabidopsis mutant for fis2": {
         "content": [
             {
@@ -205,32 +250,28 @@
                 "1": [
                     [
                         "E-TABM-1007",
+                        "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1",
                         "E_TABM_1007_A_AFFY_2.normalized.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
                     ]
                 ],
                 "2": [
-                    "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1"
-                ],
-                "3": [
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "R",
                         "[1] \"R version 4.3.3 (2024-02-29)\""
                     ]
                 ],
-                "4": [
+                "3": [
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "ExpressionAtlas",
                         "[1] \u20181.30.0\u2019"
                     ]
                 ],
-                "design": [
-                    "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1"
-                ],
                 "normalized": [
                     [
                         "E-TABM-1007",
+                        "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1",
                         "E_TABM_1007_A_AFFY_2.normalized.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
                     ]
                 ],
@@ -240,9 +281,9 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.04.4"
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2024-11-03T19:16:18.231999364"
+        "timestamp": "2024-12-20T23:46:54.383543989"
     }
 }

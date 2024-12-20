@@ -3,6 +3,9 @@ process VARIATION_COEFFICIENT {
     debug true
 
     conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/73/733cbf61013292f639ec24adcec9548a119ea6254d3ba51c6503ffaba6acda4f/data':
+        'community.wave.seqera.io/library/r-base_r-optparse:f7a5d8afb6d6fa3d' }"
 
     input:
     path count_file

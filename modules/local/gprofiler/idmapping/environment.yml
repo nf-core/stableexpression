@@ -3,4 +3,4 @@ channels:
   - conda-forge
 dependencies:
   - conda-forge::pandas==2.2.3
-  - requests==2.32.3
+  - conda-forge::requests==2.32.3

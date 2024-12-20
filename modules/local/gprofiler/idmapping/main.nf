@@ -3,9 +3,12 @@ process IDMAPPING {
     debug true
 
     // limiting to 1 thread at a time to avoid crashing the G Profiler API server
-    maxForks 1
+    //maxForks 1
 
     conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/fe/fe3f927f5032b9f0749fd5a2d3431b483f1c8cb1613d0290e2326fec10bf8268/data':
+        'community.wave.seqera.io/library/pandas_requests:c7451d98ba573475' }"
 
     input:
     tuple val(meta), path(count_file), val(species)

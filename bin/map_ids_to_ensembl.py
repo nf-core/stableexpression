@@ -14,7 +14,7 @@ class NoIDFoundException(Exception):
 ##################################################################
 
 RENAMED_FILE_SUFFIX = '_renamed.csv'
-CHUNKSIZE = 2000
+CHUNKSIZE = 2000 # number of IDs to convert at a time - may create trouble if > 2000
 
 GPROFILER_CONVERT_API_ENDPOINT = 'https://biit.cs.ut.ee/gprofiler/api/convert/convert/'
 TARGET_DATABASE = 'ENSG' # Ensembl database
@@ -120,7 +120,9 @@ def convert_ids(gene_ids: list, species: str):
 
     # keeping only rows where 'converted' is not null and only the columns of interest
     df = df.loc[df['converted'] != 'None', ['incoming', 'converted']]
+    # changing index
     df.set_index('incoming', inplace=True)
+
     return df.to_dict()['converted']
 
 ##################################################################
@@ -162,7 +164,7 @@ def main():
 
     # TODO: check is there is another way to avoid duplicate gene names
     # sometimes different gene names have the same ensembl ID
-    # for now, we just get the mean of values, but this is not a good practice
+    # for now, we just get the mean of values, but this is not ideal
     df = df.groupby(df.index).mean()
 
     # writing to output file

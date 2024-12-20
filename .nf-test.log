@@ -1,4 +1,22 @@
-Nov-25 22:02:47.024 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.0
-Nov-25 22:02:47.041 [main] INFO  com.askimed.nf.test.App - Arguments: [test, --tag, deseq2_normalize, --profile, conda, --update-snapshot]
-Nov-25 22:02:48.064 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.04.4
-Nov-25 22:02:48.066 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Load config from file /home/olivier/repositories/nf-core-stableexpression/nf-test.config...
+déc.-20 23:53:57.316 [main] INFO  com.askimed.nf.test.App - nf-test 0.9.2
+déc.-20 23:53:57.334 [main] INFO  com.askimed.nf.test.App - Arguments: [test, --tag, idmapping, --profile, singularity, --update-snapshot]
+déc.-20 23:53:58.086 [main] INFO  com.askimed.nf.test.App - Nextflow Version: 24.10.3
+déc.-20 23:53:58.088 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Load config from file /home/olivier/repositories/nf-core-stableexpression/nf-test.config...
+déc.-20 23:54:00.140 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Loaded 35 files from directory /home/olivier/repositories/nf-core-stableexpression in 1.694 sec
+déc.-20 23:54:00.141 [main] INFO  com.askimed.nf.test.lang.dependencies.DependencyResolver - Found 7 files containing tests.
+déc.-20 23:54:00.141 [main] DEBUG com.askimed.nf.test.lang.dependencies.DependencyResolver - Found files: [/home/olivier/repositories/nf-core-stableexpression/tests/modules/local/merge_count_files/main.nf.test, /home/olivier/repositories/nf-core-stableexpression/tests/modules/local/expressionatlas/getdata/main.nf.test, /home/olivier/repositories/nf-core-stableexpression/tests/modules/local/gprofiler/idmapping/main.nf.test, /home/olivier/repositories/nf-core-stableexpression/tests/modules/local/variation_coefficient/main.nf.test, /home/olivier/repositories/nf-core-stableexpression/tests/modules/local/edger/normalize/main.nf.test, /home/olivier/repositories/nf-core-stableexpression/tests/modules/local/expressionatlas/getaccessions/main.nf.test, /home/olivier/repositories/nf-core-stableexpression/tests/modules/local/deseq2/normalize/main.nf.test]
+déc.-20 23:54:00.496 [main] INFO  com.askimed.nf.test.commands.RunTestsCommand - Found 3 tests to execute.
+déc.-20 23:54:00.497 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Started test plan
+déc.-20 23:54:00.497 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Running testsuite 'Test Process IDMAPPING' from file '/home/olivier/repositories/nf-core-stableexpression/tests/modules/local/gprofiler/idmapping/main.nf.test'.
+déc.-20 23:54:00.497 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test 'cb1f8ad6: Map Ensembl IDs to themselves'. type: com.askimed.nf.test.lang.process.ProcessTest
+déc.-20 23:54:17.303 [main] DEBUG com.askimed.nf.test.lang.extensions.SnapshotFile - Load snapshots from file '/home/olivier/repositories/nf-core-stableexpression/tests/modules/local/gprofiler/idmapping/main.nf.test.snap'
+déc.-20 23:54:17.311 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshots 'Map Ensembl IDs to themselves' match.
+déc.-20 23:54:17.311 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test 'cb1f8ad6: Map Ensembl IDs to themselves' finished. status: PASSED
+déc.-20 23:54:17.313 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test '461677ec: Map NCBI IDs'. type: com.askimed.nf.test.lang.process.ProcessTest
+déc.-20 23:54:34.309 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshots 'Map NCBI IDs' match.
+déc.-20 23:54:34.309 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test '461677ec: Map NCBI IDs' finished. status: PASSED
+déc.-20 23:54:34.310 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Run test 'e1dafe2f: Map Uniprot IDs'. type: com.askimed.nf.test.lang.process.ProcessTest
+déc.-20 23:54:51.143 [main] DEBUG com.askimed.nf.test.lang.extensions.Snapshot - Snapshots 'Map Uniprot IDs' match.
+déc.-20 23:54:51.143 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Test 'e1dafe2f: Map Uniprot IDs' finished. status: PASSED
+déc.-20 23:54:51.144 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Testsuite 'Test Process IDMAPPING' finished. snapshot file: true, skipped tests: false, failed tests: false
+déc.-20 23:54:51.144 [main] INFO  com.askimed.nf.test.core.TestExecutionEngine - Executed 3 tests. 0 tests failed. Done!
