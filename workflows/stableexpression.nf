@@ -28,19 +28,16 @@ workflow STABLEEXPRESSION {
     // Checking input parameters
     //
 
-    if (
-        params.expression_atlas_keywords
-        && !params.fetch_from_expression_atlas
-        ) {
-        error('You must provide a species name if you specify expression atlas keywords')
+    if (!params.species) {
+        error('You must provide a species name')
     }
 
     if (
-        !params.input
+        !params.local_datasets
         && !params.expression_atlas_accessions
-        && !params.fetch_from_expression_atlas
+        && !params.fetch_expression_atlas_accessions
         ) {
-        error('You must provide at least either input datasets or geo accessions or fetch data from expression atlas')
+        error('You must provide at least either --local_datasets or --fetch_expression_atlas_accessions or --expression_atlas_accessions')
     }
 
     def species = params.species.split(' ').join('_')
@@ -50,13 +47,13 @@ workflow STABLEEXPRESSION {
     ch_raw = Channel.empty()
     ch_accessions = Channel.empty()
 
-    if (params.input) {
+    if (params.local_datasets) {
 
         log.info "Parsing input data"
 
         // reads list of input datasets from input file
         // and splits them in normalized and raw sub-channels
-        Channel.fromList( samplesheetToList(params.input, "${projectDir}/assets/schema_input.json") )
+        Channel.fromList( samplesheetToList(params.local_datasets, "${projectDir}/assets/schema_input.json") )
             .map {
                 item ->
                     def (count_file, design_file, normalized) = item
@@ -86,7 +83,7 @@ workflow STABLEEXPRESSION {
 
     }
 
-    if (params.fetch_from_expression_atlas) {
+    if (params.fetch_expression_atlas_accessions) {
 
         //
         // MODULE: Expression Atlas - Get accessions

@@ -6,7 +6,7 @@
 </h1>
 
 [![GitHub Actions CI Status](https://github.com/nf-core/stableexpression/actions/workflows/ci.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/ci.yml)
-[![GitHub Actions Linting Status](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/stableexpression/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![GitHub Actions Linting Status](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/stableexpression/results)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A523.04.0-23aa62.svg)](https://www.nextflow.io/)
@@ -19,50 +19,122 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / private count datasets. All datasets must refer to the same species.
+**nf-core/stableexpression** is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / local count datasets. It takes as input a species name (mandatory), keywords for expression atlas search (optional) and a CSV input file listing local raw / normalized count datasets (optional).
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+<p align="center">
+    <img title="Sarek Workflow" src="docs/images/nf-core-stableexpression_metro_map.png" width=100%>
+</p>
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
+## Pipeline summary
 
-1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+1. Get Expression Atlas accessions corresponding to the provided species (and optionally keywords) ([Expression Atlas](https://www.ebi.ac.uk/gxa/home); optional)
+2. Download Expression Atlas data ([Expression Atlas](https://www.ebi.ac.uk/gxa/home); optional)
+3. Normalize raw data (using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) or [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html))
+4. Map gene IDS to Ensembl IDS for standardisation among datasets ([g:Profiler](https://biit.cs.ut.ee/gprofiler/gost))
+5. Merge count files into a single count dataset
+6. Compute gene variation coefficients and get the most stable genes
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
+You can run this pipeline in three different ways.
 
-First, prepare a samplesheet with your input data that looks as follows:
+1. Using Expression Atlas (automatic mode)
 
-`samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-```
-
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
-
--->
-
-Now, you can run the pipeline using:
+You can tell the pipeline to fetch Expression Atlas accessions corresponding to the provided species (and optionally a list of keywords) and download the corresponding counts and experimental designs.
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -profile <docker/singularity/.../institute> \
+   -profile <conda/docker/singularity/.../institute> \
    --species <SPECIES_NAME> \
+   --fetch_expression_atlas_accessions \
+   [--expression_atlas_keywords <KEYWORDS SEPARATED BY COMMAS>]
    --outdir <OUTDIR>
 ```
+
+2. Using Expression Atlas (manual mode)
+
+You can instead provide yourself the Expression Atlas accessions you want to include in the analysis. The pipeline will download the corresponding counts and experimental designs.
+
+```bash
+nextflow run nf-core/stableexpression \
+   -profile <conda/docker/singularity/.../institute> \
+   --species <SPECIES_NAME> \
+   --expression_atlas_accessions <ACCESSIONS SEPARATED BY COMMAS>\
+   --outdir <OUTDIR>
+```
+
+3. Using local count datasets
+
+Conversely, you can provide local counts datasets / experiment designs yourself.
+
+First, prepare a samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
+* counts: the path to the count dataset (a CSV file)
+* design: the path to the experimental design associated to this dataset (a CSV file)
+* normalized: a boolean (true / false) representing whether the counts are already normalized or not
+
+It should look as follows:
+
+`datasets.csv`:
+
+```csv
+counts,design,normalized
+path/to/normalized.counts.csv,path/to/normalized.design.csv,true
+path/to/raw.counts.csv,path/to/raw.design.csv,false
+```
+
+While the counts and design CSV files should have the following structure:
+
+`counts.csv`:
+
+```csv
+,sample_A,sample_B,sample_C
+gene_1,1,2,3
+gene_2,1,2,3
+...
+```
+
+:::warning(title="Don't miss the comma")
+Note the comma preceding the first sample name: it says that the first column (genes) represents the index column
+:::
+
+`design.csv`:
+
+```csv
+sample,condition
+sample_A,condition_1
+sample_B,condition_2
+...
+```
+
+Now run the pipeline with:
+
+```bash
+nextflow run nf-core/stableexpression \
+   -profile <conda/docker/singularity/.../institute> \
+   --species <SPECIES_NAME> \
+   --local_datasets <PATH TO CSV FILE> \
+   --outdir <OUTDIR>
+```
+
+:::note(title="Run it your own style")
+You can of course mix the different scenarios to get more insightful analyses.
+
+Example:
+
+```bash
+nextflow run nf-core/stableexpression \
+   -profile docker \
+   --species "Arabidopsis thaliana" \
+   --expression_atlas_accessions "E-MTAB-552,E-GEOD-61690" \
+   --fetch_expression_atlas_accessions \
+   --expression_atlas_keywords "stress,flowering" \
+   --local_datasets datasets.csv \
+   --outdir $HOME/data
+```
+:::
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
@@ -80,8 +152,6 @@ For more details about the output files and reports, please refer to the
 
 nf-core/stableexpression was originally written by Olivier Coen.
 
-<!-- TODO nf-core: We thank the following people for their extensive assistance in the development of this pipeline: <If applicable, make list of people who have also contributed> -->
-
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
@@ -89,11 +159,6 @@ If you would like to contribute to this pipeline, please see the [contributing g
 For further information or help, don't hesitate to get in touch on the [Slack `#stableexpression` channel](https://nfcore.slack.com/channels/stableexpression) (you can join with [this invite](https://nf-co.re/join/slack)).
 
 ## Citations
-
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use nf-core/stableexpression for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 

@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema",
+    "$schema": "https://json-schema.org/draft-07/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/nextflow_schema.json",
     "title": "nf-core/stableexpression pipeline parameters",
     "description": "This pipeline is dedicated to finding the most stable genes across count datasets",
@@ -14,9 +14,10 @@
             "properties": {
                 "species": {
                     "type": "string",
-                    "description": "Species name (example: arabidopsis_thaliana). Used to fetch datasets from Expression Atlas and for ID mapping.",
-                    "fa_icon": "fas fa-folder-open",
-                    "pattern": "([a-zA-Z]+)[_ ]([a-zA-Z]+)"
+                    "description": "Species name.",
+                    "fa_icon": "fas fa-hippo",
+                    "pattern": "([a-zA-Z]+)[_ ]([a-zA-Z]+)",
+                    "help_text": "e.g. `--species 'Arabidopsis thaliana'` or `--species 'homo_sapiens'`"
                 },
                 "outdir": {
                     "type": "string",
@@ -34,12 +35,12 @@
             }
         },
         "local_datasets_options": {
-            "title": "Expression Atlas options",
+            "title": "Local datasets options",
             "type": "object",
             "fa_icon": "fas fa-dna",
             "description": "Options for local count datasets to analyze.",
             "properties": {
-                "input": {
+                "local_datasets": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
@@ -58,23 +59,25 @@
             "fa_icon": "fas fa-dna",
             "description": "Options for fetching datasets from Expression Atlas.",
             "properties": {
-                "fetch_from_expression_atlas": {
+                "fetch_expression_atlas_accessions": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-code-branch",
-                    "description": "Specify if you want to fetch count data for this species from Expression Atlas.",
+                    "fa_icon": "fas fa-book-atlas",
+                    "description": "Fetch count datasets and experimental designs from Expression Atlas for this species.",
                     "help_text": "If you want to fetch count data for this species from Expression Atlas, set this parameter to `true`."
                 },
                 "expression_atlas_keywords": {
                     "type": "string",
-                    "description": "Keywords to use when retrieving specific experiments from Expression Atlas.",
-                    "fa_icon": "fas fa-folder-open",
-                    "pattern": "([a-zA-Z,]+)"
+                    "description": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas.",
+                    "fa_icon": "fas fa-book-atlas",
+                    "pattern": "([a-zA-Z,]+)",
+                    "help_text": "e.g. `--expression_atlas_keywords 'stress,flowering'`"
                 },
                 "expression_atlas_accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Geo dataset accession(s), separated by commas.",
-                    "fa_icon": "fas fa-file-csv"
+                    "description": "Expression Atlas accession(s), separated by commas.",
+                    "fa_icon": "fas fa-book-atlas",
+                    "help_text": "e.g. `--expression_atlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
                 }
             }
         },
@@ -87,7 +90,7 @@
                 "normalization_method": {
                     "type": "string",
                     "description": "Tool to use for normalization.",
-                    "fa_icon": "fas fa-folder-open",
+                    "fa_icon": "fas fa-chart-simple",
                     "enum": ["deseq2", "edger"]
                 }
             }
