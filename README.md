@@ -45,7 +45,7 @@ You can run this pipeline in three different pathways.
 
 1. Using Expression Atlas (automatic mode)
 
-You can tell the pipeline to fetch Expression Atlas accessions corresponding to the provided species (and optionally a list of keywords) and download the corresponding counts and experimental designs.
+The pipeline fetches Expression Atlas accessions corresponding to the provided species (and optionally a list of keywords) and download the corresponding counts and experimental designs.
 
 ```bash
 nextflow run nf-core/stableexpression \
@@ -58,7 +58,7 @@ nextflow run nf-core/stableexpression \
 
 2. Using Expression Atlas (manual mode)
 
-You can instead provide yourself the Expression Atlas accessions you want to include in the analysis. The pipeline will download the corresponding counts and experimental designs.
+The pipeline will download the count datasets and experimental designs corresponding to the provided accessions.
 
 ```bash
 nextflow run nf-core/stableexpression \
@@ -70,7 +70,7 @@ nextflow run nf-core/stableexpression \
 
 3. Using local count datasets
 
-Conversely, you can provide local counts datasets / experiment designs yourself.
+Conversely, you can provide your own counts datasets / experiment designs.
 
 First, prepare a samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
 * counts: the path to the count dataset (a CSV file)
