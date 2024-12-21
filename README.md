@@ -45,7 +45,7 @@ You can run this pipeline in three different pathways.
 
 1. Using Expression Atlas (automatic mode)
 
-The pipeline fetches Expression Atlas accessions corresponding to the provided species (and optionally a list of keywords) and download the corresponding counts and experimental designs.
+The pipeline fetches Expression Atlas accessions corresponding to the provided species (and optionally a list of keywords) and downloads the corresponding counts and experimental designs.
 
 ```bash
 nextflow run nf-core/stableexpression \
@@ -58,7 +58,7 @@ nextflow run nf-core/stableexpression \
 
 2. Using Expression Atlas (manual mode)
 
-The pipeline will download the count datasets and experimental designs corresponding to the provided accessions.
+The pipeline downloads the count datasets and experimental designs corresponding to the provided accessions.
 
 ```bash
 nextflow run nf-core/stableexpression \
@@ -97,10 +97,6 @@ gene_1,1,2,3
 gene_2,1,2,3
 ...
 ```
-
-> [!WARNING]
-> Note the comma preceding the first sample name: it says that the first column (genes) represents the index column
-
 
 `design.csv`:
 
