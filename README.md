@@ -119,10 +119,9 @@ nextflow run nf-core/stableexpression \
    --outdir <OUTDIR>
 ```
 
-> [!NOTE]
-> You can mix the different scenarios
+## Example usage
 
->For example:
+Run the pipeline using a miw of the different pathways:
 
 >```bash
 >nextflow run nf-core/stableexpression \
