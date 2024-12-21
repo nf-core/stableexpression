@@ -96,9 +96,9 @@ gene_2,1,2,3
 ...
 ```
 
-:::warning(title="Don't miss the comma")
-Note the comma preceding the first sample name: it says that the first column (genes) represents the index column
-:::
+> [!WARNING]
+> Note the comma preceding the first sample name: it says that the first column (genes) represents the index column
+
 
 `design.csv`:
 
@@ -119,22 +119,21 @@ nextflow run nf-core/stableexpression \
    --outdir <OUTDIR>
 ```
 
-:::note(title="Run it your own style")
-You can of course mix the different scenarios to get more insightful analyses.
+> [!NOTE]
+> You can mix the different scenarios
 
-Example:
+>For example:
 
-```bash
-nextflow run nf-core/stableexpression \
-   -profile docker \
-   --species "Arabidopsis thaliana" \
-   --expression_atlas_accessions "E-MTAB-552,E-GEOD-61690" \
-   --fetch_expression_atlas_accessions \
-   --expression_atlas_keywords "stress,flowering" \
-   --local_datasets datasets.csv \
-   --outdir $HOME/data
-```
-:::
+>```bash
+>nextflow run nf-core/stableexpression \
+>   -profile docker \
+>   --species "Arabidopsis thaliana" \
+>   --expression_atlas_accessions "E-MTAB-552,E-GEOD-61690" \
+>   --fetch_expression_atlas_accessions \
+>   --expression_atlas_keywords "stress,flowering" \
+>   --local_datasets datasets.csv \
+>   --outdir $HOME/data
+>```
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
