@@ -40,7 +40,7 @@
             "fa_icon": "fas fa-dna",
             "description": "Options for local count datasets to analyze.",
             "properties": {
-                "local_datasets": {
+                "datasets": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,

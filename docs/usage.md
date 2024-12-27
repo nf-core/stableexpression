@@ -4,50 +4,107 @@
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
-## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+## Pathways
 
-## Samplesheet input
+You can run this pipeline in three different pathways.
 
-You will need to create a samplesheet with information about the data you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+1. Using Expression Atlas (automatic mode)
+
+The pipeline fetches Expression Atlas accessions corresponding to the provided species (and optionally a list of keywords) and downloads the corresponding counts and experimental designs.
 
 ```bash
---input '[path to samplesheet file]'
+nextflow run nf-core/stableexpression \
+   -profile <conda/docker/singularity/.../institute> \
+   --species <SPECIES_NAME> \
+   --fetch_expression_atlas_accessions \
+   [--expression_atlas_keywords <KEYWORDS SEPARATED BY COMMAS>]
+   --outdir <OUTDIR>
 ```
 
-### Multiple runs of the same sample
+2. Using Expression Atlas (manual mode)
 
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
+The pipeline downloads the count datasets and experimental designs corresponding to the provided accessions.
 
-```csv title="samplesheet.csv"
-TODO
+```bash
+nextflow run nf-core/stableexpression \
+   -profile <conda/docker/singularity/.../institute> \
+   --species <SPECIES_NAME> \
+   --expression_atlas_accessions <ACCESSIONS SEPARATED BY COMMAS>\
+   --outdir <OUTDIR>
 ```
 
-### Full samplesheet
+3. Using local count datasets
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+Conversely, you can provide your own counts datasets / experiment designs.
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+First, prepare a samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
+* counts: the path to the count dataset (a CSV file)
+* design: the path to the experimental design associated to this dataset (a CSV file)
+* normalized: a boolean (true / false) representing whether the counts are already normalized or not
 
-```csv title="samplesheet.csv"
-TODO
+It should look as follows:
+
+`datasets.csv`:
+
+```csv
+counts,design,normalized
+path/to/normalized.counts.csv,path/to/normalized.design.csv,true
+path/to/raw.counts.csv,path/to/raw.design.csv,false
 ```
 
-| Column   | Description                                                                                                                                                                            |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample` | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| TODO     |
+While the counts and design CSV files should have the following structure:
 
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+`counts.csv`:
+
+```csv
+,sample_A,sample_B,sample_C
+gene_1,1,2,3
+gene_2,1,2,3
+...
+```
+
+> [!WARNING]
+> Remember to write a comma before the first sample name. This serves to indicate that the actual first column (gene IDs) is the index
+
+`design.csv`:
+
+```csv
+sample,condition
+sample_A,condition_1
+sample_B,condition_2
+...
+```
+
+Now run the pipeline with:
+
+```bash
+nextflow run nf-core/stableexpression \
+   -profile <conda/docker/singularity/.../institute> \
+   --species <SPECIES_NAME> \
+   --datasets <PATH TO CSV FILE> \
+   --outdir <OUTDIR>
+```
 
 ## Running the pipeline
 
-The typical command for running the pipeline is as follows:
 
-```bash
-nextflow run nf-core/stableexpression --input ./samplesheet.csv --outdir ./results -profile docker
-```
+You can run the pipeline using a mix of the different pathways.
+
+Example usage:
+
+
+>```bash
+>nextflow run nf-core/stableexpression \
+>   -profile docker \
+>   --species "Arabidopsis thaliana" \
+>   --expression_atlas_accessions "E-MTAB-552,E-GEOD-61690" \
+>   --fetch_expression_atlas_accessions \
+>   --expression_atlas_keywords "stress,flowering" \
+>   --datasets ./datasets.csv \
+>   --outdir ./results
+>```
+
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
 
@@ -77,9 +134,9 @@ nextflow run nf-core/stableexpression -profile docker -params-file params.yaml
 with `params.yaml` containing:
 
 ```yaml
-input: './samplesheet.csv'
+species: 'Homo sapiens'
+datasets: './datasets.csv'
 outdir: './results/'
-genome: 'GRCh37'
 <...>
 ```
 

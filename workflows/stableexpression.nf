@@ -9,7 +9,6 @@ include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expres
 include { DESEQ2_NORMALIZE                       } from '../modules/local/deseq2/normalize/main'
 include { EDGER_NORMALIZE                        } from '../modules/local/edger/normalize/main'
 include { IDMAPPING                              } from '../modules/local/gprofiler/idmapping/main'
-include { MERGE_COUNT_FILES                      } from '../modules/local/merge_count_files/main'
 include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
 
 include { paramsSummaryMap                       } from 'plugin/nf-validation'
@@ -33,11 +32,11 @@ workflow STABLEEXPRESSION {
     }
 
     if (
-        !params.local_datasets
+        !params.datasets
         && !params.expression_atlas_accessions
         && !params.fetch_expression_atlas_accessions
         ) {
-        error('You must provide at least either --local_datasets or --fetch_expression_atlas_accessions or --expression_atlas_accessions')
+        error('You must provide at least either --datasets or --fetch_expression_atlas_accessions or --expression_atlas_accessions')
     }
 
     def species = params.species.split(' ').join('_')
@@ -47,13 +46,13 @@ workflow STABLEEXPRESSION {
     ch_raw = Channel.empty()
     ch_accessions = Channel.empty()
 
-    if (params.local_datasets) {
+    if (params.datasets) {
 
         log.info "Parsing input data"
 
         // reads list of input datasets from input file
         // and splits them in normalized and raw sub-channels
-        Channel.fromList( samplesheetToList(params.local_datasets, "${projectDir}/assets/schema_input.json") )
+        Channel.fromList( samplesheetToList(params.datasets, "${projectDir}/assets/schema_input.json") )
             .map {
                 item ->
                     def (count_file, design_file, normalized) = item
@@ -147,16 +146,10 @@ workflow STABLEEXPRESSION {
     IDMAPPING( ch_all_normalized.combine(ch_species) )
 
     //
-    // MODULE: Run Merge count files
+    // MODULE: Merge count files & compute variation coefficient for each gene
     //
 
-    MERGE_COUNT_FILES( IDMAPPING.out.csv.collect() )
-
-    //
-    // MODULE: Compute variation coefficient for each gene
-    //
-
-    VARIATION_COEFFICIENT( MERGE_COUNT_FILES.out.csv )
+    VARIATION_COEFFICIENT( IDMAPPING.out.csv.collect() )
     ch_var_coeff = VARIATION_COEFFICIENT.out.csv
 
 

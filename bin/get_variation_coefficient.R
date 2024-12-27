@@ -12,7 +12,7 @@ library(optparse)
 get_args <- function() {
 
     option_list <- list(
-        make_option("--counts", dest = 'count_file', help = "Path to input count file (normalized)")
+        make_option("--count-files", dest = 'files', help = "Files to concatenate")
     )
 
     args <- parse_args(OptionParser(
@@ -22,6 +22,24 @@ get_args <- function() {
 
     return(args)
 }
+
+merge_count_files <- function(file_list) {
+    # Read and merge CSV files
+    concat_df <- NULL
+    for (file in file_list) {
+        df <- read.csv(file, row.names = 1, header=TRUE, stringsAsFactors = FALSE)
+        if (is.null(concat_df)) {
+            concat_df <- df
+        } else {
+            # Perform outer join by row names
+            concat_df <- merge(concat_df, df, by = "row.names", all = TRUE)
+            rownames(concat_df) <- concat_df$Row.names
+            concat_df <- concat_df[, -1]
+        }
+    }
+    return(concat_df)
+}
+
 
 average_log2 <- function(row) {
     # the dataframe has already been filtered to exclude rows where mean is 0
@@ -75,7 +93,8 @@ export_data <- function(cv_df) {
 
 args <- get_args()
 
-count_data <- read.csv(args$count_file, header=TRUE, row.names = 1)
+file_list <- strsplit(args$files, " ")[[1]]
+count_data <- merge_count_files(file_list)
 
 cv_df <- get_variation_coefficient(count_data)
 

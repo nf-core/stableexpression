@@ -34,50 +34,14 @@
 5. Merge count files into a single count dataset
 6. Compute gene variation coefficients and get the most stable genes
 
+
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-### Pathways
 
-You can run this pipeline in three different pathways.
-
-1. Using Expression Atlas (automatic mode)
-
-The pipeline fetches Expression Atlas accessions corresponding to the provided species (and optionally a list of keywords) and downloads the corresponding counts and experimental designs.
-
-```bash
-nextflow run nf-core/stableexpression \
-   -profile <conda/docker/singularity/.../institute> \
-   --species <SPECIES_NAME> \
-   --fetch_expression_atlas_accessions \
-   [--expression_atlas_keywords <KEYWORDS SEPARATED BY COMMAS>]
-   --outdir <OUTDIR>
-```
-
-2. Using Expression Atlas (manual mode)
-
-The pipeline downloads the count datasets and experimental designs corresponding to the provided accessions.
-
-```bash
-nextflow run nf-core/stableexpression \
-   -profile <conda/docker/singularity/.../institute> \
-   --species <SPECIES_NAME> \
-   --expression_atlas_accessions <ACCESSIONS SEPARATED BY COMMAS>\
-   --outdir <OUTDIR>
-```
-
-3. Using local count datasets
-
-Conversely, you can provide your own counts datasets / experiment designs.
-
-First, prepare a samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
-* counts: the path to the count dataset (a CSV file)
-* design: the path to the experimental design associated to this dataset (a CSV file)
-* normalized: a boolean (true / false) representing whether the counts are already normalized or not
-
-It should look as follows:
+First, prepare a samplesheet listing the different count datasets:
 
 `datasets.csv`:
 
@@ -87,7 +51,7 @@ path/to/normalized.counts.csv,path/to/normalized.design.csv,true
 path/to/raw.counts.csv,path/to/raw.design.csv,false
 ```
 
-While the counts and design CSV files should have the following structure:
+Make sure to format your datasets properly:
 
 `counts.csv`:
 
@@ -107,30 +71,20 @@ sample_B,condition_2
 ...
 ```
 
-Now run the pipeline with:
-
-```bash
-nextflow run nf-core/stableexpression \
-   -profile <conda/docker/singularity/.../institute> \
-   --species <SPECIES_NAME> \
-   --local_datasets <PATH TO CSV FILE> \
-   --outdir <OUTDIR>
-```
-
-### Example usage
-
-Run the pipeline using a miw of the different pathways:
+Now you can tun the pipeline as follows:
 
 >```bash
 >nextflow run nf-core/stableexpression \
 >   -profile docker \
->   --species "Arabidopsis thaliana" \
->   --expression_atlas_accessions "E-MTAB-552,E-GEOD-61690" \
+>   --species <SPECIES> \
+>   --expression_atlas_accessions <ACCESSIONS> \
 >   --fetch_expression_atlas_accessions \
->   --expression_atlas_keywords "stress,flowering" \
->   --local_datasets datasets.csv \
->   --outdir $HOME/data
+>   --expression_atlas_keywords <KEYWORDS> \
+>   --datasets ./datasets.csv \
+>   --outdir ./results
 >```
+
+
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;

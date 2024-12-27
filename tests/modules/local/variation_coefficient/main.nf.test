@@ -11,7 +11,8 @@ nextflow_process {
 
             process {
                 """
-                input[0] = file('$baseDir/tests/input/variation_coefficient/all_counts.log_cpm.csv')
+                ch_csv_files = Channel.fromPath( '$baseDir/tests/input/variation_coefficient/*.csv', checkIfExists: true)
+                input[0] = ch_csv_files.collect()
                 """
             }
         }

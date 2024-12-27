@@ -3,7 +3,7 @@
         "content": [
             {
                 "0": [
-                    "variation_coefficients.csv:md5,dd0954838e602d495590f816412ab8e8"
+                    "variation_coefficients.csv:md5,5885f60672715b6f641aa02b36a14e59"
                 ],
                 "1": [
                     [
@@ -13,14 +13,14 @@
                     ]
                 ],
                 "csv": [
-                    "variation_coefficients.csv:md5,dd0954838e602d495590f816412ab8e8"
+                    "variation_coefficients.csv:md5,5885f60672715b6f641aa02b36a14e59"
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.04.4"
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2024-11-02T11:44:16.501321914"
+        "timestamp": "2024-12-23T12:44:36.097146782"
     }
 }

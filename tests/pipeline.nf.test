@@ -1,0 +1,72 @@
+nextflow_pipeline {
+
+    name "Test Workflow NFCORE_STABLEEXPRESSION"
+    script "main.nf"
+
+    test("Two Expression Atlas accessions provided") {
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                fetch_from_expression_atlas = false
+                expression_atlas_accessions = "E-MTAB-552,E-GEOD-61690"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+    test("Two Expression Atlas keywords provided") {
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                fetch_expression_atlas_accessions = true
+                expression_atlas_keywords = "potato,stress"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+    test("Input dataset provided") {
+
+        when {
+            params {
+                datasets = "tests/input/custom_datasets/input.csv"
+                species = 'solanum tuberosum'
+                fetch_expression_atlas_accessions = false
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+    test("Full test") {
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                datasets = "tests/input/custom_datasets/input.csv"
+                expression_atlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                fetch_expression_atlas_accessions = true
+                expression_atlas_keywords = "phloem"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+}

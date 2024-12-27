@@ -14,3 +14,4 @@ taggers/
 corpora/
 .nf-test.log
 .ruff_cache/
+datasets.csv
