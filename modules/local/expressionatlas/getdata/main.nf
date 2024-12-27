@@ -20,10 +20,10 @@ process EXPRESSIONATLAS_GETDATA {
     val(accession)
 
     output:
-    tuple val(accession), path("*.design.csv"), path("*raw.csv"),                   optional: true,                 emit: raw
-    tuple val(accession), path("*.design.csv"), path("*normalized.csv"),            optional: true,                 emit: normalized
-    tuple val("${task.process}"), val('R'),               eval('Rscript -e "R.version.string"'),                    topic: versions
-    tuple val("${task.process}"), val('ExpressionAtlas'), eval('Rscript -e "packageVersion(\'ExpressionAtlas\')"'), topic: versions
+    tuple val(accession), path("*.design.csv"), path("*raw.csv"),                   optional: true,                                     emit: raw
+    tuple val(accession), path("*.design.csv"), path("*normalized.csv"),            optional: true,                                     emit: normalized
+    tuple val("${task.process}"), val('R'),               eval('Rscript -e "cat(R.version.string)" | sed "s/R version //"'),            topic: versions
+    tuple val("${task.process}"), val('ExpressionAtlas'), eval('Rscript -e "cat(as.character(packageVersion(\'ExpressionAtlas\')))"'),  topic: versions
 
 
     when:

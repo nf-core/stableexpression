@@ -2,6 +2,8 @@
 // Subworkflow with functionality specific to the nf-core/stableexpression pipeline
 //
 
+import org.yaml.snakeyaml.Yaml
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS
@@ -19,6 +21,7 @@ include { nfCoreLogo                } from '../../nf-core/utils_nfcore_pipeline'
 include { imNotification            } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NFCORE_PIPELINE     } from '../../nf-core/utils_nfcore_pipeline'
 include { workflowCitation          } from '../../nf-core/utils_nfcore_pipeline'
+include { workflowVersionToYAML     } from '../../nf-core/utils_nfcore_pipeline'
 
 /*
 ========================================================================================
@@ -110,4 +113,45 @@ workflow PIPELINE_COMPLETION {
     workflow.onError {
         log.error "Pipeline failed. Please refer to troubleshooting docs: https://nf-co.re/docs/usage/troubleshooting"
     }
+}
+
+
+/*
+========================================================================================
+    FUNCTIONS
+========================================================================================
+*/
+
+// Setting these functions as temporary replacements of the native softwareVersionsToYAML / processVersionsFromYAML
+
+//
+// Get software versions for pipeline
+//
+def processVersionsFromYAML(yaml_file) {
+    Yaml yaml = new Yaml()
+    versions = yaml.load(yaml_file)
+    return yaml.dumpAsMap(versions).trim()
+}
+
+// def dumpVersionsYAML()
+
+//
+// Get channel of software versions used in pipeline in YAML format
+//
+def softwareVersionsToYAML(versions) {
+    return Channel.of(workflowVersionToYAML())
+            .concat(
+                versions
+                .unique()
+                .map {
+                    name, tool, version -> [ name.tokenize(':')[-1], [ tool, version ] ]
+                }
+                .groupTuple()
+                .map {
+                    processName, toolInfo ->
+                        def toolVersions = toolInfo.collect { tool, version -> "    ${tool}: ${version}" }.join('\n')
+                        "${processName}:\n${toolVersions}\n"
+                }
+                .map { processVersionsFromYAML(it) }
+            )
 }

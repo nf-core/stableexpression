@@ -1,3 +1,6 @@
+nextflow.enable.dsl = 2
+nextflow.preview.topic = true
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
@@ -11,6 +14,7 @@ include { EDGER_NORMALIZE                        } from '../modules/local/edger/
 include { IDMAPPING                              } from '../modules/local/gprofiler/idmapping/main'
 include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
 
+include { softwareVersionsToYAML                 } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { paramsSummaryMap                       } from 'plugin/nf-validation'
 include { samplesheetToList                      } from 'plugin/nf-schema'
 
@@ -38,6 +42,10 @@ workflow STABLEEXPRESSION {
         ) {
         error('You must provide at least either --datasets or --fetch_expression_atlas_accessions or --expression_atlas_accessions')
     }
+
+    //
+    // Initializing channels
+    //
 
     def species = params.species.split(' ').join('_')
     ch_species = Channel.value(species)
@@ -149,13 +157,23 @@ workflow STABLEEXPRESSION {
     // MODULE: Merge count files & compute variation coefficient for each gene
     //
 
+    IDMAPPING.out.csv.collect().view()
     VARIATION_COEFFICIENT( IDMAPPING.out.csv.collect() )
     ch_var_coeff = VARIATION_COEFFICIENT.out.csv
 
+    //
+    // Collate and save software versions
+    // TODO: use the nf-core functions when they are adapted to channel topics
+    //
 
+    softwareVersionsToYAML( Channel.topic('versions') )
+        .collectFile(
+            storeDir: "${params.outdir}/pipeline_info",
+            name: 'nf_core_stableexpression_software_versions.yml',
+            sort: true,
+            newLine: true
+        )
 
-    emit:
-    ch_var_coeff
 }
 
 /*

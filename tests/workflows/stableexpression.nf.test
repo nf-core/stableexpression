@@ -1,0 +1,81 @@
+nextflow_workflow {
+
+    name "Test Workflow STABLEEXPRESSION"
+    script "workflows/stableexpression.nf"
+    workflow "STABLEEXPRESSION"
+
+    test("Two Expression Atlas accessions provided") {
+
+        tag "workflow_eatlas_accessions"
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                fetch_from_expression_atlas = false
+                expression_atlas_accessions = "E-MTAB-552,E-GEOD-61690"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+    test("Two Expression Atlas keywords provided") {
+
+        tag "workflow_eatlas_kw"
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                fetch_expression_atlas_accessions = true
+                expression_atlas_keywords = "potato,stress"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+    test("Input dataset provided") {
+
+        tag "workflow_datasets"
+
+        when {
+            params {
+                datasets = "tests/input/custom_datasets/input.csv"
+                species = 'solanum tuberosum'
+                fetch_expression_atlas_accessions = false
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+    test("Full test") {
+
+        tag "workflow_full"
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                datasets = "tests/input/custom_datasets/input.csv"
+                expression_atlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                fetch_expression_atlas_accessions = true
+                expression_atlas_keywords = "phloem"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+}

@@ -121,8 +121,8 @@ def workflowVersionToYAML() {
 //
 // Get channel of software versions used in pipeline in YAML format
 //
-def softwareVersionsToYAML(ch_versions) {
-    return ch_versions
+def softwareVersionsToYAML(versions) {
+    return versions
                 .unique()
                 .map { processVersionsFromYAML(it) }
                 .unique()
