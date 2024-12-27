@@ -1,7 +1,5 @@
 process EXPRESSIONATLAS_GETACCESSIONS {
 
-    debug true
-
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e4/e40fdee15db481a7c9018d85d73fde63235faad794513039a198f3343f2b0e04/data':

@@ -1,7 +1,5 @@
 process EXPRESSIONATLAS_GETDATA {
 
-    // debug true
-
     // when there are network issues, we retry the download with a backoff
     // errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
     // maxRetries 5

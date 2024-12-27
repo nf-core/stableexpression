@@ -4,7 +4,6 @@
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
-
 ## Pathways
 
 You can run this pipeline in three different pathways.
@@ -39,9 +38,10 @@ nextflow run nf-core/stableexpression \
 Conversely, you can provide your own counts datasets / experiment designs.
 
 First, prepare a samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
-* counts: the path to the count dataset (a CSV file)
-* design: the path to the experimental design associated to this dataset (a CSV file)
-* normalized: a boolean (true / false) representing whether the counts are already normalized or not
+
+- counts: the path to the count dataset (a CSV file)
+- design: the path to the experimental design associated to this dataset (a CSV file)
+- normalized: a boolean (true / false) representing whether the counts are already normalized or not
 
 It should look as follows:
 
@@ -88,14 +88,12 @@ nextflow run nf-core/stableexpression \
 
 ## Running the pipeline
 
-
 You can run the pipeline using a mix of the different pathways.
 
 Example usage:
 
-
->```bash
->nextflow run nf-core/stableexpression \
+> ```bash
+> nextflow run nf-core/stableexpression \
 >   -profile docker \
 >   --species "Arabidopsis thaliana" \
 >   --expression_atlas_accessions "E-MTAB-552,E-GEOD-61690" \
@@ -103,8 +101,7 @@ Example usage:
 >   --expression_atlas_keywords "stress,flowering" \
 >   --datasets ./datasets.csv \
 >   --outdir ./results
->```
-
+> ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
 

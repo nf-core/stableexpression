@@ -1,6 +1,6 @@
 process VARIATION_COEFFICIENT {
 
-    debug true
+    publishDir "${params.outdir}/variation_coefficients"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

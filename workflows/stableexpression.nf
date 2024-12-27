@@ -11,7 +11,7 @@ include { EXPRESSIONATLAS_GETACCESSIONS          } from '../modules/local/expres
 include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expressionatlas/getdata/main'
 include { DESEQ2_NORMALIZE                       } from '../modules/local/deseq2/normalize/main'
 include { EDGER_NORMALIZE                        } from '../modules/local/edger/normalize/main'
-include { IDMAPPING                              } from '../modules/local/gprofiler/idmapping/main'
+include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
 include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
 
 include { softwareVersionsToYAML                 } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
@@ -151,14 +151,13 @@ workflow STABLEEXPRESSION {
     // MODULE: Id mapping
     //
 
-    IDMAPPING( ch_all_normalized.combine(ch_species) )
+    GPROFILER_IDMAPPING( ch_all_normalized.combine(ch_species) )
 
     //
     // MODULE: Merge count files & compute variation coefficient for each gene
     //
 
-    IDMAPPING.out.csv.collect().view()
-    VARIATION_COEFFICIENT( IDMAPPING.out.csv.collect() )
+    VARIATION_COEFFICIENT( GPROFILER_IDMAPPING.out.csv.collect() )
     ch_var_coeff = VARIATION_COEFFICIENT.out.csv
 
     //
@@ -169,7 +168,7 @@ workflow STABLEEXPRESSION {
     softwareVersionsToYAML( Channel.topic('versions') )
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
-            name: 'nf_core_stableexpression_software_versions.yml',
+            name: 'software_versions.yml',
             sort: true,
             newLine: true
         )

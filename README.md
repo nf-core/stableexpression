@@ -31,15 +31,12 @@
 2. Download Expression Atlas data ([Expression Atlas](https://www.ebi.ac.uk/gxa/home); optional)
 3. Normalize raw data (using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) or [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html))
 4. Map gene IDS to Ensembl IDS for standardisation among datasets ([g:Profiler](https://biit.cs.ut.ee/gprofiler/gost))
-5. Merge count files into a single count dataset
-6. Compute gene variation coefficients and get the most stable genes
-
+5. Compute gene variation coefficients and get the most stable genes
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
-
 
 First, prepare a samplesheet listing the different count datasets:
 
@@ -73,8 +70,8 @@ sample_B,condition_2
 
 Now you can tun the pipeline as follows:
 
->```bash
->nextflow run nf-core/stableexpression \
+> ```bash
+> nextflow run nf-core/stableexpression \
 >   -profile docker \
 >   --species <SPECIES> \
 >   --expression_atlas_accessions <ACCESSIONS> \
@@ -82,9 +79,7 @@ Now you can tun the pipeline as follows:
 >   --expression_atlas_keywords <KEYWORDS> \
 >   --datasets ./datasets.csv \
 >   --outdir ./results
->```
-
-
+> ```
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;

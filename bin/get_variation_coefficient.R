@@ -92,10 +92,10 @@ export_data <- function(cv_df) {
 #####################################################
 
 args <- get_args()
-
+print(args$files)
 file_list <- strsplit(args$files, " ")[[1]]
 count_data <- merge_count_files(file_list)
 
 cv_df <- get_variation_coefficient(count_data)
-
+print(cv_df)
 export_data(cv_df)

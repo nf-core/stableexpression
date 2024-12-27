@@ -1,6 +1,6 @@
-process IDMAPPING {
+process GPROFILER_IDMAPPING {
 
-    debug true
+    publishDir "${params.outdir}/idmapping"
 
     // limiting to 1 thread at a time to avoid crashing the G Profiler API server
     //maxForks 1

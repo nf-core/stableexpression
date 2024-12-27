@@ -10,8 +10,8 @@ import nltk
 from nltk.corpus import wordnet
 
 ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
-ACCESSION_OUTFILE_NAME = 'accessions.txt'
-JSON_OUTFILE_NAME = 'found.json'
+ACCESSION_OUTFILE_NAME = "accessions.txt"
+JSON_OUTFILE_NAME = "found.json"
 
 ##################################################################
 ##################################################################
@@ -19,9 +19,9 @@ JSON_OUTFILE_NAME = 'found.json'
 ##################################################################
 ##################################################################
 
-nltk.download('punkt_tab')
-nltk.download('averaged_perceptron_tagger_eng')
-nltk.download('wordnet')
+nltk.download("punkt_tab")
+nltk.download("averaged_perceptron_tagger_eng")
+nltk.download("wordnet")
 
 lemmatizer = nltk.WordNetLemmatizer()
 stemmer = nltk.PorterStemmer()
@@ -32,8 +32,10 @@ stemmer = nltk.PorterStemmer()
 ##################################################################
 ##################################################################
 
+
 class ExpressionAtlasNothingFoundError(Exception):
     pass
+
 
 ##################################################################
 ##################################################################
@@ -43,15 +45,25 @@ class ExpressionAtlasNothingFoundError(Exception):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser('Get expression atlas accessions')
-    parser.add_argument('--species', type=str, help='Species to convert IDs for')
-    parser.add_argument('--keywords', type=str, nargs='*', help='Keywords to search for in experiment description')
+    parser = argparse.ArgumentParser("Get expression atlas accessions")
+    parser.add_argument("--species", type=str, help="Species to convert IDs for")
+    parser.add_argument(
+        "--keywords",
+        type=str,
+        nargs="*",
+        help="Keywords to search for in experiment description",
+    )
     return parser.parse_args()
 
 
 def get_wordnet_pos(token: str):
     tag = nltk.pos_tag([token])[0][1][0].upper()
-    tag_dict = {"J": wordnet.ADJ, "N": wordnet.NOUN, "V": wordnet.VERB, "R": wordnet.ADV}
+    tag_dict = {
+        "J": wordnet.ADJ,
+        "N": wordnet.NOUN,
+        "V": wordnet.VERB,
+        "R": wordnet.ADV,
+    }
     return tag_dict.get(tag, wordnet.NOUN)  # Default to NOUN if not found
 
 
@@ -213,15 +225,15 @@ def get_experiment_description(exp_dict: dict):
     KeyError
         If the description field is not found in the experiment dictionary
     """
-    if 'experiment' in exp_dict:
-        if 'description' in exp_dict['experiment']:
-            return exp_dict['experiment']['description']
+    if "experiment" in exp_dict:
+        if "description" in exp_dict["experiment"]:
+            return exp_dict["experiment"]["description"]
         else:
-            raise KeyError(f'Could not find description field in {exp_dict}')
-    elif 'experimentDescription' in exp_dict:
-        return exp_dict['experimentDescription']
+            raise KeyError(f"Could not find description field in {exp_dict}")
+    elif "experimentDescription" in exp_dict:
+        return exp_dict["experimentDescription"]
     else:
-        raise KeyError(f'Could not find description field in {exp_dict}')
+        raise KeyError(f"Could not find description field in {exp_dict}")
 
 
 def get_properties_values(exp_dict: dict):
@@ -239,20 +251,22 @@ def get_properties_values(exp_dict: dict):
         A list of all values from properties
     """
     values = []
-    for column_header_dict in exp_dict['columnHeaders']:
+    for column_header_dict in exp_dict["columnHeaders"]:
         key_found = False
-        for key in ['assayGroupSummary', 'contrastSummary']:
+        for key in ["assayGroupSummary", "contrastSummary"]:
             if key in column_header_dict:
-                for property_dict in column_header_dict[key]['properties']:
-                    values.append(property_dict['testValue'])
+                for property_dict in column_header_dict[key]["properties"]:
+                    values.append(property_dict["testValue"])
                 key_found = True
                 break
         if not key_found:
-            raise KeyError(f'Could not find property value in {column_header_dict}')
+            raise KeyError(f"Could not find property value in {column_header_dict}")
     return values
 
 
-def get_species_experiments(species: str, ):
+def get_species_experiments(
+    species: str,
+):
     """
     Gets all experiments for a given species
 
@@ -268,8 +282,8 @@ def get_species_experiments(species: str, ):
     """
     data = get_data(ALL_EXP_URL)
     experiments = []
-    for exp_dict in data['experiments']:
-        if exp_dict['species'] == species:
+    for exp_dict in data["experiments"]:
+        if exp_dict["species"] == species:
             experiments.append(exp_dict)
     return experiments
 
@@ -288,7 +302,7 @@ def get_experiment_data(exp_dict: dict):
     exp_data : dict
         The full experiment data
     """
-    exp_url = ALL_EXP_URL + exp_dict['experimentAccession']
+    exp_url = ALL_EXP_URL + exp_dict["experimentAccession"]
     return get_data(exp_url)
 
 
@@ -315,23 +329,29 @@ def search_keywords_in_experiment(exp_dict: dict, keywords: list[str]):
 
     for keyword in keywords:
         if word_in_sentence(keyword, exp_description):
-            return {'data': exp_data, 'found': {'word': keyword, 'description': exp_description}}
+            return {
+                "data": exp_data,
+                "found": {"word": keyword, "description": exp_description},
+            }
 
     # if no keyword was found in the description
     # we try and find a keyword in one of the conditions of the experimental design
     exp_data = get_experiment_data(exp_dict)
     properties_values = get_properties_values(exp_data)
 
-    properties_values_str = ' '.join(properties_values)
+    properties_values_str = " ".join(properties_values)
     for keyword in keywords:
         if word_in_sentence(keyword, properties_values_str):
-            return {'data': exp_data, 'found': {'word': keyword, 'properties': properties_values_str}}
+            return {
+                "data": exp_data,
+                "found": {"word": keyword, "properties": properties_values_str},
+            }
 
     return None
 
 
 def format_species_name(species: str):
-    return species.replace('_', ' ').capitalize().strip()
+    return species.replace("_", " ").capitalize().strip()
 
 
 ##################################################################
@@ -342,48 +362,59 @@ def format_species_name(species: str):
 
 
 def main():
-
     args = parse_args()
 
     # Getting arguments
     species_name = format_species_name(args.species)
     keywords = args.keywords
 
-    print(f'Getting experiments corresponding to species {species_name}')
+    print(f"Getting experiments corresponding to species {species_name}")
     species_experiments = get_species_experiments(species_name)
-    print(f'Found {len(species_experiments)} experiments')
+    print(f"Found {len(species_experiments)} experiments")
 
     if keywords:
         print(f"Filtering experiments corresponding to keywords {keywords}")
         selected_accessions = []
         found_dict = {}
         with Pool(cpu_count()) as pool:
-            items = [(exp_dict, keywords,) for exp_dict in species_experiments]
+            items = [
+                (
+                    exp_dict,
+                    keywords,
+                )
+                for exp_dict in species_experiments
+            ]
             results = pool.starmap(search_keywords_in_experiment, items)
             for result in results:
                 if result is not None:
-                    accession = result['data']['experiment']['accession']
+                    accession = result["data"]["experiment"]["accession"]
                     selected_accessions.append(accession)
-                    found_dict[accession] = result['found']
+                    found_dict[accession] = result["found"]
 
         if not selected_accessions:
-            raise RuntimeError('Could not find experiments for species {args.species} and keywords {args.keywords}')
+            raise RuntimeError(
+                "Could not find experiments for species {args.species} and keywords {args.keywords}"
+            )
         else:
-            print(f'Kept {len(selected_accessions)} experiments:\n{selected_accessions}')
+            print(
+                f"Kept {len(selected_accessions)} experiments:\n{selected_accessions}"
+            )
 
         print(f"Writing logs of found keywords to {JSON_OUTFILE_NAME}")
-        with open(JSON_OUTFILE_NAME, 'w') as fout:
+        with open(JSON_OUTFILE_NAME, "w") as fout:
             json.dump(found_dict, fout)
 
     else:
-        print('No keywords specified. Keeping all experiments')
-        selected_accessions = [exp_dict['experimentAccession'] for exp_dict in species_experiments]
+        print("No keywords specified. Keeping all experiments")
+        selected_accessions = [
+            exp_dict["experimentAccession"] for exp_dict in species_experiments
+        ]
         print(selected_accessions)
 
     print(f"Writing accessions to {ACCESSION_OUTFILE_NAME}")
-    with open(ACCESSION_OUTFILE_NAME, 'w') as fout:
-        fout.writelines([f'{acc}\n' for acc in selected_accessions])
+    with open(ACCESSION_OUTFILE_NAME, "w") as fout:
+        fout.writelines([f"{acc}\n" for acc in selected_accessions])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
