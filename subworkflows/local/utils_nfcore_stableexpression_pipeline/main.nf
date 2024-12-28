@@ -127,7 +127,7 @@ workflow PIPELINE_COMPLETION {
 //
 // Get software versions for pipeline
 //
-def processVersionsFromYAML(yaml_file) {
+def customProcessVersionsFromYAML(yaml_file) {
     Yaml yaml = new Yaml()
     versions = yaml.load(yaml_file)
     return yaml.dumpAsMap(versions).trim()
@@ -138,7 +138,7 @@ def processVersionsFromYAML(yaml_file) {
 //
 // Get channel of software versions used in pipeline in YAML format
 //
-def softwareVersionsToYAML(versions) {
+def customSoftwareVersionsToYAML(versions) {
     return Channel.of(workflowVersionToYAML())
             .concat(
                 versions
@@ -152,6 +152,6 @@ def softwareVersionsToYAML(versions) {
                         def toolVersions = toolInfo.collect { tool, version -> "    ${tool}: ${version}" }.join('\n')
                         "${processName}:\n${toolVersions}\n"
                 }
-                .map { processVersionsFromYAML(it) }
+                .map { customProcessVersionsFromYAML(it) }
             )
 }

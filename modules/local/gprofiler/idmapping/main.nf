@@ -2,8 +2,8 @@ process GPROFILER_IDMAPPING {
 
     publishDir "${params.outdir}/idmapping"
 
-    // limiting to 1 thread at a time to avoid crashing the G Profiler API server
-    //maxForks 1
+    // limiting to 8 threads at a time to avoid 429 errors with the G Profiler API server
+    maxForks 8
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

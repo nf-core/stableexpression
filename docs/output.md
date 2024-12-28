@@ -50,7 +50,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <summary>Output files</summary>
 
 - `idmapping/`
-  - A list of count datasets whose gene IDs have been mapped to Ensembl IDs.
+  - Count datasets whose gene IDs have been mapped to Ensembl IDs (suffix `renamed.csv`).
+  - Correspondencies between original gene IDs and Ensembl IDs (suffix `mapping.json`.)
 
 </details>
 
@@ -60,7 +61,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <summary>Output files</summary>
 
 - `variation_coefficients/`
-  - A file named: `variation_coefficients.csv` which contains an ordered list of the most stable to the least stable genes (the first line being the most stable gene).
+  - An ordered list from the most stable (first line) to the least stable gene in `variation_coefficients.csv`.
+  - All normalized counts (for each gene and each sample) in `all_normalized_counts.csv`.
 
 </details>
 

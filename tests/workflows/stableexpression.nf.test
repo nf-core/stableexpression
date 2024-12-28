@@ -40,6 +40,25 @@ nextflow_workflow {
         }
     }
 
+    test("Two Expression Atlas keywords provided - Normalization with EdgeR") {
+
+        tag "workflow_eatlas_kw_edger"
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                fetch_expression_atlas_accessions = true
+                expression_atlas_keywords = "potato,stress"
+                normalization_method = "edger"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
     test("Input dataset provided") {
 
         tag "workflow_datasets"

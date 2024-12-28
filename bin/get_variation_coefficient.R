@@ -69,7 +69,7 @@ get_variation_coefficient <- function(count_data) {
     av_log_cpm <- apply(count_data, 1, average_log2)
     # combine results into a dataframe
     df <- data.frame(
-        gene = rownames(count_data),
+        #gene = rownames(count_data),
         variation_coefficient = cv,
         average_log_cpm = av_log_cpm
         )
@@ -79,10 +79,13 @@ get_variation_coefficient <- function(count_data) {
     return(df)
 }
 
-export_data <- function(cv_df) {
-    outfilename <- 'variation_coefficients.csv'
-    print(paste('Exporting normalized counts to:', outfilename))
-    write.table(cv_df, sep=",", file=outfilename, row.names = FALSE, col.names = TRUE, quote = FALSE)
+export_data <- function(cv_df, count_data) {
+    count_outfilename <- 'all_normalized_counts.csv'
+    print(paste('Exporting normalized counts to:', count_outfilename))
+    write.table(count_data, sep=",", file=count_outfilename, row.names = TRUE, col.names = NA, quote = FALSE)
+    cv_outfilename <- 'variation_coefficients.csv'
+    print(paste('Exporting variation coefficients to:', cv_outfilename))
+    write.table(cv_df, sep=",", file=cv_outfilename, row.names = TRUE, col.names = NA, quote = FALSE)
 }
 
 #####################################################
@@ -92,10 +95,10 @@ export_data <- function(cv_df) {
 #####################################################
 
 args <- get_args()
-print(args$files)
+
 file_list <- strsplit(args$files, " ")[[1]]
 count_data <- merge_count_files(file_list)
 
 cv_df <- get_variation_coefficient(count_data)
-print(cv_df)
-export_data(cv_df)
+
+export_data(cv_df, count_data)

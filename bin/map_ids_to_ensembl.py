@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 from pathlib import Path
 import argparse
+import json
 
 
 class NoIDFoundException(Exception):
@@ -15,6 +16,7 @@ class NoIDFoundException(Exception):
 ##################################################################
 
 RENAMED_FILE_SUFFIX = "_renamed.csv"
+MAPPING_FILE_SUFFIX = "_mapping.json"
 CHUNKSIZE = 2000  # number of IDs to convert at a time - may create trouble if > 2000
 
 GPROFILER_CONVERT_API_ENDPOINT = "https://biit.cs.ut.ee/gprofiler/api/convert/convert/"
@@ -173,6 +175,11 @@ def main():
     # writing to output file
     outfile = count_file.with_name(count_file.stem + RENAMED_FILE_SUFFIX)
     df.to_csv(outfile, index=True, header=True)
+
+    # writing mapping dict to file
+    mapping_file = count_file.with_name(count_file.stem + MAPPING_FILE_SUFFIX)
+    with open(mapping_file, "w") as f:
+        json.dump(mapping_dict, f)
 
 
 if __name__ == "__main__":

@@ -1,1 +1,0 @@
-/home/olivier/repositories/nf-core-stableexpression/work/ae/fdd6ed7f8df1a9fa3181f24df1bb4d/accessions.txt

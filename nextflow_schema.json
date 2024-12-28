@@ -63,7 +63,7 @@
                     "type": "boolean",
                     "fa_icon": "fas fa-book-atlas",
                     "description": "Fetch count datasets and experimental designs from Expression Atlas for this species.",
-                    "help_text": "If you want to fetch count data for this species from Expression Atlas, set this parameter to `true`."
+                    "help_text": "If you want to fetch count data for this species from Expression Atlas, set this parameter to `true`. You do not need to set this parameter if you provide Expression Atlas keywords with `--expression_atlas_keywords`."
                 },
                 "expression_atlas_keywords": {
                     "type": "string",

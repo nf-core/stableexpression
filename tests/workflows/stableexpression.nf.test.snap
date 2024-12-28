@@ -1,0 +1,19 @@
+{
+    "Two Expression Atlas keywords provided": {
+        "content": [
+            {
+                "0": [
+                    "variation_coefficients.csv:md5,bbf85cf21180ab7306d23f3fac07ea14"
+                ],
+                "ch_output_from_variation_coefficient": [
+                    "variation_coefficients.csv:md5,bbf85cf21180ab7306d23f3fac07ea14"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2024-12-28T23:44:22.027225612"
+    }
+}

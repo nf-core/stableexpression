@@ -14,7 +14,7 @@ include { EDGER_NORMALIZE                        } from '../modules/local/edger/
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
 include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
 
-include { softwareVersionsToYAML                 } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
+include { customSoftwareVersionsToYAML           } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { paramsSummaryMap                       } from 'plugin/nf-validation'
 include { samplesheetToList                      } from 'plugin/nf-schema'
 
@@ -31,7 +31,7 @@ workflow STABLEEXPRESSION {
     // Checking input parameters
     //
 
-    if (!params.species) {
+    if ( !params.species ) {
         error('You must provide a species name')
     }
 
@@ -40,7 +40,7 @@ workflow STABLEEXPRESSION {
         && !params.expression_atlas_accessions
         && !params.fetch_expression_atlas_accessions
         ) {
-        error('You must provide at least either --datasets or --fetch_expression_atlas_accessions or --expression_atlas_accessions')
+        error('You must provide at least either --datasets or --fetch_expression_atlas_accessions or --expression_atlas_accessions or --expression_atlas_keywords')
     }
 
     //
@@ -50,13 +50,16 @@ workflow STABLEEXPRESSION {
     def species = params.species.split(' ').join('_')
     ch_species = Channel.value(species)
 
-    ch_normalized = Channel.empty()
-    ch_raw = Channel.empty()
+    ch_normalized_datasets = Channel.empty()
+    ch_raw_datasets = Channel.empty()
     ch_accessions = Channel.empty()
 
-    if (params.datasets) {
+    // if input datasets were provided
+    if ( params.datasets ) {
 
-        log.info "Parsing input data"
+        //
+        // Parsing input datasets
+        //
 
         // reads list of input datasets from input file
         // and splits them in normalized and raw sub-channels
@@ -72,25 +75,29 @@ workflow STABLEEXPRESSION {
                     normalized: item[2] == true
                     raw: item[2] == false
             }
-            .set { ch_input }
+            .set { ch_input_datasets }
 
         // removes the third element ("normalized" column) and adds to the corresponding channel
-        ch_normalized = ch_normalized.concat(
-            ch_input.normalized.map{ it -> it.take(2) }
+        ch_normalized_datasets = ch_normalized_datasets.concat(
+            ch_input_datasets.normalized.map{ it -> it.take(2) }
         )
-        ch_raw = ch_raw.concat(
-            ch_input.raw.map{ it -> it.take(2) }
+        ch_raw_datasets = ch_raw_datasets.concat(
+            ch_input_datasets.raw.map{ it -> it.take(2) }
         )
 
     }
 
-    if (params.expression_atlas_accessions) {
+    // parsing Expression Atlas accessions if provided
+    if ( params.expression_atlas_accessions ) {
 
+        // parsing accessions from provided parameter
         ch_accessions = Channel.fromList( params.expression_atlas_accessions.tokenize(',') )
 
     }
 
-    if (params.fetch_expression_atlas_accessions) {
+
+    // fetching Expression Atlas accessions if applicable
+    if ( params.fetch_expression_atlas_accessions || params.expression_atlas_keywords ) {
 
         //
         // MODULE: Expression Atlas - Get accessions
@@ -99,79 +106,95 @@ workflow STABLEEXPRESSION {
         // keeping the keywords (separated by spaces) as a single string
         ch_keywords = Channel.value( params.expression_atlas_keywords )
 
-        EXPRESSIONATLAS_GETACCESSIONS(ch_species, ch_keywords)
+        // getting Expression Atlas accessions given a species name and keywords
+        // keywords can be an empty string
+        EXPRESSIONATLAS_GETACCESSIONS( ch_species, ch_keywords )
 
         // appending to accessions provided by the user
         ch_accessions = ch_accessions.concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
 
     }
 
+
     //
     // MODULE: Expression Atlas - Get data
     //
 
-    EXPRESSIONATLAS_GETDATA(ch_accessions)
+    // Downloading Expression Atlas data for each accession in ch_accessions
+    EXPRESSIONATLAS_GETDATA( ch_accessions )
 
-    ch_normalized = ch_normalized.concat(
+    // separating and arranging EXPRESSIONATLAS_GETDATA output in two separate channels (already normalized or raw data)
+    ch_normalized_datasets = ch_normalized_datasets.concat(
         EXPRESSIONATLAS_GETDATA.out.normalized.map {
-            tuple ->
-                def (accession, design_file, count_file) = tuple
+            accession, design_file, count_file ->
                 meta = [accession: accession, design: design_file]
                 [meta, count_file]
         }
     )
 
-    ch_raw = ch_raw.concat(
+    ch_normalized_datasets.view()
+
+    ch_raw_datasets = ch_raw_datasets.concat(
         EXPRESSIONATLAS_GETDATA.out.raw.map {
-            tuple ->
-                def (accession, design_file, count_file) = tuple
+            accession, design_file, count_file ->
                 meta = [accession: accession, design: design_file]
                 [meta, count_file]
             }
     )
+
+    ch_raw_datasets.view()
 
 
     //
     // MODULE: Normalization of raw count datasets (including RNA-seq datasets)
     //
 
-    if (params.normalization_method == 'deseq2') {
-        DESEQ2_NORMALIZE(ch_raw)
-        ch_raw_normalized = DESEQ2_NORMALIZE.out.csv
+    if ( params.normalization_method == 'deseq2' ) {
+        DESEQ2_NORMALIZE(ch_raw_datasets)
+        ch_raw_datasets_normalized = DESEQ2_NORMALIZE.out.csv
 
-    } else {
-        EDGER_NORMALIZE(ch_raw)
-        ch_raw_normalized = EDGER_NORMALIZE.out.csv
+    } else { // 'edger'
+        EDGER_NORMALIZE(ch_raw_datasets)
+        ch_raw_datasets_normalized = EDGER_NORMALIZE.out.csv
     }
 
     // putting all normalized count datasets together
-    ch_normalized.concat(ch_raw_normalized).set{ ch_all_normalized }
+    ch_normalized_datasets.concat( ch_raw_datasets_normalized ).set{ ch_all_normalized }
+
 
     //
-    // MODULE: Id mapping
+    // MODULE: ID Mapping
     //
 
+    // tries to map gene IDs to Ensembl IDs whenever possible
     GPROFILER_IDMAPPING( ch_all_normalized.combine(ch_species) )
+
 
     //
     // MODULE: Merge count files & compute variation coefficient for each gene
     //
 
     VARIATION_COEFFICIENT( GPROFILER_IDMAPPING.out.csv.collect() )
-    ch_var_coeff = VARIATION_COEFFICIENT.out.csv
+    ch_output_from_variation_coefficient = VARIATION_COEFFICIENT.out.csv
+
 
     //
     // Collate and save software versions
     // TODO: use the nf-core functions when they are adapted to channel topics
     //
 
-    softwareVersionsToYAML( Channel.topic('versions') )
+    customSoftwareVersionsToYAML( Channel.topic('versions') )
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
             name: 'software_versions.yml',
             sort: true,
             newLine: true
         )
+
+    // only used for nf-test
+    emit:
+        ch_output_from_variation_coefficient
+
 
 }
 
