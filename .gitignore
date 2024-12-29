@@ -1,4 +1,5 @@
-.nextflow*
+.nextflow.*
+.nextflow/
 work/
 data/
 results/
@@ -9,3 +10,7 @@ testing*
 null/
 .nf-test/
 .nf-test.*
+.idea/
+taggers/
+tokenizers/
+corpora/
