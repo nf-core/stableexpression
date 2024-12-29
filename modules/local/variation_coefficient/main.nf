@@ -8,7 +8,7 @@ process VARIATION_COEFFICIENT {
         'community.wave.seqera.io/library/r-base_r-optparse:f7a5d8afb6d6fa3d' }"
 
     input:
-    path count_files
+    path(count_files, stageAs: "?/*")
 
     output:
     path 'variation_coefficients.csv',                                                                           emit: csv

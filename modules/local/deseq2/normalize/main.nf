@@ -1,6 +1,6 @@
 process DESEQ2_NORMALIZE {
 
-    debug true
+    // debug true
 
     publishDir "${params.outdir}/normalization/deseq2"
 

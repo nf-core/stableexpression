@@ -111,10 +111,15 @@ workflow STABLEEXPRESSION {
         EXPRESSIONATLAS_GETACCESSIONS( ch_species, ch_keywords )
 
         // appending to accessions provided by the user
-        ch_accessions = ch_accessions.concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
+        // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
+        ch_accessions = ch_accessions
+                            .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
+                            .unique()
 
     }
 
+    // logging accessions if present
+    ch_accessions.collect().map { items -> println "Obtained accessions ${items}"}
 
     //
     // MODULE: Expression Atlas - Get data
@@ -132,8 +137,6 @@ workflow STABLEEXPRESSION {
         }
     )
 
-    ch_normalized_datasets.view()
-
     ch_raw_datasets = ch_raw_datasets.concat(
         EXPRESSIONATLAS_GETDATA.out.raw.map {
             accession, design_file, count_file ->
@@ -141,8 +144,6 @@ workflow STABLEEXPRESSION {
                 [meta, count_file]
             }
     )
-
-    ch_raw_datasets.view()
 
 
     //

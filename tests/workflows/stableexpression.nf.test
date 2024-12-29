@@ -12,8 +12,25 @@ nextflow_workflow {
         when {
             params {
                 species = 'solanum tuberosum'
-                fetch_from_expression_atlas = false
+                fetch_eatlas_accessions = false
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+    test("Two Expression Atlas no keyword (whole species)") {
+
+        tag "workflow_eatlas_no_kw"
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                fetch_eatlas_accessions = true
             }
         }
 
@@ -30,7 +47,6 @@ nextflow_workflow {
         when {
             params {
                 species = 'solanum tuberosum'
-                fetch_eatlas_accessions = true
                 eatlas_keywords = "potato,stress"
             }
         }
@@ -48,7 +64,6 @@ nextflow_workflow {
         when {
             params {
                 species = 'solanum tuberosum'
-                fetch_eatlas_accessions = true
                 eatlas_keywords = "potato,stress"
                 normalization_method = "edger"
             }
@@ -66,7 +81,6 @@ nextflow_workflow {
             params {
                 species = 'solanum tuberosum'
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
-                fetch_eatlas_accessions = true
                 eatlas_keywords = "phloem"
             }
         }
