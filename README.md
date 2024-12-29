@@ -19,7 +19,7 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / local count datasets. It takes as input a species name (mandatory), keywords for expression atlas search (optional) and a CSV input file listing local raw / normalized count datasets (optional).
+**nf-core/stableexpression** is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / local count datasets. It takes as input a species name (mandatory), keywords for expression atlas search (optional) and / or a CSV input file listing local raw / normalized count datasets (optional). **A typical usage is to find the most suitable qPCR housekeeping genes for a specific species (and optionally specific conditions)**.
 
 <p align="center">
     <img title="Sarek Workflow" src="docs/images/nf-core-stableexpression_metro_map.png" width=100%>
@@ -74,9 +74,8 @@ Now you can tun the pipeline as follows:
 > nextflow run nf-core/stableexpression \
 >   -profile docker \
 >   --species <SPECIES> \
->   --expression_atlas_accessions <ACCESSIONS> \
->   --fetch_expression_atlas_accessions \
->   --expression_atlas_keywords <KEYWORDS> \
+>   --eatlas_accessions <ACCESSIONS> \
+>   --eatlas_keywords <KEYWORDS> \
 >   --datasets ./datasets.csv \
 >   --outdir ./results
 > ```

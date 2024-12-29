@@ -29,7 +29,7 @@ process EXPRESSIONATLAS_GETDATA {
 
     script:
     """
-    get_expression_atlas_data.R --accession $accession
+    get_eatlas_data.R --accession $accession
     """
 
     stub:

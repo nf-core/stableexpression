@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow STABLEEXPRESSION"
     script "workflows/stableexpression.nf"
     workflow "STABLEEXPRESSION"
+    tag "workflow"
 
     test("Two Expression Atlas accessions provided") {
 
@@ -12,7 +13,7 @@ nextflow_workflow {
             params {
                 species = 'solanum tuberosum'
                 fetch_from_expression_atlas = false
-                expression_atlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
             }
         }
 
@@ -29,8 +30,8 @@ nextflow_workflow {
         when {
             params {
                 species = 'solanum tuberosum'
-                fetch_expression_atlas_accessions = true
-                expression_atlas_keywords = "potato,stress"
+                fetch_eatlas_accessions = true
+                eatlas_keywords = "potato,stress"
             }
         }
 
@@ -47,8 +48,8 @@ nextflow_workflow {
         when {
             params {
                 species = 'solanum tuberosum'
-                fetch_expression_atlas_accessions = true
-                expression_atlas_keywords = "potato,stress"
+                fetch_eatlas_accessions = true
+                eatlas_keywords = "potato,stress"
                 normalization_method = "edger"
             }
         }
@@ -59,15 +60,14 @@ nextflow_workflow {
         }
     }
 
-    test("Input dataset provided") {
-
-        tag "workflow_datasets"
+    test("Full workflow - Expression Atlas only") {
 
         when {
             params {
-                datasets = "tests/input/custom_datasets/input.csv"
                 species = 'solanum tuberosum'
-                fetch_expression_atlas_accessions = false
+                eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                fetch_eatlas_accessions = true
+                eatlas_keywords = "phloem"
             }
         }
 
@@ -75,26 +75,7 @@ nextflow_workflow {
             assert workflow.success
             assert snapshot(workflow.out).match()
         }
-    }
 
-    test("Full test") {
-
-        tag "workflow_full"
-
-        when {
-            params {
-                species = 'solanum tuberosum'
-                datasets = "tests/input/custom_datasets/input.csv"
-                expression_atlas_accessions = "E-MTAB-552,E-GEOD-61690"
-                fetch_expression_atlas_accessions = true
-                expression_atlas_keywords = "phloem"
-            }
-        }
-
-        then {
-            assert workflow.success
-            assert snapshot(workflow.out).match()
-        }
     }
 
 }

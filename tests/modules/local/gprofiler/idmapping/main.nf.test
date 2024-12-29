@@ -1,9 +1,10 @@
 nextflow_process {
 
-    name "Test Process GPROFIDER_IDMAPPING"
+    name "Test Process GPROFILER_IDMAPPING"
     script "modules/local/gprofiler/idmapping/main.nf"
-    process "GPROFIDER_IDMAPPING"
+    process "GPROFILER_IDMAPPING"
     tag "idmapping"
+    tag "module"
 
     test("Map Ensembl IDs to themselves") {
 

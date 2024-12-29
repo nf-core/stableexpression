@@ -123,7 +123,7 @@
                     [
                         "EXPRESSIONATLAS_GETACCESSIONS",
                         "python",
-                        "Python 3.13.0"
+                        "3.13.0"
                     ]
                 ],
                 "2": [
@@ -146,10 +146,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.04.4"
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2024-11-26T06:07:40.84221728"
+        "timestamp": "2024-12-29T12:37:33.063824"
     },
     "[\"solanum_tuberosum\", null]": {
         "content": [
@@ -161,7 +161,7 @@
                     [
                         "EXPRESSIONATLAS_GETACCESSIONS",
                         "python",
-                        "Python 3.13.0"
+                        "3.13.0"
                     ]
                 ],
                 "2": [
@@ -184,10 +184,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.04.4"
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2024-11-26T05:57:46.770758821"
+        "timestamp": "2024-12-29T12:37:53.879594"
     },
     "[\"solanum_tuberosum\", [\"potato\"]]": {
         "content": [
@@ -199,7 +199,7 @@
                     [
                         "EXPRESSIONATLAS_GETACCESSIONS",
                         "python",
-                        "Python 3.13.0"
+                        "3.13.0"
                     ]
                 ],
                 "2": [
@@ -222,10 +222,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.04.4"
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2024-11-26T05:56:33.599076724"
+        "timestamp": "2024-12-29T12:37:00.096237"
     },
     "Should run without failures": {
         "content": [

@@ -27,11 +27,11 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     // the folder where nltk will download data needs to be writable (necessary for singularity)
     if (keywords_string == "") {
         """
-        NLTK_DATA=$PWD get_expression_atlas_accessions.py --species $species
+        NLTK_DATA=$PWD get_eatlas_accessions.py --species $species
         """
     } else {
         """
-        NLTK_DATA=$PWD get_expression_atlas_accessions.py --species $species --keywords $keywords_string
+        NLTK_DATA=$PWD get_eatlas_accessions.py --species $species --keywords $keywords_string
         """
     }
 

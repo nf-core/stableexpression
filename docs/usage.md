@@ -6,22 +6,33 @@
 
 ## Pathways
 
-You can run this pipeline in three different pathways.
+You can run this pipeline in multiple ways.
 
-1. Using Expression Atlas (automatic mode)
+1. Expression Atlas **automatic mode**: without keywords
 
-The pipeline fetches Expression Atlas accessions corresponding to the provided species (and optionally a list of keywords) and downloads the corresponding counts and experimental designs.
+This run fetches Expression Atlas accessions corresponding to the provided species and downloads the corresponding data.
 
 ```bash
 nextflow run nf-core/stableexpression \
    -profile <conda/docker/singularity/.../institute> \
    --species <SPECIES_NAME> \
-   --fetch_expression_atlas_accessions \
-   [--expression_atlas_keywords <KEYWORDS SEPARATED BY COMMAS>]
+   --fetch_eatlas_accessions \
    --outdir <OUTDIR>
 ```
 
-2. Using Expression Atlas (manual mode)
+1. Expression Atlas **automatic mode**: with keywords
+
+The run fetches Expression Atlas accessions corresponding to the provided species / keywords and downloads the corresponding data. You do not need to specify the `--fetch_eatlas_accessions`when you specify keywords.
+
+```bash
+nextflow run nf-core/stableexpression \
+   -profile <conda/docker/singularity/.../institute> \
+   --species <SPECIES_NAME> \
+   --eatlas_keywords <KEYWORDS SEPARATED BY COMMAS>
+   --outdir <OUTDIR>
+```
+
+3. Expression Atlas **manual mode**
 
 The pipeline downloads the count datasets and experimental designs corresponding to the provided accessions.
 
@@ -29,11 +40,11 @@ The pipeline downloads the count datasets and experimental designs corresponding
 nextflow run nf-core/stableexpression \
    -profile <conda/docker/singularity/.../institute> \
    --species <SPECIES_NAME> \
-   --expression_atlas_accessions <ACCESSIONS SEPARATED BY COMMAS>\
+   --eatlas_accessions <ACCESSIONS SEPARATED BY COMMAS>\
    --outdir <OUTDIR>
 ```
 
-3. Using local count datasets
+4. Using local count datasets
 
 Conversely, you can provide your own counts datasets / experiment designs.
 
@@ -96,9 +107,8 @@ Example usage:
 > nextflow run nf-core/stableexpression \
 >   -profile docker \
 >   --species "Arabidopsis thaliana" \
->   --expression_atlas_accessions "E-MTAB-552,E-GEOD-61690" \
->   --fetch_expression_atlas_accessions \
->   --expression_atlas_keywords "stress,flowering" \
+>   --eatlas_accessions "E-MTAB-552,E-GEOD-61690" \
+>   --eatlas_keywords "stress,flowering" \
 >   --datasets ./datasets.csv \
 >   --outdir ./results
 > ```

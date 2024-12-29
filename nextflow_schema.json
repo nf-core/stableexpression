@@ -59,25 +59,25 @@
             "fa_icon": "fas fa-dna",
             "description": "Options for fetching datasets from Expression Atlas.",
             "properties": {
-                "fetch_expression_atlas_accessions": {
+                "fetch_eatlas_accessions": {
                     "type": "boolean",
                     "fa_icon": "fas fa-book-atlas",
                     "description": "Fetch count datasets and experimental designs from Expression Atlas for this species.",
-                    "help_text": "If you want to fetch count data for this species from Expression Atlas, set this parameter to `true`. You do not need to set this parameter if you provide Expression Atlas keywords with `--expression_atlas_keywords`."
+                    "help_text": "If you want to fetch count data for this species from Expression Atlas, set this parameter to `true`. You do not need to set this parameter if you provide Expression Atlas keywords with `--eatlas_keywords`."
                 },
-                "expression_atlas_keywords": {
+                "eatlas_keywords": {
                     "type": "string",
                     "description": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas.",
                     "fa_icon": "fas fa-book-atlas",
                     "pattern": "([a-zA-Z,]+)",
-                    "help_text": "e.g. `--expression_atlas_keywords 'stress,flowering'`"
+                    "help_text": "e.g. `--eatlas_keywords 'stress,flowering'`"
                 },
-                "expression_atlas_accessions": {
+                "eatlas_accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
                     "description": "Expression Atlas accession(s), separated by commas.",
                     "fa_icon": "fas fa-book-atlas",
-                    "help_text": "e.g. `--expression_atlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
+                    "help_text": "e.g. `--eatlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
                 }
             }
         },

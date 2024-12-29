@@ -37,10 +37,10 @@ workflow STABLEEXPRESSION {
 
     if (
         !params.datasets
-        && !params.expression_atlas_accessions
-        && !params.fetch_expression_atlas_accessions
+        && !params.eatlas_accessions
+        && !params.fetch_eatlas_accessions
         ) {
-        error('You must provide at least either --datasets or --fetch_expression_atlas_accessions or --expression_atlas_accessions or --expression_atlas_keywords')
+        error('You must provide at least either --datasets or --fetch_eatlas_accessions or --eatlas_accessions or --eatlas_keywords')
     }
 
     //
@@ -88,23 +88,23 @@ workflow STABLEEXPRESSION {
     }
 
     // parsing Expression Atlas accessions if provided
-    if ( params.expression_atlas_accessions ) {
+    if ( params.eatlas_accessions ) {
 
         // parsing accessions from provided parameter
-        ch_accessions = Channel.fromList( params.expression_atlas_accessions.tokenize(',') )
+        ch_accessions = Channel.fromList( params.eatlas_accessions.tokenize(',') )
 
     }
 
 
     // fetching Expression Atlas accessions if applicable
-    if ( params.fetch_expression_atlas_accessions || params.expression_atlas_keywords ) {
+    if ( params.fetch_eatlas_accessions || params.eatlas_keywords ) {
 
         //
         // MODULE: Expression Atlas - Get accessions
         //
 
         // keeping the keywords (separated by spaces) as a single string
-        ch_keywords = Channel.value( params.expression_atlas_keywords )
+        ch_keywords = Channel.value( params.eatlas_keywords )
 
         // getting Expression Atlas accessions given a species name and keywords
         // keywords can be an empty string

@@ -4,6 +4,7 @@ nextflow_process {
     script "modules/local/edger/normalize/main.nf"
     process "EDGER_NORMALIZE"
     tag "edger_normalize"
+    tag "module"
 
     test("Should run without failures") {
 

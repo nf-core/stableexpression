@@ -1,4 +1,38 @@
 {
+    "Two Expression Atlas keywords provided - Normalization with EdgeR": {
+        "content": [
+            {
+                "0": [
+                    "variation_coefficients.csv:md5,a45d061a9118f6657848663844f769ee"
+                ],
+                "ch_output_from_variation_coefficient": [
+                    "variation_coefficients.csv:md5,a45d061a9118f6657848663844f769ee"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2024-12-29T15:12:21.118208"
+    },
+    "Full workflow - Expression Atlas only": {
+        "content": [
+            {
+                "0": [
+                    "variation_coefficients.csv:md5,68c7ec46c5fa350a2d7a37cfc167980e"
+                ],
+                "ch_output_from_variation_coefficient": [
+                    "variation_coefficients.csv:md5,68c7ec46c5fa350a2d7a37cfc167980e"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2024-12-29T13:49:56.353746"
+    },
     "Two Expression Atlas keywords provided": {
         "content": [
             {
@@ -15,5 +49,22 @@
             "nextflow": "24.10.3"
         },
         "timestamp": "2024-12-28T23:44:22.027225612"
+    },
+    "Two Expression Atlas accessions provided": {
+        "content": [
+            {
+                "0": [
+                    "variation_coefficients.csv:md5,744a2ee2b5d266640abd9139fbd925f9"
+                ],
+                "ch_output_from_variation_coefficient": [
+                    "variation_coefficients.csv:md5,744a2ee2b5d266640abd9139fbd925f9"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2024-12-29T12:40:43.491641"
     }
 }
