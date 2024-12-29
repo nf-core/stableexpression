@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+# Written by Olivier Coen. Released under the MIT license.
+
 library(ExpressionAtlas)
 library(optparse)
 
@@ -22,27 +24,27 @@ get_args <- function() {
 }
 
 download_expression_atlas_data_with_retries <- function(accession, max_retries = 3, wait_time = 5) {
-  success <- FALSE
-  attempts <- 0
+    success <- FALSE
+    attempts <- 0
 
-  while (!success && attempts < max_retries) {
+    while (!success && attempts < max_retries) {
     attempts <- attempts + 1
     tryCatch({
-      atlas_data <- getAtlasData( accession )
-      success <- TRUE
-      message("Download successful on attempt ", attempts)
+        atlas_data <- getAtlasData( accession )
+        success <- TRUE
+        message("Download successful on attempt ", attempts)
     }, error = function(e) {
-      message("Attempt ", attempts, " failed: ", e$message)
-      if (attempts < max_retries) {
+        message("Attempt ", attempts, " failed: ", e$message)
+        if (attempts < max_retries) {
         message("Retrying in ", wait_time, " seconds...")
         Sys.sleep(wait_time)
-      } else {
+        } else {
         message("All attempts failed. Please check the URL or your connection.")
-      }
+        }
     })
-  }
+    }
 
-  return(atlas_data)
+    return(atlas_data)
 }
 
 get_rnaseq_data <- function(data) {

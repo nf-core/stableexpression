@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Written by Olivier Coen. Released under the MIT license.
+
 import requests
 import pandas as pd
 from pathlib import Path

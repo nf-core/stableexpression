@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+# Written by Olivier Coen. Released under the MIT license.
+
 library(DESeq2)
 library(optparse)
 
