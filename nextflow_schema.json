@@ -248,6 +248,15 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
+            "$ref": "#/definitions/local_datasets_options"
+        },
+        {
+            "$ref": "#/definitions/expression_atlas_options"
+        },
+        {
+            "$ref": "#/definitions/normalization_options"
+        },
+        {
             "$ref": "#/definitions/institutional_config_options"
         },
         {
