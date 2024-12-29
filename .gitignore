@@ -6,12 +6,4 @@ results/
 testing/
 testing*
 *.pyc
-.nf-test*
 null/
-*.csv
-tokenizers/
-taggers/
-corpora/
-.nf-test.log
-.ruff_cache/
-datasets.csv

@@ -1,10 +1,10 @@
 {
-    "$schema": "https://json-schema.org/draft-07/schema",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/nextflow_schema.json",
     "title": "nf-core/stableexpression pipeline parameters",
     "description": "This pipeline is dedicated to finding the most stable genes across count datasets",
     "type": "object",
-    "definitions": {
+    "$defs": {
         "input_output_options": {
             "title": "Input/output options",
             "type": "object",
@@ -245,25 +245,25 @@
     },
     "allOf": [
         {
-            "$ref": "#/definitions/input_output_options"
+            "$ref": "#/$defs/input_output_options"
         },
         {
-            "$ref": "#/definitions/local_datasets_options"
+            "$ref": "#/$defs/local_datasets_options"
         },
         {
-            "$ref": "#/definitions/expression_atlas_options"
+            "$ref": "#/$defs/expression_atlas_options"
         },
         {
-            "$ref": "#/definitions/normalization_options"
+            "$ref": "#/$defs/normalization_options"
         },
         {
-            "$ref": "#/definitions/institutional_config_options"
+            "$ref": "#/$defs/institutional_config_options"
         },
         {
-            "$ref": "#/definitions/max_job_request_options"
+            "$ref": "#/$defs/max_job_request_options"
         },
         {
-            "$ref": "#/definitions/generic_options"
+            "$ref": "#/$defs/generic_options"
         }
     ]
 }

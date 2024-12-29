@@ -15,7 +15,7 @@ include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofi
 include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
 
 include { customSoftwareVersionsToYAML           } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
-include { paramsSummaryMap                       } from 'plugin/nf-validation'
+include { paramsSummaryMap                       } from 'plugin/nf-schema'
 include { samplesheetToList                      } from 'plugin/nf-schema'
 
 
