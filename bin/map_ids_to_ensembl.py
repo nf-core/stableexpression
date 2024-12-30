@@ -151,9 +151,9 @@ def main():
     mapping_dict = {}
 
     chunks = chunk_list(gene_ids, chunksize=CHUNKSIZE)
-    for chunk_gene_names in chunks:
-        # converting to uniprot IDs / NCBI Gene IDs for all IDs comprised in this chunk
-        gene_mapping = convert_ids(chunk_gene_names, species_name)
+    for chunk_gene_ids in chunks:
+        # converting to Ensembl IDs for all IDs comprised in this chunk
+        gene_mapping = convert_ids(chunk_gene_ids, species_name)
         mapping_dict.update(gene_mapping)
 
     if not mapping_dict:  # if mapping dict is empty
