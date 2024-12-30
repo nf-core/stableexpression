@@ -18,11 +18,15 @@ class NoIDFoundException(Exception):
 ##################################################################
 
 RENAMED_FILE_SUFFIX = "_renamed.csv"
+METADATA_FILE_SUFFIX = "_metadata.csv"
 MAPPING_FILE_SUFFIX = "_mapping.json"
+
 CHUNKSIZE = 2000  # number of IDs to convert at a time - may create trouble if > 2000
 
 GPROFILER_CONVERT_API_ENDPOINT = "https://biit.cs.ut.ee/gprofiler/api/convert/convert/"
 TARGET_DATABASE = "ENSG"  # Ensembl database
+COLS_TO_KEEP = ["incoming", "converted", "name", "description"]
+DESCRIPTION_PART_TO_REMOVE_REGEX = r"\s*\[Source:.*?\]"
 
 
 ##################################################################
@@ -123,11 +127,18 @@ def convert_ids(gene_ids: list, species: str):
         return {}
 
     # keeping only rows where 'converted' is not null and only the columns of interest
-    df = df.loc[df["converted"] != "None", ["incoming", "converted"]]
-    # changing index
-    df.set_index("incoming", inplace=True)
+    df = df.loc[df["converted"] != "None", COLS_TO_KEEP]
 
-    return df.to_dict()["converted"]
+    # dict associating incoming IDs to converted IDs
+    mapping_dict = df.set_index("incoming").to_dict()["converted"]
+    # DataFrame associating converted IDs to name and description
+    meta_df = df.drop(columns=["incoming"]).rename(columns={"converted": "id"})
+    # Extract the part before '[Source:...]', or the whole string if not found
+    meta_df["description"] = meta_df["description"].str.replace(
+        DESCRIPTION_PART_TO_REMOVE_REGEX, "", regex=True
+    )
+
+    return mapping_dict, meta_df
 
 
 ##################################################################
@@ -149,12 +160,18 @@ def main():
 
     gene_ids = df.index.tolist()
     mapping_dict = {}
+    gene_metadata_dfs = []
 
     chunks = chunk_list(gene_ids, chunksize=CHUNKSIZE)
     for chunk_gene_ids in chunks:
         # converting to Ensembl IDs for all IDs comprised in this chunk
-        gene_mapping = convert_ids(chunk_gene_ids, species_name)
+        gene_mapping, meta_df = convert_ids(chunk_gene_ids, species_name)
         mapping_dict.update(gene_mapping)
+        gene_metadata_dfs.append(meta_df)
+
+    # concatenating all metadata and ensuring there are no duplicates
+    gene_metadata_df = pd.concat(gene_metadata_dfs, ignore_index=True)
+    gene_metadata_df.drop_duplicates(subset=["id"], inplace=True)
 
     if not mapping_dict:  # if mapping dict is empty
         raise NoIDFoundException(
@@ -178,10 +195,14 @@ def main():
     outfile = count_file.with_name(count_file.stem + RENAMED_FILE_SUFFIX)
     df.to_csv(outfile, index=True, header=True)
 
+    # writing gene metadata to file
+    metadata_file = count_file.with_name(count_file.stem + METADATA_FILE_SUFFIX)
+    gene_metadata_df.to_csv(metadata_file, index=False, header=True)
+
     # writing mapping dict to file
     mapping_file = count_file.with_name(count_file.stem + MAPPING_FILE_SUFFIX)
-    with open(mapping_file, "w") as f:
-        json.dump(mapping_dict, f)
+    with open(mapping_file, "w") as fout:
+        json.dump(mapping_dict, fout)
 
 
 if __name__ == "__main__":

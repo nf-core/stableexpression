@@ -1,38 +1,26 @@
 {
     "Map Ensembl IDs to themselves": {
-        "content": [
-            [
-                "counts.ensembl_ids_renamed.csv:md5,7fce29e696d35cf612c8c8c06b77fd56"
-            ]
-        ],
+        "content": null,
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2024-12-20T23:29:07.259617578"
+        "timestamp": "2024-12-30T15:16:26.134756929"
     },
     "Map Uniprot IDs": {
-        "content": [
-            [
-                "counts.uniprot_ids_renamed.csv:md5,6eceb6063772b12fe48fa81e2418424c"
-            ]
-        ],
+        "content": null,
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2024-12-20T23:37:08.508538995"
+        "timestamp": "2024-12-30T15:16:55.974525715"
     },
     "Map NCBI IDs": {
-        "content": [
-            [
-                "counts.ncbi_ids_renamed.csv:md5,6eceb6063772b12fe48fa81e2418424c"
-            ]
-        ],
+        "content": null,
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2024-12-20T23:36:51.904926841"
+        "timestamp": "2024-12-30T15:16:41.002037065"
     }
 }

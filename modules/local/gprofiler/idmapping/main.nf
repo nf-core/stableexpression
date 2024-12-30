@@ -1,5 +1,7 @@
 process GPROFILER_IDMAPPING {
 
+    debug true
+
     publishDir "${params.outdir}/idmapping"
 
     // limiting to 8 threads at a time to avoid 429 errors with the G Profiler API server
@@ -14,7 +16,9 @@ process GPROFILER_IDMAPPING {
     tuple val(meta), path(count_file), val(species)
 
     output:
-    path('*.csv'),                                                                                                    emit: csv
+    path('*_renamed.csv'),                                                                                             emit: renamed
+    path('*_metadata.csv'),                                                                                            emit: metadata
+    path('*_mapping.json'),                                                                                            emit: mapping
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),     topic: versions
     tuple val("${task.process}"), val('requests'), eval('python3 -c "import requests; print(requests.__version__)"'), topic: versions
@@ -31,6 +35,8 @@ process GPROFILER_IDMAPPING {
     stub:
     """
     touch fake_renamed.csv
+    touch fake_metadata.csv
+    touch fake_mapping.json
     """
 
 }
