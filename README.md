@@ -22,7 +22,7 @@
 **nf-core/stableexpression** is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / local count datasets. It takes as input a species name (mandatory), keywords for expression atlas search (optional) and / or a CSV input file listing local raw / normalized count datasets (optional). **A typical usage is to find the most suitable qPCR housekeeping genes for a specific species (and optionally specific conditions)**.
 
 <p align="center">
-    <img title="Sarek Workflow" src="docs/images/nf-core-stableexpression_metro_map.png" width=100%>
+    <img title="Stableexpression Workflow" src="docs/images/nf-core-stableexpression_metro_map.png" width=100%>
 </p>
 
 ## Pipeline summary
