@@ -39,6 +39,7 @@ workflow STABLEEXPRESSION {
         !params.datasets
         && !params.eatlas_accessions
         && !params.fetch_eatlas_accessions
+        && !params.eatlas_keywords
         ) {
         error('You must provide at least either --datasets or --fetch_eatlas_accessions or --eatlas_accessions or --eatlas_keywords')
     }
@@ -175,7 +176,11 @@ workflow STABLEEXPRESSION {
     // MODULE: Merge count files & compute variation coefficient for each gene
     //
 
-    VARIATION_COEFFICIENT( GPROFILER_IDMAPPING.out.csv.collect() )
+    VARIATION_COEFFICIENT(
+        GPROFILER_IDMAPPING.out.renamed.collect(),
+        GPROFILER_IDMAPPING.out.metadata.collect(),
+        GPROFILER_IDMAPPING.out.mapping.collect()
+    )
     ch_output_from_variation_coefficient = VARIATION_COEFFICIENT.out.csv
 
 

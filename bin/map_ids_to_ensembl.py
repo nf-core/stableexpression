@@ -6,7 +6,6 @@ import requests
 import pandas as pd
 from pathlib import Path
 import argparse
-import json
 
 
 class NoIDFoundException(Exception):
@@ -19,7 +18,7 @@ class NoIDFoundException(Exception):
 
 RENAMED_FILE_SUFFIX = "_renamed.csv"
 METADATA_FILE_SUFFIX = "_metadata.csv"
-MAPPING_FILE_SUFFIX = "_mapping.json"
+MAPPING_FILE_SUFFIX = "_mapping.csv"
 
 CHUNKSIZE = 2000  # number of IDs to convert at a time - may create trouble if > 2000
 
@@ -132,11 +131,15 @@ def convert_ids(gene_ids: list, species: str):
     # dict associating incoming IDs to converted IDs
     mapping_dict = df.set_index("incoming").to_dict()["converted"]
     # DataFrame associating converted IDs to name and description
-    meta_df = df.drop(columns=["incoming"]).rename(columns={"converted": "id"})
+    meta_df = df.drop(columns=["incoming"]).rename(columns={"converted": "gene_id"})
+
     # Extract the part before '[Source:...]', or the whole string if not found
     meta_df["description"] = meta_df["description"].str.replace(
         DESCRIPTION_PART_TO_REMOVE_REGEX, "", regex=True
     )
+    # replacing commas (if any) with semicolons
+    meta_df["name"] = meta_df["name"].str.replace(",", ";")
+    meta_df["description"] = meta_df["description"].str.replace(",", ";")
 
     return mapping_dict, meta_df
 
@@ -171,7 +174,7 @@ def main():
 
     # concatenating all metadata and ensuring there are no duplicates
     gene_metadata_df = pd.concat(gene_metadata_dfs, ignore_index=True)
-    gene_metadata_df.drop_duplicates(subset=["id"], inplace=True)
+    gene_metadata_df.drop_duplicates(inplace=True)
 
     if not mapping_dict:  # if mapping dict is empty
         raise NoIDFoundException(
@@ -199,10 +202,14 @@ def main():
     metadata_file = count_file.with_name(count_file.stem + METADATA_FILE_SUFFIX)
     gene_metadata_df.to_csv(metadata_file, index=False, header=True)
 
-    # writing mapping dict to file
+    # making dataframe for mapping (only two columns: original and new)
+    mapping_df = (
+        pd.DataFrame(mapping_dict, index=[0])
+        .T.reset_index()  # transpose: setting keys as indexes instead of columns
+        .rename(columns={"index": "original", 0: "new"})
+    )
     mapping_file = count_file.with_name(count_file.stem + MAPPING_FILE_SUFFIX)
-    with open(mapping_file, "w") as fout:
-        json.dump(mapping_dict, fout)
+    mapping_df.to_csv(mapping_file, index=False, header=True)
 
 
 if __name__ == "__main__":

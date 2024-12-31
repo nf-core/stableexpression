@@ -12,8 +12,12 @@ nextflow_process {
 
             process {
                 """
-                ch_csv_files = Channel.fromPath( '$baseDir/tests/input/variation_coefficient/*.csv', checkIfExists: true)
-                input[0] = ch_csv_files.collect()
+                ch_renamed_files = Channel.fromPath( '$baseDir/tests/input/variation_coefficient/*_renamed.csv', checkIfExists: true)
+                ch_metadata_files = Channel.fromPath( '$baseDir/tests/input/variation_coefficient/*_metadata.csv', checkIfExists: true)
+                ch_mapping_files = Channel.fromPath( '$baseDir/tests/input/variation_coefficient/*_mapping.csv', checkIfExists: true)
+                input[0] = ch_renamed_files.collect()
+                input[1] = ch_metadata_files.collect()
+                input[2] = ch_mapping_files.collect()
                 """
             }
         }
