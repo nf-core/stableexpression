@@ -15,10 +15,7 @@ get_args <- function() {
 
     option_list <- list(
         make_option("--counts", dest = 'count_file', help = "Path to input count file"),
-        make_option("--design", dest = 'design_file', help = "Path to input design file"),
-        make_option("--allow-zeros", dest = "allow_zeros", action="store_true", default=FALSE,
-            help = "Allow genes with counts = 0 in one or multiple sample (NOT RECOMMENDED FOR HOUSEKEEPING GENES)"
-        )
+        make_option("--design", dest = 'design_file', help = "Path to input design file")
     )
 
     args <- parse_args(OptionParser(
@@ -30,7 +27,7 @@ get_args <- function() {
 }
 
 remove_all_zero_columns <- function(df) {
-    # remove columns which contains only zeros
+    # remove columns which contain only zeros
     df <- df[, colSums(df) != 0]
     return(df)
 }
@@ -65,21 +62,13 @@ filter_out_lowly_expressed_genes <- function(dge) {
 }
 
 
-filter_out_genes_with_at_least_one_zero <- function(count_matrix, cpm_counts) {
-    # filter out genes with zero counts
-    non_zero_rows <- rownames(count_matrix[apply(count_matrix!=0, 1, all),])
-    cpm_counts <- cpm_counts[rownames(cpm_counts) %in% non_zero_rows, ]
-    return(cpm_counts)
-}
-
-
 get_log2_cpm_counts <- function(dge) {
     cpm_counts <- cpm(dge, normalised.lib.sizes = TRUE, log = TRUE)
     return(cpm_counts)
 }
 
 
-get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
+get_normalised_cpm_counts <- function(count_file, design_file) {
 
     print(paste('Normalizing counts in:', count_file))
 
@@ -100,6 +89,7 @@ get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
     # pre-filter genes with low counts
     count_matrix <- prefilter_counts(count_matrix)
 
+    # Add a small pseudocount to avoid zero counts
     count_matrix_pseudocount <- replace_zero_counts_with_pseudocounts(count_matrix)
 
     group <- factor(design_data$condition)
@@ -113,11 +103,6 @@ get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
     dge <- calcNormFactors(dge, method="TMM")
 
     cpm_counts <- get_log2_cpm_counts(dge)
-
-    # in case we want genes with count > 0 in all sample included in this dataset
-    if (!allow_zeros) {
-        cpm_counts <- filter_out_genes_with_at_least_one_zero(count_matrix, cpm_counts)
-    }
 
     return(cpm_counts)
 }
@@ -136,6 +121,6 @@ export_data <- function(cpm_counts, filename) {
 
 args <- get_args()
 
-cpm_counts <- get_normalised_cpm_counts(args$count_file, args$design_file, args$allow_zeros)
+cpm_counts <- get_normalised_cpm_counts(args$count_file, args$design_file)
 
 export_data(cpm_counts, basename(args$count_file))

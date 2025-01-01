@@ -28,10 +28,7 @@ get_args <- function() {
     option_list <- list(
         make_option("--counts", dest = 'count_files', help = "Count files to join"),
         make_option("--metadata", dest = 'metadata_files', help = "Metadata files to concatenate"),
-        make_option("--mappings", dest = 'mapping_files', help = "Mapping files to concatenate"),
-        make_option("--allow-zeros", dest = "allow_zeros", action="store_true", default=FALSE,
-            help = "Allow genes with counts = 0 in one or multiple sample (NOT RECOMMENDED FOR HOUSEKEEPING GENES)"
-        )
+        make_option("--mappings", dest = 'mapping_files', help = "Mapping files to concatenate")
     )
 
     args <- parse_args(OptionParser(
@@ -57,16 +54,13 @@ merge_count_files <- function(file_list) {
     return(concat_df)
 }
 
-handle_na_values <- function(df, allow_zeros) {
-    if (!allow_zeros) {
-        # Remove rows with at least one NA value
-        df <- df[complete.cases(df), ]
-    } else {
-        # Replace NA values with 0 (the genes were not present so it is equivalent to a 0 count)
-        df[is.na(df)] <- 0
-    }
+
+handle_na_values <- function(df) {
+    # Replace NA values with 0 (the genes were not present so it is equivalent to a 0 count)
+    df[is.na(df)] <- 0
     return(df)
 }
+
 
 concat_and_remove_duplicates <- function(file_list) {
     # Read CSV files
@@ -94,12 +88,12 @@ average_log2 <- function(row) {
     return(mean(log2(row + 1))) # adds 1 to avoid log(0) and to stabilize variance
 }
 
-get_variation_coefficient <- function(count_data, allow_zeros) {
+get_variation_coefficient <- function(count_data) {
 
     print('Getting coefficients of variation')
 
-    # handling NA values (genes that are found in some datasets but not all)
-    count_data <- handle_na_values(count_data, allow_zeros)
+    # handling NA values (genes that are not found in all datasets)
+    count_data <- handle_na_values(count_data)
 
     # we want genes that are neither expressed too much nor too little
     # filter the dataframe to exclude rows where row mean is in the top 5% or bottom 5%
@@ -164,7 +158,7 @@ args <- get_args()
 # getting variation coefficient for each gene
 count_file_list <- strsplit(args$count_files, " ")[[1]]
 count_data <- merge_count_files(count_file_list)
-cv_df <- get_variation_coefficient(count_data, args$allow_zeros)
+cv_df <- get_variation_coefficient(count_data)
 
 # associating gene ids with metadata (name and description)
 metadata_file_list <- strsplit(args$metadata_files, " ")[[1]]

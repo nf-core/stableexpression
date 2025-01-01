@@ -9,7 +9,6 @@ process EDGER_NORMALISE {
 
     input:
     tuple val(meta), path(count_file)
-    val allow_zero_counts
 
     output:
     tuple val(meta), path('*.log_cpm.csv'),                                                                         emit: csv
@@ -22,9 +21,8 @@ process EDGER_NORMALISE {
 
     script:
     def design_file = meta.design
-    def allow_zeros_arg = allow_zero_counts ? '--allow-zeros' : ''
     """
-    edger_normalise.R --counts "$count_file" --design "$design_file" $allow_zeros_arg
+    edger_normalise.R --counts "$count_file" --design "$design_file"
     """
 
 }

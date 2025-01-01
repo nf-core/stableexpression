@@ -16,10 +16,7 @@ get_args <- function() {
 
     option_list <- list(
         make_option("--counts", dest = 'count_file', help = "Path to input count file"),
-        make_option("--design", dest = 'design_file', help = "Path to input design file"),
-        make_option("--allow-zeros", dest = "allow_zeros", action="store_true", default=FALSE,
-            help = "Allow genes with counts = 0 in one or multiple sample (NOT RECOMMENDED FOR HOUSEKEEPING GENES)"
-        )
+        make_option("--design", dest = 'design_file', help = "Path to input design file")
     )
 
     args <- parse_args(OptionParser(
@@ -64,19 +61,11 @@ replace_zero_counts_with_pseudocounts <- function(count_matrix) {
 
 get_normalised_counts <- function(dds) {
     # perform normalisation
-
     dds <- estimateSizeFactors(dds)
     normalised_counts <- counts(dds, normalized = TRUE)
     return(normalised_counts)
 }
 
-
-filter_out_genes_with_at_least_one_zero <- function(count_matrix, normalised_counts) {
-    # filter out genes with zero counts
-    non_zero_rows <- rownames(count_matrix[apply(count_matrix!=0, 1, all),])
-    normalised_counts <- normalised_counts[rownames(normalised_counts) %in% non_zero_rows, ]
-    return(normalised_counts)
-}
 
 get_log2_cpm_counts <- function(normalised_counts, filtered_count_matrix) {
     # calculate total counts per sample (library size)
@@ -87,7 +76,7 @@ get_log2_cpm_counts <- function(normalised_counts, filtered_count_matrix) {
     return(cpm_counts)
 }
 
-get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
+get_normalised_cpm_counts <- function(count_file, design_file) {
 
     print(paste('Normalizing counts in:', count_file))
 
@@ -113,17 +102,12 @@ get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
     # pre-filter genes with low counts
     filtered_count_matrix <- prefilter_counts(count_matrix, design_data)
 
-    # Add a small pseudocount of 1 to avoid zero counts
+    # Add a small pseudocount to avoid zero counts
     filtered_count_matrix <- replace_zero_counts_with_pseudocounts(filtered_count_matrix)
 
     dds <- DESeqDataSetFromMatrix(countData = filtered_count_matrix, colData = col_data, design = ~ condition)
 
     normalised_counts <- get_normalised_counts(dds)
-
-    # in case we want genes with count > 0 in all sample included in this dataset
-    if (!allow_zeros) {
-        normalised_counts <- filter_out_genes_with_at_least_one_zero(count_matrix, normalised_counts)
-    }
 
     cpm_counts <- get_log2_cpm_counts(normalised_counts, filtered_count_matrix)
 
@@ -144,6 +128,6 @@ export_data <- function(cpm_counts, filename) {
 
 args <- get_args()
 
-cpm_counts <- get_normalised_cpm_counts(args$count_file, args$design_file, args$allow_zeros)
+cpm_counts <- get_normalised_cpm_counts(args$count_file, args$design_file)
 
 export_data(cpm_counts, basename(args$count_file))

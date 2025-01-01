@@ -51,8 +51,6 @@ workflow STABLEEXPRESSION {
     def species = params.species.split(' ').join('_')
     ch_species = Channel.value( species )
 
-    ch_allow_zero_counts = Channel.value( params.allow_zero_counts )
-
     ch_normalised_datasets = Channel.empty()
     ch_raw_datasets = Channel.empty()
     ch_accessions = Channel.empty()
@@ -151,11 +149,11 @@ workflow STABLEEXPRESSION {
     //
 
     if ( params.normalisation_method == 'deseq2' ) {
-        DESEQ2_NORMALISE( ch_raw_datasets, ch_allow_zero_counts )
+        DESEQ2_NORMALISE( ch_raw_datasets )
         ch_raw_datasets_normalised = DESEQ2_NORMALISE.out.csv
 
     } else { // 'edger'
-        EDGER_NORMALISE( ch_raw_datasets, ch_allow_zero_counts )
+        EDGER_NORMALISE( ch_raw_datasets )
         ch_raw_datasets_normalised = EDGER_NORMALISE.out.csv
     }
 
@@ -178,8 +176,7 @@ workflow STABLEEXPRESSION {
     VARIATION_COEFFICIENT(
         GPROFILER_IDMAPPING.out.renamed.collect(),
         GPROFILER_IDMAPPING.out.metadata.collect(),
-        GPROFILER_IDMAPPING.out.mapping.collect(),
-        ch_allow_zero_counts
+        GPROFILER_IDMAPPING.out.mapping.collect()
     )
     ch_output_from_variation_coefficient = VARIATION_COEFFICIENT.out.csv
 

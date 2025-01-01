@@ -92,12 +92,6 @@
                     "description": "Tool to use for normalisation.",
                     "fa_icon": "fas fa-chart-simple",
                     "enum": ["deseq2", "edger"]
-                },
-                "allow_zero_counts": {
-                    "type": "boolean",
-                    "fa_icon": "fas fa-greater-than",
-                    "description": "Allow zero counts during normalisation.",
-                    "help_text": "Keeps genes showing zero counts in some samples during the normalisation step."
                 }
             }
         },

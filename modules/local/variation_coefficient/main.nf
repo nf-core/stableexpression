@@ -11,7 +11,6 @@ process VARIATION_COEFFICIENT {
     path(count_files, stageAs: "?/*")
     path(metadata_files, stageAs: "?/*")
     path(mapping_files, stageAs: "?/*")
-    val allow_zero_counts
 
     output:
     path 'variation_coefficients.csv',                                                                           emit: csv
@@ -22,9 +21,8 @@ process VARIATION_COEFFICIENT {
     task.ext.when == null || task.ext.when
 
     script:
-    def allow_zeros_arg = allow_zero_counts ? '--allow-zeros' : ''
     """
-    get_variation_coefficients.R --counts "$count_files" --metadata "$metadata_files" --mappings "$mapping_files" $allow_zeros_arg
+    get_variation_coefficients.R --counts "$count_files" --metadata "$metadata_files" --mappings "$mapping_files"
     """
 
 }
