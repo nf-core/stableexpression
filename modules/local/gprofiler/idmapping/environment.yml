@@ -1,4 +1,4 @@
-name: GPROFILER_IDMAPPING
+name: gprofiler_idmapping
 channels:
   - conda-forge
 dependencies:

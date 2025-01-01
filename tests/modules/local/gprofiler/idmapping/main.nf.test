@@ -64,4 +64,25 @@ nextflow_process {
 
     }
 
+    test("Empty count file") {
+
+        tag "idmapping_empty"
+
+        when {
+            process {
+                """
+                meta = []
+                count_file = file("$projectDir/tests/input/idmapping/counts.empty.csv")
+                input[0] = [meta, count_file, "Arabidopsis thaliana"]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.csv).match()
+        }
+
+    }
+
 }

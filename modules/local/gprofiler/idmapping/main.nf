@@ -5,6 +5,9 @@ process GPROFILER_IDMAPPING {
     // limiting to 8 threads at a time to avoid 429 errors with the G Profiler API server
     maxForks 8
 
+    // ignoring cases when the count dataframe is empty (the script throws a 100 in this case)
+    errorStrategy { task.exitStatus == 100 ? 'ignore' : 'terminate' }
+
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/fe/fe3f927f5032b9f0749fd5a2d3431b483f1c8cb1613d0290e2326fec10bf8268/data':

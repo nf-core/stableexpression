@@ -6,6 +6,11 @@ import requests
 import pandas as pd
 from pathlib import Path
 import argparse
+import logging
+import sys
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class NoIDFoundException(Exception):
@@ -154,14 +159,18 @@ def main():
 
     count_file = args.count_file
     species_name = format_species_name(args.species)
-    print(
+    logger.info(
         f"Converting IDs for species {species_name} and count file {count_file.name}..."
     )
 
     df = pd.read_csv(count_file, header=0, index_col=0)
-    df.index = df.index.astype(str)
+    if df.empty:
+        logger.error("Count file is empty! Aborting ID mapping...")
+        sys.exit(100)
 
+    df.index = df.index.astype(str)
     gene_ids = df.index.tolist()
+
     mapping_dict = {}
     gene_metadata_dfs = []
 
