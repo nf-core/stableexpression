@@ -1,11 +1,10 @@
 process EXPRESSIONATLAS_GETDATA {
 
-    // when there are network issues, we retry the download with a backoff
-    // errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-    // maxRetries 5
+    // limiting to 8 threads at a time to avoid 429 errors with the Expression Atlas API server
+    maxForks 8
 
-    // limiting threads to avoid issues with the Expression Atlas API
-    maxForks 4
+    // ignoring accessions that cannot be retrieved from Expression Atlas (the script throws a 100 in this case)
+    errorStrategy { task.exitStatus == 100 ? 'ignore' : 'terminate' }
 
     tag "$accession"
 

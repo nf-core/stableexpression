@@ -1,7 +1,5 @@
 process VARIATION_COEFFICIENT {
 
-    debug true
-
     publishDir "${params.outdir}/variation_coefficients"
 
     conda "${moduleDir}/environment.yml"

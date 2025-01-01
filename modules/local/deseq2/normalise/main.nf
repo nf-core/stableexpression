@@ -1,7 +1,5 @@
 process DESEQ2_NORMALISE {
 
-    // debug true
-
     publishDir "${params.outdir}/normalisation/deseq2"
 
     conda "${moduleDir}/environment.yml"

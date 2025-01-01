@@ -5,6 +5,8 @@
 library(ExpressionAtlas)
 library(optparse)
 
+options (error = traceback)
+
 #####################################################
 #####################################################
 # FUNCTIONS
@@ -28,20 +30,26 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
     attempts <- 0
 
     while (!success && attempts < max_retries) {
-    attempts <- attempts + 1
-    tryCatch({
-        atlas_data <- getAtlasData( accession )
-        success <- TRUE
-        message("Download successful on attempt ", attempts)
-    }, error = function(e) {
-        message("Attempt ", attempts, " failed: ", e$message)
-        if (attempts < max_retries) {
-        message("Retrying in ", wait_time, " seconds...")
-        Sys.sleep(wait_time)
-        } else {
-        message("All attempts failed. Please check the URL or your connection.")
-        }
-    })
+        attempts <- attempts + 1
+        tryCatch({
+            atlas_data <- getAtlasData( accession )
+            success <- TRUE
+            message("Download successful on attempt ", attempts)
+        }, error = function(e) {
+            message("Attempt ", attempts, " failed: ", e$message)
+            if (attempts < max_retries) {
+                message("Retrying in ", wait_time, " seconds...")
+                Sys.sleep(wait_time)
+            } else {
+                if (e$message == "ERROR - Download appeared successful but no experiment summary object was found") {
+                    message("Ignoring this experiment accession because summary can be found")
+                    sys.exit(status = 100)
+                } else {
+                    message("Unknown error...")
+                    sys.exit(status = 1)
+                }
+            }
+        })
     }
 
     return(atlas_data)
