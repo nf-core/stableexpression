@@ -1,0 +1,125 @@
+#!/usr/bin/env Rscript
+
+# Written by Olivier Coen. Released under the MIT license.
+
+library(DESeq2)
+library(optparse)
+
+#####################################################
+#####################################################
+# FUNCTIONS
+#####################################################
+#####################################################
+
+
+get_args <- function() {
+
+    option_list <- list(
+        make_option("--counts", dest = 'count_file', help = "Path to input count file"),
+        make_option("--design", dest = 'design_file', help = "Path to input design file"),
+        make_option("--allow-zeros", dest = "allow_zeros", action="store_true", default=FALSE,
+            help = "Allow genes with counts = 0 in one or multiple sample (NOT RECOMMENDED FOR HOUSEKEEPING GENES)"
+        )
+    )
+
+    args <- parse_args(OptionParser(
+        option_list = option_list,
+        description = "Normalize counts using DESeq2"
+        ))
+
+    return(args)
+}
+
+check_samples <- function(count_matrix, design_data) {
+    # check if the column names of count_matrix match the sample names
+    if (!all(colnames(count_matrix) == design_data$sample)) {
+        stop("Sample names in the count matrix do not match the design data.")
+    }
+}
+
+prefilter_counts <- function(count_matrix, design_data) {
+    # see https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+    # getting size of smallest group
+    group_sizes <- table(design_data$condition)
+    smallest_group_size <- min(group_sizes)
+    # keep genes with at least 10 counts over a certain number of samples
+    keep <- rowSums(count_matrix >= 10) >= smallest_group_size
+    filtered_count_matrix <- count_matrix[keep,]
+    return(filtered_count_matrix)
+}
+
+get_normalised_counts <- function(dds) {
+    # perform normalisation
+    dds <- estimateSizeFactors(dds)
+    normalised_counts <- counts(dds, normalized = TRUE)
+    return(normalised_counts)
+}
+
+
+filter_out_genes_with_at_least_one_zero <- function(count_matrix, normalised_counts) {
+    # filter out genes with zero counts
+    non_zero_rows <- rownames(count_matrix[apply(count_matrix!=0, 1, all),])
+    normalised_counts <- normalised_counts[rownames(normalised_counts) %in% non_zero_rows, ]
+    return(normalised_counts)
+}
+
+get_log2_cpm_counts <- function(normalised_counts, count_data) {
+    # calculate total counts per sample (library size)
+    library_sizes <- colSums(count_data)
+    # convert normalised counts to CPM
+    cpm_counts <- t(t(normalised_counts) / library_sizes * 1e6)
+    cpm_counts <- log2(cpm_counts + 1)
+    return(cpm_counts)
+}
+
+get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
+
+    print(paste('Normalizing counts in:', count_file))
+
+    count_data <- read.csv(count_file, row.names = 1)
+    design_data <- read.csv(design_file)
+
+    design_data <- design_data[design_data$sample %in% colnames(count_data), ]
+    count_matrix <- as.matrix(count_data)
+
+    check_samples(count_matrix, design_data)
+
+    col_data <- data.frame(
+        row.names = design_data$sample,
+        condition = factor(design_data$condition)
+    )
+
+    # pre-filter genes with low counts
+    filtered_count_matrix <- prefilter_counts(count_matrix, design_data)
+
+    dds <- DESeqDataSetFromMatrix(countData = filtered_count_matrix, colData = col_data, design = ~ condition)
+
+    normalised_counts <- get_normalised_counts(dds)
+
+    # in case we want genes with count > 0 in all sample included in this dataset
+    if (!allow_zeros) {
+        normalised_counts <- filter_out_genes_with_at_least_one_zero(count_matrix, normalised_counts)
+    }
+
+    cpm_counts <- get_log2_cpm_counts(normalised_counts, count_data)
+
+    return(cpm_counts)
+}
+
+export_data <- function(cpm_counts, filename) {
+    filename <- sub("\\.csv$", ".log_cpm.csv", filename)
+    print(paste('Exporting normalised counts per million to:', filename))
+    write.table(cpm_counts, filename, sep = ',', row.names = TRUE, quote = FALSE)
+}
+
+#####################################################
+#####################################################
+# MAIN
+#####################################################
+#####################################################
+
+args <- get_args()
+
+cpm_counts <- get_normalised_cpm_counts(args$count_file, args$design_file, args$allow_zeros)
+
+export_data(cpm_counts, basename(args$count_file))

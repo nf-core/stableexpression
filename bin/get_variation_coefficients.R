@@ -28,7 +28,10 @@ get_args <- function() {
     option_list <- list(
         make_option("--counts", dest = 'count_files', help = "Count files to join"),
         make_option("--metadata", dest = 'metadata_files', help = "Metadata files to concatenate"),
-        make_option("--mappings", dest = 'mapping_files', help = "Mapping files to concatenate")
+        make_option("--mappings", dest = 'mapping_files', help = "Mapping files to concatenate"),
+        make_option("--allow-zeros", dest = "allow_zeros", action="store_true", default=FALSE,
+            help = "Allow genes with counts = 0 in one or multiple sample (NOT RECOMMENDED FOR HOUSEKEEPING GENES)"
+        )
     )
 
     args <- parse_args(OptionParser(
@@ -54,6 +57,17 @@ merge_count_files <- function(file_list) {
     return(concat_df)
 }
 
+handle_na_values <- function(df, allow_zeros) {
+    if (!allow_zeros) {
+        # Remove rows with at least one NA value
+        df <- df[complete.cases(df), ]
+    } else {
+        # Replace NA values with 0 (the genes were not present so it is equivalent to a 0 count)
+        df[is.na(df)] <- 0
+    }
+    return(df)
+}
+
 concat_and_remove_duplicates <- function(file_list) {
     # Read CSV files
     dfs <- lapply(file_list, read.csv, row.names = NULL, header = TRUE, stringsAsFactors = FALSE)
@@ -64,10 +78,10 @@ concat_and_remove_duplicates <- function(file_list) {
 }
 
 aggregate_mappings <- function(mapping_df) {
-    # group by new gene IDs and gets the list of original gene IDs for each group
+    # group by new gene IDs and gets the list of distinct original gene IDs for each group
     aggregated_df <- mapping_df %>%
         group_by(new) %>%
-        summarise(original_gene_ids = list(original), .groups = "drop")
+        summarise(original_gene_ids = list(unique(original)), .groups = "drop")
     # convert the list column to a string representation
     # separate the original gene IDs with a semicolon
     aggregated_df$original_gene_ids <- sapply(aggregated_df$original_gene_ids, function(x) paste(x, collapse = ";"))
@@ -80,16 +94,19 @@ average_log2 <- function(row) {
     return(mean(log2(row + 1))) # adds 1 to avoid log(0) and to stabilize variance
 }
 
-get_variation_coefficient <- function(count_data) {
+get_variation_coefficient <- function(count_data, allow_zeros) {
 
     print('Getting coefficients of variation')
+
+    # handling NA values (genes that are found in some datasets but not all)
+    count_data <- handle_na_values(count_data, allow_zeros)
 
     # we want genes that are neither expressed too much nor too little
     # filter the dataframe to exclude rows where row mean is in the top 5% or bottom 5%
     # determine the percentile thresholds
-    row_means <- rowMeans(count_data, na.rm = TRUE)
-    lower_threshold <- quantile(row_means, 0.05, na.rm = TRUE)
-    upper_threshold <- quantile(row_means, 0.95, na.rm = TRUE)
+    row_means <- rowMeans(count_data)
+    lower_threshold <- quantile(row_means, 0.05)
+    upper_threshold <- quantile(row_means, 0.95)
 
     count_data <- count_data[row_means >= lower_threshold & row_means <= upper_threshold, ]
 
@@ -127,8 +144,8 @@ merge_data <- function(cv_df, metadata_df, mapping_df) {
 
 export_data <- function(cv_df, count_data) {
 
-    count_outfilename <- 'all_normalized_counts.csv'
-    print(paste('Exporting normalized counts to:', count_outfilename))
+    count_outfilename <- 'all_normalised_counts.csv'
+    print(paste('Exporting normalised counts to:', count_outfilename))
     write.table(count_data, sep=",", file=count_outfilename, row.names = TRUE, col.names = NA, quote = FALSE)
 
     cv_outfilename <- 'variation_coefficients.csv'
@@ -147,7 +164,7 @@ args <- get_args()
 # getting variation coefficient for each gene
 count_file_list <- strsplit(args$count_files, " ")[[1]]
 count_data <- merge_count_files(count_file_list)
-cv_df <- get_variation_coefficient(count_data)
+cv_df <- get_variation_coefficient(count_data, args$allow_zeros)
 
 # associating gene ids with metadata (name and description)
 metadata_file_list <- strsplit(args$metadata_files, " ")[[1]]

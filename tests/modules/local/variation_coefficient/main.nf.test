@@ -18,6 +18,7 @@ nextflow_process {
                 input[0] = ch_renamed_files.collect()
                 input[1] = ch_metadata_files.collect()
                 input[2] = ch_mapping_files.collect()
+                input[3] = false
                 """
             }
         }

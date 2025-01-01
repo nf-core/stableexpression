@@ -9,8 +9,8 @@ nextflow.preview.topic = true
 
 include { EXPRESSIONATLAS_GETACCESSIONS          } from '../modules/local/expressionatlas/getaccessions/main'
 include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expressionatlas/getdata/main'
-include { DESEQ2_NORMALIZE                       } from '../modules/local/deseq2/normalize/main'
-include { EDGER_NORMALIZE                        } from '../modules/local/edger/normalize/main'
+include { DESEQ2_NORMALISE                       } from '../modules/local/deseq2/normalise/main'
+include { EDGER_NORMALISE                        } from '../modules/local/edger/normalise/main'
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
 include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
 
@@ -49,9 +49,11 @@ workflow STABLEEXPRESSION {
     //
 
     def species = params.species.split(' ').join('_')
-    ch_species = Channel.value(species)
+    ch_species = Channel.value( species )
 
-    ch_normalized_datasets = Channel.empty()
+    ch_allow_zero_counts = Channel.value( params.allow_zero_counts )
+
+    ch_normalised_datasets = Channel.empty()
     ch_raw_datasets = Channel.empty()
     ch_accessions = Channel.empty()
 
@@ -63,24 +65,24 @@ workflow STABLEEXPRESSION {
         //
 
         // reads list of input datasets from input file
-        // and splits them in normalized and raw sub-channels
+        // and splits them in normalised and raw sub-channels
         Channel.fromList( samplesheetToList(params.datasets, "${projectDir}/assets/schema_input.json") )
             .map {
                 item ->
-                    def (count_file, design_file, normalized) = item
+                    def (count_file, design_file, normalised) = item
                     meta = [accession: count_file.name, design: design_file]
-                    [meta, count_file, normalized]
+                    [meta, count_file, normalised]
             }
             .branch {
                 item ->
-                    normalized: item[2] == true
+                    normalised: item[2] == true
                     raw: item[2] == false
             }
             .set { ch_input_datasets }
 
-        // removes the third element ("normalized" column) and adds to the corresponding channel
-        ch_normalized_datasets = ch_normalized_datasets.concat(
-            ch_input_datasets.normalized.map{ it -> it.take(2) }
+        // removes the third element ("normalised" column) and adds to the corresponding channel
+        ch_normalised_datasets = ch_normalised_datasets.concat(
+            ch_input_datasets.normalised.map{ it -> it.take(2) }
         )
         ch_raw_datasets = ch_raw_datasets.concat(
             ch_input_datasets.raw.map{ it -> it.take(2) }
@@ -129,9 +131,9 @@ workflow STABLEEXPRESSION {
     // Downloading Expression Atlas data for each accession in ch_accessions
     EXPRESSIONATLAS_GETDATA( ch_accessions )
 
-    // separating and arranging EXPRESSIONATLAS_GETDATA output in two separate channels (already normalized or raw data)
-    ch_normalized_datasets = ch_normalized_datasets.concat(
-        EXPRESSIONATLAS_GETDATA.out.normalized.map {
+    // separating and arranging EXPRESSIONATLAS_GETDATA output in two separate channels (already normalised or raw data)
+    ch_normalised_datasets = ch_normalised_datasets.concat(
+        EXPRESSIONATLAS_GETDATA.out.normalised.map {
             accession, design_file, count_file ->
                 meta = [accession: accession, design: design_file]
                 [meta, count_file]
@@ -148,20 +150,20 @@ workflow STABLEEXPRESSION {
 
 
     //
-    // MODULE: Normalization of raw count datasets (including RNA-seq datasets)
+    // MODULE: normalisation of raw count datasets (including RNA-seq datasets)
     //
 
-    if ( params.normalization_method == 'deseq2' ) {
-        DESEQ2_NORMALIZE(ch_raw_datasets)
-        ch_raw_datasets_normalized = DESEQ2_NORMALIZE.out.csv
+    if ( params.normalisation_method == 'deseq2' ) {
+        DESEQ2_NORMALISE( ch_raw_datasets, ch_allow_zero_counts )
+        ch_raw_datasets_normalised = DESEQ2_NORMALISE.out.csv
 
     } else { // 'edger'
-        EDGER_NORMALIZE(ch_raw_datasets)
-        ch_raw_datasets_normalized = EDGER_NORMALIZE.out.csv
+        EDGER_NORMALISE( ch_raw_datasets, ch_allow_zero_counts )
+        ch_raw_datasets_normalised = EDGER_NORMALISE.out.csv
     }
 
-    // putting all normalized count datasets together
-    ch_normalized_datasets.concat( ch_raw_datasets_normalized ).set{ ch_all_normalized }
+    // putting all normalised count datasets together
+    ch_normalised_datasets.concat( ch_raw_datasets_normalised ).set{ ch_all_normalised }
 
 
     //
@@ -169,7 +171,7 @@ workflow STABLEEXPRESSION {
     //
 
     // tries to map gene IDs to Ensembl IDs whenever possible
-    GPROFILER_IDMAPPING( ch_all_normalized.combine(ch_species) )
+    GPROFILER_IDMAPPING( ch_all_normalised.combine(ch_species) )
 
 
     //
@@ -179,7 +181,8 @@ workflow STABLEEXPRESSION {
     VARIATION_COEFFICIENT(
         GPROFILER_IDMAPPING.out.renamed.collect(),
         GPROFILER_IDMAPPING.out.metadata.collect(),
-        GPROFILER_IDMAPPING.out.mapping.collect()
+        GPROFILER_IDMAPPING.out.mapping.collect(),
+        ch_allow_zero_counts
     )
     ch_output_from_variation_coefficient = VARIATION_COEFFICIENT.out.csv
 

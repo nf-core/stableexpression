@@ -15,7 +15,10 @@ get_args <- function() {
 
     option_list <- list(
         make_option("--counts", dest = 'count_file', help = "Path to input count file"),
-        make_option("--design", dest = 'design_file', help = "Path to input design file")
+        make_option("--design", dest = 'design_file', help = "Path to input design file"),
+        make_option("--allow-zeros", dest = "allow_zeros", action="store_true", default=FALSE,
+            help = "Allow genes with counts = 0 in one or multiple sample (NOT RECOMMENDED FOR HOUSEKEEPING GENES)"
+        )
     )
 
     args <- parse_args(OptionParser(
@@ -24,6 +27,21 @@ get_args <- function() {
         ))
 
     return(args)
+}
+
+check_samples <- function(count_matrix, design_data) {
+    # check if the column names of count_matrix match the sample names
+    if (!all(colnames(count_matrix) == design_data$sample)) {
+        stop("Sample names in the count matrix do not match the design data.")
+    }
+}
+
+prefilter_counts <- function(count_matrix) {
+    # remove genes having zeros for all counts
+    # it is advised to remove them analysis
+    non_zero_rows <- rownames(count_matrix[apply(count_matrix!=0, 1, any),])
+    filtered_count_matrix <- count_matrix[rownames(count_matrix) %in% non_zero_rows, ]
+    return(filtered_count_matrix)
 }
 
 replace_zero_counts_with_pseudocounts <- function(count_data_matrix) {
@@ -40,25 +58,22 @@ filter_out_lowly_expressed_genes <- function(dge) {
     return(dge)
 }
 
-get_non_zero_rows <- function(count_matrix) {
-    # get gene IDs corresponding to rows with only non-zero counts
-    non_zero_rows <- rownames(count_matrix[apply(count_matrix!=0, 1, all),])
-    return(non_zero_rows)
-}
 
-filter_out_genes_with_at_least_one_zero <- function(non_zero_rows, cpm_counts) {
+filter_out_genes_with_at_least_one_zero <- function(count_matrix, cpm_counts) {
     # filter out genes with zero counts
+    non_zero_rows <- rownames(count_matrix[apply(count_matrix!=0, 1, all),])
     cpm_counts <- cpm_counts[rownames(cpm_counts) %in% non_zero_rows, ]
     return(cpm_counts)
 }
 
+
 get_log2_cpm_counts <- function(dge) {
-    cpm_counts <- cpm(dge, normalized.lib.sizes = TRUE, log = TRUE)
+    cpm_counts <- cpm(dge, normalised.lib.sizes = TRUE, log = TRUE)
     return(cpm_counts)
 }
 
 
-get_normalized_cpm_counts <- function(count_file, design_file) {
+get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
 
     print(paste('Normalizing counts in:', count_file))
 
@@ -69,29 +84,35 @@ get_normalized_cpm_counts <- function(count_file, design_file) {
     group <- factor(design_data$condition)
     count_matrix <- as.matrix(count_data)
 
-    non_zero_rows <- get_non_zero_rows(count_matrix)
+    check_samples(count_matrix, design_data)
 
-    count_matrix <- replace_zero_counts_with_pseudocounts(count_matrix)
+    # pre-filter genes with low counts
+    count_matrix <- prefilter_counts(count_matrix)
 
-    dge <- DGEList(counts = count_matrix, group = group)
+    count_matrix_pseudocount <- replace_zero_counts_with_pseudocounts(count_matrix)
+
+    dge <- DGEList(counts = count_matrix_pseudocount, group = group)
     rownames(dge) <- rownames(count_matrix)
     colnames(dge) <- colnames(count_matrix)
 
     dge <- filter_out_lowly_expressed_genes(dge)
 
-    # normalization
+    # normalisation
     dge <- calcNormFactors(dge, method="TMM")
 
     cpm_counts <- get_log2_cpm_counts(dge)
 
-    cpm_counts <- filter_out_genes_with_at_least_one_zero(non_zero_rows, cpm_counts)
+    # in case we want genes with count > 0 in all sample included in this dataset
+    if (!allow_zeros) {
+        cpm_counts <- filter_out_genes_with_at_least_one_zero(count_matrix, cpm_counts)
+    }
 
     return(cpm_counts)
 }
 
 export_data <- function(cpm_counts, filename) {
     filename <- sub("\\.csv$", ".log_cpm.csv", filename)
-    print(paste('Exporting normalized counts per million to:', filename))
+    print(paste('Exporting normalised counts per million to:', filename))
     write.table(cpm_counts, filename, sep = ',', row.names = TRUE, quote = FALSE)
 }
 
@@ -103,6 +124,6 @@ export_data <- function(cpm_counts, filename) {
 
 args <- get_args()
 
-cpm_counts <- get_normalized_cpm_counts(args$count_file, args$design_file)
+cpm_counts <- get_normalised_cpm_counts(args$count_file, args$design_file, args$allow_zeros)
 
 export_data(cpm_counts, basename(args$count_file))

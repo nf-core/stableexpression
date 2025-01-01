@@ -151,7 +151,7 @@
         <mxCell id="34XCymCDlDvmFXix4drP-118" value="" style="group" parent="1" connectable="0" vertex="1">
           <mxGeometry x="-380" y="515" width="177" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="34XCymCDlDvmFXix4drP-62" value="normalization&lt;br&gt;(DESeq2 / EdgeR)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=15;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;fontStyle=1" parent="34XCymCDlDvmFXix4drP-118" vertex="1">
+        <mxCell id="34XCymCDlDvmFXix4drP-62" value="normalisation&lt;br&gt;(DESeq2 / EdgeR)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=15;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;fontStyle=1" parent="34XCymCDlDvmFXix4drP-118" vertex="1">
           <mxGeometry x="27" width="150" height="50" as="geometry" />
         </mxCell>
         <mxCell id="34XCymCDlDvmFXix4drP-114" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgaGVpZ2h0PSIyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNOS45NiAxMS4zMUMxMC44MiA4LjEgMTEuNSA2IDEzIDZzMi4xOCAyLjEgMy4wNCA1LjMxQzE3IDE0LjkyIDE4LjEgMTkgMjIgMTl2LTJjLTIuMiAwLTMtMi40Ni00LjAzLTYuMkMxNy4wOCA3LjQ2IDE2LjE1IDQgMTMgNHMtNC4wOCAzLjQ2LTQuOTcgNi44QzcuMDMgMTQuNTQgNi4yIDE3IDQgMTdWMkgydjIwaDIwdi0ySDR2LTFjMy45IDAgNS00LjA4IDUuOTYtNy42OSIgZmlsbD0iY3VycmVudENvbG9yIi8+PC9zdmc+;" parent="34XCymCDlDvmFXix4drP-118" vertex="1">

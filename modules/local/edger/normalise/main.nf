@@ -1,6 +1,6 @@
-process EDGER_NORMALIZE {
+process EDGER_NORMALISE {
 
-    publishDir "${params.outdir}/normalization/edger"
+    publishDir "${params.outdir}/normalisation/edger"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -9,6 +9,7 @@ process EDGER_NORMALIZE {
 
     input:
     tuple val(meta), path(count_file)
+    val allow_zero_counts
 
     output:
     tuple val(meta), path('*.log_cpm.csv'),                                                                         emit: csv
@@ -21,8 +22,9 @@ process EDGER_NORMALIZE {
 
     script:
     def design_file = meta.design
+    def allow_zeros_arg = allow_zero_counts ? '--allow-zeros' : ''
     """
-    edger_normalize.R --counts "$count_file" --design "$design_file"
+    edger_normalise.R --counts "$count_file" --design "$design_file" $allow_zeros_arg
     """
 
 }

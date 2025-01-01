@@ -1,8 +1,8 @@
-process DESEQ2_NORMALIZE {
+process DESEQ2_NORMALISE {
 
     // debug true
 
-    publishDir "${params.outdir}/normalization/deseq2"
+    publishDir "${params.outdir}/normalisation/deseq2"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -11,6 +11,7 @@ process DESEQ2_NORMALIZE {
 
     input:
     tuple val(meta), path(count_file)
+    val allow_zero_counts
 
     output:
     tuple val(meta), path('*.log_cpm.csv'),                                                                          emit: csv
@@ -23,8 +24,9 @@ process DESEQ2_NORMALIZE {
 
     script:
     def design_file = meta.design
+    def allow_zeros_arg = allow_zero_counts ? '--allow-zeros' : ''
     """
-    deseq2_normalize.R --counts "$count_file" --design "$design_file"
+    deseq2_normalise.R --counts "$count_file" --design "$design_file" $allow_zeros_arg
     """
 
 

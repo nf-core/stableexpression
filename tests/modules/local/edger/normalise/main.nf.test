@@ -1,0 +1,50 @@
+nextflow_process {
+
+    name "Test Process EDGER_NORMALISE"
+    script "modules/local/edger/normalise/main.nf"
+    process "EDGER_NORMALISE"
+    tag "edger"
+    tag "normalisation"
+    tag "module"
+
+    test("Very small dataset - no zeros") {
+
+        when {
+
+            process {
+                """
+                meta = [accession: "accession", design: file('$baseDir/tests/input/normalise/design.csv')]
+                input[0] = [meta, file('$baseDir/tests/input/normalise/all_counts.csv')]
+                input[1] = false
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.csv).match()
+        }
+
+    }
+
+    test("Very small dataset - with zeros") {
+
+        when {
+
+            process {
+                """
+                meta = [accession: "accession", design: file('$baseDir/tests/input/normalise/design.csv')]
+                input[0] = [meta, file('$baseDir/tests/input/normalise/all_counts.csv')]
+                input[1] = true
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.csv).match()
+        }
+
+    }
+
+}

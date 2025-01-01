@@ -60,7 +60,7 @@ get_one_colour_microarray_data <- function(data) {
 
     return(list(
         count_data = exprs( data ),
-        count_type = 'normalized',
+        count_type = 'normalised',
         sample_groups = phenoData(data)$AtlasAssayGroup
     ))
 }

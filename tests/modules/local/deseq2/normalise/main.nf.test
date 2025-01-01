@@ -1,0 +1,50 @@
+nextflow_process {
+
+    name "Test Process DESEQ2_NORMALISE"
+    script "modules/local/deseq2/normalise/main.nf"
+    process "DESEQ2_NORMALISE"
+    tag "deseq2"
+    tag "normalise"
+    tag "module"
+
+    test("Very small dataset - no zeros") {
+
+        when {
+
+            process {
+                """
+                meta = [accession: "accession", design: file('$baseDir/tests/input/normalise/design.csv')]
+                input[0] = [meta, file('$baseDir/tests/input/normalise/all_counts.csv')]
+                input[1] = false
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.csv).match()
+        }
+
+    }
+
+    test("Very small dataset - with zeros") {
+
+        when {
+
+            process {
+                """
+                meta = [accession: "accession", design: file('$baseDir/tests/input/normalise/design.csv')]
+                input[0] = [meta, file('$baseDir/tests/input/normalise/all_counts.csv')]
+                input[1] = true
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.csv).match()
+        }
+
+    }
+
+}

@@ -21,12 +21,12 @@
                 "pattern": "^\\S+\\.csv$",
                 "errorMessage": "You must provide a design file"
             },
-            "normalized": {
+            "normalised": {
                 "type": "boolean",
-                "description": "Specify whether the dataset is already normalized",
-                "errorMessage": "You must specify whether the dataset is already normalized (true or false)"
+                "description": "Specify whether the dataset is already normalised",
+                "errorMessage": "You must specify whether the dataset is already normalised (true or false)"
             }
         },
-        "required": ["counts", "design", "normalized"]
+        "required": ["counts", "design", "normalised"]
     }
 }

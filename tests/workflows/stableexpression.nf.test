@@ -56,15 +56,33 @@ nextflow_workflow {
         }
     }
 
-    test("Two Expression Atlas keywords provided - Normalization with EdgeR") {
+    test("Two Expression Atlas accessions provided - normalisation with EdgeR") {
 
-        tag "workflow_eatlas_kw_edger"
+        tag "workflow_eatlas_accessions"
 
         when {
             params {
                 species = 'solanum tuberosum'
-                eatlas_keywords = "potato,stress"
-                normalization_method = "edger"
+                eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                normalisation_method = "edger"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+    test("Two Expression Atlas accessions provided - skip no zero filter") {
+
+        tag "workflow_eatlas_accessions"
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                allow_zeros = true
             }
         }
 

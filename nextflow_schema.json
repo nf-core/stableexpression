@@ -81,17 +81,23 @@
                 }
             }
         },
-        "normalization_options": {
-            "title": "Normalization options",
+        "normalisation_options": {
+            "title": "Normalisation options",
             "type": "object",
             "fa_icon": "fas fa-dna",
-            "description": "Options for normalizing datasets.",
+            "description": "Options for normalising datasets.",
             "properties": {
-                "normalization_method": {
+                "normalisation_method": {
                     "type": "string",
-                    "description": "Tool to use for normalization.",
+                    "description": "Tool to use for normalisation.",
                     "fa_icon": "fas fa-chart-simple",
                     "enum": ["deseq2", "edger"]
+                },
+                "allow_zero_counts": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-greater-than",
+                    "description": "Allow zero counts during normalisation.",
+                    "help_text": "Keeps genes showing zero counts in some samples during the normalisation step."
                 }
             }
         },
@@ -254,7 +260,7 @@
             "$ref": "#/$defs/expression_atlas_options"
         },
         {
-            "$ref": "#/$defs/normalization_options"
+            "$ref": "#/$defs/normalisation_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"

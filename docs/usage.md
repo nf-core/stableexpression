@@ -52,15 +52,15 @@ First, prepare a samplesheet listing the different count datasets you want to us
 
 - counts: the path to the count dataset (a CSV file)
 - design: the path to the experimental design associated to this dataset (a CSV file)
-- normalized: a boolean (true / false) representing whether the counts are already normalized or not
+- normalised: a boolean (true / false) representing whether the counts are already normalised or not
 
 It should look as follows:
 
 `datasets.csv`:
 
 ```csv
-counts,design,normalized
-path/to/normalized.counts.csv,path/to/normalized.design.csv,true
+counts,design,normalised
+path/to/normalised.counts.csv,path/to/normalised.design.csv,true
 path/to/raw.counts.csv,path/to/raw.design.csv,false
 ```
 

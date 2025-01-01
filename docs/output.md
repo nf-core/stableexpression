@@ -9,7 +9,7 @@ This document describes the output produced by the pipeline.
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
 - [Expression Atlas](#expression-atlas)
-- [DESeq2](#deseq2) or [EdgeR](#edger): normalize raw data
+- [DESeq2](#deseq2) or [EdgeR](#edger): normalise raw data
 - [g:Profiler](#gprofiler-idmapping): map gene IDS to Ensembl IDS
 - [Variation coefficient](#variation-coefficient): Compute gene variation coefficients and get the most stable genes
 
@@ -20,7 +20,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - `expressionatlas/`
   - List of accessions found when querying Expression Atlas: `accessions.txt`.
-  - A list of count datasets and experimental designs download from Expression Atlas. Normalized datasets have the `normalized.csv` while not normalized datasets have the `raw.csv` extension.
+  - A list of count datasets and experimental designs download from Expression Atlas. Normalized datasets have the `normalised.csv` while not normalised datasets have the `raw.csv` extension.
 
 </details>
 
@@ -29,8 +29,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <details markdown="1">
 <summary>Output files</summary>
 
-- `normalization/deseq2/`
-  - List of newly normalized datasets
+- `normalisation/deseq2/`
+  - List of newly normalised datasets
 
 </details>
 
@@ -39,8 +39,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <details markdown="1">
 <summary>Output files</summary>
 
-- `normalization/edger/`
-  - List of newly normalized datasets
+- `normalisation/edger/`
+  - List of newly normalised datasets
 
 </details>
 
@@ -62,7 +62,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - `variation_coefficients/`
   - An ordered list from the most stable (first line) to the least stable gene in `variation_coefficients.csv`.
-  - All normalized counts (for each gene and each sample) in `all_normalized_counts.csv`.
+  - All normalised counts (for each gene and each sample) in `all_normalised_counts.csv`.
 
 </details>
 

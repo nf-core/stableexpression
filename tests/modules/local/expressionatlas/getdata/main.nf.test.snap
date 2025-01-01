@@ -9,7 +9,7 @@
                     "E-MTAB-552.rnaseq.raw.csv:md5,315f6ab694cb809bd33f481ad326c5a7"
                 ],
                 "2": [
-                    
+
                 ],
                 "3": [
                     [
@@ -28,8 +28,8 @@
                 "metadata": [
                     "E-MTAB-552.rnaseq.design.csv:md5,142d6bb20d784ba414fa76a6e73bb37f"
                 ],
-                "normalized": [
-                    
+                "normalised": [
+
                 ],
                 "raw": [
                     "E-MTAB-552.rnaseq.raw.csv:md5,315f6ab694cb809bd33f481ad326c5a7"
@@ -46,12 +46,12 @@
         "content": [
             {
                 "0": [
-                    
+
                 ],
                 "1": [
                     [
                         "E-GEOD-62537",
-                        "E_GEOD_62537_A_AFFY_2.normalized.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                        "E_GEOD_62537_A_AFFY_2.normalised.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
                     ]
                 ],
                 "2": [
@@ -74,14 +74,14 @@
                 "design": [
                     "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88"
                 ],
-                "normalized": [
+                "normalised": [
                     [
                         "E-GEOD-62537",
-                        "E_GEOD_62537_A_AFFY_2.normalized.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                        "E_GEOD_62537_A_AFFY_2.normalised.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
                     ]
                 ],
                 "raw": [
-                    
+
                 ]
             }
         ],
@@ -102,7 +102,7 @@
                     ]
                 ],
                 "1": [
-                    
+
                 ],
                 "2": [
                     [
@@ -118,8 +118,8 @@
                         "1.30.0"
                     ]
                 ],
-                "normalized": [
-                    
+                "normalised": [
+
                 ],
                 "raw": [
                     [
@@ -140,13 +140,13 @@
         "content": [
             {
                 "0": [
-                    
+
                 ],
                 "1": [
                     [
                         "E-GEOD-62537",
                         "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88",
-                        "E_GEOD_62537_A_AFFY_2.normalized.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                        "E_GEOD_62537_A_AFFY_2.normalised.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
                     ]
                 ],
                 "2": [
@@ -163,15 +163,15 @@
                         "1.30.0"
                     ]
                 ],
-                "normalized": [
+                "normalised": [
                     [
                         "E-GEOD-62537",
                         "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88",
-                        "E_GEOD_62537_A_AFFY_2.normalized.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                        "E_GEOD_62537_A_AFFY_2.normalised.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
                     ]
                 ],
                 "raw": [
-                    
+
                 ]
             }
         ],
@@ -188,10 +188,10 @@
                     "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
                 ],
                 "1": [
-                    
+
                 ],
                 "2": [
-                    "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
+                    "E-TABM-1007.A-AFFY-2.normalised.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
                 ],
                 "3": [
                     [
@@ -210,11 +210,11 @@
                 "metadata": [
                     "E-TABM-1007.A-AFFY-2.design.csv:md5,cb094d8a7f92d660a9d88d6eb6ec704a"
                 ],
-                "normalized": [
-                    "E-TABM-1007.A-AFFY-2.normalized.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
+                "normalised": [
+                    "E-TABM-1007.A-AFFY-2.normalised.csv:md5,53672c5a95c252dadcf9ba718bdf2866"
                 ],
                 "raw": [
-                    
+
                 ]
             }
         ],
@@ -245,13 +245,13 @@
         "content": [
             {
                 "0": [
-                    
+
                 ],
                 "1": [
                     [
                         "E-TABM-1007",
                         "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1",
-                        "E_TABM_1007_A_AFFY_2.normalized.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
+                        "E_TABM_1007_A_AFFY_2.normalised.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
                     ]
                 ],
                 "2": [
@@ -268,15 +268,15 @@
                         "1.30.0"
                     ]
                 ],
-                "normalized": [
+                "normalised": [
                     [
                         "E-TABM-1007",
                         "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1",
-                        "E_TABM_1007_A_AFFY_2.normalized.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
+                        "E_TABM_1007_A_AFFY_2.normalised.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
                     ]
                 ],
                 "raw": [
-                    
+
                 ]
             }
         ],
