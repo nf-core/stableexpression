@@ -47,4 +47,24 @@ nextflow_process {
 
     }
 
+    test("Rows with many zeros") {
+
+        when {
+
+            process {
+                """
+                meta = [accession: "accession", design: file('$baseDir/tests/input/normalise/design_rows_many_zeros.csv')]
+                input[0] = [meta, file('$baseDir/tests/input/normalise/counts_rows_many_zeros.csv')]
+                input[1] = true
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.csv).match()
+        }
+
+    }
+
 }

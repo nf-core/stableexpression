@@ -29,6 +29,12 @@ get_args <- function() {
     return(args)
 }
 
+remove_all_zero_columns <- function(df) {
+    # remove columns which contains only zeros
+    df <- df[, colSums(df) != 0]
+    return(df)
+}
+
 check_samples <- function(count_matrix, design_data) {
     # check if the column names of count_matrix match the sample names
     if (!all(colnames(count_matrix) == design_data$sample)) {
@@ -80,10 +86,15 @@ get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
     count_data <- read.csv(args$count_file, row.names = 1)
     design_data <- read.csv(design_file)
 
-    design_data <- design_data[design_data$sample %in% colnames(count_data), ]
-    group <- factor(design_data$condition)
     count_matrix <- as.matrix(count_data)
+    # in some rare datasets, columns can contain only zeros
+    # we do not consider these columns
+    count_matrix <- remove_all_zero_columns(count_matrix)
 
+    # getting design data
+    design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
+
+    # check if the column names of count_matrix match the sample names
     check_samples(count_matrix, design_data)
 
     # pre-filter genes with low counts
@@ -91,6 +102,7 @@ get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
 
     count_matrix_pseudocount <- replace_zero_counts_with_pseudocounts(count_matrix)
 
+    group <- factor(design_data$condition)
     dge <- DGEList(counts = count_matrix_pseudocount, group = group)
     rownames(dge) <- rownames(count_matrix)
     colnames(dge) <- colnames(count_matrix)

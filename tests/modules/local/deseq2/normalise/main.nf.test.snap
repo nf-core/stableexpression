@@ -35,6 +35,24 @@
         },
         "timestamp": "2024-12-28T22:30:31.238971692"
     },
+    "Rows with many zeros": {
+        "content": [
+            [
+                [
+                    {
+                        "accession": "accession",
+                        "design": "design_rows_many_zeros.csv:md5,3cdf98e2e202b4af2687eaefd9bdd8e9"
+                    },
+                    "counts_rows_many_zeros.log_cpm.csv:md5,a5640eeb84b90577e593ef0ca906f937"
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-01T17:45:37.786546533"
+    },
     "Very small dataset - with zeros": {
         "content": [
             [

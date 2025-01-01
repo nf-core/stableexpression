@@ -48,8 +48,23 @@ prefilter_counts <- function(count_matrix, design_data) {
     return(filtered_count_matrix)
 }
 
+remove_all_zero_columns <- function(df) {
+    # remove columns which contains only zeros
+    df <- df[, colSums(df) != 0]
+    return(df)
+}
+
+replace_zero_counts_with_pseudocounts <- function(count_matrix) {
+    # Add a small pseudocount of 1 to avoid zero counts
+    # necessary to avoid issues with rows containing lots of (but not only) zeros
+    # DESeq2 does not allow float (like 0.01) counts so we must use integers
+    count_matrix[count_matrix == 0] <- 1
+    return(count_matrix)
+}
+
 get_normalised_counts <- function(dds) {
     # perform normalisation
+
     dds <- estimateSizeFactors(dds)
     normalised_counts <- counts(dds, normalized = TRUE)
     return(normalised_counts)
@@ -63,9 +78,9 @@ filter_out_genes_with_at_least_one_zero <- function(count_matrix, normalised_cou
     return(normalised_counts)
 }
 
-get_log2_cpm_counts <- function(normalised_counts, count_data) {
+get_log2_cpm_counts <- function(normalised_counts, filtered_count_matrix) {
     # calculate total counts per sample (library size)
-    library_sizes <- colSums(count_data)
+    library_sizes <- colSums(filtered_count_matrix)
     # convert normalised counts to CPM
     cpm_counts <- t(t(normalised_counts) / library_sizes * 1e6)
     cpm_counts <- log2(cpm_counts + 1)
@@ -79,9 +94,15 @@ get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
     count_data <- read.csv(count_file, row.names = 1)
     design_data <- read.csv(design_file)
 
-    design_data <- design_data[design_data$sample %in% colnames(count_data), ]
     count_matrix <- as.matrix(count_data)
+    # in some rare datasets, columns can contain only zeros
+    # we do not consider these columns
+    count_matrix <- remove_all_zero_columns(count_matrix)
 
+    # getting design data
+    design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
+
+    # check if the column names of count_matrix match the sample names
     check_samples(count_matrix, design_data)
 
     col_data <- data.frame(
@@ -92,6 +113,9 @@ get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
     # pre-filter genes with low counts
     filtered_count_matrix <- prefilter_counts(count_matrix, design_data)
 
+    # Add a small pseudocount of 1 to avoid zero counts
+    filtered_count_matrix <- replace_zero_counts_with_pseudocounts(filtered_count_matrix)
+
     dds <- DESeqDataSetFromMatrix(countData = filtered_count_matrix, colData = col_data, design = ~ condition)
 
     normalised_counts <- get_normalised_counts(dds)
@@ -101,7 +125,7 @@ get_normalised_cpm_counts <- function(count_file, design_file, allow_zeros) {
         normalised_counts <- filter_out_genes_with_at_least_one_zero(count_matrix, normalised_counts)
     }
 
-    cpm_counts <- get_log2_cpm_counts(normalised_counts, count_data)
+    cpm_counts <- get_log2_cpm_counts(normalised_counts, filtered_count_matrix)
 
     return(cpm_counts)
 }

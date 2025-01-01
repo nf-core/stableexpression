@@ -121,9 +121,6 @@ workflow STABLEEXPRESSION {
 
     }
 
-    // logging accessions if present
-    ch_accessions.collect().map { items -> println "Obtained accessions ${items}"}
-
     //
     // MODULE: Expression Atlas - Get data
     //
