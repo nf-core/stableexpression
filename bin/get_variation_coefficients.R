@@ -106,7 +106,6 @@ get_variation_coefficient <- function(count_data) {
 
     # calculate the coefficient of variation (cv)
     # as the ratio of the standard deviation to the mean
-    # TODO: see if there is a better practice for computing the cv
     row_means <- rowMeans(count_data)
     row_sds <- apply(count_data, 1, sd)
     cv <- row_sds / row_means

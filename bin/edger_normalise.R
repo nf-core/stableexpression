@@ -99,6 +99,12 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
 
     dge <- filter_out_lowly_expressed_genes(dge)
 
+    # if the dataframe is now empty, stop the process
+    if (nrow(dge) == 0) {
+        message("No genes left after pre-filtering.")
+        sys.exit(status = 100)
+    }
+
     # normalisation
     dge <- calcNormFactors(dge, method="TMM")
 
