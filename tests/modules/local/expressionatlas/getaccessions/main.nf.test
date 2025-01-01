@@ -6,7 +6,7 @@ nextflow_process {
     tag "getaccessions"
     tag "module"
 
-    test('["solanum_tuberosum", ["potato"]]') {
+    test("Solanum tuberosum one keyword") {
 
         tag "potato_two_kw"
 
@@ -27,7 +27,7 @@ nextflow_process {
 
     }
 
-    test('["solanum_tuberosum", "potato,phloem"]') {
+    test('Solanum tuberosum two keywords') {
 
         tag "potato_two_kw"
 
@@ -48,7 +48,7 @@ nextflow_process {
 
     }
 
-    test('["solanum_tuberosum", null]') {
+    test('Solanum tuberosum no keyword') {
 
         tag "potato_no_kw"
 

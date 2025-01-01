@@ -1,9 +1,11 @@
 process EXPRESSIONATLAS_GETACCESSIONS {
 
+    debug true
+
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e4/e40fdee15db481a7c9018d85d73fde63235faad794513039a198f3343f2b0e04/data':
-        'community.wave.seqera.io/library/nltk_retry_pip_requests:0e24055eb62456ae' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e4/e459ae44332297f0429e7dd501bc3a6f9b5504b13e2db0002a5d3021cc9ac443/data':
+        'community.wave.seqera.io/library/nltk_pandas_python_requests_tenacity:a29bfda256e4f39f' }"
 
     input:
     val species

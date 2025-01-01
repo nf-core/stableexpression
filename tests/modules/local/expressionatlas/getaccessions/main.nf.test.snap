@@ -75,6 +75,44 @@
         },
         "timestamp": "2024-11-26T05:57:18.83875097"
     },
+    "Solanum tuberosum no keyword": {
+        "content": [
+            {
+                "0": [
+                    "accessions.txt:md5,dad63ac7a1715277fa44567bc40b5872"
+                ],
+                "1": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "requests",
+                        "2.32.3"
+                    ]
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "nltk",
+                        "3.9.1"
+                    ]
+                ],
+                "txt": [
+                    "accessions.txt:md5,dad63ac7a1715277fa44567bc40b5872"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-01T14:25:08.425684541"
+    },
     "[\"solanum_tuberosum\", [\"potato\", \"phloem\"]": {
         "content": [
             {
@@ -243,5 +281,81 @@
             "nextflow": "24.04.4"
         },
         "timestamp": "2024-10-14T18:18:45.473497815"
+    },
+    "Solanum tuberosum one keyword": {
+        "content": [
+            {
+                "0": [
+                    "accessions.txt:md5,dad63ac7a1715277fa44567bc40b5872"
+                ],
+                "1": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "requests",
+                        "2.32.3"
+                    ]
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "nltk",
+                        "3.9.1"
+                    ]
+                ],
+                "txt": [
+                    "accessions.txt:md5,dad63ac7a1715277fa44567bc40b5872"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-01T14:23:43.573176854"
+    },
+    "Solanum tuberosum two keywords": {
+        "content": [
+            {
+                "0": [
+                    "accessions.txt:md5,dad63ac7a1715277fa44567bc40b5872"
+                ],
+                "1": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "requests",
+                        "2.32.3"
+                    ]
+                ],
+                "3": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "nltk",
+                        "3.9.1"
+                    ]
+                ],
+                "txt": [
+                    "accessions.txt:md5,dad63ac7a1715277fa44567bc40b5872"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-01T14:24:29.42124266"
     }
 }

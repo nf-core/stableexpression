@@ -2,6 +2,8 @@ name: eatlas_get_accessions
 channels:
   - conda-forge
 dependencies:
+  - conda-forge::python==3.12.8
   - conda-forge::requests==2.32.3
   - conda-forge::nltk==3.9.1
-  - conda-forge::retry==0.9.2
+  - conda-forge::tenacity==9.0.0
+  - conda-forge::pandas==2.2.3
