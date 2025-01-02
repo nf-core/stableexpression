@@ -23,9 +23,6 @@ process EXPRESSIONATLAS_GETDATA {
     tuple val("${task.process}"), val('ExpressionAtlas'), eval('Rscript -e "cat(as.character(packageVersion(\'ExpressionAtlas\')))"'),  topic: versions
 
 
-    when:
-    task.ext.when == null || task.ext.when
-
     script:
     """
     get_eatlas_data.R --accession $accession

@@ -17,9 +17,6 @@ process VARIATION_COEFFICIENT {
     tuple val("${task.process}"), val('R'), eval('Rscript -e "cat(R.version.string)" | sed "s/R version //"'),   topic: versions
 
 
-    when:
-    task.ext.when == null || task.ext.when
-
     script:
     """
     get_variation_coefficients.R --counts "$count_files" --metadata "$metadata_files" --mappings "$mapping_files"

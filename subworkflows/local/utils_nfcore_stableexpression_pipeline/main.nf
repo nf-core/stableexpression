@@ -143,7 +143,7 @@ def customSoftwareVersionsToYAML(versions) {
                 versions
                 .unique()
                 .map {
-                    name, tool, version -> [ name.tokenize(':')[-1], [ tool, version ] ]
+                    name, tool, version -> [ name.tokenize(':').last(), [ tool, version ] ]
                 }
                 .groupTuple()
                 .map {

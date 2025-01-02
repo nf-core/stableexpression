@@ -20,9 +20,6 @@ process DESEQ2_NORMALISE {
     tuple val("${task.process}"), val('DESeq2'), eval('Rscript -e "cat(as.character(packageVersion(\'DESeq2\')))"'), topic: versions
 
 
-    when:
-    task.ext.when == null || task.ext.when
-
     script:
     def design_file = meta.design
     """
