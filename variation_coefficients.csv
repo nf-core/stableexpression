@@ -1,0 +1,5 @@
+ensembl_gene_id,variation_coefficient,average_log_cpm,gene_id,name,description,original_gene_ids
+AT5G23261,0.4486591841329657,5.596948499420021,AT5G23261,gene,blabla,ABCD12
+AT5G23260,0.46108985697101434,5.612788503055634,AT5G23260,TT16,K-box region and MADS-box transcription factor family protein,832390;Q8RYD9
+AT1G34790,0.49256782117167824,5.665943168654483,AT1G34790,TT1,C2H2 and C2HC zinc fingers superfamily protein,840386;Q8VWG3
+AT5G35550,0.8232903279951693,4.544903354046729,AT5G35550,TT2,Duplicated homeodomain-like superfamily protein,833520;Q9FJA2

@@ -1,0 +1,64 @@
+{
+    "Concat mapping files": {
+        "content": [
+            {
+                "0": [
+                    "merged.csv:md5,ecbc7c8bb8b78d7d3a20bbb08d86d56c"
+                ],
+                "1": [
+                    [
+                        "CONCATENATE_REMOVE_DUPS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "CONCATENATE_REMOVE_DUPS",
+                        "pandas",
+                        "2.2.3"
+                    ]
+                ],
+                "merged": [
+                    "merged.csv:md5,ecbc7c8bb8b78d7d3a20bbb08d86d56c"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-02T13:00:31.910445267"
+    },
+    "Concat metadata files": {
+        "content": [
+            {
+                "0": [
+                    "merged.csv:md5,de2475f5a58b809a4e33af9789468eef"
+                ],
+                "1": [
+                    [
+                        "CONCATENATE_REMOVE_DUPS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "CONCATENATE_REMOVE_DUPS",
+                        "pandas",
+                        "2.2.3"
+                    ]
+                ],
+                "merged": [
+                    "merged.csv:md5,de2475f5a58b809a4e33af9789468eef"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-02T12:51:37.531039032"
+    }
+}

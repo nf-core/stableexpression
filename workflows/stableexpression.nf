@@ -12,6 +12,8 @@ include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expres
 include { DESEQ2_NORMALISE                       } from '../modules/local/deseq2/normalise/main'
 include { EDGER_NORMALISE                        } from '../modules/local/edger/normalise/main'
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
+include { MERGE_COUNTS                           } from '../modules/local/merge_counts/main'
+include { CONCATENATE_REMOVE_DUPS                } from '../modules/local/concatenate_remove_dups/main'
 include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
 
 include { customSoftwareVersionsToYAML           } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
@@ -168,15 +170,34 @@ workflow STABLEEXPRESSION {
     // tries to map gene IDs to Ensembl IDs whenever possible
     GPROFILER_IDMAPPING( ch_all_normalised.combine(ch_species) )
 
+    GPROFILER_IDMAPPING.out.renamed
+        .reduce {
+            file1, file2 -> MERGE_COUNTS(file1, file2)
+        }
+        .set { ch_counts_renamed_merged }
+
+    GPROFILER_IDMAPPING.out.metadata
+        .reduce {
+            file1, file2 -> CONCATENATE_REMOVE_DUPS(file1, file2)
+        }
+        .set { ch_gene_metadata_merged }
+
+    GPROFILER_IDMAPPING.out.mapping
+        .reduce {
+            file1, file2 -> CONCATENATE_REMOVE_DUPS(file1, file2)
+        }
+        .set { ch_gene_idmapping_merged }
 
     //
     // MODULE: Merge count files & compute variation coefficient for each gene
     //
 
+
+
     VARIATION_COEFFICIENT(
-        GPROFILER_IDMAPPING.out.renamed.collect(),
-        GPROFILER_IDMAPPING.out.metadata.collect(),
-        GPROFILER_IDMAPPING.out.mapping.collect()
+        ch_counts_renamed_merged,
+        ch_gene_metadata_merged,
+        ch_gene_idmapping_merged
     )
     ch_output_from_variation_coefficient = VARIATION_COEFFICIENT.out.csv
 

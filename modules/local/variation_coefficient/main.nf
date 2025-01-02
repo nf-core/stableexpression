@@ -8,9 +8,9 @@ process VARIATION_COEFFICIENT {
         'community.wave.seqera.io/library/r-base_r-data.table_r-dplyr_r-optparse_r-tibble:afb27df3e35caae2' }"
 
     input:
-    path(count_files, stageAs: "?/*")
-    path(metadata_files, stageAs: "?/*")
-    path(mapping_files, stageAs: "?/*")
+    path count_file
+    path metadata
+    path mapping
 
     output:
     path 'variation_coefficients.csv',                                                                           emit: csv
@@ -19,7 +19,7 @@ process VARIATION_COEFFICIENT {
 
     script:
     """
-    get_variation_coefficients.R --counts "$count_files" --metadata "$metadata_files" --mappings "$mapping_files"
+    get_variation_coefficients.py --counts "$count_file" --metadata "$metadata" --mapping "$mapping"
     """
 
 }

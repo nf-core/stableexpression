@@ -3,7 +3,7 @@ nextflow_process {
     name "Test Process VARIATION_COEFFICIENT"
     script "modules/local/variation_coefficient/main.nf"
     process "VARIATION_COEFFICIENT"
-    tag "var_coeff"
+    tag "varcoeff"
     tag "module"
 
     test("Should run without failures") {
@@ -12,12 +12,9 @@ nextflow_process {
 
             process {
                 """
-                ch_renamed_files = Channel.fromPath( '$projectDir/tests/input/variation_coefficient/*_renamed.csv', checkIfExists: true)
-                ch_metadata_files = Channel.fromPath( '$projectDir/tests/input/variation_coefficient/*_metadata.csv', checkIfExists: true)
-                ch_mapping_files = Channel.fromPath( '$projectDir/tests/input/variation_coefficient/*_mapping.csv', checkIfExists: true)
-                input[0] = ch_renamed_files.collect()
-                input[1] = ch_metadata_files.collect()
-                input[2] = ch_mapping_files.collect()
+                input[0] = file( '$projectDir/tests/input/variation_coefficient/counts.csv', checkIfExists: true )
+                input[1] = file( '$projectDir/tests/input/variation_coefficient/metadata.csv', checkIfExists: true )
+                input[2] = file( '$projectDir/tests/input/variation_coefficient/mapping.csv', checkIfExists: true )
                 """
             }
         }
