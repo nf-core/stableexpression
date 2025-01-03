@@ -108,10 +108,17 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
         sys.exit(status = 100)
     }
 
-    # Add a small pseudocount to avoid zero counts
+    # add a small pseudocount to avoid zero counts
     filtered_count_matrix <- replace_zero_counts_with_pseudocounts(filtered_count_matrix)
 
-    dds <- DESeqDataSetFromMatrix(countData = filtered_count_matrix, colData = col_data, design = ~ condition)
+    # create DESeq2 object
+    # if the number of distinct conditions is only 1, DESeq2 returns an error
+    num_unique_conditions <- length(unique(design_data$condition))
+    if (num_unique_conditions == 1) {
+        dds <- DESeqDataSetFromMatrix(countData = filtered_count_matrix, colData = col_data, design = ~ 1)
+    } else {
+        dds <- DESeqDataSetFromMatrix(countData = filtered_count_matrix, colData = col_data, design = ~ condition)
+    }
 
     normalised_counts <- get_normalised_counts(dds)
 

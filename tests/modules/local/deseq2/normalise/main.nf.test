@@ -13,8 +13,8 @@ nextflow_process {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/input/normalise/design.csv')]
-                input[0] = [meta, file('$projectDir/tests/input/normalise/all_counts.csv')]
+                meta = [accession: "accession", design: file('$projectDir/tests/input/normalise/base/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/input/normalise/base/counts.csv')]
                 """
             }
         }
@@ -28,12 +28,33 @@ nextflow_process {
 
     test("Rows with many zeros") {
 
+        tag "deseq2_many_zeros"
+
         when {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/input/normalise/design_rows_many_zeros.csv')]
-                input[0] = [meta, file('$projectDir/tests/input/normalise/counts_rows_many_zeros.csv')]
+                meta = [accession: "accession", design: file('$projectDir/tests/input/normalise/many_zeros/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/input/normalise/many_zeros/counts.csv')]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.csv).match()
+        }
+
+    }
+
+    test("One group") {
+
+        when {
+
+            process {
+                """
+                meta = [accession: "accession", design: file('$projectDir/tests/input/normalise/one_group/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/input/normalise/one_group/counts.csv')]
                 """
             }
         }
