@@ -81,17 +81,24 @@
                 }
             }
         },
-        "normalisation_options": {
-            "title": "Normalisation options",
+        "statistical_options": {
+            "title": "Statistics options",
             "type": "object",
             "fa_icon": "fas fa-dna",
-            "description": "Options for normalising datasets.",
+            "description": "Statistical options for normalisation and calculation of gene expression variation.",
             "properties": {
                 "normalisation_method": {
                     "type": "string",
                     "description": "Tool to use for normalisation.",
                     "fa_icon": "fas fa-chart-simple",
                     "enum": ["deseq2", "edger"]
+                },
+                "gene_variation_method": {
+                    "type": "string",
+                    "description": "Method for computing gene expression variation.",
+                    "fa_icon": "fas fa-chart-simple",
+                    "enum": ["std", "cv"],
+                    "help_text": "std: Standard deviation, cv: Coefficient of variation (std / mean)"
                 }
             }
         },
@@ -254,7 +261,7 @@
             "$ref": "#/$defs/expression_atlas_options"
         },
         {
-            "$ref": "#/$defs/normalisation_options"
+            "$ref": "#/$defs/statistical_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"

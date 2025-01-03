@@ -13,8 +13,12 @@ logger = logging.getLogger(__name__)
 
 ORIGINAL_GENE_ID_COLNAME = "original_gene_id"
 ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
-CV_OUTFILENAME = "variation_coefficients.csv"
+GENE_VARIATION_OUTFILENAME = "gene_variations.csv"
 COUNT_OUTFILENAME = "all_normalised_counts.csv"
+
+GENE_VARIATION_COLNAME = "variation_coefficient"
+STANDARD_DEVIATION_COLNAME = "standard_deviation"
+METHOD_NAMES = {"std": STANDARD_DEVIATION_COLNAME, "cv": GENE_VARIATION_COLNAME}
 
 # Get variation coefficient from count data for each gene
 # The variation coefficient is the ratio of the standard deviation to the mean
@@ -34,7 +38,7 @@ COUNT_OUTFILENAME = "all_normalised_counts.csv"
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Get variation coefficient from count data for each gene"
+        description="Get variation from count data for each gene"
     )
     parser.add_argument(
         "--counts", type=str, dest="count_files", required=True, help="Count file"
@@ -48,6 +52,14 @@ def parse_args():
     )
     parser.add_argument(
         "--mappings", type=str, dest="mapping_files", required=True, help="Mapping file"
+    )
+    parser.add_argument(
+        "--method",
+        type=str,
+        dest="gene_variation_method",
+        required=True,
+        choices=["std", "cv"],
+        help="Method for computation of the gene variation",
     )
     return parser.parse_args()
 
@@ -124,11 +136,23 @@ def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
     )
 
 
+def get_standard_deviation(count_df: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Compute variation for each gene in the count dataframe.
+    """
+    logger.info("Getting standard deviations")
+    count_columns = get_count_columns(count_df)
+    return count_df.with_columns(
+        std=pl.concat_list(count_columns).list.std(),
+    ).select(
+        pl.col(ENSEMBL_GENE_ID_COLNAME),
+        pl.col("std").alias(STANDARD_DEVIATION_COLNAME),
+    )
+
+
 def get_coefficient_of_variation(count_df: pl.LazyFrame) -> pl.LazyFrame:
     """
-    Compute the coefficient of variation (CV) for each gene in the count dataframe.
-
-    CV is the ratio of the standard deviation to the mean.
+    Compute variation for each gene in the count dataframe.
     """
     logger.info("Getting coefficients of variation")
     count_columns = get_count_columns(count_df)
@@ -137,7 +161,7 @@ def get_coefficient_of_variation(count_df: pl.LazyFrame) -> pl.LazyFrame:
         std=pl.concat_list(count_columns).list.std(),
     ).select(
         pl.col(ENSEMBL_GENE_ID_COLNAME),
-        (pl.col("std") / pl.col("mean")).alias("variation_coefficient"),
+        (pl.col("std") / pl.col("mean")).alias(GENE_VARIATION_COLNAME),
     )
 
 
@@ -156,21 +180,24 @@ def get_average_log2(count_df: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
-def aggregate_expression_values(count_df: pl.LazyFrame) -> pl.LazyFrame:
+def aggregate_expression_values(
+    count_df: pl.LazyFrame, gene_variation_method: str
+) -> pl.LazyFrame:
     # handling NA values (genes that are not found in all datasets)
     # replace NaN values with 0
     count_df = count_df.fill_null(0)
 
-    # getting column containing the variation coefficient
-    variation_coefficient = get_coefficient_of_variation(count_df)
+    # getting column containing the gene variations
+    if gene_variation_method == GENE_VARIATION_COLNAME:
+        gene_variation = get_coefficient_of_variation(count_df)
+    else:
+        gene_variation = get_standard_deviation(count_df)
 
-    # get the average log cpm valucoen.olivier@gmail.come for each gene
+    # get the average log cpm value for each gene
     # to get an idea of the overall expression level of each gene
     average_log_cpm = get_average_log2(count_df)
 
-    return variation_coefficient.join(
-        average_log_cpm, on=ENSEMBL_GENE_ID_COLNAME, how="left"
-    )
+    return gene_variation.join(average_log_cpm, on=ENSEMBL_GENE_ID_COLNAME, how="left")
 
 
 def merge_data(
@@ -181,7 +208,6 @@ def merge_data(
         cv_df.join(metadata_df, on=ENSEMBL_GENE_ID_COLNAME, how="left")
         .join(mapping_df, on=ENSEMBL_GENE_ID_COLNAME, how="left")
         .unique()  # just in case
-        .sort("variation_coefficient")
     )
 
 
@@ -189,8 +215,8 @@ def export_data(cv_df: pl.LazyFrame, count_df: pl.LazyFrame):
     logger.info(f"Exporting normalised counts to: {COUNT_OUTFILENAME}")
     count_df.collect().write_csv(COUNT_OUTFILENAME)
 
-    logger.info(f"Exporting variation coefficients to: {CV_OUTFILENAME}")
-    cv_df.collect().write_csv(CV_OUTFILENAME)
+    logger.info(f"Exporting gene variations to: {GENE_VARIATION_OUTFILENAME}")
+    cv_df.collect().write_csv(GENE_VARIATION_OUTFILENAME)
 
 
 #####################################################
@@ -205,15 +231,16 @@ def main():
     count_files = [Path(file) for file in args.count_files.split(" ")]
     metadata_files = [Path(file) for file in args.metadata_files.split(" ")]
     mapping_files = [Path(file) for file in args.mapping_files.split(" ")]
+    gene_variation_method = METHOD_NAMES[args.gene_variation_method]
 
     count_df = get_counts(count_files)
-    cv_df = aggregate_expression_values(count_df)
+    cv_df = aggregate_expression_values(count_df, gene_variation_method)
 
     metadata_df = get_metadata(metadata_files)
     mapping_df = get_mappings(mapping_files)
 
     cv_df = merge_data(cv_df, metadata_df, mapping_df)
-
+    cv_df = cv_df.sort(gene_variation_method, descending=False)
     export_data(cv_df, count_df)
 
 

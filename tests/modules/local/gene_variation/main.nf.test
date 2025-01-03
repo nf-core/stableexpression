@@ -1,0 +1,57 @@
+nextflow_process {
+
+    name "Test Process GENE_VARIATION"
+    script "modules/local/gene_variation/main.nf"
+    process "GENE_VARIATION"
+    tag "genevar"
+    tag "module"
+
+    test("Method standard deviation") {
+
+        when {
+
+            process {
+                """
+                ch_counts = Channel.fromPath( '$projectDir/tests/input/gene_variation/counts*.csv', checkIfExists: true).collect()
+                ch_metadata = Channel.fromPath( '$projectDir/tests/input/gene_variation/metadata*.csv', checkIfExists: true ).collect()
+                ch_mapping = Channel.fromPath( '$projectDir/tests/input/gene_variation/mapping*.csv', checkIfExists: true ).collect()
+                input[0] = ch_counts
+                input[1] = ch_metadata
+                input[2] = ch_mapping
+                input[3] = 'std'
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+    test("Method coefficient of variation") {
+
+        when {
+
+            process {
+                """
+                ch_counts = Channel.fromPath( '$projectDir/tests/input/gene_variation/counts*.csv', checkIfExists: true).collect()
+                ch_metadata = Channel.fromPath( '$projectDir/tests/input/gene_variation/metadata*.csv', checkIfExists: true ).collect()
+                ch_mapping = Channel.fromPath( '$projectDir/tests/input/gene_variation/mapping*.csv', checkIfExists: true ).collect()
+                input[0] = ch_counts
+                input[1] = ch_metadata
+                input[2] = ch_mapping
+                input[3] = 'cv'
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

@@ -1,4 +1,4 @@
-name: variation_coefficient
+name: gene_variation
 channels:
   - conda-forge
 dependencies:

@@ -12,7 +12,7 @@ include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expres
 include { DESEQ2_NORMALISE                       } from '../modules/local/deseq2/normalise/main'
 include { EDGER_NORMALISE                        } from '../modules/local/edger/normalise/main'
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
-include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
+include { GENE_VARIATION                         } from '../modules/local/gene_variation/main'
 
 include { customSoftwareVersionsToYAML           } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { paramsSummaryLog                       } from 'plugin/nf-schema'
@@ -179,12 +179,13 @@ workflow STABLEEXPRESSION {
     // MODULE: Merge count files & compute variation coefficient for each gene
     //
 
-    VARIATION_COEFFICIENT(
+    GENE_VARIATION(
         GPROFILER_IDMAPPING.out.renamed.collect(),
         GPROFILER_IDMAPPING.out.metadata.collect(),
-        GPROFILER_IDMAPPING.out.mapping.collect()
+        GPROFILER_IDMAPPING.out.mapping.collect(),
+        Channel.value( params.gene_variation_method )
     )
-    ch_output_from_variation_coefficient = VARIATION_COEFFICIENT.out.csv
+    ch_output_from_gene_variation = GENE_VARIATION.out.csv
 
 
     //
@@ -202,7 +203,7 @@ workflow STABLEEXPRESSION {
 
     // only used for nf-test
     emit:
-        ch_output_from_variation_coefficient
+        ch_output_from_gene_variation
 
 
 }
