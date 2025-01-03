@@ -3,8 +3,20 @@ process EXPRESSIONATLAS_GETDATA {
     // limiting to 8 threads at a time to avoid 429 errors with the Expression Atlas API server
     maxForks 8
 
-    // ignoring accessions that cannot be retrieved from Expression Atlas (the script throws a 100 in this case)
-    errorStrategy { task.exitStatus == 100 ? 'ignore' : 'terminate' }
+
+    errorStrategy = {
+        if (task.exitStatus == 100) {
+            // ignoring accessions that cannot be retrieved from Expression Atlas (the script throws a 100 in this case)
+            return 'ignore'
+        } else if (task.exitStatus == 137) {
+            // in case of OOM errors, we wait a bit and try again
+            sleep(Math.pow(2, task.attempt) * 1000 as long)
+            return 'retry'
+        } else {
+            return 'terminate'
+        }
+    }
+    maxRetries = 5
 
     tag "$accession"
 
@@ -17,8 +29,9 @@ process EXPRESSIONATLAS_GETDATA {
     val(accession)
 
     output:
-    tuple val(accession), path("*.design.csv"), path("*raw.csv"),                   optional: true,                                     emit: raw
-    tuple val(accession), path("*.design.csv"), path("*normalised.csv"),            optional: true,                                     emit: normalised
+    tuple val(accession), path("*raw.csv"),                   optional: true,                                     emit: raw
+    tuple val(accession), path("*normalised.csv"),            optional: true,                                     emit: normalised
+    tuple val(accession), path("*.design.csv"),                                             emit: design
     tuple val("${task.process}"), val('R'),               eval('Rscript -e "cat(R.version.string)" | sed "s/R version //"'),            topic: versions
     tuple val("${task.process}"), val('ExpressionAtlas'), eval('Rscript -e "cat(as.character(packageVersion(\'ExpressionAtlas\')))"'),  topic: versions
 

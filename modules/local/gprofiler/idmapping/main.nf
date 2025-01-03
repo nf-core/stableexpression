@@ -5,8 +5,17 @@ process GPROFILER_IDMAPPING {
     // limiting to 8 threads at a time to avoid 429 errors with the G Profiler API server
     maxForks 8
 
-    // ignoring cases when the count dataframe is empty (the script throws a 100 in this case)
-    errorStrategy { task.exitStatus == 100 ? 'ignore' : 'terminate' }
+    errorStrategy = {
+        if (task.exitStatus == 100) {
+            // ignoring cases when the count dataframe is empty
+            return 'ignore'
+        } else if (task.exitStatus == 101) {
+            // likewise, when no mapping could be found, we do not want to continue with the subsequent steps
+            return 'ignore'
+        } else {
+            return 'terminate'
+        }
+    }
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

@@ -166,7 +166,7 @@ def main():
     count_file = args.count_file
     species_name = format_species_name(args.species)
     logger.info(
-        f"Converting IDs for species {species_name} and count file {count_file.name}..."
+        f"Converting IDs for species {args.species} and count file {count_file.name}..."
     )
 
     df = pd.read_csv(count_file, header=0, index_col=0)
@@ -192,11 +192,13 @@ def main():
     gene_metadata_df.drop_duplicates(inplace=True)
 
     if not mapping_dict:  # if mapping dict is empty
-        raise NoIDFoundException(
+        logger.error(
             f"No mapping found for gene names in count file {count_file.name} "
-            f"and for species {species_name}! "
-            f"Example of gene names found in the provided dataframe: {df.index[:5]}"
+            f"and for species {args.species}! "
+            f"Example of gene names found in the provided dataframe: {df.index[:5].tolist()}"
+            f"Count file is empty! Aborting ID mapping..."
         )
+        sys.exit(101)
 
     # filtering the DataFrame to keep only the rows where the index can be mapped
     df = df.loc[df.index.isin(mapping_dict)]
