@@ -31,6 +31,8 @@ GPROFILER_CONVERT_API_ENDPOINT = "https://biit.cs.ut.ee/gprofiler/api/convert/co
 TARGET_DATABASE = "ENSG"  # Ensembl database
 COLS_TO_KEEP = ["incoming", "converted", "name", "description"]
 DESCRIPTION_PART_TO_REMOVE_REGEX = r"\s*\[Source:.*?\]"
+ORIGINAL_GENE_ID_COLNAME = "original_gene_id"
+ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 
 
 ##################################################################
@@ -135,16 +137,20 @@ def convert_ids(gene_ids: list, species: str):
 
     # dict associating incoming IDs to converted IDs
     mapping_dict = df.set_index("incoming").to_dict()["converted"]
+
     # DataFrame associating converted IDs to name and description
-    meta_df = df.drop(columns=["incoming"]).rename(columns={"converted": "gene_id"})
+    meta_df = df.drop(columns=["incoming"]).rename(
+        columns={"converted": ENSEMBL_GENE_ID_COLNAME}
+    )
+
+    meta_df["name"] = meta_df["name"].str.replace(",", ";")
 
     # Extract the part before '[Source:...]', or the whole string if not found
-    meta_df["description"] = meta_df["description"].str.replace(
-        DESCRIPTION_PART_TO_REMOVE_REGEX, "", regex=True
+    meta_df["description"] = (
+        meta_df["description"]
+        .str.replace(DESCRIPTION_PART_TO_REMOVE_REGEX, "", regex=True)
+        .str.replace(",", ";")
     )
-    # replacing commas (if any) with semicolons
-    meta_df["name"] = meta_df["name"].str.replace(",", ";")
-    meta_df["description"] = meta_df["description"].str.replace(",", ";")
 
     return mapping_dict, meta_df
 
@@ -197,15 +203,17 @@ def main():
 
     # renaming gene names to mapped ids using mapping dict
     df.index = df.index.map(mapping_dict)
+    df.reset_index(inplace=True)
+    df.rename(columns={"index": ENSEMBL_GENE_ID_COLNAME}, inplace=True)
 
     # TODO: check is there is another way to avoid duplicate gene names
     # sometimes different gene names have the same ensembl ID
     # for now, we just get the mean of values, but this is not ideal
-    df = df.groupby(df.index).mean()
+    df = df.groupby(ENSEMBL_GENE_ID_COLNAME, as_index=False).mean()
 
     # writing to output file
     outfile = count_file.with_name(count_file.stem + RENAMED_FILE_SUFFIX)
-    df.to_csv(outfile, index=True, header=True)
+    df.to_csv(outfile, index=False, header=True)
 
     # writing gene metadata to file
     metadata_file = count_file.with_name(count_file.stem + METADATA_FILE_SUFFIX)
@@ -215,7 +223,7 @@ def main():
     mapping_df = (
         pd.DataFrame(mapping_dict, index=[0])
         .T.reset_index()  # transpose: setting keys as indexes instead of columns
-        .rename(columns={"index": "original", 0: "new"})
+        .rename(columns={"index": ORIGINAL_GENE_ID_COLNAME, 0: ENSEMBL_GENE_ID_COLNAME})
     )
     mapping_file = count_file.with_name(count_file.stem + MAPPING_FILE_SUFFIX)
     mapping_df.to_csv(mapping_file, index=False, header=True)

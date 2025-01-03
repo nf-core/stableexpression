@@ -1,6 +1,0 @@
-name: concat
-channels:
-  - conda-forge
-dependencies:
-  - conda-forge::python==3.12.8
-  - conda-forge::pandas==2.2.3

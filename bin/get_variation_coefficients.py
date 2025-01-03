@@ -1,11 +1,20 @@
+#!/usr/bin/env python3
+
+# Written by Olivier Coen. Released under the MIT license.
+
 import argparse
-import pandas as pd
-import numpy as np
+import polars as pl
 from pathlib import Path
 import logging
+from functools import reduce
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+ORIGINAL_GENE_ID_COLNAME = "original_gene_id"
+ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
+CV_OUTFILENAME = "variation_coefficients.csv"
+COUNT_OUTFILENAME = "all_normalised_counts.csv"
 
 # Get variation coefficient from count data for each gene
 # The variation coefficient is the ratio of the standard deviation to the mean
@@ -28,93 +37,160 @@ def parse_args():
         description="Get variation coefficient from count data for each gene"
     )
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts", type=str, dest="count_files", required=True, help="Count file"
     )
     parser.add_argument(
         "--metadata",
-        type=Path,
-        dest="metadata_file",
+        type=str,
+        dest="metadata_files",
         required=True,
         help="Metadata file",
     )
     parser.add_argument(
-        "--mapping", type=Path, dest="mapping_file", required=True, help="Mapping file"
+        "--mappings", type=str, dest="mapping_files", required=True, help="Mapping file"
     )
     return parser.parse_args()
 
 
-def get_counts(count_file: Path) -> pd.DataFrame:
-    return pd.read_csv(count_file, index_col=0, header=0)
+def is_valid_df(df: pl.LazyFrame, file: Path) -> bool:
+    try:
+        return not df.limit(1).collect().is_empty()
+    except (
+        FileNotFoundError
+    ):  # strangely enough we get this error for files existing but empty
+        logger.error(f"Could not find file {str(file)}")
+        return False
+    except pl.exceptions.NoDataError as err:
+        logger.error(f"File {str(file)} is empty: {err}")
+        return False
 
 
-def get_metadata(metadata_file: Path) -> pd.DataFrame:
-    return pd.read_csv(metadata_file, header=0)
+def get_valid_lazy_dfs(files: list[Path]) -> list[pl.LazyFrame]:
+    df_dict = {file: pl.scan_csv(file) for file in files}
+    return [df for file, df in df_dict.items() if is_valid_df(df, file)]
 
 
-def get_mappings(mapping_file: Path) -> pd.DataFrame:
-    mapping_df = pd.read_csv(mapping_file, header=0)
+def join_dfs(df1: pl.LazyFrame, df2: pl.LazyFrame):
+    return df1.join(df2, on=ENSEMBL_GENE_ID_COLNAME, how="full", coalesce=True)
+
+
+def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame:
+    dfs = get_valid_lazy_dfs(files)
+    concat_df = pl.concat(dfs)
+    # dropping duplicates
+    # casting all columns to String
+    return concat_df.unique().with_columns(
+        [
+            pl.col(column).cast(pl.String)
+            for column in concat_df.collect_schema().names()
+        ]
+    )
+
+
+def get_count_columns(df: pl.LazyFrame) -> list[str]:
+    return [
+        col for col in df.collect_schema().names() if col != ENSEMBL_GENE_ID_COLNAME
+    ]
+
+
+def get_counts(files: list[Path]) -> pl.LazyFrame:
+    # lazy loading
+    dfs = get_valid_lazy_dfs(files)
+    # joining all count files
+    merged_df = reduce(join_dfs, dfs)
+    # casting count columns to Float64
+    # casting gene id column to String
+    count_columns = get_count_columns(merged_df)
+    return merged_df.with_columns(
+        [pl.col(column).cast(pl.Float64) for column in count_columns]
+    ).with_columns([pl.col(ENSEMBL_GENE_ID_COLNAME).cast(pl.String)])
+
+
+def get_metadata(metadata_files: list[Path]) -> pl.LazyFrame:
+    return concat_cast_to_string_and_drop_duplicates(metadata_files)
+
+
+def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
+    concat_df = concat_cast_to_string_and_drop_duplicates(mapping_files)
     # group by new gene IDs and gets the list of distinct original gene IDs for each group
     # convert the list column to a string representation
     # separate the original gene IDs with a semicolon
-    aggregated_df = (
-        mapping_df.groupby("new")["original"]
-        .apply(lambda x: ";".join(sorted(x.unique())))
-        .reset_index()
-        .rename(columns={"original": "original_gene_ids"})
+    return concat_df.group_by(ENSEMBL_GENE_ID_COLNAME).agg(
+        pl.col(ORIGINAL_GENE_ID_COLNAME)
+        .unique()
+        .sort()
+        .str.join(";")
+        .alias("original_gene_ids")
     )
-    return aggregated_df
 
 
-def average_log2(row):
-    # the dataframe has already been filtered to exclude rows where mean is 0
-    return np.mean(np.log2(row + 1))  # adds 1 to avoid log(0) and to stabilize variance
+def get_coefficient_of_variation(count_df: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Compute the coefficient of variation (CV) for each gene in the count dataframe.
 
-
-def get_variation_coefficient(count_df: pd.DataFrame) -> pd.DataFrame:
+    CV is the ratio of the standard deviation to the mean.
+    """
     logger.info("Getting coefficients of variation")
+    count_columns = get_count_columns(count_df)
+    return count_df.with_columns(
+        mean=pl.concat_list(count_columns).list.mean(),
+        std=pl.concat_list(count_columns).list.std(),
+    ).select(
+        pl.col(ENSEMBL_GENE_ID_COLNAME),
+        (pl.col("std") / pl.col("mean")).alias("variation_coefficient"),
+    )
+
+
+def get_average_log2(count_df: pl.LazyFrame) -> pl.LazyFrame:
+    # the dataframe has already been filtered to exclude rows where mean is 0
+    # adds 1 to avoid log(0) and to stabilize variance
+    logger.info("Getting average log2 counts")
+    count_columns = get_count_columns(count_df)
+    transformed_cols = [pl.col(ENSEMBL_GENE_ID_COLNAME)] + [
+        (pl.col(column) + 1).log(2).alias(column) for column in count_columns
+    ]
+    return (
+        count_df.select(transformed_cols)
+        .with_columns(average_log2_count=pl.concat_list(count_columns).list.mean())
+        .select(pl.col(ENSEMBL_GENE_ID_COLNAME), pl.col("average_log2_count"))
+    )
+
+
+def aggregate_expression_values(count_df: pl.LazyFrame) -> pl.LazyFrame:
     # handling NA values (genes that are not found in all datasets)
     # replace NaN values with 0
-    count_df.fillna(0, inplace=True)
+    count_df = count_df.fill_null(0)
 
-    # calculate the coefficient of variation (cv)
-    # as the ratio of the standard deviation to the mean
-    row_means = count_df.mean(axis=1)
-    row_sds = count_df.std(axis=1)
-    cv = row_sds / row_means
+    # getting column containing the variation coefficient
+    variation_coefficient = get_coefficient_of_variation(count_df)
 
-    # get the average log cpm value for each gene
+    # get the average log cpm valucoen.olivier@gmail.come for each gene
     # to get an idea of the overall expression level of each gene
-    av_log_cpm = count_df.apply(average_log2, axis=1)
+    average_log_cpm = get_average_log2(count_df)
 
-    # combine results into a dataframe
-    df = pd.DataFrame({"variation_coefficient": cv, "average_log_cpm": av_log_cpm})
-    # order dataframe (from lowest to highest variation coefficient)
-    df = df.sort_values("variation_coefficient", ascending=True)
-
-    return df
+    return variation_coefficient.join(
+        average_log_cpm, on=ENSEMBL_GENE_ID_COLNAME, how="left"
+    )
 
 
 def merge_data(
-    cv_df: pd.DataFrame, metadata_df: pd.DataFrame, mapping_df: pd.DataFrame
-) -> pd.DataFrame:
+    cv_df: pl.LazyFrame, metadata_df: pl.LazyFrame, mapping_df: pl.LazyFrame
+) -> pl.LazyFrame:
     # we need to ensure that the index of cv_df are strings
     return (
-        cv_df.reset_index()
-        .rename(columns={"index": "ensembl_gene_id"})
-        .merge(metadata_df, left_on="ensembl_gene_id", right_on="gene_id", how="left")
-        .merge(mapping_df, left_on="ensembl_gene_id", right_on="new", how="left")
-        .drop(columns="new")
+        cv_df.join(metadata_df, on=ENSEMBL_GENE_ID_COLNAME, how="left")
+        .join(mapping_df, on=ENSEMBL_GENE_ID_COLNAME, how="left")
+        .unique()  # just in case
+        .sort("variation_coefficient")
     )
 
 
-def export_data(cv_df: pd.DataFrame, count_df: pd.DataFrame):
-    count_outfilename = "all_normalised_counts.csv"
-    logger.info(f"Exporting normalised counts to: {count_outfilename}")
-    count_df.to_csv(count_outfilename, index=True)
+def export_data(cv_df: pl.LazyFrame, count_df: pl.LazyFrame):
+    logger.info(f"Exporting normalised counts to: {COUNT_OUTFILENAME}")
+    count_df.collect().write_csv(COUNT_OUTFILENAME)
 
-    cv_outfilename = "variation_coefficients.csv"
-    logger.info(f"Exporting variation coefficients to: {cv_outfilename}")
-    cv_df.to_csv(cv_outfilename, index=False)
+    logger.info(f"Exporting variation coefficients to: {CV_OUTFILENAME}")
+    cv_df.collect().write_csv(CV_OUTFILENAME)
 
 
 #####################################################
@@ -126,15 +202,18 @@ def export_data(cv_df: pd.DataFrame, count_df: pd.DataFrame):
 
 def main():
     args = parse_args()
+    count_files = [Path(file) for file in args.count_files.split(" ")]
+    metadata_files = [Path(file) for file in args.metadata_files.split(" ")]
+    mapping_files = [Path(file) for file in args.mapping_files.split(" ")]
 
-    count_df = get_counts(args.count_file)
-    cv_df = get_variation_coefficient(count_df)
+    count_df = get_counts(count_files)
+    cv_df = aggregate_expression_values(count_df)
 
-    metadata_df = get_metadata(args.metadata_file)
-    mapping_df = get_mappings(args.mapping_file)
+    metadata_df = get_metadata(metadata_files)
+    mapping_df = get_mappings(mapping_files)
 
     cv_df = merge_data(cv_df, metadata_df, mapping_df)
-    print(cv_df)
+
     export_data(cv_df, count_df)
 
 

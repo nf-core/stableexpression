@@ -88,10 +88,10 @@
         "content": [
             {
                 "0": [
-                    "variation_coefficients.csv:md5,c17c7c45d599dcd1611e2bbd4264fce7"
+                    "variation_coefficients.csv:md5,354aa7ee34a20ebf4b09d3be78c54194"
                 ],
                 "ch_output_from_variation_coefficient": [
-                    "variation_coefficients.csv:md5,c17c7c45d599dcd1611e2bbd4264fce7"
+                    "variation_coefficients.csv:md5,354aa7ee34a20ebf4b09d3be78c54194"
                 ]
             }
         ],
@@ -99,7 +99,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2024-12-31T21:05:38.889725"
+        "timestamp": "2025-01-03T11:21:34.40984841"
     },
     "Two Expression Atlas accessions provided - normalisation with EdgeR": {
         "content": [

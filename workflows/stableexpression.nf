@@ -12,12 +12,11 @@ include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expres
 include { DESEQ2_NORMALISE                       } from '../modules/local/deseq2/normalise/main'
 include { EDGER_NORMALISE                        } from '../modules/local/edger/normalise/main'
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
-include { MERGE_COUNTS                           } from '../modules/local/merge_counts/main'
-include { CONCATENATE_REMOVE_DUPS                } from '../modules/local/concatenate_remove_dups/main'
 include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
 
 include { customSoftwareVersionsToYAML           } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
-include { paramsSummaryMap                       } from 'plugin/nf-schema'
+include { paramsSummaryLog                       } from 'plugin/nf-schema'
+include { validateParameters                     } from 'plugin/nf-schema'
 include { samplesheetToList                      } from 'plugin/nf-schema'
 
 
@@ -33,6 +32,9 @@ workflow STABLEEXPRESSION {
     // Checking input parameters
     //
 
+    // Validate input parameters
+    validateParameters()
+
     if ( !params.species ) {
         error('You must provide a species name')
     }
@@ -45,6 +47,9 @@ workflow STABLEEXPRESSION {
         ) {
         error('You must provide at least either --datasets or --fetch_eatlas_accessions or --eatlas_accessions or --eatlas_keywords')
     }
+
+    // Print summary of supplied parameters
+    // log.info paramsSummaryLog(workflow)
 
     //
     // Initializing channels
@@ -66,7 +71,7 @@ workflow STABLEEXPRESSION {
 
         // reads list of input datasets from input file
         // and splits them in normalised and raw sub-channels
-        Channel.fromList( samplesheetToList(params.datasets, "${projectDir}/assets/schema_input.json") )
+        Channel.fromList(samplesheetToList(params.datasets, "assets/schema_input.json"))
             .map {
                 item ->
                     def (count_file, design_file, normalised) = item
@@ -170,34 +175,14 @@ workflow STABLEEXPRESSION {
     // tries to map gene IDs to Ensembl IDs whenever possible
     GPROFILER_IDMAPPING( ch_all_normalised.combine(ch_species) )
 
-    GPROFILER_IDMAPPING.out.renamed
-        .reduce {
-            file1, file2 -> MERGE_COUNTS(file1, file2)
-        }
-        .set { ch_counts_renamed_merged }
-
-    GPROFILER_IDMAPPING.out.metadata
-        .reduce {
-            file1, file2 -> CONCATENATE_REMOVE_DUPS(file1, file2)
-        }
-        .set { ch_gene_metadata_merged }
-
-    GPROFILER_IDMAPPING.out.mapping
-        .reduce {
-            file1, file2 -> CONCATENATE_REMOVE_DUPS(file1, file2)
-        }
-        .set { ch_gene_idmapping_merged }
-
     //
     // MODULE: Merge count files & compute variation coefficient for each gene
     //
 
-
-
     VARIATION_COEFFICIENT(
-        ch_counts_renamed_merged,
-        ch_gene_metadata_merged,
-        ch_gene_idmapping_merged
+        GPROFILER_IDMAPPING.out.renamed.collect(),
+        GPROFILER_IDMAPPING.out.metadata.collect(),
+        GPROFILER_IDMAPPING.out.mapping.collect()
     )
     ch_output_from_variation_coefficient = VARIATION_COEFFICIENT.out.csv
 

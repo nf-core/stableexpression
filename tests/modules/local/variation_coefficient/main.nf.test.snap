@@ -3,17 +3,17 @@
         "content": [
             {
                 "0": [
-                    "variation_coefficients.csv:md5,329ed4c3197a7b48c8f5ef47f35caa1e"
+                    "variation_coefficients.csv:md5,53c4ce914fb26c3c0c54cf9d34f99b2b"
                 ],
                 "1": [
                     [
                         "VARIATION_COEFFICIENT",
                         "R",
-                        "4.3.3 (2024-02-29)"
+                        ""
                     ]
                 ],
                 "csv": [
-                    "variation_coefficients.csv:md5,329ed4c3197a7b48c8f5ef47f35caa1e"
+                    "variation_coefficients.csv:md5,53c4ce914fb26c3c0c54cf9d34f99b2b"
                 ]
             }
         ],
@@ -21,6 +21,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-01T20:40:24.443926287"
+        "timestamp": "2025-01-03T11:08:35.181976931"
     }
 }

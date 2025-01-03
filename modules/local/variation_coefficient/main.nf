@@ -1,16 +1,18 @@
 process VARIATION_COEFFICIENT {
 
+    debug true
+
     publishDir "${params.outdir}/variation_coefficients"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ea/eac9296641a6b7b5052cad88b74f09d0f48ae25bca90468645b22bf37bec74b8/data':
-        'community.wave.seqera.io/library/r-base_r-data.table_r-dplyr_r-optparse_r-tibble:afb27df3e35caae2' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f8a5d02e7b31980c887253a9f118da0ef91ead1c7b158caf855199e5c5d5473/data':
+        'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    path count_file
-    path metadata
-    path mapping
+    path count_files, stageAs: "?/*"
+    path metadata_files, stageAs: "?/*"
+    path mapping_files, stageAs: "?/*"
 
     output:
     path 'variation_coefficients.csv',                                                                           emit: csv
@@ -19,7 +21,7 @@ process VARIATION_COEFFICIENT {
 
     script:
     """
-    get_variation_coefficients.py --counts "$count_file" --metadata "$metadata" --mapping "$mapping"
+    get_variation_coefficients.py --counts "$count_files" --metadata "$metadata_files" --mappings "$mapping_files"
     """
 
 }

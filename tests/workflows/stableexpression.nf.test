@@ -11,6 +11,7 @@ nextflow_workflow {
 
         when {
             params {
+                outdir = "results"
                 species = 'solanum tuberosum'
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
             }
@@ -28,6 +29,7 @@ nextflow_workflow {
 
         when {
             params {
+                outdir = "results"
                 species = 'solanum tuberosum'
                 fetch_eatlas_accessions = true
             }
@@ -45,6 +47,7 @@ nextflow_workflow {
 
         when {
             params {
+                outdir = "results"
                 species = 'solanum tuberosum'
                 eatlas_keywords = "potato,stress"
             }
@@ -62,6 +65,7 @@ nextflow_workflow {
 
         when {
             params {
+                outdir = "results"
                 species = 'solanum tuberosum'
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
                 normalisation_method = "edger"
@@ -80,6 +84,7 @@ nextflow_workflow {
 
         when {
             params {
+                outdir = "results"
                 species = 'solanum tuberosum'
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
                 allow_zeros = true
@@ -96,6 +101,7 @@ nextflow_workflow {
 
         when {
             params {
+                outdir = "results"
                 species = 'solanum tuberosum'
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
                 eatlas_keywords = "phloem"
