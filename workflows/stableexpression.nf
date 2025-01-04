@@ -14,10 +14,12 @@ include { EDGER_NORMALISE                        } from '../modules/local/edger/
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
 include { GENE_VARIATION                         } from '../modules/local/gene_variation/main'
 
+include { parseInputDatasets                     } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
+include { groupFilesByDatasetId                  } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
+include { augmentWithDatasetId                   } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { customSoftwareVersionsToYAML           } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { paramsSummaryLog                       } from 'plugin/nf-schema'
 include { validateParameters                     } from 'plugin/nf-schema'
-include { samplesheetToList                      } from 'plugin/nf-schema'
 
 
 /*
@@ -33,7 +35,7 @@ workflow STABLEEXPRESSION {
     //
 
     // Validate input parameters
-    validateParameters()
+    //validateParameters()
 
     if ( !params.species ) {
         error('You must provide a species name')
@@ -71,28 +73,14 @@ workflow STABLEEXPRESSION {
 
         // reads list of input datasets from input file
         // and splits them in normalised and raw sub-channels
-        Channel.fromList(samplesheetToList(params.datasets, "assets/schema_input.json"))
-            .map {
-                item ->
-                    def (count_file, design_file, normalised) = item
-                    meta = [accession: count_file.name, design: design_file]
-                    [meta, count_file, normalised]
-            }
-            .branch {
-                item ->
-                    normalised: item[2] == true
-                    raw: item[2] == false
-            }
-            .set { ch_input_datasets }
+        ch_input_datasets = parseInputDatasets( params.datasets )
 
-        // removes the third element ("normalised" column) and adds to the corresponding channel
         ch_normalised_datasets = ch_normalised_datasets.concat(
             ch_input_datasets.normalised.map{ it -> it.take(2) }
         )
         ch_raw_datasets = ch_raw_datasets.concat(
             ch_input_datasets.raw.map{ it -> it.take(2) }
         )
-
     }
 
     // parsing Expression Atlas accessions if provided
@@ -111,19 +99,18 @@ workflow STABLEEXPRESSION {
         // MODULE: Expression Atlas - Get accessions
         //
 
-        // keeping the keywords (separated by spaces) as a single string
-        ch_keywords = Channel.value( params.eatlas_keywords )
-
         // getting Expression Atlas accessions given a species name and keywords
         // keywords can be an empty string
-        EXPRESSIONATLAS_GETACCESSIONS( ch_species, ch_keywords )
+        EXPRESSIONATLAS_GETACCESSIONS(
+            ch_species,
+            Channel.value( params.eatlas_keywords )
+            )
 
         // appending to accessions provided by the user
         // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
         ch_accessions = ch_accessions
                             .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
                             .unique()
-
     }
 
     //
@@ -133,23 +120,25 @@ workflow STABLEEXPRESSION {
     // Downloading Expression Atlas data for each accession in ch_accessions
     EXPRESSIONATLAS_GETDATA( ch_accessions )
 
-    // separating and arranging EXPRESSIONATLAS_GETDATA output in two separate channels (already normalised or raw data)
-    ch_normalised_datasets = ch_normalised_datasets.concat(
-        EXPRESSIONATLAS_GETDATA.out.normalised.map {
-            accession, design_file, count_file ->
-                meta = [accession: accession, design: design_file]
-                [meta, count_file]
-        }
+    // adding dataset id (accession + data_type) in the file meta
+    ch_etlas_output_design = augmentWithDatasetId( EXPRESSIONATLAS_GETDATA.out.design.flatten() )
+    ch_eatlas_normalized_output = augmentWithDatasetId( EXPRESSIONATLAS_GETDATA.out.normalised.flatten() )
+    ch_eatlas_raw_output = augmentWithDatasetId( EXPRESSIONATLAS_GETDATA.out.raw.flatten() )
+
+    // adding design files to the meta their respective count files
+    ch_eatlas_normalized = groupFilesByDatasetId(
+        ch_etlas_output_design,
+        ch_eatlas_normalized_output
     )
 
-    ch_raw_datasets = ch_raw_datasets.concat(
-        EXPRESSIONATLAS_GETDATA.out.raw.map {
-            accession, design_file, count_file ->
-                meta = [accession: accession, design: design_file]
-                [meta, count_file]
-            }
+    ch_eatlas_raw = groupFilesByDatasetId(
+        ch_etlas_output_design,
+        ch_eatlas_raw_output
     )
 
+    // putting all normalized and raw datasets together (local datasets + Expression Atlas datasets)
+    ch_normalised_datasets = ch_normalised_datasets.concat( ch_eatlas_normalized )
+    ch_raw_datasets = ch_raw_datasets.concat( ch_eatlas_raw )
 
     //
     // MODULE: normalisation of raw count datasets (including RNA-seq datasets)

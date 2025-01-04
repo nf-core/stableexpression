@@ -1,7 +1,5 @@
 process GENE_VARIATION {
 
-    debug true
-
     publishDir "${params.outdir}/gene_variation"
 
     conda "${moduleDir}/environment.yml"

@@ -2,6 +2,8 @@ process DESEQ2_NORMALISE {
 
     publishDir "${params.outdir}/normalisation/deseq2"
 
+    tag "${meta.dataset}"
+
     // ignoring cases when the count dataframe gets empty after filtering (the script throws a 100 in this case)
     // the subsequent steps will not be run for this dataset
     errorStrategy { task.exitStatus == 100 ? 'ignore' : 'terminate' }

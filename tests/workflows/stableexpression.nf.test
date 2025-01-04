@@ -23,6 +23,24 @@ nextflow_workflow {
         }
     }
 
+    test("Expression Atlas accession - two output datasets") {
+
+        tag "workflow_eatlas_accession_two_datasets"
+
+        when {
+            params {
+                outdir = "results"
+                species = 'homo sapiens'
+                eatlas_accessions = "E-GEOD-1615"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
     test("Two Expression Atlas no keyword (whole species)") {
 
         tag "workflow_eatlas_no_kw"
@@ -78,16 +96,15 @@ nextflow_workflow {
         }
     }
 
-    test("Two Expression Atlas accessions provided - skip no zero filter") {
+    test("Test workflow datasets") {
 
-        tag "workflow_eatlas_accessions"
+        tag "worfklow_datasets"
 
         when {
             params {
                 outdir = "results"
                 species = 'solanum tuberosum'
-                eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
-                allow_zeros = true
+                datasets = "tests/input/custom_datasets/input.csv"
             }
         }
 
@@ -95,9 +112,10 @@ nextflow_workflow {
             assert workflow.success
             assert snapshot(workflow.out).match()
         }
+
     }
 
-    test("Full workflow - Expression Atlas only") {
+    test("Test workflow - common accession (E-MTAB-552) between manual and auto") {
 
         when {
             params {

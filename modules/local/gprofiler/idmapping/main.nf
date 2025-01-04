@@ -1,6 +1,8 @@
 process GPROFILER_IDMAPPING {
-    debug true
+
     publishDir "${params.outdir}/idmapping"
+
+    tag "${meta.dataset}"
 
     // limiting to 8 threads at a time to avoid 429 errors with the G Profiler API server
     maxForks 8

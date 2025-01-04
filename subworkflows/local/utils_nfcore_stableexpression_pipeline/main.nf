@@ -21,6 +21,7 @@ include { imNotification            } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NFCORE_PIPELINE     } from '../../nf-core/utils_nfcore_pipeline'
 include { workflowCitation          } from '../../nf-core/utils_nfcore_pipeline'
 include { workflowVersionToYAML     } from '../../nf-core/utils_nfcore_pipeline'
+include { samplesheetToList         } from 'plugin/nf-schema'
 
 /*
 ========================================================================================
@@ -133,8 +134,6 @@ def customProcessVersionsFromYAML(yaml_file) {
     return yaml.dumpAsMap(versions).trim()
 }
 
-// def dumpVersionsYAML()
-
 //
 // Get channel of software versions used in pipeline in YAML format
 //
@@ -154,4 +153,55 @@ def customSoftwareVersionsToYAML(versions) {
                 }
                 .map { customProcessVersionsFromYAML(it) }
             )
+}
+
+//
+// Parses files from input dataset and creates two subchannels raw and normalized
+// with elements like [meta, count_file, normalised]
+//
+def parseInputDatasets(samplesheet) {
+    return Channel.fromList( samplesheetToList(samplesheet, "assets/schema_input.json") )
+            .map {
+                item ->
+                    def (count_file, design_file, normalised) = item
+                    meta = [dataset: count_file.getBaseName(), design: design_file]
+                    [meta, count_file, normalised]
+            }
+            .branch {
+                item ->
+                    normalised: item[2] == true
+                    raw: item[2] == false
+            }
+}
+
+//
+// Get Expression Atlas Batch ID (accession + data_type) from file stem
+//
+def augmentWithDatasetId( ch_files ) {
+    return ch_files
+            .map {
+                file ->
+                    [[dataset: file.getSimpleName()], file]
+            }
+}
+
+//
+// Groups design and data files by accession and data_type
+//
+def groupFilesByDatasetId(ch_design, ch_counts) {
+    return ch_design
+        .concat( ch_counts ) // puts counts at the end of the resulting channel
+        .groupTuple() // groups by dataset ID; design files are necessarily BEFORE count files
+        .filter {
+            it.get(1).size() == 2 // only groups with two files
+        }
+        .filter { // only groups with first file as design file and second one as count file
+            meta, files ->
+                files.get(0).name.endsWith('.design.csv') && !files.get(1).name.endsWith('.design.csv')
+        }
+        .map { // putting design file in meta
+            meta, files ->
+                def newMeta = meta + [design: files[0]]
+                [newMeta, files[1]]
+        }
 }
