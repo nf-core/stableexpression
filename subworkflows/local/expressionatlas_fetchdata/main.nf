@@ -47,6 +47,8 @@ workflow EXPRESSIONATLAS_FETCHDATA {
         ch_accessions = ch_accessions
                             .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
                             .unique()
+                            .map { it -> it.trim() }
+                            .filter { it.startsWith('E-') && !it.startsWith('E-PROT-') }
     }
 
     //

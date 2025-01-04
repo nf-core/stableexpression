@@ -11,7 +11,7 @@ nextflow_workflow {
             workflow {
                 """
                 species = 'solanum tuberosum'
-                eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
                 eatlas_keywords = "potato,stress"
                 fetch_eatlas_accessions = false // no impact since we define keywords
 

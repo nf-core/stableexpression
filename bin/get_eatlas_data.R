@@ -5,8 +5,6 @@
 library(ExpressionAtlas)
 library(optparse)
 
-options (error = traceback)
-
 #####################################################
 #####################################################
 # FUNCTIONS
@@ -45,7 +43,7 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
             }
 
             # else, retrying
-            message("Attempt ", attempts, " Warning message: ", w$message)
+            message("Attempt ", attempts, " Warning: ", w$message)
 
             if (attempts < max_retries) {
                 warning("Retrying in ", wait_time, " seconds...")
@@ -64,7 +62,7 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
 
         }, error = function(e) {
 
-            message("Attempt ", attempts, " Error status: ", e$status, " Message: ", e$message)
+            message("Attempt ", attempts, " Message: ", e$message)
 
             if (attempts < max_retries) {
                 warning("Retrying in ", wait_time, " seconds...")
@@ -72,7 +70,7 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
 
             } else {
 
-                if (e$message == "ERROR - Download appeared successful but no experiment summary object was found") {
+                if (grepl("Download appeared successful but no experiment summary object was found", e$message)) {
                     warning(e$message)
                     quit(save = "no", status = 100) # quit & ignore process
                 } else {
@@ -193,6 +191,12 @@ process_data <- function(atlas_data, accession) {
 #####################################################
 
 args <- get_args()
+
+accession <- trimws(args$accession)
+if (startsWith(accession, "E-PROT")) {
+    warning("Ignoring the ", accession, " experiment.")
+    quit(save = "no", status = 100) # quit & ignore process
+}
 
 # searching and downloading expression atlas data
 atlas_data <- download_expression_atlas_data_with_retries(args$accession)
