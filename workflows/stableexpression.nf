@@ -7,16 +7,14 @@ nextflow.preview.topic = true
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { EXPRESSIONATLAS_GETACCESSIONS          } from '../modules/local/expressionatlas/getaccessions/main'
-include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expressionatlas/getdata/main'
+include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/expressionatlas_fetchdata/main'
+
 include { DESEQ2_NORMALISE                       } from '../modules/local/deseq2/normalise/main'
 include { EDGER_NORMALISE                        } from '../modules/local/edger/normalise/main'
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
 include { GENE_VARIATION                         } from '../modules/local/gene_variation/main'
 
 include { parseInputDatasets                     } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
-include { groupFilesByDatasetId                  } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
-include { augmentWithDatasetId                   } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { customSoftwareVersionsToYAML           } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { paramsSummaryLog                       } from 'plugin/nf-schema'
 include { validateParameters                     } from 'plugin/nf-schema'
@@ -57,12 +55,10 @@ workflow STABLEEXPRESSION {
     // Initializing channels
     //
 
-    def species = params.species.split(' ').join('_')
-    ch_species = Channel.value( species )
+    ch_species = Channel.value( params.species.split(' ').join('_') )
 
     ch_normalised_datasets = Channel.empty()
     ch_raw_datasets = Channel.empty()
-    ch_accessions = Channel.empty()
 
     // if input datasets were provided
     if ( params.datasets ) {
@@ -83,62 +79,20 @@ workflow STABLEEXPRESSION {
         )
     }
 
-    // parsing Expression Atlas accessions if provided
-    if ( params.eatlas_accessions ) {
-
-        // parsing accessions from provided parameter
-        ch_accessions = Channel.fromList( params.eatlas_accessions.tokenize(',') )
-
-    }
-
-
-    // fetching Expression Atlas accessions if applicable
-    if ( params.fetch_eatlas_accessions || params.eatlas_keywords ) {
-
-        //
-        // MODULE: Expression Atlas - Get accessions
-        //
-
-        // getting Expression Atlas accessions given a species name and keywords
-        // keywords can be an empty string
-        EXPRESSIONATLAS_GETACCESSIONS(
-            ch_species,
-            Channel.value( params.eatlas_keywords )
-            )
-
-        // appending to accessions provided by the user
-        // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
-        ch_accessions = ch_accessions
-                            .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
-                            .unique()
-    }
-
     //
-    // MODULE: Expression Atlas - Get data
+    // SUBWORKFLOW: fetching Expression Atlas datasets if needed
     //
 
-    // Downloading Expression Atlas data for each accession in ch_accessions
-    EXPRESSIONATLAS_GETDATA( ch_accessions )
-
-    // adding dataset id (accession + data_type) in the file meta
-    ch_etlas_output_design = augmentWithDatasetId( EXPRESSIONATLAS_GETDATA.out.design.flatten() )
-    ch_eatlas_normalized_output = augmentWithDatasetId( EXPRESSIONATLAS_GETDATA.out.normalised.flatten() )
-    ch_eatlas_raw_output = augmentWithDatasetId( EXPRESSIONATLAS_GETDATA.out.raw.flatten() )
-
-    // adding design files to the meta their respective count files
-    ch_eatlas_normalized = groupFilesByDatasetId(
-        ch_etlas_output_design,
-        ch_eatlas_normalized_output
-    )
-
-    ch_eatlas_raw = groupFilesByDatasetId(
-        ch_etlas_output_design,
-        ch_eatlas_raw_output
+    EXPRESSIONATLAS_FETCHDATA(
+        ch_species,
+        params.eatlas_accessions,
+        params.eatlas_keywords,
+        params.fetch_eatlas_accessions
     )
 
     // putting all normalized and raw datasets together (local datasets + Expression Atlas datasets)
-    ch_normalised_datasets = ch_normalised_datasets.concat( ch_eatlas_normalized )
-    ch_raw_datasets = ch_raw_datasets.concat( ch_eatlas_raw )
+    ch_normalised_datasets = ch_normalised_datasets.concat( EXPRESSIONATLAS_FETCHDATA.out.normalised )
+    ch_raw_datasets = ch_raw_datasets.concat( EXPRESSIONATLAS_FETCHDATA.out.raw )
 
     //
     // MODULE: normalisation of raw count datasets (including RNA-seq datasets)

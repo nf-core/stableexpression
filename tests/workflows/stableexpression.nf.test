@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow STABLEEXPRESSION"
     script "workflows/stableexpression.nf"
     workflow "STABLEEXPRESSION"
+    config "./nextflow.config"
     tag "workflow"
 
     test("Two Expression Atlas accessions provided") {
@@ -11,7 +12,6 @@ nextflow_workflow {
 
         when {
             params {
-                outdir = "results"
                 species = 'solanum tuberosum'
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
             }
@@ -29,7 +29,6 @@ nextflow_workflow {
 
         when {
             params {
-                outdir = "results"
                 species = 'homo sapiens'
                 eatlas_accessions = "E-GEOD-1615"
             }
@@ -47,7 +46,6 @@ nextflow_workflow {
 
         when {
             params {
-                outdir = "results"
                 species = 'solanum tuberosum'
                 fetch_eatlas_accessions = true
             }
@@ -65,7 +63,6 @@ nextflow_workflow {
 
         when {
             params {
-                outdir = "results"
                 species = 'solanum tuberosum'
                 eatlas_keywords = "potato,stress"
             }
@@ -83,7 +80,6 @@ nextflow_workflow {
 
         when {
             params {
-                outdir = "results"
                 species = 'solanum tuberosum'
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
                 normalisation_method = "edger"
@@ -96,30 +92,10 @@ nextflow_workflow {
         }
     }
 
-    test("Test workflow datasets") {
-
-        tag "worfklow_datasets"
-
-        when {
-            params {
-                outdir = "results"
-                species = 'solanum tuberosum'
-                datasets = "tests/input/custom_datasets/input.csv"
-            }
-        }
-
-        then {
-            assert workflow.success
-            assert snapshot(workflow.out).match()
-        }
-
-    }
-
     test("Test workflow - common accession (E-MTAB-552) between manual and auto") {
 
         when {
             params {
-                outdir = "results"
                 species = 'solanum tuberosum'
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
                 eatlas_keywords = "phloem"

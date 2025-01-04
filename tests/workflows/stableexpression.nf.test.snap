@@ -88,10 +88,10 @@
         "content": [
             {
                 "0": [
-                    "variation_coefficients.csv:md5,c17c7c45d599dcd1611e2bbd4264fce7"
+                    "gene_variations.csv:md5,73bb18fe7efc6fe8121517d5260ebc97"
                 ],
-                "ch_output_from_variation_coefficient": [
-                    "variation_coefficients.csv:md5,c17c7c45d599dcd1611e2bbd4264fce7"
+                "ch_output_from_gene_variation": [
+                    "gene_variations.csv:md5,73bb18fe7efc6fe8121517d5260ebc97"
                 ]
             }
         ],
@@ -99,16 +99,16 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2024-12-31T21:07:48.666413"
+        "timestamp": "2025-01-04T10:10:39.27923988"
     },
     "Two Expression Atlas no keyword (whole species)": {
         "content": [
             {
                 "0": [
-                    "gene_variations.csv:md5,9f520a7b999fa2ff3b3cf07a5a11621b"
+                    "gene_variations.csv:md5,a1f009584a242f11a9bb69b0f5ad4e27"
                 ],
                 "ch_output_from_gene_variation": [
-                    "gene_variations.csv:md5,9f520a7b999fa2ff3b3cf07a5a11621b"
+                    "gene_variations.csv:md5,a1f009584a242f11a9bb69b0f5ad4e27"
                 ]
             }
         ],
@@ -116,16 +116,33 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-03T13:58:41.548002028"
+        "timestamp": "2025-01-04T10:09:09.098400643"
+    },
+    "Test workflow - common accession (E-MTAB-552) between manual and auto": {
+        "content": [
+            {
+                "0": [
+                    "gene_variations.csv:md5,3bd88d9e5f656cd69777de3ad38dd3c0"
+                ],
+                "ch_output_from_gene_variation": [
+                    "gene_variations.csv:md5,3bd88d9e5f656cd69777de3ad38dd3c0"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-04T10:12:42.829549076"
     },
     "Two Expression Atlas accessions provided - normalisation with EdgeR": {
         "content": [
             {
                 "0": [
-                    "gene_variations.csv:md5,b60e41fbc6c587cb2595c1b25e9f5011"
+                    "gene_variations.csv:md5,0ed2e3f7c873b2dabda0019be2560626"
                 ],
                 "ch_output_from_gene_variation": [
-                    "gene_variations.csv:md5,b60e41fbc6c587cb2595c1b25e9f5011"
+                    "gene_variations.csv:md5,0ed2e3f7c873b2dabda0019be2560626"
                 ]
             }
         ],
@@ -133,16 +150,16 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-04T01:03:21.455106846"
+        "timestamp": "2025-01-04T10:11:20.333596241"
     },
     "Two Expression Atlas accessions provided": {
         "content": [
             {
                 "0": [
-                    "gene_variations.csv:md5,5f5987920fefed1be31af7ca4a048aff"
+                    "gene_variations.csv:md5,5bf38356c1a5c984347f8a77cbfd4f88"
                 ],
                 "ch_output_from_gene_variation": [
-                    "gene_variations.csv:md5,5f5987920fefed1be31af7ca4a048aff"
+                    "gene_variations.csv:md5,5bf38356c1a5c984347f8a77cbfd4f88"
                 ]
             }
         ],
@@ -150,6 +167,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-04T01:02:12.556538462"
+        "timestamp": "2025-01-04T10:07:14.475462178"
     }
 }

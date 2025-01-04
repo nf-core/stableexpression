@@ -1,0 +1,33 @@
+nextflow_workflow {
+
+    name "Test Workflow EXPRESSIONATLAS_FETCHDATA"
+    script "subworkflows/local/expressionatlas_fetchdata/main.nf"
+    workflow "EXPRESSIONATLAS_FETCHDATA"
+    tag "subworkflow_expressionatlas_fetchdata"
+
+    test("Should run without failures") {
+
+        when {
+            workflow {
+                """
+                species = 'solanum tuberosum'
+                eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                eatlas_keywords = "potato,stress"
+                fetch_eatlas_accessions = false // no impact since we define keywords
+
+                input[0] = Channel.value( species.split(' ').join('_') )
+                input[1] = eatlas_accessions
+                input[2] = eatlas_keywords
+                input[3] = fetch_eatlas_accessions
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+
+    }
+
+}
