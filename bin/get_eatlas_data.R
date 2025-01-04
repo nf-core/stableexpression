@@ -31,27 +31,59 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
 
     while (!success && attempts < max_retries) {
         attempts <- attempts + 1
+
         tryCatch({
-            atlas_data <- getAtlasData( accession )
+            atlas_data <- ExpressionAtlas::getAtlasData( accession )
             success <- TRUE
-            message("Download successful on attempt ", attempts)
-        }, error = function(e) {
-            message("Attempt ", attempts, " failed: ", e$message)
+
+        }, warning = function(w) {
+
+            # if the accession os not valid, we stop immediately (useless to keep going)
+            if (grepl("does not look like an ArrayExpress/BioStudies experiment accession.", w$message)) {
+                warning(w$message)
+                quit(save = "no", status = 100) # quit & ignore process
+            }
+
+            # else, retrying
+            message("Attempt ", attempts, " Warning message: ", w$message)
+
             if (attempts < max_retries) {
-                message("Retrying in ", wait_time, " seconds...")
+                warning("Retrying in ", wait_time, " seconds...")
                 Sys.sleep(wait_time)
+
             } else {
-                if (e$message == "ERROR - Download appeared successful but no experiment summary object was found") {
-                    message("Ignoring this experiment accession because summary can be found")
-                    sys.exit(status = 100)
+
+                if (grepl("550 Requested action not taken; file unavailable", w$message)) {
+                    warning(w$message)
+                    quit(save = "no", status = 100) # quit & ignore process
                 } else {
-                    message("Unknown error...")
-                    sys.exit(status = 1)
+                    warning("Unhandled warning: ", w$message)
+                    quit(save = "no", status = 1) # quit & stop workflow
                 }
+            }
+
+        }, error = function(e) {
+
+            message("Attempt ", attempts, " Error status: ", e$status, " Message: ", e$message)
+
+            if (attempts < max_retries) {
+                warning("Retrying in ", wait_time, " seconds...")
+                Sys.sleep(wait_time)
+
+            } else {
+
+                if (e$message == "ERROR - Download appeared successful but no experiment summary object was found") {
+                    warning(e$message)
+                    quit(save = "no", status = 100) # quit & ignore process
+                } else {
+                    warning("Unhandled error: ", e$message)
+                    quit(save = "no", status = 1) # quit & stop workflow
+                }
+
             }
         })
     }
-
+    print(length(atlas_data))
     return(atlas_data)
 }
 
@@ -165,6 +197,8 @@ args <- get_args()
 # searching and downloading expression atlas data
 atlas_data <- download_expression_atlas_data_with_retries(args$accession)
 
+
+print(atlas_data)
 # writing count data in atlas_data to specific CSV files
 process_data(atlas_data, args$accession)
 

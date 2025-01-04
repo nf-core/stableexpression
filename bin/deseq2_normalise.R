@@ -105,7 +105,7 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     # if the dataframe is now empty, stop the process
     if (nrow(filtered_count_matrix) == 0) {
         message("No genes left after pre-filtering.")
-        sys.exit(status = 100)
+        quit(save = "no", status = 100)
     }
 
     # add a small pseudocount to avoid zero counts
