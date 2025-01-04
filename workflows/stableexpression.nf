@@ -1,4 +1,3 @@
-nextflow.enable.dsl = 2
 nextflow.preview.topic = true
 
 /*
@@ -16,8 +15,7 @@ include { GENE_VARIATION                         } from '../modules/local/gene_v
 
 include { parseInputDatasets                     } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { customSoftwareVersionsToYAML           } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
-include { paramsSummaryLog                       } from 'plugin/nf-schema'
-include { validateParameters                     } from 'plugin/nf-schema'
+include { validateInputParameters                } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
 
 /*
@@ -28,56 +26,14 @@ include { validateParameters                     } from 'plugin/nf-schema'
 
 workflow STABLEEXPRESSION {
 
-    //
-    // Checking input parameters
-    //
+    take:
+    ch_raw_datasets
+    ch_normalised_datasets
 
-    // Validate input parameters
-    //validateParameters()
 
-    if ( !params.species ) {
-        error('You must provide a species name')
-    }
-
-    if (
-        !params.datasets
-        && !params.eatlas_accessions
-        && !params.fetch_eatlas_accessions
-        && !params.eatlas_keywords
-        ) {
-        error('You must provide at least either --datasets or --fetch_eatlas_accessions or --eatlas_accessions or --eatlas_keywords')
-    }
-
-    // Print summary of supplied parameters
-    // log.info paramsSummaryLog(workflow)
-
-    //
-    // Initializing channels
-    //
+    main:
 
     ch_species = Channel.value( params.species.split(' ').join('_') )
-
-    ch_normalised_datasets = Channel.empty()
-    ch_raw_datasets = Channel.empty()
-
-    // if input datasets were provided
-    if ( params.datasets ) {
-
-        //
-        // Parsing input datasets
-        //
-
-        // reads list of input datasets from input file
-        // and splits them in normalised and raw sub-channels
-        ch_input_datasets = parseInputDatasets( params.datasets )
-
-        ch_normalised_datasets = ch_normalised_datasets.concat(
-            ch_input_datasets.normalised.map{ it -> it.take(2) }
-        )
-        ch_raw_datasets = ch_raw_datasets.concat(
-            ch_input_datasets.raw.map{ it -> it.take(2) }
-        )
-    }
 
     //
     // SUBWORKFLOW: fetching Expression Atlas datasets if needed
@@ -128,7 +84,6 @@ workflow STABLEEXPRESSION {
         GPROFILER_IDMAPPING.out.mapping.collect(),
         Channel.value( params.gene_variation_method )
     )
-    ch_output_from_gene_variation = GENE_VARIATION.out.csv
 
 
     //
@@ -144,9 +99,9 @@ workflow STABLEEXPRESSION {
             newLine: true
         )
 
-    // only used for nf-test
+    multiqc_report = Channel.empty()
     emit:
-        ch_output_from_gene_variation
+        multiqc_report
 
 
 }

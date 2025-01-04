@@ -3,6 +3,15 @@
     "homePage": "https://github.com/nf-core/stableexpression",
     "repos": {
         "https://github.com/nf-core/modules.git": {
+            "modules": {
+                "nf-core": {
+                    "multiqc": {
+                        "branch": "master",
+                        "git_sha": "cf17ca47590cc578dfb47db1c2a44ef86f89976d",
+                        "installed_by": ["modules"]
+                    }
+                }
+            },
             "subworkflows": {
                 "nf-core": {
                     "utils_nextflow_pipeline": {
@@ -12,12 +21,12 @@
                     },
                     "utils_nfcore_pipeline": {
                         "branch": "master",
-                        "git_sha": "92de218a329bfc9a9033116eb5f65fd270e72ba3",
+                        "git_sha": "51ae5406a030d4da1e49e4dab49756844fdd6c7a",
                         "installed_by": ["subworkflows"]
                     },
-                    "utils_nfvalidation_plugin": {
+                    "utils_nfschema_plugin": {
                         "branch": "master",
-                        "git_sha": "e6c055a7bb7551ef18436a8ef410dd0e27393c61",
+                        "git_sha": "2fd2cd6d0e7b273747f32e465fdc6bcc3ae0814e",
                         "installed_by": ["subworkflows"]
                     }
                 }
