@@ -11,17 +11,18 @@ process GENE_VARIATION {
     path count_files, stageAs: "?/*"
     path metadata_files, stageAs: "?/*"
     path mapping_files, stageAs: "?/*"
-    val gene_variation_method
 
     output:
-    path 'gene_variations.csv',                                                                                       emit: csv
+    path 'stats_all_genes.csv',                                                                                       emit: stats_all_genes
+    path 'stats_most_stable_genes.csv',                                                                               emit: stats_most_stable_genes
+    path 'count_summary.csv',                                                                                         emit: count_summary
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
 
     script:
     """
-    get_gene_variations.py --counts "$count_files" --metadata "$metadata_files" --mappings "$mapping_files" --method "$gene_variation_method"
+    get_gene_variations.py --counts "$count_files" --metadata "$metadata_files" --mappings "$mapping_files"
     """
 
 }

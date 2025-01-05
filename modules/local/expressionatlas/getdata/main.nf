@@ -9,9 +9,9 @@ process EXPRESSIONATLAS_GETDATA {
         if (task.exitStatus == 100) {
             // ignoring accessions that cannot be retrieved from Expression Atlas (the script throws a 100 in this case)
             return 'ignore'
-        } else if (task.exitStatus == 137) {
+        } else if (task.exitStatus == 137) { // override default behaviour to sleep some time before retry
             // in case of OOM errors, we wait a bit and try again
-            sleep(Math.pow(2, task.attempt) * 1000 as long)
+            sleep(Math.pow(2, task.attempt) * 2000 as long)
             return 'retry'
         } else {
             return 'terminate'

@@ -12,10 +12,16 @@ include { DESEQ2_NORMALISE                       } from '../modules/local/deseq2
 include { EDGER_NORMALISE                        } from '../modules/local/edger/normalise/main'
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
 include { GENE_VARIATION                         } from '../modules/local/gene_variation/main'
+include { MULTIQC                                } from '../modules/nf-core/multiqc/main'
 
 include { parseInputDatasets                     } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { customSoftwareVersionsToYAML           } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { validateInputParameters                } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
+include { methodsDescriptionText                 } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
+include { paramsSummaryMultiqc                   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { paramsSummaryMap                       } from 'plugin/nf-schema'
+
+
 
 
 /*
@@ -32,6 +38,8 @@ workflow STABLEEXPRESSION {
 
 
     main:
+
+    ch_multiqc_files = Channel.empty()
 
     ch_species = Channel.value( params.species.split(' ').join('_') )
 
@@ -81,9 +89,13 @@ workflow STABLEEXPRESSION {
     GENE_VARIATION(
         GPROFILER_IDMAPPING.out.renamed.collect(),
         GPROFILER_IDMAPPING.out.metadata.collect(),
-        GPROFILER_IDMAPPING.out.mapping.collect(),
-        Channel.value( params.gene_variation_method )
+        GPROFILER_IDMAPPING.out.mapping.collect()
     )
+
+    ch_multiqc_files = ch_multiqc_files
+                        .mix( GENE_VARIATION.out.stats_most_stable_genes.collect() )
+                        .mix( GENE_VARIATION.out.stats_all_genes.collect() )
+                        .mix( GENE_VARIATION.out.count_summary.collect() )
 
 
     //
@@ -91,17 +103,62 @@ workflow STABLEEXPRESSION {
     // TODO: use the nf-core functions when they are adapted to channel topics
     //
 
-    customSoftwareVersionsToYAML( Channel.topic('versions') )
+    ch_collated_versions = customSoftwareVersionsToYAML( Channel.topic('versions') )
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
-            name: 'software_versions.yml',
+            name: 'nf_core_stableexpression_software_mqc_versions.yml',
             sort: true,
             newLine: true
         )
 
-    multiqc_report = Channel.empty()
+    //
+    // MODULE: MultiQC
+    //
+
+    // Load MultiQC configuration file
+    ch_multiqc_config = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config
+        ? Channel.fromPath(params.multiqc_config, checkIfExists: true)
+        : Channel.empty()
+    ch_multiqc_logo = params.multiqc_logo
+        ? Channel.fromPath(params.multiqc_logo, checkIfExists: true)
+        : Channel.fromPath("${workflow.projectDir}/docs/images/nf-core-sampleexpression_logo_light.png", checkIfExists: true)
+
+    // Prepare the workflow summary
+    ch_workflow_summary = Channel.value(
+        paramsSummaryMultiqc(
+            paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+        )
+    ).collectFile(name: 'workflow_summary_mqc.yaml')
+
+    // Prepare the methods section
+    ch_methods_description = Channel.value(
+        methodsDescriptionText(
+            params.multiqc_methods_description
+                ? file(params.multiqc_methods_description)
+                : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
+        )
+    ).collectFile(name: 'methods_description_mqc.yaml')
+
+    // Add summary, versions, and methods to the MultiQC input file list
+    ch_multiqc_files = ch_multiqc_files
+        .mix(ch_workflow_summary)
+        .mix(ch_collated_versions)
+        .mix(ch_methods_description)
+
+    MULTIQC (
+        ch_multiqc_files.collect(),
+        ch_multiqc_config.toList(),
+        ch_multiqc_custom_config.toList(),
+        ch_multiqc_logo.toList(),
+        [],
+        []
+    )
+    ch_multiqc_report = MULTIQC.out.report
+
+
     emit:
-        multiqc_report
+        multiqc_report = ch_multiqc_report
 
 
 }

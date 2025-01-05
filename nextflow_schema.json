@@ -92,13 +92,6 @@
                     "description": "Tool to use for normalisation.",
                     "fa_icon": "fas fa-chart-simple",
                     "enum": ["deseq2", "edger"]
-                },
-                "gene_variation_method": {
-                    "type": "string",
-                    "description": "Method for computing gene expression variation.",
-                    "fa_icon": "fas fa-chart-simple",
-                    "enum": ["std", "cv"],
-                    "help_text": "std: Standard deviation, cv: Coefficient of variation (std / mean)"
                 }
             }
         },
