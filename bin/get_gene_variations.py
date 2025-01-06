@@ -12,22 +12,40 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 ORIGINAL_GENE_ID_COLNAME = "original_gene_id"
+ORIGINAL_GENE_IDS_COLNAME = "original_gene_ids"
 ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
-NB_MOST_STABLE_GENES = 5000
 MOST_STABLE_GENES_RESULT_OUTFILENAME = "stats_most_stable_genes.csv"
 ALL_GENES_RESULT_OUTFILENAME = "stats_all_genes.csv"
 COUNT_SUMMARY_OUTFILENAME = "count_summary.csv"
+GENE_NAME_COLNAME = "name"
+GENE_DESCRIPTION_COLNAME = "description"
 
-GENE_VARIATION_COLNAME = "variation_coefficient"
+VARIATION_COEFFICIENT_COLNAME = "variation_coefficient"
 STANDARD_DEVIATION_COLNAME = "standard_deviation"
-AVERAGE_LOG_CPM_COLNAME = "average_log2_count"
-STATUS_COLNAME = "status"
+MEAN_COLNAME = "mean"
+EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME = "expression_level_quantile_interval"
+QUANTILE_INTERVAL_STATUS_COLNAME = "quantile_interval_status"
+
+NB_QUANTILES = 20
+MAX_SELECTED_STABLE_GENES_PER_QUANTILE_INTERVAL = 10
+
+MOST_STABLE_GENES_RESULT_COLS = [
+    ENSEMBL_GENE_ID_COLNAME,
+    STANDARD_DEVIATION_COLNAME,
+    VARIATION_COEFFICIENT_COLNAME,
+    MEAN_COLNAME,
+    EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME,
+    QUANTILE_INTERVAL_STATUS_COLNAME,
+    GENE_NAME_COLNAME,
+    GENE_DESCRIPTION_COLNAME,
+    ORIGINAL_GENE_IDS_COLNAME,
+]
 
 ALL_GENES_STATS_COLS = [
     ENSEMBL_GENE_ID_COLNAME,
+    MEAN_COLNAME,
     STANDARD_DEVIATION_COLNAME,
-    GENE_VARIATION_COLNAME,
-    AVERAGE_LOG_CPM_COLNAME,
+    VARIATION_COEFFICIENT_COLNAME,
 ]
 
 # Get variation coefficient from count data for each gene
@@ -134,40 +152,22 @@ def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
         .unique()
         .sort()
         .str.join(";")
-        .alias("original_gene_ids")
+        .alias(ORIGINAL_GENE_IDS_COLNAME)
     )
 
 
-def get_standard_deviation(count_df: pl.LazyFrame) -> pl.LazyFrame:
-    """
-    Compute variation for each gene in the count dataframe.
-    """
-    logger.info("Getting standard deviations")
-    count_columns = get_count_columns(count_df)
-    return count_df.with_columns(
-        std=pl.concat_list(count_columns).list.std(),
-    ).select(
-        pl.col(ENSEMBL_GENE_ID_COLNAME),
-        pl.col("std").alias(STANDARD_DEVIATION_COLNAME),
-    )
+def preprocess_count(count_df: pl.LazyFrame) -> pl.LazyFrame:
+    # handling NA values (genes that are not found in all datasets)
+    # replace NaN values with 0
+    count_df = count_df.fill_null(0)
+
+    # getting log2 counts
+    count_df = transform_counts_to_log_counts(count_df)
+
+    return count_df
 
 
-def get_coefficient_of_variation(count_df: pl.LazyFrame) -> pl.LazyFrame:
-    """
-    Compute variation for each gene in the count dataframe.
-    """
-    logger.info("Getting coefficients of variation")
-    count_columns = get_count_columns(count_df)
-    return count_df.with_columns(
-        mean=pl.concat_list(count_columns).list.mean(),
-        std=pl.concat_list(count_columns).list.std(),
-    ).select(
-        pl.col(ENSEMBL_GENE_ID_COLNAME),
-        (pl.col("std") / pl.col("mean")).alias(GENE_VARIATION_COLNAME),
-    )
-
-
-def get_average_log2(count_df: pl.LazyFrame) -> pl.LazyFrame:
+def transform_counts_to_log_counts(count_df: pl.LazyFrame) -> pl.LazyFrame:
     # the dataframe has already been filtered to exclude rows where mean is 0
     # adds 1 to avoid log(0) and to stabilize variance
     logger.info("Getting average log2 counts")
@@ -175,29 +175,47 @@ def get_average_log2(count_df: pl.LazyFrame) -> pl.LazyFrame:
     transformed_cols = [pl.col(ENSEMBL_GENE_ID_COLNAME)] + [
         (pl.col(column) + 1).log(2).alias(column) for column in count_columns
     ]
-    return (
-        count_df.select(transformed_cols)
-        .with_columns(average_log2_count=pl.concat_list(count_columns).list.mean())
-        .select(pl.col(ENSEMBL_GENE_ID_COLNAME), pl.col(AVERAGE_LOG_CPM_COLNAME))
+    return count_df.select(transformed_cols)
+
+
+def get_main_statistics(count_df: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Compute log2 count descriptive statistics for each gene in the count dataframe.
+    """
+    logger.info("Getting descriptive statistics")
+    count_columns = get_count_columns(count_df)
+    return count_df.with_columns(
+        mean=pl.concat_list(count_columns).list.mean(),
+        std=pl.concat_list(count_columns).list.std(),
+    ).select(
+        pl.col(ENSEMBL_GENE_ID_COLNAME),
+        pl.col("mean").alias(MEAN_COLNAME),
+        pl.col("std").alias(STANDARD_DEVIATION_COLNAME),
+        (pl.col("std") / pl.col("mean")).alias(VARIATION_COEFFICIENT_COLNAME),
     )
 
 
-def aggregate_expression_values(count_df: pl.LazyFrame) -> pl.LazyFrame:
-    # handling NA values (genes that are not found in all datasets)
-    # replace NaN values with 0
-    count_df = count_df.fill_null(0)
+def get_quantile_intervals(df: pl.LazyFrame) -> pl.LazyFrame:
+    logger.info("Getting average log2 cpm quantiles")
+    return df.with_columns(
+        (pl.col(MEAN_COLNAME).rank() / pl.col(MEAN_COLNAME).count() * NB_QUANTILES)
+        .floor()
+        .cast(pl.Int8)
+        # we want the only value = NB_QUANTILES to be NB_QUANTILES - 1
+        # because the last quantile interval is [NB_QUANTILES - 1, NB_QUANTILES]
+        .replace({NB_QUANTILES: NB_QUANTILES - 1})
+        .alias(EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
+    )
 
-    # getting variation data
-    standard_deviation = get_standard_deviation(count_df)
-    variation_coefficient = get_coefficient_of_variation(count_df)
 
-    # get the average log cpm value for each gene
-    # to get an idea of the overall expression level of each gene
-    average_log_cpm = get_average_log2(count_df)
+def compute_statistics(count_df: pl.LazyFrame) -> pl.LazyFrame:
+    # getting expression statistics
+    stat_df = get_main_statistics(count_df)
 
-    return standard_deviation.join(
-        variation_coefficient, on=ENSEMBL_GENE_ID_COLNAME, how="left"
-    ).join(average_log_cpm, on=ENSEMBL_GENE_ID_COLNAME, how="left")
+    # getting quantile intervals
+    stat_df = get_quantile_intervals(stat_df)
+
+    return stat_df
 
 
 def merge_data(
@@ -208,22 +226,59 @@ def merge_data(
         stat_df.join(metadata_df, on=ENSEMBL_GENE_ID_COLNAME, how="left")
         .join(mapping_df, on=ENSEMBL_GENE_ID_COLNAME, how="left")
         .unique()  # just in case
-        .sort(STANDARD_DEVIATION_COLNAME, descending=False)  # very important
+        .sort(STANDARD_DEVIATION_COLNAME, descending=False)  # VERY IMPORTANT
     )
 
 
-def export_data(stat_df: pl.LazyFrame, count_df: pl.LazyFrame):
-    most_stable_genes_stat_df = stat_df.head(NB_MOST_STABLE_GENES).with_row_index(
-        "rank", offset=1
+def get_status(quantile_interval: int) -> str:
+    if quantile_interval == NB_QUANTILES - 1:
+        return "very_high_expression"
+    elif quantile_interval == NB_QUANTILES - 2:
+        return "high_expression"
+    elif quantile_interval == 0:
+        return "very_low_expression"
+    elif quantile_interval == 1:
+        return "low_expression"
+    else:
+        return "ok"
+
+
+def get_most_stable_genes(stat_df: pl.LazyFrame) -> pl.LazyFrame:
+    logger.info("Getting most stable genes per quantile interval")
+    most_stable_genes_df = (
+        stat_df.group_by(  # the df should be already sorted
+            EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME
+        )
+        .head(MAX_SELECTED_STABLE_GENES_PER_QUANTILE_INTERVAL)
+        .with_columns(
+            pl.col(EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
+            .map_elements(get_status)
+            .alias(QUANTILE_INTERVAL_STATUS_COLNAME)
+        )
+        .sort(
+            [EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME, STANDARD_DEVIATION_COLNAME],
+            descending=[True, False],
+        )
+        .select([column for column in MOST_STABLE_GENES_RESULT_COLS])
     )
+    return most_stable_genes_df
+
+
+def format_all_genes_dataframe(stat_df: pl.LazyFrame) -> pl.LazyFrame:
+    all_genes_stat_df = stat_df.select([column for column in ALL_GENES_STATS_COLS])
+    return all_genes_stat_df
+
+
+def export_data(
+    most_stable_genes_df: pl.LazyFrame,
+    all_genes_stat_df: pl.LazyFrame,
+    count_df: pl.LazyFrame,
+):
     logger.info(
-        f"Exporting statistics for the top {NB_MOST_STABLE_GENES} genes to: {MOST_STABLE_GENES_RESULT_OUTFILENAME}"
+        f"Exporting statistics for the most stable genes to: {MOST_STABLE_GENES_RESULT_OUTFILENAME}"
     )
-    most_stable_genes_stat_df.collect().write_csv(MOST_STABLE_GENES_RESULT_OUTFILENAME)
+    most_stable_genes_df.collect().write_csv(MOST_STABLE_GENES_RESULT_OUTFILENAME)
 
-    all_genes_stat_df = stat_df.select(
-        pl.col(column) for column in ALL_GENES_STATS_COLS
-    )
     logger.info(
         f"Exporting statistics for all genes to: {ALL_GENES_RESULT_OUTFILENAME}"
     )
@@ -246,16 +301,24 @@ def main():
     metadata_files = [Path(file) for file in args.metadata_files.split(" ")]
     mapping_files = [Path(file) for file in args.mapping_files.split(" ")]
 
+    # putting all counts into a single dataframe
     count_df = get_counts(count_files)
-    stat_df = aggregate_expression_values(count_df)
+    # preprocessing counts (removing 0 counts / log transformation)
+    count_df = preprocess_count(count_df)
 
+    # getting metadata and mappings
     metadata_df = get_metadata(metadata_files)
     mapping_df = get_mappings(mapping_files)
 
+    # computing statistics (mean, standard deviation, coefficient of variation, quantiles)
+    stat_df = compute_statistics(count_df)
+
     stat_df = merge_data(stat_df, metadata_df, mapping_df)
-    # sort by standard deviation
-    stat_df = stat_df.sort(STANDARD_DEVIATION_COLNAME, descending=False)
-    export_data(stat_df, count_df)
+
+    most_stable_genes_df = get_most_stable_genes(stat_df)
+    print(most_stable_genes_df.collect())
+    all_genes_stat_df = format_all_genes_dataframe(stat_df)
+    export_data(most_stable_genes_df, all_genes_stat_df, count_df)
 
 
 if __name__ == "__main__":

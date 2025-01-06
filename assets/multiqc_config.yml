@@ -9,43 +9,65 @@ report_section_order:
   "nf-core-stableexpression-summary":
     order: -1003
 
+#export_plots: true
+
 run_modules:
   - custom_content
 
-export_plots: true
-
 disable_version_detection: true
 
-max_table_rows: 5000
+max_table_rows: 1000
 
 custom_data:
   most_stable_genes:
     section_name: "Most stable genes"
     file_format: "csv"
-    description: "Descriptive statistics of the 1000 most stable genes (relatively to standard deviation)"
+    description: |
+      Expression descriptive statistics of the 1000 most stable genes (relatively to standard deviation).
+      Expression was calculated as log2(cpm + 1) were cpm is the normalised counts per million across all samples.
     plot_type: "table"
     no_violin: true
     pconfig:
       col1_header: "Rank"
+      expression_level_quantile_interval:
     headers:
       ensembl_gene_id:
         title: "Ensembl Gene ID"
         description: "Unique identifier of the gene in Ensembl"
       standard_deviation:
         title: "Standard deviation"
+        description: "Standard deviation of the expression across samples"
         format: "{:,.3f}"
       variation_coefficient:
         title: "Variation coefficient"
         format: "{:,.3f}"
-        description: "Ratio of standard deviation to mean"
-      average_log2_count:
-        title: "Average log2 CPM"
+        description: "Ratio of standard deviation to mean of expression across all samples"
+      mean:
+        title: "Mean"
         format: "{:,.3f}"
-        description: "Average log2 of counts per million (CPM) among all samples"
+        description: "Average expression across samples"
+      expression_level_quantile_interval:
+        title: "Expression level score"
+        description: "Quantile interval of the gene mean expression (among 20 intervals; min = 0, max = 19)"
+        format: "{:,.0f}"
+      quantile_interval_status:
+        title: "Expression level status"
+        description: "TODO"
+        cond_formatting_rules:
+          fail:
+            - s_eq: very_high_expression
+            - s_eq: very_low_expression
+          warn:
+            - s_eq: high_expression
+            - s_eq: low_expression
+          pass:
+            - s_eq: ok
       name:
-        title: "Gene name as shown in Ensembl (g:Profiler)"
+        title: "Gene name"
+        description: "Gene name as shown in Ensembl (g:Profiler)"
       description:
-        title: "Gene description as shown in Ensembl (g:Profiler)"
+        title: "Gene description"
+        description: "Gene description as shown in Ensembl (g:Profiler)"
       original_gene_ids:
         title: "Original Gene IDs"
         description: "Gene IDs as stated in the original datasets"
@@ -53,34 +75,45 @@ custom_data:
   gene_variation_statistics:
     section_name: "Descriptive statistics - All genes"
     file_format: "csv"
-    description: "Distribution of descriptive statistics for all genes"
+    description: |
+      Distribution of descriptive statistics for all genes.
+      Expression was calculated as log2(cpm + 1) were cpm is the normalised counts per million across all samples.
     plot_type: "violin"
     pconfig:
       col1_header: "Ensembl Gene ID"
     headers:
+      # colors from https://colorbrewer2.org/#type=diverging&scheme=BrBG&n=8
       standard_deviation:
         title: "Standard deviation"
+        description: "Standard deviation of the expression across samples"
+        color: "#bf812d"
       variation_coefficient:
         title: "Variation coefficient"
         description: "Ratio of standard deviation to mean"
-      average_log2_count:
-        title: "Average log2 CPM"
-        description: "Average log2 of counts per million (CPM) among all samples"
+        color: "#f6e8c3"
+      mean:
+        title: "Average"
+        description: "Average expression across samples"
+        color: "#01665e"
 
-  count_summary:
-    section_name: "Count summary"
+  cpm_distributions:
+    section_name: "CPM distribution by sample"
     file_format: "csv"
-    description: "Normalised counts for each gene sample by sample"
-    plot_type: "table"
-    pconfig:
-      id: "count_summary_table"
-      namespace: "Count summary"
-      col1_header: "Ensembl Gene ID"
+    description: |
+      Distribution of gene counts per million (CPM) sample by sample.
+      Expression was calculated as log2(cpm + 1) were cpm is the normalised counts per million across all samples.
+    plot_type: "boxplot"
+
+#violin_downsample_after: 10000
+
+log_filesize_limit: 2000000000 # 2GB
 
 sp:
   most_stable_genes:
     fn: "*stats_most_stable_genes.csv"
+    max_filesize: 1000000 # 1MB
   gene_variation_statistics:
     fn: "*stats_all_genes.csv"
-  count_summary:
+    max_filesize: 50000000 # 50MB
+  cpm_distributions:
     fn: "*count_summary.csv"
