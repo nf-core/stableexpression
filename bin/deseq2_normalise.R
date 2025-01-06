@@ -72,7 +72,7 @@ get_log2_cpm_counts <- function(normalised_counts, filtered_count_matrix) {
     library_sizes <- colSums(filtered_count_matrix)
     # convert normalised counts to CPM
     cpm_counts <- t(t(normalised_counts) / library_sizes * 1e6)
-    cpm_counts <- log2(cpm_counts + 1)
+    # cpm_counts <- log2(cpm_counts)
     return(cpm_counts)
 }
 

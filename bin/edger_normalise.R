@@ -63,7 +63,7 @@ filter_out_lowly_expressed_genes <- function(dge) {
 
 
 get_log2_cpm_counts <- function(dge) {
-    cpm_counts <- cpm(dge, normalised.lib.sizes = TRUE, log = TRUE)
+    cpm_counts <- cpm(dge, normalised.lib.sizes = TRUE)
     return(cpm_counts)
 }
 
