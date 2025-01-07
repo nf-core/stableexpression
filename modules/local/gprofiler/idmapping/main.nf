@@ -12,7 +12,7 @@ process GPROFILER_IDMAPPING {
             // ignoring cases when the count dataframe is empty
             return 'ignore'
         } else if (task.exitStatus == 101) {
-            // likewise, when no mapping could be found, we do not want to continue with the subsequent steps
+            // likewise, when no mapping could be found, we do not want to continue with the subsequent steps for this specific dataset
             return 'ignore'
         } else {
             return 'terminate'

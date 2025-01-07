@@ -8,10 +8,37 @@ This document describes the output produced by the pipeline.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
-- [Expression Atlas](#expression-atlas)
+- [Expression Atlas](#expression-atlas): get Expression Atlas accessions and download data
 - [DESeq2](#deseq2) or [EdgeR](#edger): normalise raw data
 - [g:Profiler](#gprofiler-idmapping): map gene IDS to Ensembl IDS
-- [Variation coefficient](#variation-coefficient): Compute gene variation coefficients and get the most stable genes
+- [Gene Variation](#gene-variation): compute gene variation statistics and get the most stable genes
+- [MultiQC](#multiqc): generate reports
+
+## Output files
+
+### MultiQC
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `multiqc/`
+  - MultiQC report file: `multiqc_report.html`.
+  - MultiQC data dir: `multiqc_data`.
+  - Plots created by MultiQC: `multiqc_plots`.
+
+</details>
+
+### Gene Variation
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `gene_variation/`
+  - A list of the most stable genes in stats_most_stable_genes.csv`.
+  - Descriptive statistics for all genes in `stats_all_genes.csv`
+  - All normalised counts (for each gene and each sample) in `count_summary.csv`.
+
+</details>
 
 ### Expression Atlas
 
@@ -20,7 +47,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - `expressionatlas/`
   - List of accessions found when querying Expression Atlas: `accessions.txt`.
-  - A list of count datasets and experimental designs download from Expression Atlas. Normalized datasets have the `normalised.csv` while not normalised datasets have the `raw.csv` extension.
+  - List of count datasets (normalized: `*.normalised.csv` / raw: `*.raw.csv`) and experimental designs (`*.design.csv`) downloaded from Expression Atlas.
 
 </details>
 
@@ -50,19 +77,9 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <summary>Output files</summary>
 
 - `idmapping/`
-  - Count datasets whose gene IDs have been mapped to Ensembl IDs (suffix `renamed.csv`).
-  - Correspondencies between original gene IDs and Ensembl IDs (suffix `mapping.json`.)
-
-</details>
-
-### Variation coefficient
-
-<details markdown="1">
-<summary>Output files</summary>
-
-- `variation_coefficients/`
-  - An ordered list from the most stable (first line) to the least stable gene in `variation_coefficients.csv`.
-  - All normalised counts (for each gene and each sample) in `all_normalised_counts.csv`.
+  - Count datasets whose gene IDs have been mapped to Ensembl IDs: `*_renamed.csv`.
+  - Table associating original gene IDs and Ensembl IDs: `*_mapping.csv`.
+  - Ensembl gene metadata (name and description): `*_metadata.csv`.
 
 </details>
 
