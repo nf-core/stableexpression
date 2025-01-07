@@ -7,7 +7,7 @@
                         "accession": "accession",
                         "design": "design.csv:md5,a83dd6a15463b51d94f0a42c196d7933"
                     },
-                    "counts.log_cpm.csv:md5,4091ece4324283f6edb3b91fafa324fa"
+                    "counts.cpm.csv:md5,8f683e81653109dad305b07fa7782b30"
                 ]
             ]
         ],
@@ -15,7 +15,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-03T12:53:09.580478043"
+        "timestamp": "2025-01-07T08:14:38.107688659"
     },
     "One group": {
         "content": [
@@ -25,7 +25,7 @@
                         "accession": "accession",
                         "design": "design.csv:md5,28cf54802df5df4a9dc406003623c6a7"
                     },
-                    "counts.log_cpm.csv:md5,5c662f9c6a7422119ba94b61b4bf695d"
+                    "counts.cpm.csv:md5,30cfd49966f0b5f5321824eac1b10388"
                 ]
             ]
         ],
@@ -33,43 +33,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-03T12:53:48.817205569"
-    },
-    "Very small dataset - no zeros": {
-        "content": [
-            [
-                [
-                    {
-                        "accession": "accession",
-                        "design": "design.csv:md5,a83dd6a15463b51d94f0a42c196d7933"
-                    },
-                    "all_counts.log_cpm.csv:md5,4091ece4324283f6edb3b91fafa324fa"
-                ]
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
-        },
-        "timestamp": "2024-12-31T12:30:02.920269"
-    },
-    "Should run without failures": {
-        "content": [
-            [
-                [
-                    {
-                        "accession": "accession",
-                        "design": "design.csv:md5,a83dd6a15463b51d94f0a42c196d7933"
-                    },
-                    "all_counts.log_cpm.csv:md5,4091ece4324283f6edb3b91fafa324fa"
-                ]
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
-        },
-        "timestamp": "2024-12-28T22:30:31.238971692"
+        "timestamp": "2025-01-07T08:15:18.900550813"
     },
     "Rows with many zeros": {
         "content": [
@@ -79,7 +43,7 @@
                         "accession": "accession",
                         "design": "design.csv:md5,3cdf98e2e202b4af2687eaefd9bdd8e9"
                     },
-                    "counts.log_cpm.csv:md5,a5640eeb84b90577e593ef0ca906f937"
+                    "counts.cpm.csv:md5,aae5e18209beb0861aeace87982dac8d"
                 ]
             ]
         ],
@@ -87,24 +51,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-03T12:53:29.441742091"
-    },
-    "Very small dataset - with zeros": {
-        "content": [
-            [
-                [
-                    {
-                        "accession": "accession",
-                        "design": "design.csv:md5,a83dd6a15463b51d94f0a42c196d7933"
-                    },
-                    "all_counts.log_cpm.csv:md5,4091ece4324283f6edb3b91fafa324fa"
-                ]
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
-        },
-        "timestamp": "2024-12-31T12:20:21.710139"
+        "timestamp": "2025-01-07T08:14:58.370267302"
     }
 }

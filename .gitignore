@@ -12,3 +12,5 @@ null/
 taggers/
 tokenizers/
 corpora/
+.github/act.custom_runner.Dockerfile
+.ruff_cache

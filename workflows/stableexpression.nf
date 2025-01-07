@@ -91,11 +91,14 @@ workflow STABLEEXPRESSION {
         GPROFILER_IDMAPPING.out.metadata.collect(),
         GPROFILER_IDMAPPING.out.mapping.collect()
     )
+    ch_stats_most_stable_genes = GENE_VARIATION.out.stats_most_stable_genes
+    ch_stats_all_genes = GENE_VARIATION.out.stats_all_genes
+    ch_count_summary = GENE_VARIATION.out.count_summary
 
     ch_multiqc_files = ch_multiqc_files
-                        .mix( GENE_VARIATION.out.stats_most_stable_genes.collect() )
-                        .mix( GENE_VARIATION.out.stats_all_genes.collect() )
-                        .mix( GENE_VARIATION.out.count_summary.collect() )
+                        .mix( ch_stats_most_stable_genes.collect() )
+                        .mix( ch_stats_all_genes.collect() )
+                        .mix( ch_count_summary.collect() )
 
 
     //
@@ -158,6 +161,9 @@ workflow STABLEEXPRESSION {
 
 
     emit:
+        stats_most_stable_genes = ch_stats_most_stable_genes
+        stats_all_genes = ch_stats_all_genes
+        count_summary = ch_count_summary
         multiqc_report = ch_multiqc_report
 
 

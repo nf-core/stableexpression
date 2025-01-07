@@ -85,6 +85,10 @@ def parse_args():
 
 
 def is_valid_df(df: pl.LazyFrame, file: Path) -> bool:
+    """Check if a LazyFrame is valid.
+
+    A LazyFrame is considered valid if it contains at least one row.
+    """
     try:
         return not df.limit(1).collect().is_empty()
     except (
@@ -98,15 +102,31 @@ def is_valid_df(df: pl.LazyFrame, file: Path) -> bool:
 
 
 def get_valid_lazy_dfs(files: list[Path]) -> list[pl.LazyFrame]:
+    """Get a list of valid LazyFrames from a list of files.
+
+    A LazyFrame is considered valid if it contains at least one row.
+    """
     df_dict = {file: pl.scan_csv(file) for file in files}
     return [df for file, df in df_dict.items() if is_valid_df(df, file)]
 
 
 def join_dfs(df1: pl.LazyFrame, df2: pl.LazyFrame):
+    """Join two LazyFrames on the ENSEMBL_GENE_ID_COLNAME column.
+
+    The how parameter is set to "full" to include all rows from both dfs.
+    The coalesce parameter is set to True to fill NaN values in the
+    resulting dataframe with values from the other dataframe.
+    """
     return df1.join(df2, on=ENSEMBL_GENE_ID_COLNAME, how="full", coalesce=True)
 
 
 def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame:
+    """Concatenate LazyFrames, cast all columns to String, and drop duplicates.
+
+    The first step is to concatenate the LazyFrames. Then, the dataframe is cast
+    to String to ensure that all columns have the same data type. Finally, duplicate
+    rows are dropped.
+    """
     dfs = get_valid_lazy_dfs(files)
     concat_df = pl.concat(dfs)
     # dropping duplicates
@@ -120,12 +140,21 @@ def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame
 
 
 def get_count_columns(df: pl.LazyFrame) -> list[str]:
+    """Get all column names except the ENSEMBL_GENE_ID_COLNAME column.
+
+    The ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
+    """
     return [
         col for col in df.collect_schema().names() if col != ENSEMBL_GENE_ID_COLNAME
     ]
 
 
 def get_counts(files: list[Path]) -> pl.LazyFrame:
+    """Get all count data from a list of files.
+
+    The files are merged into a single dataframe. The ENSEMBL_GENE_ID_COLNAME column is cast
+    to String, and all other columns are cast to Float64.
+    """
     # lazy loading
     dfs = get_valid_lazy_dfs(files)
     # joining all count files
@@ -139,12 +168,15 @@ def get_counts(files: list[Path]) -> pl.LazyFrame:
 
 
 def get_metadata(metadata_files: list[Path]) -> pl.LazyFrame:
+    """Retrieve and concatenate metadata from a list of metadata files."""
     return concat_cast_to_string_and_drop_duplicates(metadata_files)
 
 
 def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
     concat_df = concat_cast_to_string_and_drop_duplicates(mapping_files)
-    # group by new gene IDs and gets the list of distinct original gene IDs for each group
+    # group by new gene IDs and gets the lis
+    """Group by new gene IDs, get the list of distinct original gene IDs and convert to a string representation."""
+    # t of distinct original gene IDs for each group
     # convert the list column to a string representation
     # separate the original gene IDs with a semicolon
     return concat_df.group_by(ENSEMBL_GENE_ID_COLNAME).agg(
@@ -157,6 +189,10 @@ def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
 
 
 def preprocess_count(count_df: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Preprocess the count data by replacing NaN values with 0,
+    then computing the log2 of the counts.
+    """
     # handling NA values (genes that are not found in all datasets)
     # replace NaN values with 0
     count_df = count_df.fill_null(0)
@@ -164,12 +200,19 @@ def preprocess_count(count_df: pl.LazyFrame) -> pl.LazyFrame:
     # getting log2 counts
     count_df = transform_counts_to_log_counts(count_df)
 
-    return count_df
+    # sorting dataframe (necessary to get consistent output)
+    return count_df.sort(ENSEMBL_GENE_ID_COLNAME, descending=False)
 
 
 def transform_counts_to_log_counts(count_df: pl.LazyFrame) -> pl.LazyFrame:
-    # the dataframe has already been filtered to exclude rows where mean is 0
-    # adds 1 to avoid log(0) and to stabilize variance
+    """
+    Transform count data to log2 scale.
+
+    The function converts the count data to log2 scale by adding 1 to each count
+    (to avoid log(0) and stabilize variance), and then taking the log base 2 of the result.
+    The ENSEMBL_GENE_ID_COLNAME column is not transformed, and the transformed columns
+    retain their original names.
+    """
     logger.info("Getting average log2 counts")
     count_columns = get_count_columns(count_df)
     transformed_cols = [pl.col(ENSEMBL_GENE_ID_COLNAME)] + [
@@ -196,6 +239,11 @@ def get_main_statistics(count_df: pl.LazyFrame) -> pl.LazyFrame:
 
 
 def get_quantile_intervals(df: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Compute the quantile intervals for the mean expression levels of each gene in the dataframe.
+
+    The function assigns to each gene a quantile interval of its mean cpm compared to all genes.
+    """
     logger.info("Getting average log2 cpm quantiles")
     return df.with_columns(
         (pl.col(MEAN_COLNAME).rank() / pl.col(MEAN_COLNAME).count() * NB_QUANTILES)
@@ -209,6 +257,13 @@ def get_quantile_intervals(df: pl.LazyFrame) -> pl.LazyFrame:
 
 
 def compute_statistics(count_df: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Compute descriptive statistics and quantile intervals for gene expression data.
+
+    This function calculates the main statistics (mean, standard deviation, and
+    variation coefficient) for each gene. It then computes the quantile intervals based on mean expression levels,
+    assigning each gene a quantile interval of its mean counts per million (cpm) compared to all genes.
+    """
     # getting expression statistics
     stat_df = get_main_statistics(count_df)
 
@@ -221,6 +276,7 @@ def compute_statistics(count_df: pl.LazyFrame) -> pl.LazyFrame:
 def merge_data(
     stat_df: pl.LazyFrame, metadata_df: pl.LazyFrame, mapping_df: pl.LazyFrame
 ) -> pl.LazyFrame:
+    """Merge the statistics dataframe with the metadata dataframe and the mapping dataframe."""
     # we need to ensure that the index of stat_df are strings
     return (
         stat_df.join(metadata_df, on=ENSEMBL_GENE_ID_COLNAME, how="left")
@@ -231,6 +287,7 @@ def merge_data(
 
 
 def get_status(quantile_interval: int) -> str:
+    """Return the expression level status of the gene given its quantile interval."""
     if quantile_interval == NB_QUANTILES - 1:
         return "very_high_expression"
     elif quantile_interval == NB_QUANTILES - 2:
@@ -244,8 +301,16 @@ def get_status(quantile_interval: int) -> str:
 
 
 def get_most_stable_genes(stat_df: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Extract the most stable genes from the statistics dataframe.
+
+    This function groups the genes by their expression level quantile intervals
+    and selects the top most stable genes from each quantile interval.
+    The number of genes selected per interval is determined by the constant
+    `MAX_SELECTED_STABLE_GENES_PER_QUANTILE_INTERVAL`.
+    """
     logger.info("Getting most stable genes per quantile interval")
-    most_stable_genes_df = (
+    return (
         stat_df.group_by(  # the df should be already sorted
             EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME
         )
@@ -256,17 +321,25 @@ def get_most_stable_genes(stat_df: pl.LazyFrame) -> pl.LazyFrame:
             .alias(QUANTILE_INTERVAL_STATUS_COLNAME)
         )
         .sort(
-            [EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME, STANDARD_DEVIATION_COLNAME],
-            descending=[True, False],
+            [
+                EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME,
+                STANDARD_DEVIATION_COLNAME,
+                ENSEMBL_GENE_ID_COLNAME,  # if genes have same quantile and standard deviation, we sort them anyway by gene ID
+            ],
+            descending=[True, False, False],
         )
         .select([column for column in MOST_STABLE_GENES_RESULT_COLS])
     )
-    return most_stable_genes_df
 
 
 def format_all_genes_dataframe(stat_df: pl.LazyFrame) -> pl.LazyFrame:
-    all_genes_stat_df = stat_df.select([column for column in ALL_GENES_STATS_COLS])
-    return all_genes_stat_df
+    """
+    Format the dataframe containing statistics for all genes by selecting the right columns
+    and sorting the dataframe by gene ID.
+    """
+    return stat_df.select([column for column in ALL_GENES_STATS_COLS]).sort(
+        ENSEMBL_GENE_ID_COLNAME, descending=False
+    )
 
 
 def export_data(
@@ -274,6 +347,7 @@ def export_data(
     all_genes_stat_df: pl.LazyFrame,
     count_df: pl.LazyFrame,
 ):
+    """Export gene expression data to CSV files."""
     logger.info(
         f"Exporting statistics for the most stable genes to: {MOST_STABLE_GENES_RESULT_OUTFILENAME}"
     )
@@ -316,7 +390,7 @@ def main():
     stat_df = merge_data(stat_df, metadata_df, mapping_df)
 
     most_stable_genes_df = get_most_stable_genes(stat_df)
-    print(most_stable_genes_df.collect())
+
     all_genes_stat_df = format_all_genes_dataframe(stat_df)
     export_data(most_stable_genes_df, all_genes_stat_df, count_df)
 

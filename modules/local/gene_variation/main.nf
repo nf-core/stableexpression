@@ -6,7 +6,7 @@ process GENE_VARIATION {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f8a5d02e7b31980c887253a9f118da0ef91ead1c7b158caf855199e5c5d5473/data':
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/56/56c02e34754f3f0a79292e5d4052fe6d2e271714ff9a883097eeef52317cc9d2/data':
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:

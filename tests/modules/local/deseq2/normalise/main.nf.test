@@ -21,7 +21,7 @@ nextflow_process {
 
         then {
             assert process.success
-            assert snapshot(process.out.csv).match()
+            assert snapshot(process.out.cpm).match()
         }
 
     }
@@ -42,7 +42,7 @@ nextflow_process {
 
         then {
             assert process.success
-            assert snapshot(process.out.csv).match()
+            assert snapshot(process.out.cpm).match()
         }
 
     }
@@ -61,7 +61,7 @@ nextflow_process {
 
         then {
             assert process.success
-            assert snapshot(process.out.csv).match()
+            assert snapshot(process.out.cpm).match()
         }
 
     }

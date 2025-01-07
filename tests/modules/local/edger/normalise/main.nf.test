@@ -21,12 +21,14 @@ nextflow_process {
 
         then {
             assert process.success
-            assert snapshot(process.out.csv).match()
+            assert snapshot(process.out.cpm).match()
         }
 
     }
 
     test("Rows with many zeros") {
+
+        tag "rows_many_zeros"
 
         when {
 
@@ -40,10 +42,7 @@ nextflow_process {
 
         then {
             assert process.success
-            assert snapshot(process.out.csv).match()
-            with(process.out.csv) {
-                assert path(get(0)).readLines().size() == 5
-            }
+            assert snapshot(process.out.cpm).match()
         }
 
     }
@@ -62,7 +61,7 @@ nextflow_process {
 
         then {
             assert process.success
-            assert snapshot(process.out.csv).match()
+            assert snapshot(process.out.cpm).match()
         }
 
     }

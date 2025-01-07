@@ -1,172 +1,110 @@
 {
-    "Full workflow - Expression Atlas only": {
-        "content": [
-            {
-                "0": [
-                    "variation_coefficients.csv:md5,2c9749853675f7359ebf2cd0242641fe"
-                ],
-                "ch_output_from_variation_coefficient": [
-                    "variation_coefficients.csv:md5,2c9749853675f7359ebf2cd0242641fe"
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
-        },
-        "timestamp": "2024-12-31T21:10:44.253721"
-    },
-    "Two Expression Atlas accessions provided - skip no zero normalisation filter": {
-        "content": [
-            {
-                "0": [
-                    "variation_coefficients.csv:md5,baaa5074dcc665399f74d80a2e48bb89"
-                ],
-                "ch_output_from_variation_coefficient": [
-                    "variation_coefficients.csv:md5,baaa5074dcc665399f74d80a2e48bb89"
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
-        },
-        "timestamp": "2024-12-31T13:44:57.610154"
-    },
-    "Two Expression Atlas keywords provided - normalisation with EdgeR": {
-        "content": [
-            {
-                "0": [
-                    "variation_coefficients.csv:md5,cd96cd99f15072771afa6180092c7bc2"
-                ],
-                "ch_output_from_variation_coefficient": [
-                    "variation_coefficients.csv:md5,cd96cd99f15072771afa6180092c7bc2"
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
-        },
-        "timestamp": "2024-12-30T18:54:55.39010153"
-    },
-    "Two Expression Atlas accessions provided - skip no zero filter": {
-        "content": [
-            {
-                "0": [
-                    
-                ],
-                "ch_output_from_gene_variation": [
-                    
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
-        },
-        "timestamp": "2025-01-03T17:31:44.519304559"
-    },
     "Expression Atlas accession - two output datasets": {
         "content": [
-            {
-                "0": [
-                    "gene_variations.csv:md5,1a17cababd3a48b9b67f93613ad2ae66"
-                ],
-                "ch_output_from_gene_variation": [
-                    "gene_variations.csv:md5,1a17cababd3a48b9b67f93613ad2ae66"
-                ]
-            }
+            [
+                "stats_most_stable_genes.csv:md5,24892b65e3569872371f79c3afcb863d"
+            ],
+            [
+                "stats_all_genes.csv:md5,7867fdf5168199d20dc16c47006ef8ce"
+            ],
+            [
+                "count_summary.csv:md5,3ce9f092b0863842fc08db3dd0bc947e"
+            ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-04T00:32:14.127103629"
+        "timestamp": "2025-01-09T10:46:57.423487611"
     },
     "Two Expression Atlas keywords provided": {
         "content": [
-            {
-                "0": [
-                    "gene_variations.csv:md5,73bb18fe7efc6fe8121517d5260ebc97"
-                ],
-                "ch_output_from_gene_variation": [
-                    "gene_variations.csv:md5,73bb18fe7efc6fe8121517d5260ebc97"
-                ]
-            }
+            [
+                "stats_most_stable_genes.csv:md5,a06dceee03c9d413d6c8ec22329f5262"
+            ],
+            [
+                "stats_all_genes.csv:md5,ef718e06c30989d1e8341cbd2f5b8b44"
+            ],
+            [
+                "count_summary.csv:md5,42fd89bef2f7a1e6f43ae91bc443e584"
+            ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-04T10:10:39.27923988"
+        "timestamp": "2025-01-09T10:55:01.778957099"
     },
     "Two Expression Atlas no keyword (whole species)": {
         "content": [
-            {
-                "0": [
-                    "gene_variations.csv:md5,a1f009584a242f11a9bb69b0f5ad4e27"
-                ],
-                "ch_output_from_gene_variation": [
-                    "gene_variations.csv:md5,a1f009584a242f11a9bb69b0f5ad4e27"
-                ]
-            }
+            [
+                "stats_most_stable_genes.csv:md5,efb81b25c691f8758da1c1f44f315016"
+            ],
+            [
+                "stats_all_genes.csv:md5,0ec1c7005ad2c0ef43d4b43787293cfc"
+            ],
+            [
+                "count_summary.csv:md5,7bffef35d4d295abd25391ff42def670"
+            ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-04T10:09:09.098400643"
+        "timestamp": "2025-01-09T10:50:56.83921757"
     },
     "Test workflow - common accession (E-MTAB-552) between manual and auto": {
         "content": [
-            {
-                "0": [
-                    "gene_variations.csv:md5,3bd88d9e5f656cd69777de3ad38dd3c0"
-                ],
-                "ch_output_from_gene_variation": [
-                    "gene_variations.csv:md5,3bd88d9e5f656cd69777de3ad38dd3c0"
-                ]
-            }
+            [
+                "stats_most_stable_genes.csv:md5,b311ed6e0abab127f180ece1737c4835"
+            ],
+            [
+                "stats_all_genes.csv:md5,a1ee2aa140ec3f2968b662e46e65a7ae"
+            ],
+            [
+                "count_summary.csv:md5,ff830820097999847752e1e553628c18"
+            ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-04T10:12:42.829549076"
+        "timestamp": "2025-01-09T15:21:40.286621572"
     },
     "Two Expression Atlas accessions provided - normalisation with EdgeR": {
         "content": [
-            {
-                "0": [
-                    "gene_variations.csv:md5,0ed2e3f7c873b2dabda0019be2560626"
-                ],
-                "ch_output_from_gene_variation": [
-                    "gene_variations.csv:md5,0ed2e3f7c873b2dabda0019be2560626"
-                ]
-            }
+            [
+                "stats_most_stable_genes.csv:md5,9af4528cb8ea2695e0aff66c1ea464a7"
+            ],
+            [
+                "stats_all_genes.csv:md5,7339175b11aeaeac1a9552a294f9f7b3"
+            ],
+            [
+                "count_summary.csv:md5,06ba6597605876cc7152c67db0545075"
+            ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-04T10:11:20.333596241"
+        "timestamp": "2025-01-09T10:56:26.563087788"
     },
     "Two Expression Atlas accessions provided": {
         "content": [
-            {
-                "0": [
-                    "gene_variations.csv:md5,5bf38356c1a5c984347f8a77cbfd4f88"
-                ],
-                "ch_output_from_gene_variation": [
-                    "gene_variations.csv:md5,5bf38356c1a5c984347f8a77cbfd4f88"
-                ]
-            }
+            [
+                "stats_most_stable_genes.csv:md5,91a38d6845c7a8bdd744b5bd7d14580d"
+            ],
+            [
+                "stats_all_genes.csv:md5,a209dc78d21f5ec26dadccc33a121602"
+            ],
+            [
+                "count_summary.csv:md5,d663b54f74d651807188ccf1eb5ca7e2"
+            ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-04T10:07:14.475462178"
+        "timestamp": "2025-01-09T10:46:17.955565042"
     }
 }
