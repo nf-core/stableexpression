@@ -17,7 +17,7 @@ process EDGER_NORMALISE {
     tuple val(meta), path(count_file)
 
     output:
-    tuple val(meta), path('*.log_cpm.csv'),                                                                         emit: csv
+    tuple val(meta), path('*.cpm.csv'),                                                                             emit: cpm
     tuple val("${task.process}"), val('R'),     eval('Rscript -e "cat(R.version.string)" | sed "s/R version //"'),  topic: versions
     tuple val("${task.process}"), val('edgeR'), eval('Rscript -e "cat(as.character(packageVersion(\'edgeR\')))"'),  topic: versions
 

@@ -128,7 +128,7 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
 }
 
 export_data <- function(cpm_counts, filename) {
-    filename <- sub("\\.csv$", ".log_cpm.csv", filename)
+    filename <- sub("\\.csv$", ".cpm.csv", filename)
     print(paste('Exporting normalised counts per million to:', filename))
     write.table(cpm_counts, filename, sep = ',', row.names = TRUE, quote = FALSE)
 }

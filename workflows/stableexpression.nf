@@ -64,11 +64,11 @@ workflow STABLEEXPRESSION {
 
     if ( params.normalisation_method == 'deseq2' ) {
         DESEQ2_NORMALISE( ch_raw_datasets )
-        ch_raw_datasets_normalised = DESEQ2_NORMALISE.out.csv
+        ch_raw_datasets_normalised = DESEQ2_NORMALISE.out.cpm
 
     } else { // 'edger'
         EDGER_NORMALISE( ch_raw_datasets )
-        ch_raw_datasets_normalised = EDGER_NORMALISE.out.csv
+        ch_raw_datasets_normalised = EDGER_NORMALISE.out.cpm
     }
 
     // putting all normalised count datasets together
