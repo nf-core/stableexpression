@@ -122,7 +122,7 @@ workflow STABLEEXPRESSION {
         : Channel.empty()
     ch_multiqc_logo = params.multiqc_logo
         ? Channel.fromPath(params.multiqc_logo, checkIfExists: true)
-        : Channel.fromPath("${workflow.projectDir}/docs/images/nf-core-sampleexpression_logo_light.png", checkIfExists: true)
+        : Channel.fromPath("${workflow.projectDir}/docs/images/nf-core-stableexpression_logo_light.png", checkIfExists: true)
 
     // Prepare the workflow summary
     ch_workflow_summary = Channel.value(

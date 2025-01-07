@@ -1,5 +1,4 @@
-.nextflow.*
-.nextflow/
+.nextflow*
 work/
 data/
 results/
@@ -8,8 +7,7 @@ testing/
 testing*
 *.pyc
 null/
-.nf-test/
-.nf-test.*
+.nf-test*
 .idea/
 taggers/
 tokenizers/

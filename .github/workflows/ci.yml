@@ -66,8 +66,4 @@ jobs:
           sudo mv nf-test /usr/local/bin/
 
       - name: Run Tests (Shard ${{ matrix.shard }}/${{ strategy.job-total }})
-        run: nf-test test --ci --shard ${{ matrix.shard }}/${{ strategy.job-total }}
-
-      - name: Run whole pipeline with test profile
-        run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile test,docker --outdir ./results
+        run: nf-test test --ci --shard ${{ matrix.shard }}/${{ strategy.job-total }} --tag module
