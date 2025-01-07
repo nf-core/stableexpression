@@ -1,5 +1,7 @@
 process EDGER_NORMALISE {
 
+    label 'process_low'
+
     publishDir "${params.outdir}/normalisation/edger"
 
     tag "${meta.dataset}"

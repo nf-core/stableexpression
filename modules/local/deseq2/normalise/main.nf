@@ -1,5 +1,7 @@
 process DESEQ2_NORMALISE {
 
+    label 'process_low'
+
     publishDir "${params.outdir}/normalisation/deseq2"
 
     tag "${meta.dataset}"

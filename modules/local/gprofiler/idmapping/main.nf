@@ -1,5 +1,7 @@
 process GPROFILER_IDMAPPING {
 
+    label 'process_low'
+
     publishDir "${params.outdir}/idmapping"
 
     tag "${meta.dataset}"

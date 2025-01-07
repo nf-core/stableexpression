@@ -1,5 +1,7 @@
 process EXPRESSIONATLAS_GETDATA {
 
+    label 'process_low'
+
     // limiting to 8 threads at a time to avoid 429 errors with the Expression Atlas API server
     maxForks 8
 

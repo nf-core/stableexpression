@@ -1,5 +1,7 @@
 process EXPRESSIONATLAS_GETACCESSIONS {
 
+    label 'process_low'
+
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e4/e459ae44332297f0429e7dd501bc3a6f9b5504b13e2db0002a5d3021cc9ac443/data':

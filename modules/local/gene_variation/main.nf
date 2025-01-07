@@ -1,5 +1,7 @@
 process GENE_VARIATION {
 
+    label 'process_low'
+
     publishDir "${params.outdir}/gene_variation"
 
     conda "${moduleDir}/environment.yml"
