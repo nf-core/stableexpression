@@ -68,10 +68,13 @@ workflow PIPELINE_INITIALISATION {
     validateInputParameters( params )
 
     //
-    // Create channel from input file provided through params.input
+    // Create channel from datasets file provided through params.datasets
     //
-
-    ch_input_datasets = parseInputDatasets( params.datasets )
+    if (params.datasets) {
+        ch_input_datasets = parseInputDatasets( params.datasets )
+    } else {
+        ch_input_datasets = [ raw: Channel.empty(), normalised: Channel.empty() ]
+    }
 
     emit:
     raw_datasets = ch_input_datasets.raw
