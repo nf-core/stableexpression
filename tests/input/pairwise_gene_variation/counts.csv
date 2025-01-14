@@ -1,0 +1,4 @@
+ensembl_gene_id,sample_A,sample_B,sample_C,sample_D
+gene_a,1,3,5,3
+gene_b,2,6,10,6
+gene_c,1,5,9,5

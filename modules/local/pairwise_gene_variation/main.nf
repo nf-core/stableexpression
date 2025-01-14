@@ -6,8 +6,8 @@ process PAIRWISE_GENE_VARIATION {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        '':
-        '' }"
+        'oras://community.wave.seqera.io/library/polars_psutil_python_tqdm:ebc5651c8258f46d':
+        'community.wave.seqera.io/library/polars_psutil_python_tqdm:e7cefc1d3226eea4' }"
 
     input:
     path count_file
