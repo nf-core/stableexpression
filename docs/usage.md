@@ -10,7 +10,7 @@ You can run this pipeline in multiple ways.
 
 1. Expression Atlas **automatic mode**: without keywords
 
-This run fetches Expression Atlas accessions corresponding to the provided species and downloads the corresponding data.
+This pipeline fetches Expression Atlas accessions for the provided species and downloads the corresponding data.
 
 ```bash
 nextflow run nf-core/stableexpression \
@@ -22,7 +22,7 @@ nextflow run nf-core/stableexpression \
 
 1. Expression Atlas **automatic mode**: with keywords
 
-The run fetches Expression Atlas accessions corresponding to the provided species / keywords and downloads the corresponding data. You do not need to specify the `--fetch_eatlas_accessions`when you specify keywords.
+The pipeline fetches Expression Atlas accessions for the provided species / keywords and downloads the corresponding data. You do not need to specify the `--fetch_eatlas_accessions` parameter when you specify keywords.
 
 ```bash
 nextflow run nf-core/stableexpression \
@@ -34,7 +34,7 @@ nextflow run nf-core/stableexpression \
 
 3. Expression Atlas **manual mode**
 
-The pipeline downloads the count datasets and experimental designs corresponding to the provided accessions.
+The pipeline downloads the count datasets and experimental designs for the provided accessions.
 
 ```bash
 nextflow run nf-core/stableexpression \

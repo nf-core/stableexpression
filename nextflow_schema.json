@@ -25,6 +25,17 @@
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
                     "fa_icon": "fas fa-folder-open"
                 },
+                "datasets": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_input.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing information about the input count datasets and their related experimental design.",
+                    "help_text": "The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. .",
+                    "fa_icon": "fas fa-file-csv"
+                },
                 "email": {
                     "type": "string",
                     "description": "Email address for completion summary.",
@@ -34,57 +45,38 @@
                 }
             }
         },
-        "local_datasets_options": {
-            "title": "Local datasets options",
-            "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Options for local count datasets to analyze.",
-            "properties": {
-                "datasets": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "schema": "assets/schema_input.json",
-                    "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing information about the input count datasets and their related experimental design.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
-                }
-            }
-        },
         "expression_atlas_options": {
             "title": "Expression Atlas options",
             "type": "object",
-            "fa_icon": "fas fa-dna",
+            "fa_icon": "fas fa-book-atlas",
             "description": "Options for fetching datasets from Expression Atlas.",
             "properties": {
                 "fetch_eatlas_accessions": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-book-atlas",
-                    "description": "Fetch count datasets and experimental designs from Expression Atlas for this species.",
-                    "help_text": "If you want to fetch count data for this species from Expression Atlas, set this parameter to `true`. You do not need to set this parameter if you provide Expression Atlas keywords with `--eatlas_keywords`."
+                    "fa_icon": "fas fa-cloud-arrow-down",
+                    "description": "Automatically etches Expression Atlas accessions for this species. and downloads the corresponding count datasets and experimental designs.",
+                    "help_text": "If no Expression Atlas keywords are provided (with `--eatlas_keywords`) and if you want to get all Expression Atlas accessions for this species, provide this parameter."
                 },
                 "eatlas_keywords": {
                     "type": "string",
                     "description": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas.",
-                    "fa_icon": "fas fa-book-atlas",
+                    "fa_icon": "fas fa-highlighter",
                     "pattern": "([a-zA-Z,]+)",
-                    "help_text": "e.g. `--eatlas_keywords 'stress,flowering'`"
+                    "help_text": "The pipeline will select all Expression Atlas experiments that contain the provided keywords in their description of in one of the condition names. Example: `--eatlas_keywords 'stress,flowering'`"
                 },
                 "eatlas_accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Expression Atlas accession(s), separated by commas.",
-                    "fa_icon": "fas fa-book-atlas",
-                    "help_text": "e.g. `--eatlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
+                    "description": "Provide directly Expression Atlas accession(s) (separated by commas) that you want to download.",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "Example: `--eatlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
                 }
             }
         },
         "statistical_options": {
             "title": "Statistics options",
             "type": "object",
-            "fa_icon": "fas fa-dna",
+            "fa_icon": "fas fa-chart-line",
             "description": "Statistical options for normalisation and calculation of gene expression variation.",
             "properties": {
                 "normalisation_method": {
@@ -245,9 +237,6 @@
     "allOf": [
         {
             "$ref": "#/$defs/input_output_options"
-        },
-        {
-            "$ref": "#/$defs/local_datasets_options"
         },
         {
             "$ref": "#/$defs/expression_atlas_options"

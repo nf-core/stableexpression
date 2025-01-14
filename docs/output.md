@@ -9,8 +9,8 @@ This document describes the output produced by the pipeline.
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
 - [Expression Atlas](#expression-atlas): get Expression Atlas accessions and download data
-- [DESeq2](#deseq2) or [EdgeR](#edger): normalise raw data
-- [g:Profiler](#gprofiler-idmapping): map gene IDS to Ensembl IDS
+- [Normalisation](#normalisation): normalise raw data (with DESeq2 or EdgeR)
+- [gProfiler](#gprofiler-idmapping): map gene IDS to Ensembl IDS
 - [Gene Variation](#gene-variation): compute gene variation statistics and get the most stable genes
 - [MultiQC](#multiqc): generate reports
 
@@ -34,7 +34,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <summary>Output files</summary>
 
 - `gene_variation/`
-  - A list of the most stable genes in stats_most_stable_genes.csv`.
+  - A list of the most stable genes in `stats_most_stable_genes.csv`.
   - Descriptive statistics for all genes in `stats_all_genes.csv`
   - All normalised counts (for each gene and each sample) in `count_summary.csv`.
 
@@ -51,23 +51,15 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 </details>
 
-### Deseq2
+### Normalisation
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `normalisation/deseq2/`
-  - List of newly normalised datasets
+List of newly normalised datasets in `normalisation/`
 
-</details>
-
-### EdgeR
-
-<details markdown="1">
-<summary>Output files</summary>
-
-- `normalisation/edger/`
-  - List of newly normalised datasets
+- `normalisation/deseq2/` for DESeq2
+- `normalisation/edger/` for EdgeR
 
 </details>
 

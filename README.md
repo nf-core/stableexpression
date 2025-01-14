@@ -68,7 +68,7 @@ sample_B,condition_2
 ...
 ```
 
-Now you can tun the pipeline as follows:
+Now you can run the pipeline as follows:
 
 > ```bash
 > nextflow run nf-core/stableexpression \
