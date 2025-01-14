@@ -2,6 +2,14 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
+# Get variation coefficient from count data for each gene
+# The variation coefficient is the ratio of the standard deviation to the mean
+# We want genes that are neither expressed too much nor too little
+# Metadata (name and description) are used to annotate the results
+# Likewise, mappings (original gene ids) are used to better associate gene ids with their original gene ids
+# Usage:
+# python get_variation_coefficients.py --counts <count_file> --metadata <metadata_file> --mapping <mapping_file>
+
 import argparse
 import polars as pl
 from pathlib import Path
@@ -11,23 +19,23 @@ from functools import reduce
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# outfile names
+MOST_STABLE_GENES_RESULT_OUTFILENAME = "stats_most_stable_genes.csv"
+ALL_GENES_RESULT_OUTFILENAME = "stats_all_genes.csv"
+COUNT_SUMMARY_PARQUET_OUTFILENAME = "count_summary.parquet"
+LOG_COUNT_SUMMARY_OUTFILENAME = "log_count_summary.csv"
+
+# column names
 ORIGINAL_GENE_ID_COLNAME = "original_gene_id"
 ORIGINAL_GENE_IDS_COLNAME = "original_gene_ids"
 ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
-MOST_STABLE_GENES_RESULT_OUTFILENAME = "stats_most_stable_genes.csv"
-ALL_GENES_RESULT_OUTFILENAME = "stats_all_genes.csv"
-COUNT_SUMMARY_OUTFILENAME = "count_summary.csv"
 GENE_NAME_COLNAME = "name"
 GENE_DESCRIPTION_COLNAME = "description"
-
 VARIATION_COEFFICIENT_COLNAME = "variation_coefficient"
 STANDARD_DEVIATION_COLNAME = "standard_deviation"
 MEAN_COLNAME = "mean"
 EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME = "expression_level_quantile_interval"
 QUANTILE_INTERVAL_STATUS_COLNAME = "quantile_interval_status"
-
-NB_QUANTILES = 20
-MAX_SELECTED_STABLE_GENES_PER_QUANTILE_INTERVAL = 10
 
 MOST_STABLE_GENES_RESULT_COLS = [
     ENSEMBL_GENE_ID_COLNAME,
@@ -48,13 +56,9 @@ ALL_GENES_STATS_COLS = [
     VARIATION_COEFFICIENT_COLNAME,
 ]
 
-# Get variation coefficient from count data for each gene
-# The variation coefficient is the ratio of the standard deviation to the mean
-# We want genes that are neither expressed too much nor too little
-# Metadata (name and description) are used to annotate the results
-# Likewise, mappings (original gene ids) are used to better associate gene ids with their original gene ids
-# Usage:
-# python get_variation_coefficients.py --counts <count_file> --metadata <metadata_file> --mapping <mapping_file>
+# quantile intervals
+NB_QUANTILES = 20
+MAX_SELECTED_STABLE_GENES_PER_QUANTILE_INTERVAL = 10
 
 
 #####################################################
@@ -91,9 +95,8 @@ def is_valid_df(df: pl.LazyFrame, file: Path) -> bool:
     """
     try:
         return not df.limit(1).collect().is_empty()
-    except (
-        FileNotFoundError
-    ):  # strangely enough we get this error for files existing but empty
+    except FileNotFoundError:
+        # strangely enough we get this error for some files existing but empty
         logger.error(f"Could not find file {str(file)}")
         return False
     except pl.exceptions.NoDataError as err:
@@ -190,16 +193,11 @@ def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
 
 def preprocess_count(count_df: pl.LazyFrame) -> pl.LazyFrame:
     """
-    Preprocess the count data by replacing NaN values with 0,
-    then computing the log2 of the counts.
+    Preprocess the count data by replacing NaN values with 0 and sorting the dataframe.
     """
     # handling NA values (genes that are not found in all datasets)
     # replace NaN values with 0
     count_df = count_df.fill_null(0)
-
-    # getting log2 counts
-    count_df = transform_counts_to_log_counts(count_df)
-
     # sorting dataframe (necessary to get consistent output)
     return count_df.sort(ENSEMBL_GENE_ID_COLNAME, descending=False)
 
@@ -346,6 +344,7 @@ def export_data(
     most_stable_genes_df: pl.LazyFrame,
     all_genes_stat_df: pl.LazyFrame,
     count_df: pl.LazyFrame,
+    log_count_df: pl.LazyFrame,
 ):
     """Export gene expression data to CSV files."""
     logger.info(
@@ -358,8 +357,11 @@ def export_data(
     )
     all_genes_stat_df.collect().write_csv(ALL_GENES_RESULT_OUTFILENAME)
 
-    logger.info(f"Exporting normalised counts to: {COUNT_SUMMARY_OUTFILENAME}")
-    count_df.collect().write_csv(COUNT_SUMMARY_OUTFILENAME)
+    logger.info(f"Exporting normalised counts to: {COUNT_SUMMARY_PARQUET_OUTFILENAME}")
+    count_df.collect().write_parquet(COUNT_SUMMARY_PARQUET_OUTFILENAME)
+
+    logger.info(f"Exporting log normalised counts to: {LOG_COUNT_SUMMARY_OUTFILENAME}")
+    count_df.collect().write_csv(LOG_COUNT_SUMMARY_OUTFILENAME)
 
 
 #####################################################
@@ -380,19 +382,22 @@ def main():
     # preprocessing counts (removing 0 counts / log transformation)
     count_df = preprocess_count(count_df)
 
+    # getting log2 counts
+    log_count_df = transform_counts_to_log_counts(count_df)
+
     # getting metadata and mappings
     metadata_df = get_metadata(metadata_files)
     mapping_df = get_mappings(mapping_files)
 
     # computing statistics (mean, standard deviation, coefficient of variation, quantiles)
-    stat_df = compute_statistics(count_df)
+    stat_df = compute_statistics(log_count_df)
 
     stat_df = merge_data(stat_df, metadata_df, mapping_df)
 
     most_stable_genes_df = get_most_stable_genes(stat_df)
 
     all_genes_stat_df = format_all_genes_dataframe(stat_df)
-    export_data(most_stable_genes_df, all_genes_stat_df, count_df)
+    export_data(most_stable_genes_df, all_genes_stat_df, count_df, log_count_df)
 
 
 if __name__ == "__main__":
