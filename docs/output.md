@@ -11,7 +11,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [Expression Atlas](#expression-atlas): get Expression Atlas accessions and download data
 - [Normalisation](#normalisation): normalise raw data (with DESeq2 or EdgeR)
 - [gProfiler](#gprofiler-idmapping): map gene IDS to Ensembl IDS
-- [Gene Variation](#gene-variation): compute gene variation statistics and get the most stable genes
+- [Gene Statistics](#gene-statistics): merge all counts, compute gene variation statistics and get the most stable genes
 - [MultiQC](#multiqc): generate reports
 
 ## Output files

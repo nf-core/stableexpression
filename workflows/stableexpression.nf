@@ -11,7 +11,7 @@ include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/e
 include { DESEQ2_NORMALISE                       } from '../modules/local/deseq2/normalise/main'
 include { EDGER_NORMALISE                        } from '../modules/local/edger/normalise/main'
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
-include { GENE_VARIATION                         } from '../modules/local/gene_variation/main'
+include { GENE_STATISTICS                        } from '../modules/local/gene_statistics/main'
 include { MULTIQC                                } from '../modules/nf-core/multiqc/main'
 
 include { parseInputDatasets                     } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
@@ -86,19 +86,19 @@ workflow STABLEEXPRESSION {
     // MODULE: Merge count files & compute variation coefficient for each gene
     //
 
-    GENE_VARIATION(
+    GENE_STATISTICS(
         GPROFILER_IDMAPPING.out.renamed.collect(),
         GPROFILER_IDMAPPING.out.metadata.collect(),
         GPROFILER_IDMAPPING.out.mapping.collect()
     )
-    ch_stats_most_stable_genes = GENE_VARIATION.out.stats_most_stable_genes
-    ch_stats_all_genes = GENE_VARIATION.out.stats_all_genes
-    ch_count_summary = GENE_VARIATION.out.count_summary
+    ch_stats_most_stable_genes = GENE_STATISTICS.out.stats_most_stable_genes
+    ch_stats_all_genes = GENE_STATISTICS.out.stats_all_genes
+    ch_log_count_summary = GENE_STATISTICS.out.log_count_summary
 
     ch_multiqc_files = ch_multiqc_files
                         .mix( ch_stats_most_stable_genes.collect() )
                         .mix( ch_stats_all_genes.collect() )
-                        .mix( ch_count_summary.collect() )
+                        .mix( ch_log_count_summary.collect() )
 
 
     //
@@ -163,7 +163,7 @@ workflow STABLEEXPRESSION {
     emit:
         stats_most_stable_genes = ch_stats_most_stable_genes
         stats_all_genes = ch_stats_all_genes
-        count_summary = ch_count_summary
+        count_summary = ch_log_count_summary
         multiqc_report = ch_multiqc_report
 
 

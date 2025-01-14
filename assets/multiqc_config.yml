@@ -74,7 +74,7 @@ custom_data:
         title: "Original Gene IDs"
         description: "Gene IDs as stated in the original datasets"
 
-  gene_variation_statistics:
+  gene_statistics:
     section_name: "Descriptive statistics - All genes"
     file_format: "csv"
     description: |
@@ -114,8 +114,8 @@ sp:
   most_stable_genes:
     fn: "*stats_most_stable_genes.csv"
     max_filesize: 1000000 # 1MB
-  gene_variation_statistics:
+  gene_statistics:
     fn: "*stats_all_genes.csv"
     max_filesize: 50000000 # 50MB
   cpm_distributions:
-    fn: "*count_summary.csv"
+    fn: "*log_count_summary.csv"
