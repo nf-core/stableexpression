@@ -11,6 +11,8 @@ include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/e
 include { DESEQ2_NORMALISE                       } from '../modules/local/deseq2/normalise/main'
 include { EDGER_NORMALISE                        } from '../modules/local/edger/normalise/main'
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
+include { MERGE_COUNTS                           } from '../modules/local/merge_counts/main'
+include { PAIRWISE_GENE_VARIATION                } from '../modules/local/pairwise_gene_variation/main'
 include { GENE_STATISTICS                        } from '../modules/local/gene_statistics/main'
 include { MULTIQC                                } from '../modules/nf-core/multiqc/main'
 
@@ -81,16 +83,32 @@ workflow STABLEEXPRESSION {
 
     // tries to map gene IDs to Ensembl IDs whenever possible
     GPROFILER_IDMAPPING( ch_all_normalised.combine(ch_species) )
+    ch_counts_gene_renamed = GPROFILER_IDMAPPING.out.renamed
+    ch_gene_metadata = GPROFILER_IDMAPPING.out.metadata
+    ch_renaming_mapping = GPROFILER_IDMAPPING.out.mapping
 
     //
-    // MODULE: Merge count files & compute variation coefficient for each gene
+    // MODULE: Merge count files
     //
 
+    MERGE_COUNTS( ch_counts_gene_renamed.collect() )
+    ch_merged_counts = MERGE_COUNTS.out.counts
+
+    //
+    // MODULE: Pairwise gene variation
+    //
+    PAIRWISE_GENE_VARIATION ( ch_merged_counts )
+
+    //
+    // MODULE: Gene statistics
+    //
     GENE_STATISTICS(
-        GPROFILER_IDMAPPING.out.renamed.collect(),
-        GPROFILER_IDMAPPING.out.metadata.collect(),
-        GPROFILER_IDMAPPING.out.mapping.collect()
+        ch_merged_counts,
+        ch_gene_metadata.collect(),
+        ch_renaming_mapping.collect(),
+        PAIRWISE_GENE_VARIATION.out.m_measures
     )
+
     ch_stats_most_stable_genes = GENE_STATISTICS.out.stats_most_stable_genes
     ch_stats_all_genes = GENE_STATISTICS.out.stats_all_genes
     ch_log_count_summary = GENE_STATISTICS.out.log_count_summary
