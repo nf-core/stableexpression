@@ -85,6 +85,20 @@
                     "fa_icon": "fas fa-chart-simple",
                     "enum": ["deseq2", "edger"],
                     "default": "deseq2"
+                },
+                "gene_variation_method": {
+                    "type": "string",
+                    "description": "Method to use for calculation of gene expression variation.",
+                    "fa_icon": "fas fa-chart-simple",
+                    "enum": ["pairwise_gene_variation"],
+                    "default": "pairwise_gene_variation",
+                    "help_text": "Pairwise gene variation is large scale implementation of Genorm (Vandesompele et al., Genome Biology (2002))"
+                },
+                "skip_gene_variation_calc": {
+                    "type": "boolean",
+                    "description": "Skip calculation of gene expression variation.",
+                    "fa_icon": "fas fa-chart-simple",
+                    "help_text": "If you don't want to calculate gene expression variation, you can skip this step by providing `--skip_gene_variation_calc`."
                 }
             }
         },
