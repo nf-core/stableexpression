@@ -17,6 +17,7 @@ process PAIRWISE_GENE_VARIATION {
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
     tuple val("${task.process}"), val('psutil'),   eval('python3 -c "import psutil; print(psutil.__version__)"'),     topic: versions
+    tuple val("${task.process}"), val('tqdm'),     eval('python3 -c "import tqdm; print(tqdm.__version__)"'),         topic: versions
 
 
     script:

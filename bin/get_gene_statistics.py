@@ -2,19 +2,10 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
-# Get variation coefficient from count data for each gene
-# The variation coefficient is the ratio of the standard deviation to the mean
-# We want genes that are neither expressed too much nor too little
-# Metadata (name and description) are used to annotate the results
-# Likewise, mappings (original gene ids) are used to better associate gene ids with their original gene ids
-# Usage:
-# python get_variation_coefficients.py --counts <count_file> --metadata <metadata_file> --mapping <mapping_file>
-
 import argparse
 import polars as pl
 from pathlib import Path
 import logging
-from functools import reduce
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,13 +13,13 @@ logger = logging.getLogger(__name__)
 # outfile names
 MOST_STABLE_GENES_RESULT_OUTFILENAME = "stats_most_stable_genes.csv"
 ALL_GENES_RESULT_OUTFILENAME = "stats_all_genes.csv"
-COUNT_SUMMARY_PARQUET_OUTFILENAME = "count_summary.parquet"
-LOG_COUNT_SUMMARY_OUTFILENAME = "log_count_summary.csv"
+LOG_COUNT_SUMMARY_OUTFILENAME = "log_counts.csv"
 
 # column names
 ORIGINAL_GENE_ID_COLNAME = "original_gene_id"
 ORIGINAL_GENE_IDS_COLNAME = "original_gene_ids"
 ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
+M_MEASURE_COLNAME = "m_measure"
 GENE_NAME_COLNAME = "name"
 GENE_DESCRIPTION_COLNAME = "description"
 VARIATION_COEFFICIENT_COLNAME = "variation_coefficient"
@@ -39,6 +30,7 @@ QUANTILE_INTERVAL_STATUS_COLNAME = "quantile_interval_status"
 
 MOST_STABLE_GENES_RESULT_COLS = [
     ENSEMBL_GENE_ID_COLNAME,
+    M_MEASURE_COLNAME,
     STANDARD_DEVIATION_COLNAME,
     VARIATION_COEFFICIENT_COLNAME,
     MEAN_COLNAME,
@@ -51,6 +43,7 @@ MOST_STABLE_GENES_RESULT_COLS = [
 
 ALL_GENES_STATS_COLS = [
     ENSEMBL_GENE_ID_COLNAME,
+    M_MEASURE_COLNAME,
     MEAN_COLNAME,
     STANDARD_DEVIATION_COLNAME,
     VARIATION_COEFFICIENT_COLNAME,
@@ -70,10 +63,10 @@ MAX_SELECTED_STABLE_GENES_PER_QUANTILE_INTERVAL = 10
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Get variation from count data for each gene"
+        description="Get statistics from count data for each gene"
     )
     parser.add_argument(
-        "--counts", type=str, dest="count_files", required=True, help="Count file"
+        "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
     parser.add_argument(
         "--metadata",
@@ -85,16 +78,23 @@ def parse_args():
     parser.add_argument(
         "--mappings", type=str, dest="mapping_files", required=True, help="Mapping file"
     )
+    parser.add_argument(
+        "--m-measures",
+        type=Path,
+        dest="m_measure_file",
+        required=True,
+        help="M-measure file",
+    )
     return parser.parse_args()
 
 
-def is_valid_df(df: pl.LazyFrame, file: Path) -> bool:
+def is_valid_lf(lf: pl.LazyFrame, file: Path) -> bool:
     """Check if a LazyFrame is valid.
 
     A LazyFrame is considered valid if it contains at least one row.
     """
     try:
-        return not df.limit(1).collect().is_empty()
+        return not lf.limit(1).collect().is_empty()
     except FileNotFoundError:
         # strangely enough we get this error for some files existing but empty
         logger.error(f"Could not find file {str(file)}")
@@ -104,23 +104,13 @@ def is_valid_df(df: pl.LazyFrame, file: Path) -> bool:
         return False
 
 
-def get_valid_lazy_dfs(files: list[Path]) -> list[pl.LazyFrame]:
+def get_valid_lazy_lfs(files: list[Path]) -> list[pl.LazyFrame]:
     """Get a list of valid LazyFrames from a list of files.
 
     A LazyFrame is considered valid if it contains at least one row.
     """
-    df_dict = {file: pl.scan_csv(file) for file in files}
-    return [df for file, df in df_dict.items() if is_valid_df(df, file)]
-
-
-def join_dfs(df1: pl.LazyFrame, df2: pl.LazyFrame):
-    """Join two LazyFrames on the ENSEMBL_GENE_ID_COLNAME column.
-
-    The how parameter is set to "full" to include all rows from both dfs.
-    The coalesce parameter is set to True to fill NaN values in the
-    resulting dataframe with values from the other dataframe.
-    """
-    return df1.join(df2, on=ENSEMBL_GENE_ID_COLNAME, how="full", coalesce=True)
+    lf_dict = {file: pl.scan_csv(file) for file in files}
+    return [lf for file, lf in lf_dict.items() if is_valid_lf(lf, file)]
 
 
 def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame:
@@ -130,44 +120,30 @@ def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame
     to String to ensure that all columns have the same data type. Finally, duplicate
     rows are dropped.
     """
-    dfs = get_valid_lazy_dfs(files)
-    concat_df = pl.concat(dfs)
+    lfs = get_valid_lazy_lfs(files)
+    concat_lf = pl.concat(lfs)
     # dropping duplicates
     # casting all columns to String
-    return concat_df.unique().with_columns(
+    return concat_lf.unique().with_columns(
         [
             pl.col(column).cast(pl.String)
-            for column in concat_df.collect_schema().names()
+            for column in concat_lf.collect_schema().names()
         ]
     )
 
 
-def get_count_columns(df: pl.LazyFrame) -> list[str]:
+def get_count_columns(lf: pl.LazyFrame) -> list[str]:
     """Get all column names except the ENSEMBL_GENE_ID_COLNAME column.
 
     The ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
     """
     return [
-        col for col in df.collect_schema().names() if col != ENSEMBL_GENE_ID_COLNAME
+        col for col in lf.collect_schema().names() if col != ENSEMBL_GENE_ID_COLNAME
     ]
 
 
-def get_counts(files: list[Path]) -> pl.LazyFrame:
-    """Get all count data from a list of files.
-
-    The files are merged into a single dataframe. The ENSEMBL_GENE_ID_COLNAME column is cast
-    to String, and all other columns are cast to Float64.
-    """
-    # lazy loading
-    dfs = get_valid_lazy_dfs(files)
-    # joining all count files
-    merged_df = reduce(join_dfs, dfs)
-    # casting count columns to Float64
-    # casting gene id column to String
-    count_columns = get_count_columns(merged_df)
-    return merged_df.with_columns(
-        [pl.col(column).cast(pl.Float64) for column in count_columns]
-    ).with_columns([pl.col(ENSEMBL_GENE_ID_COLNAME).cast(pl.String)])
+def get_counts(file: Path) -> pl.LazyFrame:
+    return pl.scan_parquet(file)
 
 
 def get_metadata(metadata_files: list[Path]) -> pl.LazyFrame:
@@ -176,13 +152,13 @@ def get_metadata(metadata_files: list[Path]) -> pl.LazyFrame:
 
 
 def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
-    concat_df = concat_cast_to_string_and_drop_duplicates(mapping_files)
+    concat_lf = concat_cast_to_string_and_drop_duplicates(mapping_files)
     # group by new gene IDs and gets the lis
     """Group by new gene IDs, get the list of distinct original gene IDs and convert to a string representation."""
     # t of distinct original gene IDs for each group
     # convert the list column to a string representation
     # separate the original gene IDs with a semicolon
-    return concat_df.group_by(ENSEMBL_GENE_ID_COLNAME).agg(
+    return concat_lf.group_by(ENSEMBL_GENE_ID_COLNAME).agg(
         pl.col(ORIGINAL_GENE_ID_COLNAME)
         .unique()
         .sort()
@@ -191,18 +167,18 @@ def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
     )
 
 
-def preprocess_count(count_df: pl.LazyFrame) -> pl.LazyFrame:
+def preprocess_count(count_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Preprocess the count data by replacing NaN values with 0 and sorting the dataframe.
     """
     # handling NA values (genes that are not found in all datasets)
     # replace NaN values with 0
-    count_df = count_df.fill_null(0)
+    count_lf = count_lf.fill_null(0)
     # sorting dataframe (necessary to get consistent output)
-    return count_df.sort(ENSEMBL_GENE_ID_COLNAME, descending=False)
+    return count_lf.sort(ENSEMBL_GENE_ID_COLNAME, descending=False)
 
 
-def transform_counts_to_log_counts(count_df: pl.LazyFrame) -> pl.LazyFrame:
+def transform_counts_to_log_counts(count_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Transform count data to log2 scale.
 
@@ -212,20 +188,20 @@ def transform_counts_to_log_counts(count_df: pl.LazyFrame) -> pl.LazyFrame:
     retain their original names.
     """
     logger.info("Getting average log2 counts")
-    count_columns = get_count_columns(count_df)
+    count_columns = get_count_columns(count_lf)
     transformed_cols = [pl.col(ENSEMBL_GENE_ID_COLNAME)] + [
         (pl.col(column) + 1).log(2).alias(column) for column in count_columns
     ]
-    return count_df.select(transformed_cols)
+    return count_lf.select(transformed_cols)
 
 
-def get_main_statistics(count_df: pl.LazyFrame) -> pl.LazyFrame:
+def get_main_statistics(count_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Compute log2 count descriptive statistics for each gene in the count dataframe.
     """
     logger.info("Getting descriptive statistics")
-    count_columns = get_count_columns(count_df)
-    return count_df.with_columns(
+    count_columns = get_count_columns(count_lf)
+    return count_lf.with_columns(
         mean=pl.concat_list(count_columns).list.mean(),
         std=pl.concat_list(count_columns).list.std(),
     ).select(
@@ -236,14 +212,14 @@ def get_main_statistics(count_df: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
-def get_quantile_intervals(df: pl.LazyFrame) -> pl.LazyFrame:
+def get_quantile_intervals(lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Compute the quantile intervals for the mean expression levels of each gene in the dataframe.
 
     The function assigns to each gene a quantile interval of its mean cpm compared to all genes.
     """
     logger.info("Getting average log2 cpm quantiles")
-    return df.with_columns(
+    return lf.with_columns(
         (pl.col(MEAN_COLNAME).rank() / pl.col(MEAN_COLNAME).count() * NB_QUANTILES)
         .floor()
         .cast(pl.Int8)
@@ -254,7 +230,7 @@ def get_quantile_intervals(df: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
-def compute_statistics(count_df: pl.LazyFrame) -> pl.LazyFrame:
+def compute_general_statistics(count_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Compute descriptive statistics and quantile intervals for gene expression data.
 
@@ -263,22 +239,29 @@ def compute_statistics(count_df: pl.LazyFrame) -> pl.LazyFrame:
     assigning each gene a quantile interval of its mean counts per million (cpm) compared to all genes.
     """
     # getting expression statistics
-    stat_df = get_main_statistics(count_df)
+    stat_lf = get_main_statistics(count_lf)
 
     # getting quantile intervals
-    stat_df = get_quantile_intervals(stat_df)
+    stat_lf = get_quantile_intervals(stat_lf)
 
-    return stat_df
+    return stat_lf
+
+
+def add_computed_statistics(
+    stat_lf: pl.LazyFrame, m_measure_file: Path
+) -> pl.LazyFrame:
+    m_measure_lf = pl.scan_csv(m_measure_file)
+    return stat_lf.join(m_measure_lf, on=ENSEMBL_GENE_ID_COLNAME, how="left")
 
 
 def merge_data(
-    stat_df: pl.LazyFrame, metadata_df: pl.LazyFrame, mapping_df: pl.LazyFrame
+    stat_lf: pl.LazyFrame, metadata_lf: pl.LazyFrame, mapping_lf: pl.LazyFrame
 ) -> pl.LazyFrame:
     """Merge the statistics dataframe with the metadata dataframe and the mapping dataframe."""
-    # we need to ensure that the index of stat_df are strings
+    # we need to ensure that the index of stat_lf are strings
     return (
-        stat_df.join(metadata_df, on=ENSEMBL_GENE_ID_COLNAME, how="left")
-        .join(mapping_df, on=ENSEMBL_GENE_ID_COLNAME, how="left")
+        stat_lf.join(metadata_lf, on=ENSEMBL_GENE_ID_COLNAME, how="left")
+        .join(mapping_lf, on=ENSEMBL_GENE_ID_COLNAME, how="left")
         .unique()  # just in case
         .sort(STANDARD_DEVIATION_COLNAME, descending=False)  # VERY IMPORTANT
     )
@@ -298,7 +281,7 @@ def get_status(quantile_interval: int) -> str:
         return "ok"
 
 
-def get_most_stable_genes(stat_df: pl.LazyFrame) -> pl.LazyFrame:
+def get_most_stable_genes(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Extract the most stable genes from the statistics dataframe.
 
@@ -309,7 +292,7 @@ def get_most_stable_genes(stat_df: pl.LazyFrame) -> pl.LazyFrame:
     """
     logger.info("Getting most stable genes per quantile interval")
     return (
-        stat_df.group_by(  # the df should be already sorted
+        stat_lf.group_by(  # the lf should be already sorted
             EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME
         )
         .head(MAX_SELECTED_STABLE_GENES_PER_QUANTILE_INTERVAL)
@@ -326,42 +309,48 @@ def get_most_stable_genes(stat_df: pl.LazyFrame) -> pl.LazyFrame:
             ],
             descending=[True, False, False],
         )
-        .select([column for column in MOST_STABLE_GENES_RESULT_COLS])
+        .select(
+            [
+                column
+                for column in MOST_STABLE_GENES_RESULT_COLS
+                if column in stat_lf.collect_schema().names()
+            ]
+        )
     )
 
 
-def format_all_genes_dataframe(stat_df: pl.LazyFrame) -> pl.LazyFrame:
+def format_all_genes_dataframe(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Format the dataframe containing statistics for all genes by selecting the right columns
     and sorting the dataframe by gene ID.
     """
-    return stat_df.select([column for column in ALL_GENES_STATS_COLS]).sort(
-        ENSEMBL_GENE_ID_COLNAME, descending=False
-    )
+    return stat_lf.select(
+        [
+            column
+            for column in ALL_GENES_STATS_COLS
+            if column in stat_lf.collect_schema().names()
+        ]
+    ).sort(ENSEMBL_GENE_ID_COLNAME, descending=False)
 
 
 def export_data(
-    most_stable_genes_df: pl.LazyFrame,
-    all_genes_stat_df: pl.LazyFrame,
-    count_df: pl.LazyFrame,
-    log_count_df: pl.LazyFrame,
+    most_stable_genes_lf: pl.LazyFrame,
+    all_genes_stat_lf: pl.LazyFrame,
+    log_count_lf: pl.LazyFrame,
 ):
     """Export gene expression data to CSV files."""
     logger.info(
         f"Exporting statistics for the most stable genes to: {MOST_STABLE_GENES_RESULT_OUTFILENAME}"
     )
-    most_stable_genes_df.collect().write_csv(MOST_STABLE_GENES_RESULT_OUTFILENAME)
+    most_stable_genes_lf.collect().write_csv(MOST_STABLE_GENES_RESULT_OUTFILENAME)
 
     logger.info(
         f"Exporting statistics for all genes to: {ALL_GENES_RESULT_OUTFILENAME}"
     )
-    all_genes_stat_df.collect().write_csv(ALL_GENES_RESULT_OUTFILENAME)
-
-    logger.info(f"Exporting normalised counts to: {COUNT_SUMMARY_PARQUET_OUTFILENAME}")
-    count_df.collect().write_parquet(COUNT_SUMMARY_PARQUET_OUTFILENAME)
+    all_genes_stat_lf.collect().write_csv(ALL_GENES_RESULT_OUTFILENAME)
 
     logger.info(f"Exporting log normalised counts to: {LOG_COUNT_SUMMARY_OUTFILENAME}")
-    count_df.collect().write_csv(LOG_COUNT_SUMMARY_OUTFILENAME)
+    log_count_lf.collect().write_csv(LOG_COUNT_SUMMARY_OUTFILENAME)
 
 
 #####################################################
@@ -373,31 +362,33 @@ def export_data(
 
 def main():
     args = parse_args()
-    count_files = [Path(file) for file in args.count_files.split(" ")]
     metadata_files = [Path(file) for file in args.metadata_files.split(" ")]
     mapping_files = [Path(file) for file in args.mapping_files.split(" ")]
 
     # putting all counts into a single dataframe
-    count_df = get_counts(count_files)
+    count_lf = get_counts(args.count_file)
     # preprocessing counts (removing 0 counts / log transformation)
-    count_df = preprocess_count(count_df)
+    count_lf = preprocess_count(count_lf)
 
     # getting log2 counts
-    log_count_df = transform_counts_to_log_counts(count_df)
+    log_count_lf = transform_counts_to_log_counts(count_lf)
 
     # getting metadata and mappings
-    metadata_df = get_metadata(metadata_files)
-    mapping_df = get_mappings(mapping_files)
+    metadata_lf = get_metadata(metadata_files)
+    mapping_lf = get_mappings(mapping_files)
 
     # computing statistics (mean, standard deviation, coefficient of variation, quantiles)
-    stat_df = compute_statistics(log_count_df)
+    stat_lf = compute_general_statistics(log_count_lf)
 
-    stat_df = merge_data(stat_df, metadata_df, mapping_df)
+    # adding other statistics (example: m-measure)
+    stat_lf = add_computed_statistics(stat_lf, args.m_measure_file)
 
-    most_stable_genes_df = get_most_stable_genes(stat_df)
+    stat_lf = merge_data(stat_lf, metadata_lf, mapping_lf)
 
-    all_genes_stat_df = format_all_genes_dataframe(stat_df)
-    export_data(most_stable_genes_df, all_genes_stat_df, count_df, log_count_df)
+    most_stable_genes_lf = get_most_stable_genes(stat_lf)
+
+    all_genes_stat_lf = format_all_genes_dataframe(stat_lf)
+    export_data(most_stable_genes_lf, all_genes_stat_lf, log_count_lf)
 
 
 if __name__ == "__main__":

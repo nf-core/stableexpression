@@ -1,4 +1,4 @@
-name: gene_statistics
+name: merge_counts
 channels:
   - conda-forge
 dependencies:

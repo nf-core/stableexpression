@@ -3,42 +3,36 @@
         "content": [
             {
                 "0": [
-                    "stats_all_genes.csv:md5,50550edd66d9721f6e88d2489a976293"
+                    "stats_all_genes.csv:md5,3dd505bec3381b67da2dd316b49e2727"
                 ],
                 "1": [
-                    "stats_most_stable_genes.csv:md5,13d03e47a22dde541d7f54847ed1066d"
+                    "stats_most_stable_genes.csv:md5,c07e07ae7d28ccfb63a2fc88f05f77a1"
                 ],
                 "2": [
-                    "log_count_summary.csv:md5,8379348155d8472e3c0c6a71a30e75a6"
+                    "log_counts.csv:md5,676b63d29a0658c9c1766021d3d8f862"
                 ],
                 "3": [
-                    "count_summary.parquet:md5,fcf4fb9f7d91350b7af5b110dea15762"
-                ],
-                "4": [
                     [
                         "GENE_STATISTICS",
                         "python",
                         "3.12.8"
                     ]
                 ],
-                "5": [
+                "4": [
                     [
                         "GENE_STATISTICS",
                         "polars",
                         "1.17.1"
                     ]
                 ],
-                "count_summary": [
-                    "count_summary.parquet:md5,fcf4fb9f7d91350b7af5b110dea15762"
-                ],
                 "log_count_summary": [
-                    "log_count_summary.csv:md5,8379348155d8472e3c0c6a71a30e75a6"
+                    "log_counts.csv:md5,676b63d29a0658c9c1766021d3d8f862"
                 ],
                 "stats_all_genes": [
-                    "stats_all_genes.csv:md5,50550edd66d9721f6e88d2489a976293"
+                    "stats_all_genes.csv:md5,3dd505bec3381b67da2dd316b49e2727"
                 ],
                 "stats_most_stable_genes": [
-                    "stats_most_stable_genes.csv:md5,13d03e47a22dde541d7f54847ed1066d"
+                    "stats_most_stable_genes.csv:md5,c07e07ae7d28ccfb63a2fc88f05f77a1"
                 ]
             }
         ],
@@ -46,6 +40,84 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-14T18:20:06.637107376"
+        "timestamp": "2025-01-15T09:24:07.245081166"
+    },
+    "With m-measures": {
+        "content": [
+            {
+                "0": [
+                    "stats_all_genes.csv:md5,73aeed3da1d4d396788bdd5ab0c46bd0"
+                ],
+                "1": [
+                    "stats_most_stable_genes.csv:md5,3a770a9b3ccbd5353e7c298d5634790a"
+                ],
+                "2": [
+                    "log_counts.csv:md5,676b63d29a0658c9c1766021d3d8f862"
+                ],
+                "3": [
+                    [
+                        "GENE_STATISTICS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "4": [
+                    [
+                        "GENE_STATISTICS",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "log_count_summary": [
+                    "log_counts.csv:md5,676b63d29a0658c9c1766021d3d8f862"
+                ],
+                "stats_all_genes": [
+                    "stats_all_genes.csv:md5,73aeed3da1d4d396788bdd5ab0c46bd0"
+                ],
+                "stats_most_stable_genes": [
+                    "stats_most_stable_genes.csv:md5,3a770a9b3ccbd5353e7c298d5634790a"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-15T10:16:21.09953523"
+    },
+    "Without variation data": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "log_count_summary": [
+                    
+                ],
+                "stats_all_genes": [
+                    
+                ],
+                "stats_most_stable_genes": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-15T10:09:05.24895393"
     }
 }
