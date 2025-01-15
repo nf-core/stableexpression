@@ -12,7 +12,7 @@ nextflow_process {
             process {
                 """
                 meta = []
-                count_file = file("$projectDir/tests/input/idmapping/base/counts.ensembl_ids.csv")
+                count_file = file("$projectDir/tests/data/idmapping/base/counts.ensembl_ids.csv")
                 input[0] = [meta, count_file, "Solanum tuberosum"]
                 """
             }
@@ -31,7 +31,7 @@ nextflow_process {
             process {
                 """
                 meta = []
-                count_file = file("$projectDir/tests/input/idmapping/base/counts.ncbi_ids.csv")
+                count_file = file("$projectDir/tests/data/idmapping/base/counts.ncbi_ids.csv")
                 input[0] = [meta, count_file, "Arabidopsis thaliana"]
                 """
             }
@@ -51,7 +51,7 @@ nextflow_process {
             process {
                 """
                 meta = []
-                count_file = file("$projectDir/tests/input/idmapping/base/counts.uniprot_ids.csv")
+                count_file = file("$projectDir/tests/data/idmapping/base/counts.uniprot_ids.csv")
                 input[0] = [meta, count_file, "Arabidopsis thaliana"]
                 """
             }
@@ -72,7 +72,7 @@ nextflow_process {
             process {
                 """
                 meta = []
-                count_file = file("$projectDir/tests/input/idmapping/empty/counts.csv")
+                count_file = file("$projectDir/tests/data/idmapping/empty/counts.csv")
                 input[0] = [meta, count_file, "Arabidopsis thaliana"]
                 """
             }
@@ -98,7 +98,7 @@ nextflow_process {
             process {
                 """
                 meta = []
-                count_file = file("$projectDir/tests/input/idmapping/not_found/counts.csv")
+                count_file = file("$projectDir/tests/data/idmapping/not_found/counts.csv")
                 input[0] = [meta, count_file, "Homo sapiens"]
                 """
             }

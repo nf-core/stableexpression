@@ -11,7 +11,7 @@ nextflow_process {
         when {
             process {
                 """
-                ch_counts = Channel.fromPath( '$projectDir/tests/input/pairwise_gene_variation/counts.parquet', checkIfExists: true)
+                ch_counts = Channel.fromPath( '$projectDir/tests/data/pairwise_gene_variation/counts.parquet', checkIfExists: true)
                 input[0] = ch_counts
                 """
             }

@@ -12,9 +12,9 @@ nextflow_process {
 
             process {
                 """
-                ch_counts = Channel.fromPath( '$projectDir/tests/input/gene_statistics/counts*.csv', checkIfExists: true).collect()
-                ch_metadata = Channel.fromPath( '$projectDir/tests/input/gene_statistics/metadata*.csv', checkIfExists: true ).collect()
-                ch_mapping = Channel.fromPath( '$projectDir/tests/input/gene_statistics/mapping*.csv', checkIfExists: true ).collect()
+                ch_counts = Channel.fromPath( '$projectDir/tests/data/gene_statistics/counts*.csv', checkIfExists: true).collect()
+                ch_metadata = Channel.fromPath( '$projectDir/tests/data/gene_statistics/metadata*.csv', checkIfExists: true ).collect()
+                ch_mapping = Channel.fromPath( '$projectDir/tests/data/gene_statistics/mapping*.csv', checkIfExists: true ).collect()
                 input[0] = ch_counts
                 input[1] = ch_metadata
                 input[2] = ch_mapping

@@ -1,3 +1,0 @@
-counts,design,normalised
-tests/input/custom_datasets/normalised.csv,tests/input/custom_datasets/normalised.design.csv,true
-tests/input/custom_datasets/raw.csv,tests/input/custom_datasets/raw.design.csv,false
