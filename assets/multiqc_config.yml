@@ -36,6 +36,10 @@ custom_data:
       ensembl_gene_id:
         title: "Ensembl Gene ID"
         description: "Unique identifier of the gene in Ensembl"
+      m_measure:
+        title: "Gene stability measure M-measure"
+        description: "Gene stability measure M as defined in Vandesompele et al., Genome Biology (2002)"
+        format: "{:,.3f}"
       standard_deviation:
         title: "Standard deviation"
         description: "Standard deviation of the expression across samples"
@@ -85,6 +89,10 @@ custom_data:
       col1_header: "Ensembl Gene ID"
     headers:
       # colors from https://colorbrewer2.org/#type=diverging&scheme=BrBG&n=8
+      m_measure:
+        title: "Gene stability measure M-measure"
+        description: "Gene stability measure M as defined in Vandesompele et al., Genome Biology (2002)"
+        color: "#bf812d"
       standard_deviation:
         title: "Standard deviation"
         description: "Standard deviation of the expression across samples"
@@ -118,4 +126,4 @@ sp:
     fn: "*stats_all_genes.csv"
     max_filesize: 50000000 # 50MB
   cpm_distributions:
-    fn: "*log_count_summary.csv"
+    fn: "*log_counts.csv"
