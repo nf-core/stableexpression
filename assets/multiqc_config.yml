@@ -25,40 +25,35 @@ custom_data:
     section_name: "Most stable genes"
     file_format: "csv"
     description: |
-      Expression descriptive statistics of the 1000 most stable genes (relatively to standard deviation).
-      Expression was calculated as log2(cpm + 1) were cpm is the normalised counts per million across all samples.
+      Expression descriptive statistics of the 1000 most stable genes. Expression were normalised and cpm (counts per million) were used for all calculations.
     plot_type: "table"
     no_violin: true
     pconfig:
-      col1_header: "Rank"
-      expression_level_quantile_interval:
+      col1_header: "Ensembl Gene ID"
     headers:
-      ensembl_gene_id:
-        title: "Ensembl Gene ID"
-        description: "Unique identifier of the gene in Ensembl"
       m_measure:
-        title: "Gene stability measure M-measure"
-        description: "Gene stability measure M as defined in Vandesompele et al., Genome Biology (2002)"
+        title: "M-measure"
+        description: "Gene stability measure M as defined in Vandesompele et al., Genome Biology (2002). Lower values indicate higher stability. M-measures were calculated directly from cpm (counts per million)."
         format: "{:,.3f}"
       standard_deviation:
-        title: "Standard deviation"
-        description: "Standard deviation of the expression across samples"
+        title: "Std"
+        description: "Standard deviation of the expression across samples. Expression was calculated as preprocessed as expression = log2(cpm + 1)."
         format: "{:,.3f}"
       variation_coefficient:
-        title: "Variation coefficient"
+        title: "Var coeff"
         format: "{:,.3f}"
-        description: "Ratio of standard deviation to mean of expression across all samples"
+        description: "Variation coefficient: ratio of standard deviation to mean of expression across all samples. Expression was calculated as preprocessed as expression = log2(cpm + 1)."
       mean:
         title: "Mean"
         format: "{:,.3f}"
-        description: "Average expression across samples"
+        description: "Average expression across samples. Expression was calculated as preprocessed as expression = log2(cpm + 1)."
       expression_level_quantile_interval:
-        title: "Expression level score"
-        description: "Quantile interval of the gene mean expression (among 20 intervals; min = 0, max = 19)"
+        title: "Expr. score"
+        description: "Quantile interval of the gene mean expression (among 100 intervals; min = 0, max = 99)"
         format: "{:,.0f}"
       quantile_interval_status:
-        title: "Expression level status"
-        description: "TODO"
+        title: "Expr. status"
+        description: "Indication about the average gene expression level compared to the whole pool of genes"
         cond_formatting_rules:
           fail:
             - s_eq: very_high_expression
@@ -69,14 +64,14 @@ custom_data:
           pass:
             - s_eq: ok
       name:
-        title: "Gene name"
+        title: "Name"
         description: "Gene name as shown in Ensembl (g:Profiler)"
       description:
-        title: "Gene description"
+        title: "Description"
         description: "Gene description as shown in Ensembl (g:Profiler)"
       original_gene_ids:
-        title: "Original Gene IDs"
-        description: "Gene IDs as stated in the original datasets"
+        title: "IDs"
+        description: "Original gene IDs as stated in the input (provided or downloaded) datasets"
 
   gene_statistics:
     section_name: "Descriptive statistics - All genes"

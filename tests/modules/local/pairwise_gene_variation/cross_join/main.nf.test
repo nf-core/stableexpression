@@ -11,9 +11,10 @@ nextflow_process {
         when {
             process {
                 """
+                meta = [index_1: 0, index_2: 1]
                 file_1 = file( '$projectDir/tests/data/pairwise_gene_variation/cross_join/input/count_chunk.0.parquet', checkIfExists: true)
                 file_2 = file( '$projectDir/tests/data/pairwise_gene_variation/cross_join/input/count_chunk.1.parquet', checkIfExists: true)
-                input[0] = [file_1, file_2]
+                input[0] = [meta, file_1, file_2]
                 """
             }
         }

@@ -70,7 +70,9 @@ def getUniqueFilePairs( ch_count_chunks ) {
         }
         .filter { it -> it.index_1 <= it.index_2 } // keeps only pairs where i <= j
         .map {
-            it -> [it.file_1, it.file_2] // keeps files only
+            it ->
+                def meta = [index_1: it.index_1, index_2: it.index_2] // puts indexes in a meta tuple
+                [ meta, it.file_1, it.file_2 ]
         }
 }
 

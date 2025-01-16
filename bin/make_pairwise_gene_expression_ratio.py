@@ -85,7 +85,7 @@ def main():
     if len(ratios_df) == 0:
         raise ValueError(f"No output following treatment of file {str(file)}")
 
-    outfilename = "ratios.parquet"
+    outfilename = args.cross_joined_file.name.replace("cross_join", "ratios")
     ratios_df.write_parquet(outfilename)
 
 

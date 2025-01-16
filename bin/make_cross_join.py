@@ -35,6 +35,20 @@ def parse_args():
         help="Chunk count file 2",
     )
     parser.add_argument(
+        "--index1",
+        type=Path,
+        dest="count_file_1_index",
+        required=True,
+        help="Index of chunk count file 1",
+    )
+    parser.add_argument(
+        "--index2",
+        type=Path,
+        dest="count_file_2_index",
+        required=True,
+        help="Index of chunk count file 2",
+    )
+    parser.add_argument(
         "--task-attempts",
         dest="task_attempts",
         type=int,
@@ -69,7 +83,7 @@ def main():
             f"No output following treatment of files {str(args.count_file_1)} and {str(args.count_file_2)}"
         )
 
-    outfile = "cross_join.parquet"
+    outfile = f"cross_join.{args.count_file_1_index}.{args.count_file_2_index}.parquet"
     df.write_parquet(outfile)
 
 

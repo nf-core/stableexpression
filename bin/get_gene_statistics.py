@@ -3,6 +3,7 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
+
 import polars as pl
 from pathlib import Path
 import logging
@@ -50,8 +51,8 @@ ALL_GENES_STATS_COLS = [
 ]
 
 # quantile intervals
-NB_QUANTILES = 20
-MAX_SELECTED_STABLE_GENES_PER_QUANTILE_INTERVAL = 10
+NB_QUANTILES = 100
+NB_SELECTED_STABLE_GENES = 1000
 
 
 #####################################################
@@ -80,7 +81,7 @@ def parse_args():
     )
     parser.add_argument(
         "--m-measures",
-        type=Path,
+        type=str,
         dest="m_measure_file",
         required=True,
         help="M-measure file",
@@ -113,6 +114,12 @@ def get_valid_lazy_lfs(files: list[Path]) -> list[pl.LazyFrame]:
     return [lf for file, lf in lf_dict.items() if is_valid_lf(lf, file)]
 
 
+def cast_cols_to_string(lf: pl.LazyFrame) -> pl.LazyFrame:
+    return lf.select(
+        [pl.col(column).cast(pl.String) for column in lf.collect_schema().names()]
+    )
+
+
 def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame:
     """Concatenate LazyFrames, cast all columns to String, and drop duplicates.
 
@@ -121,15 +128,11 @@ def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame
     rows are dropped.
     """
     lfs = get_valid_lazy_lfs(files)
+    lfs = [cast_cols_to_string(lf) for lf in lfs]
     concat_lf = pl.concat(lfs)
     # dropping duplicates
     # casting all columns to String
-    return concat_lf.unique().with_columns(
-        [
-            pl.col(column).cast(pl.String)
-            for column in concat_lf.collect_schema().names()
-        ]
-    )
+    return concat_lf.unique()
 
 
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
@@ -140,6 +143,12 @@ def get_count_columns(lf: pl.LazyFrame) -> list[str]:
     return [
         col for col in lf.collect_schema().names() if col != ENSEMBL_GENE_ID_COLNAME
     ]
+
+
+def cast_count_columns_to_float32(lf: pl.LazyFrame) -> pl.LazyFrame:
+    return lf.select(
+        [pl.col(column).cast(pl.Float32) for column in get_count_columns(lf)]
+    )
 
 
 def get_counts(file: Path) -> pl.LazyFrame:
@@ -250,8 +259,11 @@ def compute_general_statistics(count_lf: pl.LazyFrame) -> pl.LazyFrame:
 def add_computed_statistics(
     stat_lf: pl.LazyFrame, m_measure_file: Path
 ) -> pl.LazyFrame:
-    m_measure_lf = pl.scan_csv(m_measure_file)
-    return stat_lf.join(m_measure_lf, on=ENSEMBL_GENE_ID_COLNAME, how="left")
+    if m_measure_file != "none" and Path(m_measure_file).exists():
+        stat_lf = stat_lf.join(
+            pl.scan_csv(m_measure_file), on=ENSEMBL_GENE_ID_COLNAME, how="left"
+        ).sort(M_MEASURE_COLNAME, descending=False)
+    return stat_lf
 
 
 def merge_data(
@@ -263,19 +275,25 @@ def merge_data(
         stat_lf.join(metadata_lf, on=ENSEMBL_GENE_ID_COLNAME, how="left")
         .join(mapping_lf, on=ENSEMBL_GENE_ID_COLNAME, how="left")
         .unique()  # just in case
-        .sort(STANDARD_DEVIATION_COLNAME, descending=False)  # VERY IMPORTANT
     )
+
+
+def sort_dataframe(lf: pl.LazyFrame) -> pl.LazyFrame:
+    if M_MEASURE_COLNAME in lf.collect_schema().names():
+        return lf.sort(M_MEASURE_COLNAME, descending=False)
+    else:
+        return lf.sort(STANDARD_DEVIATION_COLNAME, descending=False)
 
 
 def get_status(quantile_interval: int) -> str:
     """Return the expression level status of the gene given its quantile interval."""
-    if quantile_interval == NB_QUANTILES - 1:
+    if quantile_interval >= NB_QUANTILES - 5:
         return "very_high_expression"
-    elif quantile_interval == NB_QUANTILES - 2:
+    elif quantile_interval >= NB_QUANTILES - 10:
         return "high_expression"
-    elif quantile_interval == 0:
+    elif quantile_interval <= 4:
         return "very_low_expression"
-    elif quantile_interval == 1:
+    elif quantile_interval >= 9:
         return "low_expression"
     else:
         return "ok"
@@ -284,38 +302,19 @@ def get_status(quantile_interval: int) -> str:
 def get_most_stable_genes(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Extract the most stable genes from the statistics dataframe.
-
-    This function groups the genes by their expression level quantile intervals
-    and selects the top most stable genes from each quantile interval.
-    The number of genes selected per interval is determined by the constant
-    `MAX_SELECTED_STABLE_GENES_PER_QUANTILE_INTERVAL`.
     """
     logger.info("Getting most stable genes per quantile interval")
-    return (
-        stat_lf.group_by(  # the lf should be already sorted
-            EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME
-        )
-        .head(MAX_SELECTED_STABLE_GENES_PER_QUANTILE_INTERVAL)
-        .with_columns(
-            pl.col(EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
-            .map_elements(get_status)
-            .alias(QUANTILE_INTERVAL_STATUS_COLNAME)
-        )
-        .sort(
-            [
-                EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME,
-                STANDARD_DEVIATION_COLNAME,
-                ENSEMBL_GENE_ID_COLNAME,  # if genes have same quantile and standard deviation, we sort them anyway by gene ID
-            ],
-            descending=[True, False, False],
-        )
-        .select(
-            [
-                column
-                for column in MOST_STABLE_GENES_RESULT_COLS
-                if column in stat_lf.collect_schema().names()
-            ]
-        )
+    most_stable_genes_lf = stat_lf.head(NB_SELECTED_STABLE_GENES).with_columns(
+        pl.col(EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
+        .map_elements(get_status)
+        .alias(QUANTILE_INTERVAL_STATUS_COLNAME)
+    )
+    return most_stable_genes_lf.select(
+        [
+            column
+            for column in MOST_STABLE_GENES_RESULT_COLS
+            if column in most_stable_genes_lf.collect_schema().names()
+        ]
     )
 
 
@@ -383,11 +382,22 @@ def main():
     # adding other statistics (example: m-measure)
     stat_lf = add_computed_statistics(stat_lf, args.m_measure_file)
 
+    # add gene name, description and original gene IDs
     stat_lf = merge_data(stat_lf, metadata_lf, mapping_lf)
 
+    # sort genes according to the metrics present in the dataframe
+    stat_lf = sort_dataframe(stat_lf)
+
+    # getting the most stable genes
     most_stable_genes_lf = get_most_stable_genes(stat_lf)
 
+    # formatting dataframe containing statistics for all genes
     all_genes_stat_lf = format_all_genes_dataframe(stat_lf)
+
+    # reducing dataframe size (it is only used for plotting by MultiQC)
+    log_count_lf = cast_count_columns_to_float32(log_count_lf)
+
+    # exporting computed data
     export_data(most_stable_genes_lf, all_genes_stat_lf, log_count_lf)
 
 

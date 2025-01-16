@@ -1,6 +1,7 @@
 process COMPUTE_M_MEASURE {
 
     // label 'process_medium'
+    publishDir "${params.outdir}/pairwise_gene_variation/m_measures"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

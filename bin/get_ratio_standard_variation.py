@@ -125,7 +125,7 @@ def main():
     if len(std_df) == 0:
         raise ValueError(f"No output following treatment of file {str(file)}")
 
-    outfile = "std.parquet"
+    outfile = args.ratio_file.name.replace("ratios", "std")
     std_df.write_parquet(outfile)
 
 

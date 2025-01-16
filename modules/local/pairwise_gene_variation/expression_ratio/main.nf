@@ -1,6 +1,7 @@
 process EXPRESSION_RATIO {
 
     // label 'process_medium'
+    publishDir "${params.outdir}/pairwise_gene_variation/expression_ratios"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -11,7 +12,7 @@ process EXPRESSION_RATIO {
     path file
 
     output:
-    path 'ratios.parquet',                                                                                            emit: data
+    path 'ratios.*.parquet',                                                                                            emit: data
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 

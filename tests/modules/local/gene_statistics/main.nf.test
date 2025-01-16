@@ -12,10 +12,10 @@ nextflow_process {
 
             process {
                 """
-                ch_counts = Channel.fromPath( '$projectDir/tests/data/merge_counts/output/all_counts.parquet', checkIfExists: true).collect()
+                ch_counts = Channel.fromPath( '$projectDir/tests/data/merge_counts/output/all_counts.parquet', checkIfExists: true)
                 ch_metadata = Channel.fromPath( '$projectDir/tests/data/gene_statistics/metadata*.csv', checkIfExists: true ).collect()
                 ch_mapping = Channel.fromPath( '$projectDir/tests/data/gene_statistics/mapping*.csv', checkIfExists: true ).collect()
-                ch_m_measures = Channel.fromList( [] ).collect()
+                ch_m_measures = Channel.of( 'none' )
                 input[0] = ch_counts
                 input[1] = ch_metadata
                 input[2] = ch_mapping
@@ -37,10 +37,10 @@ nextflow_process {
 
             process {
                 """
-                ch_counts = Channel.fromPath( '$projectDir/tests/data/merge_counts/output/all_counts.parquet', checkIfExists: true).collect()
+                ch_counts = Channel.fromPath( '$projectDir/tests/data/merge_counts/output/all_counts.parquet', checkIfExists: true)
                 ch_metadata = Channel.fromPath( '$projectDir/tests/data/gene_statistics/metadata*.csv', checkIfExists: true ).collect()
                 ch_mapping = Channel.fromPath( '$projectDir/tests/data/gene_statistics/mapping*.csv', checkIfExists: true ).collect()
-                ch_m_measures = Channel.fromPath( '$projectDir/tests/data/pairwise_gene_variation/output/m_measures.csv', checkIfExists: true ).collect()
+                ch_m_measures = Channel.fromPath( '$projectDir/tests/data/pairwise_gene_variation/output/m_measures.csv', checkIfExists: true )
                 input[0] = ch_counts
                 input[1] = ch_metadata
                 input[2] = ch_mapping

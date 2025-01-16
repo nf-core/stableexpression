@@ -1,6 +1,7 @@
 process GENE_STATISTICS {
 
     label 'process_low'
+    debug true
 
     publishDir "${params.outdir}/gene_statistics"
 
@@ -13,7 +14,7 @@ process GENE_STATISTICS {
     path count_file
     path metadata_files, stageAs: "?/*"
     path mapping_files, stageAs: "?/*"
-    path m_measure_file
+    val m_measure_file
 
     output:
     path 'stats_all_genes.csv',                                                                                       emit: stats_all_genes

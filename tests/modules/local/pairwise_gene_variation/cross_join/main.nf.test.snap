@@ -3,7 +3,7 @@
         "content": [
             {
                 "0": [
-                    "cross_join.parquet:md5,5a504aab5ae5234e50b324581a0d9b7a"
+                    "cross_join.0.1.parquet:md5,5a504aab5ae5234e50b324581a0d9b7a"
                 ],
                 "1": [
                     [
@@ -20,7 +20,7 @@
                     ]
                 ],
                 "data": [
-                    "cross_join.parquet:md5,5a504aab5ae5234e50b324581a0d9b7a"
+                    "cross_join.0.1.parquet:md5,5a504aab5ae5234e50b324581a0d9b7a"
                 ]
             }
         ],
@@ -28,6 +28,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-16T10:49:03.746839728"
+        "timestamp": "2025-01-16T14:58:52.353199168"
     }
 }

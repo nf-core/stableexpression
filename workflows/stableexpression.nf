@@ -97,8 +97,12 @@ workflow STABLEEXPRESSION {
     //
     // STEP: Calculate gene variation
     //
-    ch_m_measures = Channel.empty()
-    if (!params.skip_gene_variation_calc) {
+
+    if (params.skip_gene_variation_calc) {
+
+        ch_m_measures = Channel.of( 'none' )
+
+    } else {
 
         if ( params.gene_variation_method == 'pairwise_gene_variation' ) {
             PAIRWISE_GENE_VARIATION ( ch_merged_counts )
@@ -106,7 +110,7 @@ workflow STABLEEXPRESSION {
         }
 
     }
-    ch_m_measures.view()
+
 
     //
     // MODULE: Gene statistics
