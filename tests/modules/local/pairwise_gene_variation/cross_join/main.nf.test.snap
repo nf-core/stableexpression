@@ -1,0 +1,33 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "cross_join.parquet:md5,5a504aab5ae5234e50b324581a0d9b7a"
+                ],
+                "1": [
+                    [
+                        "CROSS_JOIN",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "CROSS_JOIN",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "data": [
+                    "cross_join.parquet:md5,5a504aab5ae5234e50b324581a0d9b7a"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-16T10:49:03.746839728"
+    }
+}

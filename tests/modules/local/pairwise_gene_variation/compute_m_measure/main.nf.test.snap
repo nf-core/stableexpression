@@ -1,0 +1,33 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "m_measures.csv:md5,996ba9ca255d5d4032e30e04bc062079"
+                ],
+                "1": [
+                    [
+                        "COMPUTE_M_MEASURE",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_M_MEASURE",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "m_measures": [
+                    "m_measures.csv:md5,996ba9ca255d5d4032e30e04bc062079"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-16T11:48:03.528113087"
+    }
+}

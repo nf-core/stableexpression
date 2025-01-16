@@ -1,0 +1,28 @@
+nextflow_process {
+
+    name "Test Process CROSS_JOIN"
+    script "modules/local/pairwise_gene_variation/cross_join/main.nf"
+    process "CROSS_JOIN"
+    tag "cross_join"
+    tag "module"
+
+    test("Should run without failures") {
+
+        when {
+            process {
+                """
+                file_1 = file( '$projectDir/tests/data/pairwise_gene_variation/cross_join/input/count_chunk.0.parquet', checkIfExists: true)
+                file_2 = file( '$projectDir/tests/data/pairwise_gene_variation/cross_join/input/count_chunk.1.parquet', checkIfExists: true)
+                input[0] = [file_1, file_2]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

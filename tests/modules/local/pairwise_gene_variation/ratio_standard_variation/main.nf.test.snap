@@ -1,0 +1,33 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "std.parquet:md5,9680e17684a2d9340cff06cf23e48c41"
+                ],
+                "1": [
+                    [
+                        "RATIO_STANDARD_VARIATION",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "RATIO_STANDARD_VARIATION",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "data": [
+                    "std.parquet:md5,9680e17684a2d9340cff06cf23e48c41"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-16T11:29:11.382256699"
+    }
+}

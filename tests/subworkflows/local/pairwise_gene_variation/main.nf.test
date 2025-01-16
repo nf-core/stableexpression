@@ -1,0 +1,27 @@
+nextflow_workflow {
+
+    name "Test Workflow PAIRWISE_GENE_VARIATION"
+    script "subworkflows/local/pairwise_gene_variation/main.nf"
+    workflow "PAIRWISE_GENE_VARIATION"
+    tag "subworkflow_pairwise_gene_variation"
+    tag "workflow"
+
+    test("Should run without failures") {
+
+        when {
+            workflow {
+                """
+                ch_counts = Channel.fromPath( '$projectDir/tests/data/pairwise_gene_variation/make_chunks/input/counts.parquet', checkIfExists: true)
+                input[0] = ch_counts
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+
+    }
+
+}

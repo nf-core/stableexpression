@@ -1,0 +1,37 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "m_measures.csv:md5,094fb91d2f3c407a43fb7ed07701b30d",
+                    "m_measures.csv:md5,1f4c63c3a8435f8ac9ba365ff5386822",
+                    "m_measures.csv:md5,24e036cf673ecd890005f588a3da50f9",
+                    "m_measures.csv:md5,2c568ef766c87719121ab9a188b5db47",
+                    "m_measures.csv:md5,2e47136e5e0f0619e8e4e70b4f94db4b",
+                    "m_measures.csv:md5,65a9a7b89fed5676f166c372b07e32a1",
+                    "m_measures.csv:md5,84ae12fca786a6996853e9b369e0e129",
+                    "m_measures.csv:md5,89e1a0a5ca430ecfe1fc5fc659b9cee8",
+                    "m_measures.csv:md5,c4b36288c82e6074a48ace1413f18c28",
+                    "m_measures.csv:md5,c7c446d82a1c1ee26155d48feb3cb5ef"
+                ],
+                "m_measures": [
+                    "m_measures.csv:md5,094fb91d2f3c407a43fb7ed07701b30d",
+                    "m_measures.csv:md5,1f4c63c3a8435f8ac9ba365ff5386822",
+                    "m_measures.csv:md5,24e036cf673ecd890005f588a3da50f9",
+                    "m_measures.csv:md5,2c568ef766c87719121ab9a188b5db47",
+                    "m_measures.csv:md5,2e47136e5e0f0619e8e4e70b4f94db4b",
+                    "m_measures.csv:md5,65a9a7b89fed5676f166c372b07e32a1",
+                    "m_measures.csv:md5,84ae12fca786a6996853e9b369e0e129",
+                    "m_measures.csv:md5,89e1a0a5ca430ecfe1fc5fc659b9cee8",
+                    "m_measures.csv:md5,c4b36288c82e6074a48ace1413f18c28",
+                    "m_measures.csv:md5,c7c446d82a1c1ee26155d48feb3cb5ef"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-16T11:50:36.616787203"
+    }
+}

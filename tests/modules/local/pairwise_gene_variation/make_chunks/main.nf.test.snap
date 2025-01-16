@@ -1,0 +1,35 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "count_chunk.0.parquet:md5,6b20401635b2a408a9f5271ddeb99111",
+                        "count_chunk.1.parquet:md5,84f80c8f3adfcde6efff58420d68fd88",
+                        "count_chunk.2.parquet:md5,503334b1bec074872581b0951937a614",
+                        "count_chunk.3.parquet:md5,fefadf60ee25192be62b8f8fbe4f8f03"
+                    ]
+                ],
+                "1": [
+                    [
+                        "MAKE_CHUNKS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "MAKE_CHUNKS",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-16T09:18:58.894208912"
+    }
+}
