@@ -7,12 +7,12 @@ nextflow.preview.topic = true
 */
 
 include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/expressionatlas_fetchdata/main'
+include { PAIRWISE_GENE_VARIATION                } from '../subworkflows/local/pairwise_gene_variation/main.nf'
 
 include { DESEQ2_NORMALISE                       } from '../modules/local/deseq2/normalise/main'
 include { EDGER_NORMALISE                        } from '../modules/local/edger/normalise/main'
 include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
 include { MERGE_COUNTS                           } from '../modules/local/merge_counts/main'
-include { PAIRWISE_GENE_VARIATION                } from '../modules/local/pairwise_gene_variation/main'
 include { GENE_STATISTICS                        } from '../modules/local/gene_statistics/main'
 include { MULTIQC                                } from '../modules/nf-core/multiqc/main'
 
@@ -106,6 +106,7 @@ workflow STABLEEXPRESSION {
         }
 
     }
+    ch_m_measures.view()
 
     //
     // MODULE: Gene statistics
