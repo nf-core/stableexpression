@@ -9,7 +9,8 @@ process COMPUTE_M_MEASURE {
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    path files, stageAs: "?/*"
+    path count_file
+    path files
 
     output:
     path 'm_measures.csv',                                                                                            emit: m_measures
@@ -20,7 +21,7 @@ process COMPUTE_M_MEASURE {
     script:
     def args = "--task-attempts ${task.attempt}"
     """
-    compute_m_measures.py --files "$files" $args
+    compute_m_measures.py --counts $count_file --std-files "$files" $args
     """
 
 }

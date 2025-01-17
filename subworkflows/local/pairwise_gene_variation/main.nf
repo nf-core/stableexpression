@@ -38,7 +38,10 @@ workflow PAIRWISE_GENE_VARIATION {
 
     EXPRESSION_RATIO.out.data | RATIO_STANDARD_VARIATION
 
-    RATIO_STANDARD_VARIATION.out.data.collect() | COMPUTE_M_MEASURE
+    COMPUTE_M_MEASURE(
+        ch_counts,
+        RATIO_STANDARD_VARIATION.out.data.collect()
+    )
 
     emit:
     m_measures = COMPUTE_M_MEASURE.out.m_measures

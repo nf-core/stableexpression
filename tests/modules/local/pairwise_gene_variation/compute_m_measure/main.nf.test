@@ -11,8 +11,10 @@ nextflow_process {
         when {
             process {
                 """
+                ch_count_file = Channel.fromPath( '$projectDir/tests/data/pairwise_gene_variation/make_chunks/input/counts.parquet', checkIfExists: true)
                 ch_ratio_std_files = Channel.fromPath( '$projectDir/tests/data/pairwise_gene_variation/compute_m_measure/input/std.*.parquet', checkIfExists: true).collect()
-                input[0] = ch_ratio_std_files
+                input[0] = ch_count_file
+                input[1] = ch_ratio_std_files
                 """
             }
         }
