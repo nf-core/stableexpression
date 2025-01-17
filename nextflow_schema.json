@@ -29,11 +29,11 @@
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "schema": "assets/schema_input.json",
+                    "schema": "assets/schema_datasets.json",
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.csv$",
                     "description": "Path to comma-separated file containing information about the input count datasets and their related experimental design.",
-                    "help_text": "The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. .",
+                    "help_text": "The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location.",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "email": {
@@ -70,6 +70,42 @@
                     "description": "Provide directly Expression Atlas accession(s) (separated by commas) that you want to download.",
                     "fa_icon": "fas fa-id-card",
                     "help_text": "Example: `--eatlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
+                }
+            }
+        },
+        "idmapping_options": {
+            "title": "ID mapping options",
+            "type": "object",
+            "fa_icon": "fas fa-map",
+            "description": "Options for mapping gene IDs.",
+            "properties": {
+                "skip_gprofiler": {
+                    "type": "boolean",
+                    "description": "Skip g:Profiler ID mapping step.",
+                    "fa_icon": "fas fa-ban",
+                    "help": "If you don't want to map gene IDs with g:Profiler, you can skip this step by providing `--skip_gprofiler`. It can be in particular useful if the g:Profiler is down and if you already have a custom mapping file."
+                },
+                "gene_id_mapping": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_gene_id_mapping.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler.",
+                    "help_text": "The mapping file should be a comma-separated file with 2 columns (original_gene_id and ensembl_gene_id) and a header row.",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "gene_metadata": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_gene_metadata.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description.",
+                    "help_text": "The metadata file should be a comma-separated file with 3 columns (ensembl_gene_id, name and description) and a header row.",
+                    "fa_icon": "fas fa-file-csv"
                 }
             }
         },
@@ -254,6 +290,9 @@
         },
         {
             "$ref": "#/$defs/expression_atlas_options"
+        },
+        {
+            "$ref": "#/$defs/idmapping_options"
         },
         {
             "$ref": "#/$defs/statistical_options"

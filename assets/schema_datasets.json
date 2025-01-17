@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/assets/schema_input.json",
-    "title": "nf-core/stableexpression pipeline - params.input schema",
-    "description": "Schema for the file provided with params.input",
+    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/assets/schema_datasets.json",
+    "title": "nf-core/stableexpression pipeline - params.schema_datasets schema",
+    "description": "Schema for the file provided with params.datasets",
     "type": "array",
     "items": {
         "type": "object",

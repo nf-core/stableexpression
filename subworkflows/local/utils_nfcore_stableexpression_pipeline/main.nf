@@ -157,7 +157,7 @@ def validateInputParameters(params) {
 // Parses files from input dataset and creates two subchannels raw and normalized
 // with elements like [meta, count_file, normalised]
 def parseInputDatasets(samplesheet) {
-    return Channel.fromList( samplesheetToList(samplesheet, "assets/schema_input.json") )
+    return Channel.fromList( samplesheetToList(samplesheet, "assets/schema_datasets.json") )
             .map {
                 item ->
                     def (count_file, design_file, normalised) = item

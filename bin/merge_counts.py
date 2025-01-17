@@ -11,7 +11,7 @@ from functools import reduce
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-COUNT_SUMMARY_PARQUET_OUTFILENAME = "all_counts.parquet"
+ALL_COUNTS_PARQUET_OUTFILENAME = "all_counts.parquet"
 
 ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 
@@ -33,13 +33,23 @@ def parse_args():
     return parser.parse_args()
 
 
-def is_valid_df(df: pl.LazyFrame, file: Path) -> bool:
+def parse_count_file(count_file: Path) -> pl.LazyFrame:
+    lf = pl.scan_csv(count_file)
+    # in some cases, the first column may have an empty name or be different than ENSEMBL_GENE_ID_COLNAME
+    # in any case, this column must have the ENSEMBL_GENE_ID_COLNAME name
+    first_column_name = lf.collect_schema().names()[0]
+    if first_column_name != ENSEMBL_GENE_ID_COLNAME:
+        lf = lf.rename({first_column_name: ENSEMBL_GENE_ID_COLNAME})
+    return lf
+
+
+def is_valid_df(lf: pl.LazyFrame, file: Path) -> bool:
     """Check if a LazyFrame is valid.
 
     A LazyFrame is considered valid if it contains at least one row.
     """
     try:
-        return not df.limit(1).collect().is_empty()
+        return not lf.limit(1).collect().is_empty()
     except FileNotFoundError:
         # strangely enough we get this error for some files existing but empty
         logger.error(f"Could not find file {str(file)}")
@@ -54,27 +64,27 @@ def get_valid_lazy_dfs(files: list[Path]) -> list[pl.LazyFrame]:
 
     A LazyFrame is considered valid if it contains at least one row.
     """
-    df_dict = {file: pl.scan_csv(file) for file in files}
-    return [df for file, df in df_dict.items() if is_valid_df(df, file)]
+    lf_dict = {file: parse_count_file(file) for file in files}
+    return [lf for file, lf in lf_dict.items() if is_valid_df(lf, file)]
 
 
-def join_dfs(df1: pl.LazyFrame, df2: pl.LazyFrame):
+def join_dfs(lf1: pl.LazyFrame, lf2: pl.LazyFrame):
     """Join two LazyFrames on the ENSEMBL_GENE_ID_COLNAME column.
 
     The how parameter is set to "full" to include all rows from both dfs.
     The coalesce parameter is set to True to fill NaN values in the
     resulting dataframe with values from the other dataframe.
     """
-    return df1.join(df2, on=ENSEMBL_GENE_ID_COLNAME, how="full", coalesce=True)
+    return lf1.join(lf2, on=ENSEMBL_GENE_ID_COLNAME, how="full", coalesce=True)
 
 
-def get_count_columns(df: pl.LazyFrame) -> list[str]:
+def get_count_columns(lf: pl.LazyFrame) -> list[str]:
     """Get all column names except the ENSEMBL_GENE_ID_COLNAME column.
 
     The ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
     """
     return [
-        col for col in df.collect_schema().names() if col != ENSEMBL_GENE_ID_COLNAME
+        col for col in lf.collect_schema().names() if col != ENSEMBL_GENE_ID_COLNAME
     ]
 
 
@@ -85,21 +95,21 @@ def get_counts(files: list[Path]) -> pl.LazyFrame:
     to String, and all other columns are cast to Float64.
     """
     # lazy loading
-    dfs = get_valid_lazy_dfs(files)
+    lfs = get_valid_lazy_dfs(files)
     # joining all count files
-    merged_df = reduce(join_dfs, dfs)
+    merged_lf = reduce(join_dfs, lfs)
     # casting count columns to Float64
     # casting gene id column to String
-    count_columns = get_count_columns(merged_df)
-    return merged_df.with_columns(
+    count_columns = get_count_columns(merged_lf)
+    return merged_lf.with_columns(
         [pl.col(column).cast(pl.Float64) for column in count_columns]
     ).with_columns([pl.col(ENSEMBL_GENE_ID_COLNAME).cast(pl.String)])
 
 
 def export_count_data(count_lf: pl.LazyFrame):
     """Export gene expression data to CSV files."""
-    logger.info(f"Exporting normalised counts to: {COUNT_SUMMARY_PARQUET_OUTFILENAME}")
-    count_lf.collect().write_parquet(COUNT_SUMMARY_PARQUET_OUTFILENAME)
+    logger.info(f"Exporting normalised counts to: {ALL_COUNTS_PARQUET_OUTFILENAME}")
+    count_lf.collect().write_parquet(ALL_COUNTS_PARQUET_OUTFILENAME)
 
 
 #####################################################
@@ -114,9 +124,9 @@ def main():
     count_files = [Path(file) for file in args.count_files.split(" ")]
 
     # putting all counts into a single dataframe
-    count_df = get_counts(count_files)
+    count_lf = get_counts(count_files)
 
-    export_count_data(count_df)
+    export_count_data(count_lf)
 
 
 if __name__ == "__main__":

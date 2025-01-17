@@ -38,8 +38,15 @@ ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 
 def parse_args():
     parser = argparse.ArgumentParser("Map IDs to Ensembl")
-    parser.add_argument("--count-file", type=Path, help="Input file containing counts")
-    parser.add_argument("--species", type=str, help="Species to convert IDs for")
+    parser.add_argument(
+        "--count-file", type=Path, required=True, help="Input file containing counts"
+    )
+    parser.add_argument(
+        "--species", type=str, required=True, help="Species to convert IDs for"
+    )
+    parser.add_argument(
+        "--custom-mappings", type=str, help="Optional file containing custom mappings"
+    )
     return parser.parse_args()
 
 
@@ -103,7 +110,12 @@ def request_conversion(
         response.raise_for_status()
     except requests.exceptions.HTTPError as err:
         if err.response.status_code == 502:
-            logger.error("g:Profiler server seems to be down. Please retry later...")
+            logger.error(
+                "g:Profiler server seems to be down... Please retry later... "
+                "If you have gene ID mappings and / or gene metadata for these datasets, you can provide them "
+                "directly using the `--gene_id_mapping` and `--gene_metadata` parameters respectively, "
+                "and by skipping the g:Profiler ID mapping step with `--skip_gprofiler`."
+            )
             sys.exit(102)
         logger.error(f"Error {err.response.status_code} while converting IDs: {err}")
         sys.exit(101)
@@ -173,6 +185,9 @@ def main():
         f"Converting IDs for species {args.species} and count file {count_file.name}..."
     )
 
+    #############################################################"
+    # PARSING FILES
+    #############################################################
     df = pd.read_csv(count_file, header=0, index_col=0)
     if df.empty:
         logger.error("Count file is empty! Aborting ID mapping...")
@@ -181,21 +196,38 @@ def main():
     df.index = df.index.astype(str)
     gene_ids = df.index.tolist()
 
+    custom_mappings_dict = {}
+    custom_mapping_file = args.custom_mappings
+    if custom_mapping_file:
+        if Path(custom_mapping_file).is_file():
+            custom_mapping_df = pd.read_csv(custom_mapping_file)
+            custom_mappings_dict = custom_mapping_df.set_index(
+                ORIGINAL_GENE_ID_COLNAME
+            )[ENSEMBL_GENE_ID_COLNAME].to_dict()
+
+    gene_ids_left_to_map = [
+        gene_id for gene_id in gene_ids if gene_id not in custom_mappings_dict.keys()
+    ]
+    logger.info(f"Number of genes left to map: {len(gene_ids_left_to_map)}")
+
+    #############################################################
+    # QUERYING g:PROFILER SERVER
+    #############################################################
     mapping_dict = {}
     gene_metadata_dfs = []
 
-    chunks = chunk_list(gene_ids, chunksize=CHUNKSIZE)
-    for chunk_gene_ids in chunks:
-        # converting to Ensembl IDs for all IDs comprised in this chunk
-        gene_mapping, meta_df = convert_ids(chunk_gene_ids, species_name)
-        mapping_dict.update(gene_mapping)
-        gene_metadata_dfs.append(meta_df)
+    if gene_ids_left_to_map:
+        chunks = chunk_list(gene_ids_left_to_map, chunksize=CHUNKSIZE)
+        for chunk_gene_ids in chunks:
+            # converting to Ensembl IDs for all IDs comprised in this chunk
+            gene_mapping, meta_df = convert_ids(chunk_gene_ids, species_name)
+            mapping_dict.update(gene_mapping)
+            gene_metadata_dfs.append(meta_df)
 
-    # concatenating all metadata and ensuring there are no duplicates
-    gene_metadata_df = pd.concat(gene_metadata_dfs, ignore_index=True)
-    gene_metadata_df.drop_duplicates(inplace=True)
-
-    if not mapping_dict:  # if mapping dict is empty
+    # adding custom mappings
+    mapping_dict.update(custom_mappings_dict)
+    # if mapping dict is empty
+    if not mapping_dict:
         logger.error(
             f"No mapping found for gene names in count file {count_file.name} "
             f"and for species {args.species}! "
@@ -204,6 +236,9 @@ def main():
         )
         sys.exit(101)
 
+    #############################################################"
+    # MAPPING GENE IDS IN DATAFRAME
+    #############################################################
     # filtering the DataFrame to keep only the rows where the index can be mapped
     df = df.loc[df.index.isin(mapping_dict)]
 
@@ -217,13 +252,20 @@ def main():
     # for now, we just get the mean of values, but this is not ideal
     df = df.groupby(ENSEMBL_GENE_ID_COLNAME, as_index=False).mean()
 
+    #############################################################"
+    # WRITING OUTFILES
+    #############################################################
     # writing to output file
     outfile = count_file.with_name(count_file.stem + RENAMED_FILE_SUFFIX)
     df.to_csv(outfile, index=False, header=True)
 
-    # writing gene metadata to file
-    metadata_file = count_file.with_name(count_file.stem + METADATA_FILE_SUFFIX)
-    gene_metadata_df.to_csv(metadata_file, index=False, header=True)
+    # concatenating all metadata and ensuring there are no duplicates
+    if gene_metadata_dfs:
+        gene_metadata_df = pd.concat(gene_metadata_dfs, ignore_index=True)
+        gene_metadata_df.drop_duplicates(inplace=True)
+        # writing gene metadata to file
+        metadata_file = count_file.with_name(count_file.stem + METADATA_FILE_SUFFIX)
+        gene_metadata_df.to_csv(metadata_file, index=False, header=True)
 
     # making dataframe for mapping (only two columns: original and new)
     mapping_df = (

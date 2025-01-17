@@ -32,11 +32,12 @@ process GPROFILER_IDMAPPING {
 
     input:
     tuple val(meta), path(count_file), val(species)
+    val gene_id_mapping_file
 
     output:
-    path('*_renamed.csv'),                                                                                            emit: renamed
-    path('*_metadata.csv'),                                                                                           emit: metadata
-    path('*_mapping.csv'),                                                                                            emit: mapping
+    tuple val(meta), path('*_renamed.csv'),                                                                           emit: renamed
+    path('*_metadata.csv'), optional: true,                                                                           emit: metadata
+    path('*_mapping.csv'),  optional: true,                                                                           emit: mapping
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),     topic: versions
     tuple val("${task.process}"), val('requests'), eval('python3 -c "import requests; print(requests.__version__)"'), topic: versions
@@ -44,7 +45,10 @@ process GPROFILER_IDMAPPING {
 
     script:
     """
-    map_ids_to_ensembl.py --count-file "$count_file" --species "$species"
+    map_ids_to_ensembl.py \
+        --count-file "$count_file" \
+        --species "$species" \
+        --custom-mappings $gene_id_mapping_file
     """
 
 

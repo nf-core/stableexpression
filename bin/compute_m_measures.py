@@ -73,7 +73,7 @@ def compute_m_measures(lf: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
-def chunks(lst: list, chunksize: int):
+def get_chunks(lst: list, chunksize: int):
     """Yield successive n-sized chunks from lst."""
     for i in range(0, len(lst), chunksize):
         yield lst[i : i + chunksize]
@@ -100,9 +100,11 @@ def main():
     #############################################################################
     gene_ids = count_lf.select(ENSEMBL_GENE_ID_COLNAME).collect().to_series().to_list()
     gene_ids = sorted(gene_ids)
-    gene_id_list_chunks = list(
-        chunks(gene_ids, chunksize=int(len(gene_ids) / NB_GENE_ID_CHUNK_FOLDERS))
-    )
+
+    chunksize = max(
+        1, int(len(gene_ids) / NB_GENE_ID_CHUNK_FOLDERS)
+    )  # 1 if len(gene_ids) < NB_GENE_ID_CHUNK_FOLDERS
+    gene_id_list_chunks = list(get_chunks(gene_ids, chunksize=chunksize))
 
     gene_id_chunk_folders = []
     for i in range(len(gene_id_list_chunks)):

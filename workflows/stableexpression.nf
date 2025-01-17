@@ -74,24 +74,48 @@ workflow STABLEEXPRESSION {
     }
 
     // putting all normalised count datasets together
-    ch_normalised_datasets.concat( ch_raw_datasets_normalised ).set{ ch_all_normalised }
+    ch_all_normalised_counts = ch_normalised_datasets.concat( ch_raw_datasets_normalised )
 
 
     //
     // MODULE: ID Mapping
     //
 
-    // tries to map gene IDs to Ensembl IDs whenever possible
-    GPROFILER_IDMAPPING( ch_all_normalised.combine(ch_species) )
-    ch_counts_gene_renamed = GPROFILER_IDMAPPING.out.renamed
-    ch_gene_metadata = GPROFILER_IDMAPPING.out.metadata
-    ch_renaming_mapping = GPROFILER_IDMAPPING.out.mapping
+    ch_gene_metadata = Channel.empty()
+    if ( params.gene_metadata ) {
+        ch_gene_metadata = Channel.fromPath( params.gene_metadata, checkIfExists: true )
+    }
+
+    if ( params.skip_gprofiler ) {
+
+        ch_gene_id_mapping = Channel.empty()
+        if ( params.gene_id_mapping ) {
+            // the gene id mappings will only be those provided by the user
+            ch_gene_id_mapping = Channel.fromPath( params.gene_id_mapping, checkIfExists: true )
+        }
+
+    } else {
+        // tries to map gene IDs to Ensembl IDs whenever possible
+        GPROFILER_IDMAPPING(
+            ch_all_normalised_counts.combine( ch_species ),
+            params.gene_id_mapping ? Channel.fromPath( params.gene_id_mapping, checkIfExists: true ) : 'none'
+        )
+        ch_all_normalised_counts = GPROFILER_IDMAPPING.out.renamed
+        ch_gene_metadata = ch_gene_metadata.mix( GPROFILER_IDMAPPING.out.metadata )
+        // the gene id mappings are the sum
+        // of those provided by the user and those fetched from g:Profiler
+        ch_gene_id_mapping = GPROFILER_IDMAPPING.out.mapping
+    }
+
 
     //
     // MODULE: Merge count files
     //
+    ch_all_normalised_counts
+                    .map { meta, file -> [file] }
+                    .collect()
+                    | MERGE_COUNTS
 
-    MERGE_COUNTS( ch_counts_gene_renamed.collect() )
     ch_merged_counts = MERGE_COUNTS.out.counts
 
     //
@@ -118,7 +142,7 @@ workflow STABLEEXPRESSION {
     GENE_STATISTICS(
         ch_merged_counts,
         ch_gene_metadata.collect(),
-        ch_renaming_mapping.collect(),
+        ch_gene_id_mapping.collect(),
         ch_m_measures
     )
 
