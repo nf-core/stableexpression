@@ -13,10 +13,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class NoIDFoundException(Exception):
-    pass
-
-
 ##################################################################
 # CONSTANTS
 ##################################################################
@@ -103,7 +99,15 @@ def request_conversion(
         url=GPROFILER_CONVERT_API_ENDPOINT,
         json={"organism": species, "query": gene_ids, "target": TARGET_DATABASE},
     )
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        if err.response.status_code == 502:
+            logger.error("g:Profiler server seems to be down. Please retry later...")
+            sys.exit(102)
+        logger.error(f"Error {err.response.status_code} while converting IDs: {err}")
+        sys.exit(101)
+
     return response.json()["result"]
 
 

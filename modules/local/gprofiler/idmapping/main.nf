@@ -1,6 +1,7 @@
 process GPROFILER_IDMAPPING {
 
     label 'process_low'
+    debug true
 
     publishDir "${params.outdir}/idmapping"
 
@@ -16,6 +17,9 @@ process GPROFILER_IDMAPPING {
         } else if (task.exitStatus == 101) {
             // likewise, when no mapping could be found, we do not want to continue with the subsequent steps for this specific dataset
             return 'ignore'
+        } else if (task.exitStatus == 102) {
+            // if the server appears to be down, we stop immediately
+            return 'terminate'
         } else {
             return 'terminate'
         }
