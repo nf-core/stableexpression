@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 # outfile names
 MOST_STABLE_GENES_RESULT_OUTFILENAME = "stats_most_stable_genes.csv"
 ALL_GENES_RESULT_OUTFILENAME = "stats_all_genes.csv"
-LOG_COUNT_SUMMARY_OUTFILENAME = "log_counts.csv"
+LOG_COUNTS_OUTFILENAME = "all_log_counts.csv"
+MOST_STABLE_GENES_LOG_COUNTS_OUTFILENAME = "most_stable_genes_log_counts.csv"
 
 # column names
 ORIGINAL_GENE_ID_COLNAME = "original_gene_id"
@@ -52,7 +53,7 @@ ALL_GENES_STATS_COLS = [
 
 # quantile intervals
 NB_QUANTILES = 100
-NB_SELECTED_STABLE_GENES = 1000
+NB_SELECTED_STABLE_GENES = 100
 
 
 #####################################################
@@ -147,7 +148,8 @@ def get_count_columns(lf: pl.LazyFrame) -> list[str]:
 
 def cast_count_columns_to_float32(lf: pl.LazyFrame) -> pl.LazyFrame:
     return lf.select(
-        [pl.col(column).cast(pl.Float32) for column in get_count_columns(lf)]
+        [pl.col(ENSEMBL_GENE_ID_COLNAME)]
+        + [pl.col(column).cast(pl.Float32) for column in get_count_columns(lf)]
     )
 
 
@@ -306,7 +308,7 @@ def get_most_stable_genes(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
     logger.info("Getting most stable genes per quantile interval")
     most_stable_genes_lf = stat_lf.head(NB_SELECTED_STABLE_GENES).with_columns(
         pl.col(EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
-        .map_elements(get_status)
+        .map_elements(get_status, return_dtype=pl.String)
         .alias(QUANTILE_INTERVAL_STATUS_COLNAME)
     )
     return most_stable_genes_lf.select(
@@ -332,10 +334,28 @@ def format_all_genes_dataframe(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
     ).sort(ENSEMBL_GENE_ID_COLNAME, descending=False)
 
 
+def get_most_stable_genes_log_counts(
+    log_count_lf: pl.LazyFrame, most_stable_genes_lf: pl.LazyFrame
+) -> pl.DataFrame:
+    """
+    Get the log normalised counts for the most stable genes.
+    """
+    most_stable_genes_log_counts_df = log_count_lf.filter(
+        pl.col(ENSEMBL_GENE_ID_COLNAME).is_in(
+            most_stable_genes_lf.select(ENSEMBL_GENE_ID_COLNAME).collect()
+        )
+    ).collect()
+    gene_ids = most_stable_genes_log_counts_df[ENSEMBL_GENE_ID_COLNAME].to_list()
+    return most_stable_genes_log_counts_df.select(
+        pl.exclude(ENSEMBL_GENE_ID_COLNAME)
+    ).transpose(column_names=gene_ids)
+
+
 def export_data(
     most_stable_genes_lf: pl.LazyFrame,
     all_genes_stat_lf: pl.LazyFrame,
     log_count_lf: pl.LazyFrame,
+    most_stable_genes_log_counts_df: pl.DataFrame,
 ):
     """Export gene expression data to CSV files."""
     logger.info(
@@ -348,8 +368,15 @@ def export_data(
     )
     all_genes_stat_lf.collect().write_csv(ALL_GENES_RESULT_OUTFILENAME)
 
-    logger.info(f"Exporting log normalised counts to: {LOG_COUNT_SUMMARY_OUTFILENAME}")
-    log_count_lf.collect().write_csv(LOG_COUNT_SUMMARY_OUTFILENAME)
+    logger.info(f"Exporting log normalised counts to: {LOG_COUNTS_OUTFILENAME}")
+    log_count_lf.collect().write_csv(LOG_COUNTS_OUTFILENAME)
+
+    logger.info(
+        f"Exporting log normalised counts for the most stable genes to: {MOST_STABLE_GENES_LOG_COUNTS_OUTFILENAME}"
+    )
+    most_stable_genes_log_counts_df.write_csv(MOST_STABLE_GENES_LOG_COUNTS_OUTFILENAME)
+
+    logger.info("Done")
 
 
 #####################################################
@@ -366,6 +393,7 @@ def main():
 
     # putting all counts into a single dataframe
     count_lf = get_counts(args.count_file)
+
     # preprocessing counts (removing 0 counts / log transformation)
     count_lf = preprocess_count(count_lf)
 
@@ -397,8 +425,17 @@ def main():
     # reducing dataframe size (it is only used for plotting by MultiQC)
     log_count_lf = cast_count_columns_to_float32(log_count_lf)
 
+    most_stable_genes_log_counts_df = get_most_stable_genes_log_counts(
+        log_count_lf, most_stable_genes_lf
+    )
+
     # exporting computed data
-    export_data(most_stable_genes_lf, all_genes_stat_lf, log_count_lf)
+    export_data(
+        most_stable_genes_lf,
+        all_genes_stat_lf,
+        log_count_lf,
+        most_stable_genes_log_counts_df,
+    )
 
 
 if __name__ == "__main__":

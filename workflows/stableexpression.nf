@@ -148,12 +148,14 @@ workflow STABLEEXPRESSION {
 
     ch_stats_most_stable_genes = GENE_STATISTICS.out.stats_most_stable_genes
     ch_stats_all_genes = GENE_STATISTICS.out.stats_all_genes
-    ch_log_count_summary = GENE_STATISTICS.out.log_count_summary
+    ch_all_log_counts = GENE_STATISTICS.out.all_log_counts
+    ch_most_stable_genes_log_counts = GENE_STATISTICS.out.most_stable_genes_log_counts
 
     ch_multiqc_files = ch_multiqc_files
                         .mix( ch_stats_most_stable_genes.collect() )
                         .mix( ch_stats_all_genes.collect() )
-                        .mix( ch_log_count_summary.collect() )
+                        .mix( ch_all_log_counts.collect() )
+                        .mix( ch_most_stable_genes_log_counts.collect() )
 
 
     //
@@ -218,7 +220,7 @@ workflow STABLEEXPRESSION {
     emit:
         stats_most_stable_genes = ch_stats_most_stable_genes
         stats_all_genes = ch_stats_all_genes
-        count_summary = ch_log_count_summary
+        log_counts = ch_log_counts
         multiqc_report = ch_multiqc_report
 
 

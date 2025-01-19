@@ -19,7 +19,8 @@ process GENE_STATISTICS {
     output:
     path 'stats_all_genes.csv',                                                                                       emit: stats_all_genes
     path 'stats_most_stable_genes.csv',                                                                               emit: stats_most_stable_genes
-    path 'log_counts.csv',                                                                                            emit: log_count_summary
+    path 'all_log_counts.csv',                                                                                        emit: all_log_counts
+    path 'most_stable_genes_log_counts.csv',                                                                          emit: most_stable_genes_log_counts
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 

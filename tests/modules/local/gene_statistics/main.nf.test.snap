@@ -52,7 +52,7 @@
                     "stats_most_stable_genes.csv:md5,ce9c7a153c24733249571bbe7e19846d"
                 ],
                 "2": [
-                    "log_counts.csv:md5,904a7a21acd7431b593643b4754ee2e5"
+                    "log_counts.csv:md5,93966082e9f4b205b420ce036b349303"
                 ],
                 "3": [
                     [
@@ -69,7 +69,7 @@
                     ]
                 ],
                 "log_count_summary": [
-                    "log_counts.csv:md5,904a7a21acd7431b593643b4754ee2e5"
+                    "log_counts.csv:md5,93966082e9f4b205b420ce036b349303"
                 ],
                 "stats_all_genes": [
                     "stats_all_genes.csv:md5,73aeed3da1d4d396788bdd5ab0c46bd0"
@@ -83,7 +83,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-16T16:35:33.606120733"
+        "timestamp": "2025-01-17T15:10:53.327197284"
     },
     "Without variation data": {
         "content": [
@@ -95,7 +95,7 @@
                     "stats_most_stable_genes.csv:md5,a00a45dc5691899b418d590ec48a80b9"
                 ],
                 "2": [
-                    "log_counts.csv:md5,904a7a21acd7431b593643b4754ee2e5"
+                    "log_counts.csv:md5,93966082e9f4b205b420ce036b349303"
                 ],
                 "3": [
                     [
@@ -112,7 +112,7 @@
                     ]
                 ],
                 "log_count_summary": [
-                    "log_counts.csv:md5,904a7a21acd7431b593643b4754ee2e5"
+                    "log_counts.csv:md5,93966082e9f4b205b420ce036b349303"
                 ],
                 "stats_all_genes": [
                     "stats_all_genes.csv:md5,3dd505bec3381b67da2dd316b49e2727"
@@ -126,6 +126,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-16T16:35:26.249156316"
+        "timestamp": "2025-01-17T15:06:22.41755353"
     }
 }
