@@ -15,7 +15,7 @@ ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 
 # experimentally chosen
 GENE_CHUNK_SIZE = 300
-ZERO_REPLACE_VALUE = 1e-3
+ZERO_REPLACE_VALUE = 1e-8
 
 #####################################################
 #####################################################

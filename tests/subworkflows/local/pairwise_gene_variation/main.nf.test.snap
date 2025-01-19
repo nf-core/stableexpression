@@ -1,12 +1,12 @@
 {
-    "Should run without failures": {
+    "1000 genes": {
         "content": [
             {
                 "0": [
-                    "m_measures.csv:md5,40c21df8bc352ec1b76974c35df6be7b"
+                    "m_measures.csv:md5,dbd868dd5a64c239fbfe802169aaff7b"
                 ],
                 "m_measures": [
-                    "m_measures.csv:md5,40c21df8bc352ec1b76974c35df6be7b"
+                    "m_measures.csv:md5,dbd868dd5a64c239fbfe802169aaff7b"
                 ]
             }
         ],
@@ -14,6 +14,40 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-19T14:42:25.315532878"
+        "timestamp": "2025-01-19T15:02:22.512476651"
+    },
+    "10 genes": {
+        "content": [
+            {
+                "0": [
+                    "m_measures.csv:md5,02faaa46853edf29b168ebb13a9ea361"
+                ],
+                "m_measures": [
+                    "m_measures.csv:md5,02faaa46853edf29b168ebb13a9ea361"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-19T14:54:29.512974871"
+    },
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "m_measures.csv:md5,02faaa46853edf29b168ebb13a9ea361"
+                ],
+                "m_measures": [
+                    "m_measures.csv:md5,02faaa46853edf29b168ebb13a9ea361"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-19T14:51:10.097567803"
     }
 }

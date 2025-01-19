@@ -1,14 +1,12 @@
 import pandas as pd
 import numpy as np
+import sys
 
-
+file = sys.argv[1]
 # Expression data for three control genes.
-counts = pd.read_parquet(
-    "/home/olivier/repositories/nf-core-stableexpression/tests/data/pairwise_gene_variation/make_chunks/input/counts.head.parquet"
-)
-
+counts = pd.read_parquet(file)
 counts.set_index("ensembl_gene_id", inplace=True)
-counts = counts.T.replace(0, 1e-3)
+counts = counts.T.replace(0, 1e-8)
 
 
 def _m_numpy(gene_expression: np.ndarray) -> np.ndarray:
@@ -29,12 +27,8 @@ def _m_numpy(gene_expression: np.ndarray) -> np.ndarray:
     a = gene_expression
     # Eq. (2): A_{jk}^{(i)} = log_2 (a_{ij} / a_{ik})
     A = np.log2(np.einsum("ij,ik->ijk", a, 1 / a))
-    print("A")
-    # print(A)
-    print("A")
     # Eq. (3)
     V = np.std(A, axis=0)
-    print(pd.DataFrame(V))
     # Eq. (4) N.B., Since V_{j=k} is zero, we can simply ignore it since it does not
     # contribute to calculation.
     n = V.shape[1]

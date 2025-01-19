@@ -88,40 +88,29 @@ def compute_standard_deviations(file: Path, low_memory: bool) -> pl.LazyFrame:
 
 
 def get_column_standard_deviations(std_lf: pl.LazyFrame, column: str) -> pl.LazyFrame:
+    # column is either ENSEMBL_GENE_ID_COLNAME or f"{ENSEMBL_GENE_ID_COLNAME}_other"
     return (
         std_lf.group_by(column)
         .agg(RATIOS_STDS_COLNAME)  # getting list of ratio std for this gene
-        .select(pl.col(column), pl.col(RATIOS_STDS_COLNAME))
+        .select(
+            pl.col(column).alias(ENSEMBL_GENE_ID_COLNAME), pl.col(RATIOS_STDS_COLNAME)
+        )
     )
 
 
 def group_standard_deviations(std_lf: pl.LazyFrame) -> pl.LazyFrame:
-    # getting list of gene ids in ensembl_gene_id and in ensembl_gene_id_other columns
-    ensembl_gene_ids = sorted(
-        std_lf.select(ENSEMBL_GENE_ID_COLNAME).unique().collect().to_series().to_list()
-    )
-    other_ensembl_gene_ids = sorted(
-        std_lf.select(f"{ENSEMBL_GENE_ID_COLNAME}_other")
-        .unique()
-        .collect()
-        .to_series()
-        .to_list()
-    )
-
-    # getting the standard devs for "a" genes
+    # getting the standard devs for genes in the ensembl_gene_id column
     std_a = get_column_standard_deviations(std_lf, column=ENSEMBL_GENE_ID_COLNAME)
-    # if both lists of gene ids are the identical,
-    # we need to collect values only for one column to avoid duplicates
-    if ensembl_gene_ids == other_ensembl_gene_ids:
-        return std_a
-
-    # getting the standard devs for "b" genes
+    # getting the standard devs for genes in the ensembl_gene_id_other column
     std_b = get_column_standard_deviations(
         std_lf, column=f"{ENSEMBL_GENE_ID_COLNAME}_other"
     )
     # concatenating both dataframes vertically
-    # we drop duplicates in the case when both input files are the sames
-    return pl.concat([std_a, std_b], how="vertical")
+    # if both lists of gene ids are the identical,
+    # we need to collect values only for one column to avoid duplicates
+    return pl.concat([std_a, std_b], how="vertical").unique(
+        subset=ENSEMBL_GENE_ID_COLNAME
+    )
 
 
 #####################################################

@@ -6,14 +6,34 @@ nextflow_workflow {
     tag "subworkflow_pairwise_gene_variation"
     tag "workflow"
 
-    test("Should run without failures") {
+    test("10 genes") {
 
-        tag "workflow_make_chunks"
+        tag "subworkflow_pairwise_gene_variation_10_genes"
 
         when {
             workflow {
                 """
                 ch_counts = Channel.fromPath( '$projectDir/tests/data/pairwise_gene_variation/make_chunks/input/counts.head.parquet', checkIfExists: true)
+                input[0] = ch_counts
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+
+    }
+
+    test("1000 genes") {
+
+        tag "subworkflow_pairwise_gene_variation_1000_genes"
+
+        when {
+            workflow {
+                """
+                ch_counts = Channel.fromPath( '$projectDir/tests/data/pairwise_gene_variation/make_chunks/input/counts.parquet', checkIfExists: true)
                 input[0] = ch_counts
                 """
             }
