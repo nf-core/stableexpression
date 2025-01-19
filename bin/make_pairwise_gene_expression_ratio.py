@@ -82,6 +82,7 @@ def main():
     ratios_lf = compute_ratios(file, low_memory)
 
     ratios_df = ratios_lf.collect()
+
     if len(ratios_df) == 0:
         raise ValueError(f"No output following treatment of file {str(file)}")
 

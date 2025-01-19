@@ -11,6 +11,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
+RATIOS_STD_COLNAME = "ratios_stds"
+M_MEASURE_COLNAME = "m_measure"
+
 M_MEASURE_OUTFILE_NAME = "m_measures.csv"
 
 DEFAULT_CHUNKSIZE = 300
@@ -58,9 +61,9 @@ def concat_all_std_data(files: list[Path], low_memory: bool) -> pl.LazyFrame:
     lfs = [pl.scan_parquet(file, low_memory=low_memory) for file in files]
     lf = pl.concat(lfs)
     return (
-        lf.explode("ratios_std")
+        lf.explode(RATIOS_STD_COLNAME)
         .group_by(ENSEMBL_GENE_ID_COLNAME)
-        .agg(pl.col("ratios_std"))
+        .agg(pl.col(RATIOS_STD_COLNAME))
     )
 
 
@@ -68,8 +71,9 @@ def compute_m_measures(lf: pl.LazyFrame) -> pl.LazyFrame:
     return lf.select(
         pl.col(ENSEMBL_GENE_ID_COLNAME),
         (
-            pl.col("ratios_std").list.mean() / (pl.col("ratios_std").list.len() - 1)
-        ).alias("m_measure"),
+            pl.col(RATIOS_STD_COLNAME).list.sum()
+            / (pl.col(RATIOS_STD_COLNAME).list.len() - 1)
+        ).alias(M_MEASURE_COLNAME),
     )
 
 
@@ -172,7 +176,9 @@ def main():
             computed_genes += len(m_measure_df)
 
             unique_nb_ratios = (
-                concat_lf.with_columns(pl.col("ratios_std").list.len().alias("length"))
+                concat_lf.with_columns(
+                    pl.col(RATIOS_STD_COLNAME).list.len().alias("length")
+                )
                 .select("length")
                 .unique()
                 .collect()

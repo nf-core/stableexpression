@@ -15,6 +15,7 @@ ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 
 # experimentally chosen
 GENE_CHUNK_SIZE = 300
+ZERO_REPLACE_VALUE = 1e-3
 
 #####################################################
 #####################################################
@@ -50,7 +51,8 @@ def parse_count_dataset(file: Path, low_memory: bool) -> pl.LazyFrame:
     lf = pl.scan_parquet(file, low_memory=low_memory).fill_null(0).fill_nan(0)
     count_columns = get_count_columns(lf)
     cols = [pl.col(ENSEMBL_GENE_ID_COLNAME)] + [
-        pl.col(column).replace({0: 1e-8}).cast(pl.Float32) for column in count_columns
+        pl.col(column).replace({0: ZERO_REPLACE_VALUE}).cast(pl.Float32)
+        for column in count_columns
     ]
     return lf.select(cols)
 
