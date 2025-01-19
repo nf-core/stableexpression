@@ -4,6 +4,7 @@
 
 import polars as pl
 from pathlib import Path
+from math import ceil
 import argparse
 import logging
 
@@ -68,12 +69,13 @@ def get_count_columns(lf: pl.LazyFrame) -> list[str]:
 
 def split_count_summary_in_chunks(lf: pl.LazyFrame):
     lf = lf.with_row_index(name="index")
+
     nb_rows = get_nb_rows(lf)
     logger.info(f"Number of rows (genes) in count file: {nb_rows}")
-    nb_chunks = nb_rows // GENE_CHUNK_SIZE + 1
+    nb_chunks = ceil(nb_rows / GENE_CHUNK_SIZE)
     logger.info(f"Number of chunks: {nb_chunks}")
 
-    for i, start in enumerate(range(0, nb_rows + 1, GENE_CHUNK_SIZE)):
+    for i, start in enumerate(range(0, nb_rows, GENE_CHUNK_SIZE)):
         partition = (
             lf.filter(
                 (pl.col("index") >= start) & (pl.col("index") < start + GENE_CHUNK_SIZE)

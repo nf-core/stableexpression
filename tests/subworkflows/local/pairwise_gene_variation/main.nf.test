@@ -8,6 +8,8 @@ nextflow_workflow {
 
     test("Should run without failures") {
 
+        tag "workflow_make_chunks"
+
         when {
             workflow {
                 """
