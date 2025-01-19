@@ -24,6 +24,10 @@ MAPPING_FILE_SUFFIX = "_mapping.csv"
 CHUNKSIZE = 2000  # number of IDs to convert at a time - may create trouble if > 2000
 
 GPROFILER_CONVERT_API_ENDPOINT = "https://biit.cs.ut.ee/gprofiler/api/convert/convert/"
+GPROFILER_CONVERT_BETA_API_ENDPOINT = (
+    "https://biit.cs.ut.ee/gprofiler_beta/api/convert/convert/"
+)
+
 TARGET_DATABASE = "ENSG"  # Ensembl database
 COLS_TO_KEEP = ["incoming", "converted", "name", "description"]
 DESCRIPTION_PART_TO_REMOVE_REGEX = r"\s*\[Source:.*?\]"
@@ -83,8 +87,12 @@ def chunk_list(lst: list, chunksize: int):
 
 
 def request_conversion(
-    gene_ids: list, species: str, target_database: str
-) -> list[dict]:
+    gene_ids: list,
+    species: str,
+    target_database: str,
+    url: str = GPROFILER_CONVERT_API_ENDPOINT,
+    attempts: int = 0,
+) -> list[str]:
     """
     Send a request to the g:Profiler API to convert a list of gene IDs.
 
@@ -94,8 +102,10 @@ def request_conversion(
         The list of gene IDs to convert.
     species : str
         The species to convert the IDs for.
-    target_database : str
-        The target database to convert to.
+    url : str, optional
+        The URL to send the request to, by default GPROFILER_CONVERT_API_ENDPOINT
+    attempts : int, optional
+        The number of attempts already performed, by default 0
 
     Returns
     -------
@@ -103,20 +113,33 @@ def request_conversion(
         The list of dicts corresponding to the converted IDs.
     """
     response = requests.post(
-        url=GPROFILER_CONVERT_API_ENDPOINT,
-        json={"organism": species, "query": gene_ids, "target": TARGET_DATABASE},
+        url=url,
+        json={"organism": species, "query": gene_ids, "target": target_database},
     )
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError as err:
         if err.response.status_code == 502:
-            logger.error(
-                "g:Profiler server seems to be down... Please retry later... "
-                "If you have gene ID mappings and / or gene metadata for these datasets, you can provide them "
-                "directly using the `--gene_id_mapping` and `--gene_metadata` parameters respectively, "
-                "and by skipping the g:Profiler ID mapping step with `--skip_gprofiler`."
-            )
-            sys.exit(102)
+            # server appears down
+            if attempts == 0:
+                # we only tried with the main server, we try with the beta server
+                return request_conversion(
+                    gene_ids,
+                    species,
+                    target_database=target_database,
+                    url=GPROFILER_CONVERT_BETA_API_ENDPOINT,
+                    attempts=1,
+                )
+            else:
+                # both servers appear down, we stop here...
+                logger.error(
+                    "g:Profiler servers (main and beta) seem to be down... Please retry later... "
+                    "If you have gene ID mappings and / or gene metadata for these datasets, you can provide them "
+                    "directly using the `--gene_id_mapping` and `--gene_metadata` parameters respectively, "
+                    "and by skipping the g:Profiler ID mapping step with `--skip_gprofiler`."
+                )
+                sys.exit(102)
+
         logger.error(f"Error {err.response.status_code} while converting IDs: {err}")
         sys.exit(101)
 

@@ -44,11 +44,12 @@ process GPROFILER_IDMAPPING {
 
 
     script:
+    def custom_mapping_arg = gene_id_mapping_file ? "--custom-mappings $gene_id_mapping_file" : ""
     """
     map_ids_to_ensembl.py \
         --count-file "$count_file" \
         --species "$species" \
-        --custom-mappings $gene_id_mapping_file
+        $custom_mapping_arg
     """
 
 

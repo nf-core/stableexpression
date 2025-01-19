@@ -220,7 +220,7 @@ workflow STABLEEXPRESSION {
     emit:
         stats_most_stable_genes = ch_stats_most_stable_genes
         stats_all_genes = ch_stats_all_genes
-        log_counts = ch_log_counts
+        log_counts = ch_all_log_counts
         multiqc_report = ch_multiqc_report
 
 
