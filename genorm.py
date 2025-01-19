@@ -47,17 +47,3 @@ def m_measure(gene_expression):
 
 
 print(m_measure(counts).sort_values())
-
-mst = [
-    0.000000,
-    4.651544e00,
-    4.573957,
-    9.589349e00,
-    5.517287,
-    6.853257e00,
-    5.598943,
-    4.705487e00,
-    5.288232,
-    9.654778,
-]
-print(np.sum(mst) / 9)
