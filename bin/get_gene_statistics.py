@@ -289,16 +289,16 @@ def sort_dataframe(lf: pl.LazyFrame) -> pl.LazyFrame:
 
 def get_status(quantile_interval: int) -> str:
     """Return the expression level status of the gene given its quantile interval."""
-    if quantile_interval >= NB_QUANTILES - 5:
-        return "very_high_expression"
-    elif quantile_interval >= NB_QUANTILES - 10:
-        return "high_expression"
+    if NB_QUANTILES - 5 <= quantile_interval:
+        return "Very high expression"
+    elif NB_QUANTILES - 10 <= quantile_interval < NB_QUANTILES - 5:
+        return "High expression"
+    elif 4 < quantile_interval <= 9:
+        return "Low expression"
     elif quantile_interval <= 4:
-        return "very_low_expression"
-    elif quantile_interval >= 9:
-        return "low_expression"
+        return "Very low expression"
     else:
-        return "ok"
+        return "Medium range"
 
 
 def get_most_stable_genes(stat_lf: pl.LazyFrame) -> pl.LazyFrame:

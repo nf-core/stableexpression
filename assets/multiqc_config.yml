@@ -66,13 +66,13 @@ custom_data:
           Indication about the average gene expression level compared to the whole pool of genes
         cond_formatting_rules:
           fail:
-            - s_eq: very_high_expression
-            - s_eq: very_low_expression
+            - s_eq: "Very high expression"
+            - s_eq: "Very low expression"
           warn:
-            - s_eq: high_expression
-            - s_eq: low_expression
+            - s_eq: "High expression"
+            - s_eq: "Low expression"
           pass:
-            - s_eq: ok
+            - s_eq: "Medium range"
       name:
         title: "Name"
         description: |
@@ -106,7 +106,7 @@ custom_data:
     headers:
       # colors from https://colorbrewer2.org/#type=diverging&scheme=BrBG&n=8
       m_measure:
-        title: "Gene stability measure M-measure"
+        title: "Gene stability M-measure"
         description: |
           Gene stability measure M as defined in Vandesompele et al., Genome Biology (2002)
         color: "#bf812d"
