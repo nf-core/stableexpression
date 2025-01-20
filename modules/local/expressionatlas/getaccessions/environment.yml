@@ -1,7 +1,0 @@
-name: eatlas_get_accessions
-channels:
-  - conda-forge
-dependencies:
-  - conda-forge::requests==2.32.3
-  - conda-forge::nltk==3.9.1
-  - conda-forge::retry==0.9.2

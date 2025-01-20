@@ -6,10 +6,10 @@
 </h1>
 
 [![GitHub Actions CI Status](https://github.com/nf-core/stableexpression/actions/workflows/ci.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/ci.yml)
-[![GitHub Actions Linting Status](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/stableexpression/results)
+[![GitHub Actions Linting Status](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/stableexpression/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A523.04.0-23aa62.svg)](https://www.nextflow.io/)
+[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.04.2-23aa62.svg)](https://www.nextflow.io/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
@@ -19,70 +19,52 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / local count datasets. It takes as input a species name (mandatory), keywords for expression atlas search (optional) and / or a CSV input file listing local raw / normalized count datasets (optional). **A typical usage is to find the most suitable qPCR housekeeping genes for a specific species (and optionally specific conditions)**.
+**nf-core/stableexpression** is a bioinformatics pipeline that ...
 
-<p align="center">
-    <img title="Sarek Workflow" src="docs/images/nf-core-stableexpression_metro_map.png" width=100%>
-</p>
+<!-- TODO nf-core:
+   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
+   major pipeline sections and the types of output it produces. You're giving an overview to someone new
+   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
+-->
 
-## Pipeline summary
-
-1. Get Expression Atlas accessions corresponding to the provided species (and optionally keywords) ([Expression Atlas](https://www.ebi.ac.uk/gxa/home); optional)
-2. Download Expression Atlas data ([Expression Atlas](https://www.ebi.ac.uk/gxa/home); optional)
-3. Normalize raw data (using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) or [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html))
-4. Map gene IDS to Ensembl IDS for standardisation among datasets ([g:Profiler](https://biit.cs.ut.ee/gprofiler/gost))
-5. Compute gene variation coefficients and get the most stable genes
+<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
+     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
+<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-First, prepare a samplesheet listing the different count datasets:
+<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
+     Explain what rows and columns represent. For instance (please edit as appropriate):
 
-`datasets.csv`:
+First, prepare a samplesheet with your input data that looks as follows:
 
-```csv
-counts,design,normalized
-path/to/normalized.counts.csv,path/to/normalized.design.csv,true
-path/to/raw.counts.csv,path/to/raw.design.csv,false
-```
-
-Make sure to format your datasets properly:
-
-`counts.csv`:
+`samplesheet.csv`:
 
 ```csv
-,sample_A,sample_B,sample_C
-gene_1,1,2,3
-gene_2,1,2,3
-...
+sample,fastq_1,fastq_2
+CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
 ```
 
-`design.csv`:
+Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
 
-```csv
-sample,condition
-sample_A,condition_1
-sample_B,condition_2
-...
+-->
+
+Now, you can run the pipeline using:
+
+<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
+
+```bash
+nextflow run nf-core/stableexpression \
+   -profile <docker/singularity/.../institute> \
+   --input samplesheet.csv \
+   --outdir <OUTDIR>
 ```
-
-Now you can tun the pipeline as follows:
-
-> ```bash
-> nextflow run nf-core/stableexpression \
->   -profile docker \
->   --species <SPECIES> \
->   --eatlas_accessions <ACCESSIONS> \
->   --eatlas_keywords <KEYWORDS> \
->   --datasets ./datasets.csv \
->   --outdir ./results
-> ```
 
 > [!WARNING]
-> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
-> see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
+> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
 For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/stableexpression/usage) and the [parameter documentation](https://nf-co.re/stableexpression/parameters).
 
@@ -96,6 +78,10 @@ For more details about the output files and reports, please refer to the
 
 nf-core/stableexpression was originally written by Olivier Coen.
 
+We thank the following people for their extensive assistance in the development of this pipeline:
+
+<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
@@ -103,6 +89,11 @@ If you would like to contribute to this pipeline, please see the [contributing g
 For further information or help, don't hesitate to get in touch on the [Slack `#stableexpression` channel](https://nfcore.slack.com/channels/stableexpression) (you can join with [this invite](https://nf-co.re/join/slack)).
 
 ## Citations
+
+<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
+<!-- If you use nf-core/stableexpression for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+
+<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 

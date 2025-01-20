@@ -1,7 +1,0 @@
-name: variation_coefficient
-channels:
-  - conda-forge
-  - bioconda
-dependencies:
-  - conda-forge::r-base==4.3.3
-  - conda-forge::r-optparse==1.7.5

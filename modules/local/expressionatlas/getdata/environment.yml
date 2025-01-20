@@ -1,8 +1,0 @@
-name: eatlas_get_data
-channels:
-  - conda-forge
-  - bioconda
-dependencies:
-  - conda-forge::r-base==4.3.3
-  - bioconda::bioconductor-expressionatlas==1.30.0
-  - conda-forge::r-optparse==1.7.5

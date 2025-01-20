@@ -1,2 +1,12 @@
+nf_core_version: 3.1.2
 repository_type: pipeline
-nf_core_version: "2.14.1"
+template:
+  author: Olivier Coen
+  description: This pipeline is dedicated to finding the most stable genes across
+    count datasets
+  force: false
+  is_nfcore: true
+  name: stableexpression
+  org: nf-core
+  outdir: .
+  version: 1.0dev
