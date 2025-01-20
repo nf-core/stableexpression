@@ -18,52 +18,68 @@ run_modules:
 
 disable_version_detection: true
 
-max_table_rows: 1000
+max_table_rows: 5000
 
 custom_data:
-  most_stable_genes:
-    section_name: "Most stable genes - summary"
+  ranked_top_stable_genes_summary:
+    section_name: "Top stable genes - ranked by stability"
     file_format: "csv"
-    description: |
-      Expression descriptive statistics of the 1000 most stable genes.
-      Expression were normalised and cpm (counts per million) were used for all calculations.
-    plot_type: "table"
     no_violin: true
+    sort_rows: false
+    description: |
+      Expression descriptive statistics of all genes, ranked by stability.
+      Expression were normalised and cpm (counts per million) were used for all calculations.
+      Genes are sorted by M-measure - from the most stable to the least stable.
+    plot_type: "table"
     pconfig:
-      col1_header: "Ensembl Gene ID"
+      col1_header: "Rank"
     headers:
+      rank:
+        rid: "Rank"
+        hidden: true
+      ensembl_gene_id:
+        title: "Ensembl Gene ID"
+        description: |
+          Gene IDs as shown in Ensembl
+        format: "{:,.3f}"
       m_measure:
-        title: "M-measure"
+        title: "Stability"
         description: |
           Gene stability measure M as defined in Vandesompele et al., Genome Biology (2002).
-          Lower values indicate higher stability. M-measures were calculated directly from cpm (counts per million).
+          Lower values indicate higher stability.
+          M-measures were calculated directly from cpm (normalised count per million).
         format: "{:,.3f}"
+        #minrange: 0
       standard_deviation:
         title: "Std"
         description: |
-          Standard deviation of the expression across samples. Expression was prior calculated as log2(cpm + 1) for each sample.
+          Standard deviation of the expression across samples.
+          For each sample, expression was determined as log2(cpm + 1).
         format: "{:,.3f}"
       variation_coefficient:
         title: "Var coeff"
-        format: "{:,.3f}"
         description: |
-          Variation coefficient: std(expression) / mean(expression). Expression was prior calculated as log2(cpm + 1) for each sample.
+          Variation coefficient: std(expression) / mean(expression).
+          For each sample, expression was determined as log2(cpm + 1).
+        format: "{:,.3f}"
       mean:
         title: "Mean"
-        format: "{:,.3f}"
         description: |
-          Average expression across samples. Expression was prior calculated as log2(cpm + 1) for each sample.
+          Average expression across samples.
+          For each sample, expression was determined as log2(cpm + 1).
+        format: "{:,.3f}"
       expression_level_quantile_interval:
         title: "Expr. level"
         description: |
           Quantile interval of the average expression for this gene (100 intervals from 0 to 99).
           The higher the quantile interval, the higher the average expression.
-          Expression was prior calculated as log2(cpm + 1) for each sample.
+          For each sample, expression was determined as log2(cpm + 1).
         format: "{:,.0f}"
+        hidden: true
       quantile_interval_status:
         title: "Expr. status"
         description: |
-          Indication about the average gene expression level compared to the whole pool of genes
+          Indication about the average gene expression level compared to the whole pool of genes.
         cond_formatting_rules:
           fail:
             - s_eq: "Very high expression"
@@ -74,25 +90,31 @@ custom_data:
           pass:
             - s_eq: "Medium range"
       name:
-        title: "Name"
+        title: "Ensembl name"
         description: |
           Gene name as shown in Ensembl (g:Profiler)
       description:
-        title: "Description"
+        title: "Ensembl description"
         description: |
           Gene description as shown in Ensembl (g:Profiler)
       original_gene_ids:
-        title: "IDs"
+        title: "Original gene IDs"
         description: |
           Original gene IDs as stated in the input (provided or downloaded) datasets
 
-  most_stable_genes_log_cpm_distributions:
-    section_name: "Most stable genes - expression distribution"
+  expression_distributions_top_stable_genes:
+    section_name: "Expression distribution of the top stable genes (ranked by stability)"
     file_format: "csv"
+    pconfig:
+      sort_samples: false
+      sort_rows: false
     description: |
       Distribution of gene expression across samples for the most stable genes.
-      Expression was prior calculated as log2(cpm + 1) were cpm is the normalised counts per million in one sample.
+      For each sample, expression was determined as log2(cpm + 1) were cpm is the normalised count per million.
+      Genes are ranked from the most stable to the least stable.
     plot_type: "boxplot"
+    #xlab: Expression
+    #ylab: Gene
 
   gene_statistics:
     section_name: "Descriptive statistics - All genes"
@@ -127,26 +149,27 @@ custom_data:
           Expression was calculated as preprocessed as expression = log2(cpm + 1).
         color: "#01665e"
 
-  log_cpm_distributions:
-    section_name: "Log CPM distribution by sample"
+  expression_distributions_by_sample:
+    section_name: "Distribution of expression (all genes together) sample by sample"
     file_format: "csv"
     description: |
       Distribution of overall gene expression sample by sample.
-      Expression was calculated as log2(cpm + 1) were cpm is the normalised counts per million in one sample.
+      Expression was calculated as log2(cpm + 1) were cpm is the normalised count per million in one sample.
     plot_type: "boxplot"
 
 #violin_downsample_after: 10000
 
-log_filesize_limit: 2000000000 # 2GB
+log_filesize_limit: 10000000000 # 10GB
 
 sp:
-  most_stable_genes:
-    fn: "*stats_most_stable_genes.csv"
-    max_filesize: 1000000 # 1MB
-  most_stable_genes_log_cpm_distributions:
-    fn: "*most_stable_genes_log_counts.csv"
+  ranked_top_stable_genes_summary:
+    fn: "*top_stable_genes_summary.csv"
+    max_filesize: 5000000 # 5MB
+  expression_distributions_top_stable_genes:
+    fn: "*top_stable_genes_transposed_log_counts.csv"
+    max_filesize: 50000000 # 50MB
   gene_statistics:
     fn: "*stats_all_genes.csv"
     max_filesize: 50000000 # 50MB
-  log_cpm_distributions:
+  expression_distributions_by_sample:
     fn: "*all_log_counts.csv"

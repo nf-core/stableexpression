@@ -17,10 +17,10 @@ process GENE_STATISTICS {
     val m_measure_file
 
     output:
-    path 'stats_all_genes.csv',                                                                                       emit: stats_all_genes
-    path 'stats_most_stable_genes.csv',                                                                               emit: stats_most_stable_genes
-    path 'all_log_counts.csv',                                                                                        emit: all_log_counts
-    path 'most_stable_genes_log_counts.csv',                                                                          emit: most_stable_genes_log_counts
+    path 'top_stable_genes_summary.csv',                                                                              emit: top_stable_genes_summary
+    path 'stats_all_genes.csv',                                                                                       emit: all_statistics
+    path 'all_log_counts.csv',                                                                                        emit: log_counts
+    path 'top_stable_genes_transposed_log_counts.csv',                                                                emit: top_stable_genes_transposed_log_counts
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 

@@ -146,16 +146,16 @@ workflow STABLEEXPRESSION {
         ch_m_measures
     )
 
-    ch_stats_most_stable_genes = GENE_STATISTICS.out.stats_most_stable_genes
-    ch_stats_all_genes = GENE_STATISTICS.out.stats_all_genes
-    ch_all_log_counts = GENE_STATISTICS.out.all_log_counts
-    ch_most_stable_genes_log_counts = GENE_STATISTICS.out.most_stable_genes_log_counts
+    ch_top_stable_genes_summary = GENE_STATISTICS.out.top_stable_genes_summary
+    ch_all_statistics = GENE_STATISTICS.out.all_statistics
+    ch_log_counts = GENE_STATISTICS.out.log_counts
+    ch_top_stable_genes_log_counts = GENE_STATISTICS.out.top_stable_genes_transposed_log_counts
 
     ch_multiqc_files = ch_multiqc_files
-                        .mix( ch_stats_most_stable_genes.collect() )
-                        .mix( ch_stats_all_genes.collect() )
-                        .mix( ch_all_log_counts.collect() )
-                        .mix( ch_most_stable_genes_log_counts.collect() )
+                        .mix( ch_top_stable_genes_summary.collect() )
+                        .mix( ch_all_statistics.collect() )
+                        .mix( ch_log_counts.collect() )
+                        .mix( ch_top_stable_genes_log_counts.collect() )
 
 
     //
@@ -218,9 +218,9 @@ workflow STABLEEXPRESSION {
 
 
     emit:
-        stats_most_stable_genes = ch_stats_most_stable_genes
-        stats_all_genes = ch_stats_all_genes
-        log_counts = ch_all_log_counts
+        top_stable_genes_summary = ch_top_stable_genes_summary
+        log_counts = ch_log_counts
+        top_stable_genes_log_counts = ch_top_stable_genes_log_counts
         multiqc_report = ch_multiqc_report
 
 
