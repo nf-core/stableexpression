@@ -207,15 +207,12 @@ workflow STABLEEXPRESSION {
         [],
         []
     )
-    ch_multiqc_report = MULTIQC.out.report
-
 
     emit:
         top_stable_genes_summary = ch_top_stable_genes_summary
         log_counts = ch_log_counts
         top_stable_genes_log_counts = ch_top_stable_genes_log_counts
         multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-
 
 }
 
