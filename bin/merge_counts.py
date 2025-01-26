@@ -101,15 +101,27 @@ def get_counts(files: list[Path]) -> pl.LazyFrame:
     # casting count columns to Float64
     # casting gene id column to String
     count_columns = get_count_columns(merged_lf)
-    return merged_lf.with_columns(
-        [pl.col(column).cast(pl.Float64) for column in count_columns]
-    ).with_columns([pl.col(ENSEMBL_GENE_ID_COLNAME).cast(pl.String)])
+    return (
+        merged_lf.select(
+            [pl.col(ENSEMBL_GENE_ID_COLNAME).cast(pl.String)]
+            + [pl.col(column).cast(pl.Float64) for column in count_columns]
+        )
+        .fill_null(0)
+        .fill_nan(0)
+    )
 
 
-def export_count_data(count_lf: pl.LazyFrame):
+def filter_out_genes_not_always_present(count_lf: pl.LazyFrame):
+    print(count_lf.collect())
+    return count_lf.filter(
+        pl.concat_list(pl.exclude(ENSEMBL_GENE_ID_COLNAME)).list.min() > 0
+    )
+
+
+def export_count_data(filtered_count_lf: pl.LazyFrame):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting normalised counts to: {ALL_COUNTS_PARQUET_OUTFILENAME}")
-    count_lf.collect().write_parquet(ALL_COUNTS_PARQUET_OUTFILENAME)
+    filtered_count_lf.collect().write_parquet(ALL_COUNTS_PARQUET_OUTFILENAME)
 
 
 #####################################################
@@ -125,8 +137,16 @@ def main():
 
     # putting all counts into a single dataframe
     count_lf = get_counts(count_files)
+    nb_genes = count_lf.select(pl.len()).collect().item()
 
-    export_count_data(count_lf)
+    filtered_count_lf = filter_out_genes_not_always_present(count_lf)
+    nb_genes_left = count_lf.select(pl.len()).collect().item()
+
+    logger.info(
+        f"Kept {nb_genes_left} genes ({100 * nb_genes_left / nb_genes:.2f}%) after filtering"
+    )
+
+    export_count_data(filtered_count_lf)
 
 
 if __name__ == "__main__":

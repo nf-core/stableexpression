@@ -1,5 +1,5 @@
 process MERGE_COUNTS {
-
+    debug true
     label 'process_low'
 
     publishDir "${params.outdir}/merged_counts"
