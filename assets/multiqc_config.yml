@@ -5,11 +5,11 @@ report_comment: >
 
 report_section_order:
   "nf-core-stableexpression-methods-description":
-    order: -1001
+    order: -1000
   software_versions:
-    order: -1002
+    order: -1001
   "nf-core-stableexpression-summary":
-    order: -1003
+    order: -1002
 
 export_plots: true
 

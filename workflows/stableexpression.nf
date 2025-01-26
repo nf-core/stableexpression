@@ -23,9 +23,6 @@ include { methodsDescriptionText                 } from '../subworkflows/local/u
 include { paramsSummaryMultiqc                   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { paramsSummaryMap                       } from 'plugin/nf-schema'
 
-
-
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -174,37 +171,33 @@ workflow STABLEEXPRESSION {
     //
     // MODULE: MultiQC
     //
+    ch_multiqc_config        = Channel.fromPath(
+        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config ?
+        Channel.fromPath(params.multiqc_config, checkIfExists: true) :
+        Channel.empty()
+    ch_multiqc_logo          = params.multiqc_logo ?
+        Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
+        Channel.empty()
 
-    // Load MultiQC configuration file
-    ch_multiqc_config = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config
-        ? Channel.fromPath(params.multiqc_config, checkIfExists: true)
-        : Channel.empty()
-    ch_multiqc_logo = params.multiqc_logo
-        ? Channel.fromPath(params.multiqc_logo, checkIfExists: true)
-        : Channel.fromPath("${workflow.projectDir}/docs/images/nf-core-stableexpression_logo_light.png", checkIfExists: true)
+    summary_params      = paramsSummaryMap(
+        workflow, parameters_schema: "nextflow_schema.json")
+    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
+    ch_multiqc_files = ch_multiqc_files.mix(
+        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
+        file(params.multiqc_methods_description, checkIfExists: true) :
+        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
+    ch_methods_description                = Channel.value(
+        methodsDescriptionText(ch_multiqc_custom_methods_description))
 
-    // Prepare the workflow summary
-    ch_workflow_summary = Channel.value(
-        paramsSummaryMultiqc(
-            paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
+    ch_multiqc_files = ch_multiqc_files.mix(
+        ch_methods_description.collectFile(
+            name: 'methods_description_mqc.yaml',
+            sort: true
         )
-    ).collectFile(name: 'workflow_summary_mqc.yaml')
-
-    // Prepare the methods section
-    ch_methods_description = Channel.value(
-        methodsDescriptionText(
-            params.multiqc_methods_description
-                ? file(params.multiqc_methods_description)
-                : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-        )
-    ).collectFile(name: 'methods_description_mqc.yaml')
-
-    // Add summary, versions, and methods to the MultiQC input file list
-    ch_multiqc_files = ch_multiqc_files
-        .mix(ch_workflow_summary)
-        .mix(ch_collated_versions)
-        .mix(ch_methods_description)
+    )
 
     MULTIQC (
         ch_multiqc_files.collect(),
@@ -221,7 +214,7 @@ workflow STABLEEXPRESSION {
         top_stable_genes_summary = ch_top_stable_genes_summary
         log_counts = ch_log_counts
         top_stable_genes_log_counts = ch_top_stable_genes_log_counts
-        multiqc_report = ch_multiqc_report
+        multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
 
 
 }

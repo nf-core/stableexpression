@@ -15,7 +15,7 @@ repository_type: pipeline
 template:
   author: test
   description: test
-  force: true
+  force: false
   is_nfcore: true
   name: stableexpression
   org: nf-core

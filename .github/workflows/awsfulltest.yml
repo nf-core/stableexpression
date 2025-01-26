@@ -15,7 +15,7 @@ jobs:
   run-platform:
     name: Run AWS full tests
     # run only if the PR is approved by at least 2 reviewers and against the master branch or manually triggered
-    if: github.repository == 'nf-core/fake' && github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'master' || github.event_name == 'workflow_dispatch'
+    if: github.repository == 'nf-core/stableexpression' && github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'master' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: octokit/request-action@v2.x
@@ -32,6 +32,7 @@ jobs:
           test $CURRENT_APPROVALS_COUNT -ge 2 || exit 1 # At least 2 approvals are required
       - name: Launch workflow via Seqera Platform
         uses: seqeralabs/action-tower-launch@v2
+        # TODO nf-core: You can customise AWS full pipeline tests as required
         # Add full size test data (but still relatively small datasets for few samples)
         # on the `test_full.config` test runs with only one set of parameters
         with:
@@ -39,11 +40,11 @@ jobs:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
           revision: ${{ github.sha }}
-          workdir: s3://${{ secrets.AWS_S3_BUCKET }}/work/fake/work-${{ github.sha }}
+          workdir: s3://${{ secrets.AWS_S3_BUCKET }}/work/stableexpression/work-${{ github.sha }}
           parameters: |
             {
               "hook_url": "${{ secrets.MEGATESTS_ALERTS_SLACK_HOOK_URL }}",
-              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/fake/results-${{ github.sha }}"
+              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/stableexpression/results-${{ github.sha }}"
             }
           profiles: test_full
 
