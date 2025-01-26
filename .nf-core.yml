@@ -1,2 +1,27 @@
+bump_version: null
+lint:
+  files_exist:
+    - conf/igenomes.config
+    - conf/igenomes_ignored.config
+    - conf/igenomes.config
+    - conf/igenomes_ignored.config
+  files_unchanged:
+    - assets/nf-core-stableexpression_logo_light.png
+  nextflow_config:
+    - params.input
+nf_core_version: 3.0.2
+org_path: null
 repository_type: pipeline
-nf_core_version: "2.14.1"
+template:
+  author: test
+  description: test
+  force: false
+  is_nfcore: true
+  name: stableexpression
+  org: nf-core
+  outdir: .
+  skip_features:
+    - igenomes
+    - fastqc
+  version: 1.0dev
+update: null

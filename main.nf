@@ -1,15 +1,13 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/sampleexpression
+    nf-core/stableexpression
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/sampleexpression
-    Website: https://nf-co.re/sampleexpression
-    Slack  : https://nfcore.slack.com/channels/sampleexpression
+    Github : https://github.com/nf-core/stableexpression
+    Website: https://nf-co.re/stableexpression
+    Slack  : https://nfcore.slack.com/channels/stableexpression
 ----------------------------------------------------------------------------------------
 */
-
-nextflow.enable.dsl = 2
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -17,23 +15,9 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { SAMPLEEXPRESSION  } from './workflows/sampleexpression'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_sampleexpression_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_sampleexpression_pipeline'
-
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_sampleexpression_pipeline'
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// TODO nf-core: Remove this line if you don't need a FASTA file
-//   This is an example of how to use getGenomeAttribute() to fetch parameters
-//   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
-
+include { STABLEEXPRESSION  } from './workflows/stableexpression'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_stableexpression_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_stableexpression_pipeline'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -43,7 +27,7 @@ params.fasta = getGenomeAttribute('fasta')
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow NFCORE_SAMPLEEXPRESSION {
+workflow NFCORE_STABLEEXPRESSION {
 
     take:
     samplesheet // channel: samplesheet read in from --input
@@ -53,13 +37,11 @@ workflow NFCORE_SAMPLEEXPRESSION {
     //
     // WORKFLOW: Run pipeline
     //
-    SAMPLEEXPRESSION (
+    STABLEEXPRESSION (
         samplesheet
     )
-
     emit:
-    multiqc_report = SAMPLEEXPRESSION.out.multiqc_report // channel: /path/to/multiqc_report.html
-
+    multiqc_report = STABLEEXPRESSION.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,13 +52,11 @@ workflow NFCORE_SAMPLEEXPRESSION {
 workflow {
 
     main:
-
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
     PIPELINE_INITIALISATION (
         params.version,
-        params.help,
         params.validate_params,
         params.monochrome_logs,
         args,
@@ -87,10 +67,9 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_SAMPLEEXPRESSION (
+    NFCORE_STABLEEXPRESSION (
         PIPELINE_INITIALISATION.out.samplesheet
     )
-
     //
     // SUBWORKFLOW: Run completion tasks
     //
@@ -101,7 +80,7 @@ workflow {
         params.outdir,
         params.monochrome_logs,
         params.hook_url,
-        NFCORE_SAMPLEEXPRESSION.out.multiqc_report
+        NFCORE_STABLEEXPRESSION.out.multiqc_report
     )
 }
 
