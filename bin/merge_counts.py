@@ -112,7 +112,6 @@ def get_counts(files: list[Path]) -> pl.LazyFrame:
 
 
 def filter_out_genes_not_always_present(count_lf: pl.LazyFrame):
-    print(count_lf.collect())
     return count_lf.filter(
         pl.concat_list(pl.exclude(ENSEMBL_GENE_ID_COLNAME)).list.min() > 0
     )

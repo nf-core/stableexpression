@@ -51,7 +51,7 @@ def parse_count_dataset(file: Path, low_memory: bool) -> pl.LazyFrame:
     lf = pl.scan_parquet(file, low_memory=low_memory).fill_null(0).fill_nan(0)
     count_columns = get_count_columns(lf)
     cols = [pl.col(ENSEMBL_GENE_ID_COLNAME)] + [
-        pl.col(column).replace({0: ZERO_REPLACE_VALUE}).cast(pl.Float32)
+        pl.col(column).replace({0: ZERO_REPLACE_VALUE}).cast(pl.Float64)
         for column in count_columns
     ]
     return lf.select(cols)

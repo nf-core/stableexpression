@@ -319,17 +319,13 @@ def get_top_stable_gene_summary(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
         quantile_interval: get_status(quantile_interval)
         for quantile_interval in range(NB_QUANTILES)
     }
-    stat_summary_lf = stat_lf.head(NB_TOP_GENES_TO_SHOW_IN_TABLE).with_columns(
+    lf = stat_lf.head(NB_TOP_GENES_TO_SHOW_IN_TABLE).with_columns(
         pl.col(EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
         .replace_strict(mapping_dict)
         .alias(QUANTILE_INTERVAL_STATUS_COLNAME)
     )
-    return stat_summary_lf.select(
-        [
-            column
-            for column in STATISTICS_COLS
-            if column in stat_summary_lf.collect_schema().names()
-        ]
+    return lf.select(
+        [column for column in STATISTICS_COLS if column in lf.collect_schema().names()]
     )
 
 

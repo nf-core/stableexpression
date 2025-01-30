@@ -108,8 +108,12 @@ def group_standard_deviations(std_lf: pl.LazyFrame) -> pl.LazyFrame:
     # concatenating both dataframes vertically
     # if both lists of gene ids are the identical,
     # we need to collect values only for one column to avoid duplicates
-    return pl.concat([std_a, std_b], how="vertical").unique(
-        subset=ENSEMBL_GENE_ID_COLNAME
+    return (
+        pl.concat([std_a, std_b], how="vertical")
+        .unique(subset=ENSEMBL_GENE_ID_COLNAME)
+        .sort(
+            ENSEMBL_GENE_ID_COLNAME
+        )  # only needed to have consistent output (for snapshots)
     )
 
 

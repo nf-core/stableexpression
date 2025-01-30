@@ -3,10 +3,10 @@
         "content": [
             {
                 "0": [
-                    "m_measures.csv:md5,dbd868dd5a64c239fbfe802169aaff7b"
+                    "m_measures.csv:md5,ac7ab2bb244b25c15d6fd29bbdef6904"
                 ],
                 "m_measures": [
-                    "m_measures.csv:md5,dbd868dd5a64c239fbfe802169aaff7b"
+                    "m_measures.csv:md5,ac7ab2bb244b25c15d6fd29bbdef6904"
                 ]
             }
         ],
@@ -14,16 +14,16 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-19T15:02:22.512476651"
+        "timestamp": "2025-01-30T16:17:34.337881721"
     },
     "10 genes": {
         "content": [
             {
                 "0": [
-                    "m_measures.csv:md5,02faaa46853edf29b168ebb13a9ea361"
+                    "m_measures.csv:md5,597ef653508ddfc81f1c284daca67fbc"
                 ],
                 "m_measures": [
-                    "m_measures.csv:md5,02faaa46853edf29b168ebb13a9ea361"
+                    "m_measures.csv:md5,597ef653508ddfc81f1c284daca67fbc"
                 ]
             }
         ],
@@ -31,7 +31,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-19T14:54:29.512974871"
+        "timestamp": "2025-01-30T16:23:31.38356288"
     },
     "Should run without failures": {
         "content": [

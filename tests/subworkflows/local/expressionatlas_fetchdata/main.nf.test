@@ -4,6 +4,7 @@ nextflow_workflow {
     script "subworkflows/local/expressionatlas_fetchdata/main.nf"
     workflow "EXPRESSIONATLAS_FETCHDATA"
     tag "subworkflow_expressionatlas_fetchdata"
+    tag "subworkflow"
 
     test("Should run without failures") {
 

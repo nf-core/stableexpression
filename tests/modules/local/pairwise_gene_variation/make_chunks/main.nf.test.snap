@@ -4,10 +4,10 @@
             {
                 "0": [
                     [
-                        "count_chunk.0.parquet:md5,6b20401635b2a408a9f5271ddeb99111",
-                        "count_chunk.1.parquet:md5,84f80c8f3adfcde6efff58420d68fd88",
-                        "count_chunk.2.parquet:md5,503334b1bec074872581b0951937a614",
-                        "count_chunk.3.parquet:md5,fefadf60ee25192be62b8f8fbe4f8f03"
+                        "count_chunk.0.parquet:md5,77cbba7f85bb646d4843d756c7ba701d",
+                        "count_chunk.1.parquet:md5,33d252ec9988e951a3b9dbe30d6c2e3d",
+                        "count_chunk.2.parquet:md5,1a80a3d72cd2b090d1b67aa561409f7c",
+                        "count_chunk.3.parquet:md5,34890e85d64bbc623477299cff4b3c24"
                     ]
                 ],
                 "1": [
@@ -23,6 +23,14 @@
                         "polars",
                         "1.17.1"
                     ]
+                ],
+                "chunks": [
+                    [
+                        "count_chunk.0.parquet:md5,77cbba7f85bb646d4843d756c7ba701d",
+                        "count_chunk.1.parquet:md5,33d252ec9988e951a3b9dbe30d6c2e3d",
+                        "count_chunk.2.parquet:md5,1a80a3d72cd2b090d1b67aa561409f7c",
+                        "count_chunk.3.parquet:md5,34890e85d64bbc623477299cff4b3c24"
+                    ]
                 ]
             }
         ],
@@ -30,6 +38,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-16T09:18:58.894208912"
+        "timestamp": "2025-01-29T19:24:23.507551112"
     }
 }
