@@ -11,7 +11,7 @@ nextflow_process {
         when {
             process {
                 """
-                ch_counts = Channel.fromPath( '$projectDir/tests/data/merge_counts/input/counts*.csv', checkIfExists: true).collect()
+                ch_counts = Channel.fromPath( '$projectDir/tests/test_data/merge_counts/input/counts*.csv', checkIfExists: true).collect()
                 input[0] = ch_counts
                 """
             }

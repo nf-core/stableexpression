@@ -11,7 +11,7 @@ nextflow_process {
         when {
             process {
                 """
-                file = file( '$projectDir/tests/data/pairwise_gene_variation/expression_ratio/output/ratios.0.1.parquet', checkIfExists: true)
+                file = file( '$projectDir/tests/test_data/pairwise_gene_variation/expression_ratio/output/ratios.0.1.parquet', checkIfExists: true)
                 input[0] = file
                 """
             }

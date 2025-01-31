@@ -12,9 +12,9 @@ nextflow_process {
 
             process {
                 """
-                ch_counts = Channel.fromPath( '$projectDir/tests/data/merge_counts/output/all_counts.parquet', checkIfExists: true)
-                ch_metadata = Channel.fromPath( '$projectDir/tests/data/gene_statistics/input/metadata*.csv', checkIfExists: true ).collect()
-                ch_mapping = Channel.fromPath( '$projectDir/tests/data/gene_statistics/input/mapping*.csv', checkIfExists: true ).collect()
+                ch_counts = Channel.fromPath( '$projectDir/tests/test_data/merge_counts/output/all_counts.parquet', checkIfExists: true)
+                ch_metadata = Channel.fromPath( '$projectDir/tests/test_data/gene_statistics/input/metadata*.csv', checkIfExists: true ).collect()
+                ch_mapping = Channel.fromPath( '$projectDir/tests/test_data/gene_statistics/input/mapping*.csv', checkIfExists: true ).collect()
                 ch_m_measures = Channel.of( 'none' )
                 input[0] = ch_counts
                 input[1] = ch_metadata
@@ -39,10 +39,10 @@ nextflow_process {
 
             process {
                 """
-                ch_counts = Channel.fromPath( '$projectDir/tests/data/merge_counts/output/all_counts.parquet', checkIfExists: true)
-                ch_metadata = Channel.fromPath( '$projectDir/tests/data/gene_statistics/input/metadata*.csv', checkIfExists: true ).collect()
-                ch_mapping = Channel.fromPath( '$projectDir/tests/data/gene_statistics/input/mapping*.csv', checkIfExists: true ).collect()
-                ch_m_measures = Channel.fromPath( '$projectDir/tests/data/gene_statistics/input/m_measures.csv', checkIfExists: true )
+                ch_counts = Channel.fromPath( '$projectDir/tests/test_data/merge_counts/output/all_counts.parquet', checkIfExists: true)
+                ch_metadata = Channel.fromPath( '$projectDir/tests/test_data/gene_statistics/input/metadata*.csv', checkIfExists: true ).collect()
+                ch_mapping = Channel.fromPath( '$projectDir/tests/test_data/gene_statistics/input/mapping*.csv', checkIfExists: true ).collect()
+                ch_m_measures = Channel.fromPath( '$projectDir/tests/test_data/gene_statistics/input/m_measures.csv', checkIfExists: true )
                 input[0] = ch_counts
                 input[1] = ch_metadata
                 input[2] = ch_mapping

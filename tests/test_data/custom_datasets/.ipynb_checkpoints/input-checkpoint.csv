@@ -1,0 +1,3 @@
+counts,design,normalised
+tests/data/custom_datasets/normalised.csv,tests/data/custom_datasets/normalised.design.csv,true
+tests/data/custom_datasets/raw.csv,tests/data/custom_datasets/raw.design.csv,false
