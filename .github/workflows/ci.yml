@@ -14,7 +14,6 @@ env:
   NXF_SINGULARITY_CACHEDIR: ${{ github.workspace }}/.singularity
   NXF_SINGULARITY_LIBRARYDIR: ${{ github.workspace }}/.singularity
   NFT_VER: "0.9.2"
-  NFX_MIN_VER: "24.04.2"
 
 concurrency:
   group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
@@ -29,7 +28,7 @@ jobs:
     strategy:
       matrix:
         NXF_VER:
-          - NFX_MIN_VER
+          - "24.04.2"
           - "latest-everything"
         profile:
           - "conda"
@@ -94,7 +93,7 @@ jobs:
     strategy:
       matrix:
         NXF_VER:
-          - NFX_MIN_VER
+          - "24.04.2"
           - "latest-everything"
         profile:
           - "conda"
