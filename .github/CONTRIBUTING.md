@@ -1,4 +1,4 @@
-# nf-core/stableexpression: Contributing Guidelines
+# `nf-core/stableexpression`: Contributing Guidelines
 
 Hi there!
 Many thanks for taking an interest in improving nf-core/stableexpression.

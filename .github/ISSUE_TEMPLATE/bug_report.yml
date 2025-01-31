@@ -9,7 +9,6 @@ body:
 
         - [nf-core website: troubleshooting](https://nf-co.re/usage/troubleshooting)
         - [nf-core/stableexpression pipeline documentation](https://nf-co.re/stableexpression/usage)
-
   - type: textarea
     id: description
     attributes:
