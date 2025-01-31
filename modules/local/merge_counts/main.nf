@@ -2,6 +2,23 @@ process MERGE_COUNTS {
     // debug true
     label 'process_low'
 
+    errorStrategy = {
+        if (task.exitStatus == 100) {
+            log.error(
+                "No count could be found before merging datasets! "
+                + "Please check the provided accessions and datasets and run again"
+                )
+            return 'terminate'
+        }
+        if (task.exitStatus == 101) {
+            log.error(
+                "When filtering for genes with at least one count in all datasets, no gene was found! "
+                + "Please check the provided accessions and datasets and run again."
+                )
+            return 'terminate'
+        }
+    }
+
     publishDir "${params.outdir}/merged_counts"
 
     conda "${moduleDir}/environment.yml"

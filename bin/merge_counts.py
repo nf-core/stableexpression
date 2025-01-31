@@ -3,6 +3,7 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
+import sys
 import polars as pl
 from pathlib import Path
 import logging
@@ -98,6 +99,12 @@ def get_counts(files: list[Path]) -> pl.LazyFrame:
     lfs = get_valid_lazy_dfs(files)
     # joining all count files
     merged_lf = reduce(join_dfs, lfs)
+
+    # checking if filtered count dataframe is empty
+    if merged_lf.limit(1).collect().is_empty():
+        logger.error("No data found in any of the input count datasets...")
+        sys.exit(100)
+
     # casting count columns to Float64
     # casting gene id column to String
     count_columns = get_count_columns(merged_lf)
@@ -112,9 +119,15 @@ def get_counts(files: list[Path]) -> pl.LazyFrame:
 
 
 def filter_out_genes_not_always_present(count_lf: pl.LazyFrame):
-    return count_lf.filter(
+    filtered_count_lf = count_lf.filter(
         pl.concat_list(pl.exclude(ENSEMBL_GENE_ID_COLNAME)).list.min() > 0
     )
+    # checking if filtered count dataframe is empty
+    if filtered_count_lf.limit(1).collect().is_empty():
+        logger.error("No gene left after filtering for expression > 0 in all samples")
+        sys.exit(101)
+
+    return filtered_count_lf
 
 
 def export_count_data(filtered_count_lf: pl.LazyFrame):
