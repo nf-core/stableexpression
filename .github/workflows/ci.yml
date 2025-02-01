@@ -99,6 +99,7 @@ jobs:
           - "conda"
           - "docker"
           - "singularity"
+        shard: [1, 2, 3, 4]
         isMaster:
           - ${{ github.base_ref == 'master' }}
         # Exclude conda and singularity on dev
@@ -151,4 +152,4 @@ jobs:
 
       - name: Run Tests
         run: |
-          nf-test test --verbose --debug --tag workflow
+          nf-test test --ci --profile ${{ matrix.profile }} --shard ${{ matrix.shard }}/${{ strategy.job-total }}
