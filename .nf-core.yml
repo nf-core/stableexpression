@@ -9,6 +9,9 @@ lint:
     - assets/nf-core-stableexpression_logo_light.png
   nextflow_config:
     - params.input
+  template_strings:
+    - tests/test_data/pairwise_gene_variation/compute_m_measure/input/std.0.0.parquet
+    - tests/test_data/pairwise_gene_variation/compute_m_measure/input/std.1.2.parquet
 nf_core_version: 3.2.0
 org_path: null
 repository_type: pipeline
