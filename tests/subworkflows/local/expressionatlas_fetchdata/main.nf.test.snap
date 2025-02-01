@@ -1,0 +1,107 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    [
+                        {
+                            "dataset": "E_GEOD_77826_rnaseq",
+                            "design": "E_GEOD_77826_rnaseq.design.csv:md5,5aa61df754aa9c6c107b247c642d2e53"
+                        },
+                        "E_GEOD_77826_rnaseq.raw.csv:md5,85cea79c602a9924d5a4d6b597ef5530"
+                    ],
+                    [
+                        {
+                            "dataset": "E_MTAB_4251_rnaseq",
+                            "design": "E_MTAB_4251_rnaseq.design.csv:md5,4f3ef7b76ca6ed1ec3157295bc4a8d84"
+                        },
+                        "E_MTAB_4251_rnaseq.raw.csv:md5,5cf27be0e00b93d5d431754ba8058687"
+                    ],
+                    [
+                        {
+                            "dataset": "E_MTAB_4301_rnaseq",
+                            "design": "E_MTAB_4301_rnaseq.design.csv:md5,165eeef7d612c01fd62baae1a3f296ae"
+                        },
+                        "E_MTAB_4301_rnaseq.raw.csv:md5,1ab49feea238e7b1419937b5037952b5"
+                    ],
+                    [
+                        {
+                            "dataset": "E_MTAB_5038_rnaseq",
+                            "design": "E_MTAB_5038_rnaseq.design.csv:md5,352ed3163d7deef2be35d899418d5ad4"
+                        },
+                        "E_MTAB_5038_rnaseq.raw.csv:md5,b4acb3d7c39cdb2bd6cef6c9314c5b2a"
+                    ],
+                    [
+                        {
+                            "dataset": "E_MTAB_5215_rnaseq",
+                            "design": "E_MTAB_5215_rnaseq.design.csv:md5,2741dcd5b45bacce865db632f626a273"
+                        },
+                        "E_MTAB_5215_rnaseq.raw.csv:md5,273704bdf762c342271b33958a84d1e7"
+                    ],
+                    [
+                        {
+                            "dataset": "E_MTAB_7711_rnaseq",
+                            "design": "E_MTAB_7711_rnaseq.design.csv:md5,3e7748b54a0c25c008d9bd2ddbf1bf00"
+                        },
+                        "E_MTAB_7711_rnaseq.raw.csv:md5,3c02cf432c29d3751c978439539df388"
+                    ]
+                ],
+                "normalised": [
+                    
+                ],
+                "raw": [
+                    [
+                        {
+                            "dataset": "E_GEOD_77826_rnaseq",
+                            "design": "E_GEOD_77826_rnaseq.design.csv:md5,5aa61df754aa9c6c107b247c642d2e53"
+                        },
+                        "E_GEOD_77826_rnaseq.raw.csv:md5,85cea79c602a9924d5a4d6b597ef5530"
+                    ],
+                    [
+                        {
+                            "dataset": "E_MTAB_4251_rnaseq",
+                            "design": "E_MTAB_4251_rnaseq.design.csv:md5,4f3ef7b76ca6ed1ec3157295bc4a8d84"
+                        },
+                        "E_MTAB_4251_rnaseq.raw.csv:md5,5cf27be0e00b93d5d431754ba8058687"
+                    ],
+                    [
+                        {
+                            "dataset": "E_MTAB_4301_rnaseq",
+                            "design": "E_MTAB_4301_rnaseq.design.csv:md5,165eeef7d612c01fd62baae1a3f296ae"
+                        },
+                        "E_MTAB_4301_rnaseq.raw.csv:md5,1ab49feea238e7b1419937b5037952b5"
+                    ],
+                    [
+                        {
+                            "dataset": "E_MTAB_5038_rnaseq",
+                            "design": "E_MTAB_5038_rnaseq.design.csv:md5,352ed3163d7deef2be35d899418d5ad4"
+                        },
+                        "E_MTAB_5038_rnaseq.raw.csv:md5,b4acb3d7c39cdb2bd6cef6c9314c5b2a"
+                    ],
+                    [
+                        {
+                            "dataset": "E_MTAB_5215_rnaseq",
+                            "design": "E_MTAB_5215_rnaseq.design.csv:md5,2741dcd5b45bacce865db632f626a273"
+                        },
+                        "E_MTAB_5215_rnaseq.raw.csv:md5,273704bdf762c342271b33958a84d1e7"
+                    ],
+                    [
+                        {
+                            "dataset": "E_MTAB_7711_rnaseq",
+                            "design": "E_MTAB_7711_rnaseq.design.csv:md5,3e7748b54a0c25c008d9bd2ddbf1bf00"
+                        },
+                        "E_MTAB_7711_rnaseq.raw.csv:md5,3c02cf432c29d3751c978439539df388"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-04T10:03:12.001142929"
+    }
+}

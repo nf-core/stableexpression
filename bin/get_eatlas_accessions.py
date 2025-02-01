@@ -4,16 +4,26 @@
 
 import argparse
 import requests
-from retry import retry
-from os import cpu_count
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_delay,
+    wait_exponential,
+    before_sleep_log,
+)
 import json
+from functools import partial
 from multiprocessing import Pool
 import nltk
 from nltk.corpus import wordnet
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
 ACCESSION_OUTFILE_NAME = "accessions.txt"
-JSON_OUTFILE_NAME = "found.json"
+FILTERED_EXPERIMENTS_OUTFILE_NAME = "filtered_experiments.json"
 
 ##################################################################
 ##################################################################
@@ -179,7 +189,12 @@ def word_in_sentence(word: str, sentence: str):
     return False
 
 
-@retry(ExpressionAtlasNothingFoundError, tries=3, delay=2, backoff=2)
+@retry(
+    retry=retry_if_exception_type(ExpressionAtlasNothingFoundError),
+    stop=stop_after_delay(600),
+    wait=wait_exponential(multiplier=1, min=1, max=30),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+)
 def get_data(url: str):
     """
     Queries a URL and returns the data as a JSON object
@@ -238,6 +253,36 @@ def get_experiment_description(exp_dict: dict):
         raise KeyError(f"Could not find description field in {exp_dict}")
 
 
+def get_experiment_accesssion(exp_dict: dict):
+    """
+    Gets the accession from an experiment dictionary
+
+    Parameters
+    ----------
+    exp_dict : dict
+        The experiment dictionary
+
+    Returns
+    -------
+    accession : str
+        The experiment accession
+
+    Raises
+    ------
+    KeyError
+        If the accession field is not found in the experiment dictionary
+    """
+    if "experiment" in exp_dict:
+        if "accession" in exp_dict["experiment"]:
+            return exp_dict["experiment"]["accession"]
+        else:
+            raise KeyError(f"Could not find accession field in {exp_dict}")
+    elif "experimentAccession" in exp_dict:
+        return exp_dict["experimentAccession"]
+    else:
+        raise KeyError(f"Could not find accession field in {exp_dict}")
+
+
 def get_properties_values(exp_dict: dict):
     """
     Gets all values from properties from an experiment dictionary
@@ -263,7 +308,10 @@ def get_properties_values(exp_dict: dict):
                 break
         if not key_found:
             raise KeyError(f"Could not find property value in {column_header_dict}")
-    return values
+    # removing empty strings
+    values = [value for value in values if value != ""]
+    # removing duplicates
+    return list(set(values))
 
 
 def get_species_experiments(
@@ -308,48 +356,39 @@ def get_experiment_data(exp_dict: dict):
     return get_data(exp_url)
 
 
-def search_keywords_in_experiment(exp_dict: dict, keywords: list[str]):
-    """
-    Searches for keywords in an experiment's description and conditions
-
-    Parameters
-    ----------
-    exp_dict : dict
-        The experiment dictionary
-    keywords : list[str]
-        The list of keywords to search for
-
-    Returns
-    -------
-    result : dict
-        A dictionary with the experiment data and a description of which keyword was found
-        Example: {'data': {'experiment': {...}}, 'found': {'word': 'salt', 'description': '...'}}
-        If no keyword was found, returns None
-    """
-    exp_data = get_experiment_data(exp_dict)
-    exp_description = get_experiment_description(exp_dict)
-
-    for keyword in keywords:
-        if word_in_sentence(keyword, exp_description):
-            return {
-                "data": exp_data,
-                "found": {"word": keyword, "description": exp_description},
-            }
-
-    # if no keyword was found in the description
-    # we try and find a keyword in one of the conditions of the experimental design
+def parse_experiment(exp_dict: dict):
+    # getting accession and description
+    accession = get_experiment_accesssion(exp_dict)
+    description = get_experiment_description(exp_dict)
+    # getting properties of this experiment
     exp_data = get_experiment_data(exp_dict)
     properties_values = get_properties_values(exp_data)
 
-    properties_values_str = " ".join(properties_values)
-    for keyword in keywords:
-        if word_in_sentence(keyword, properties_values_str):
-            return {
-                "data": exp_data,
-                "found": {"word": keyword, "properties": properties_values_str},
-            }
+    return {
+        "accession": accession,
+        "description": description,
+        "properties": properties_values,
+    }
 
-    return None
+
+def keywords_in_experiment(fields: list[str], keywords: list[str]):
+    return [
+        keyword
+        for keyword in keywords
+        for field in fields
+        if word_in_sentence(keyword, field)
+    ]
+
+
+def filter_experiment(exp_dict: dict, keywords: list[str]):
+    all_searchable_fields = [exp_dict["description"]] + exp_dict["properties"]
+    found_keywords = keywords_in_experiment(all_searchable_fields, keywords)
+    # only returning experiments if found keywords
+    if found_keywords:
+        exp_dict["found_keywords"] = list(set(found_keywords))
+        return exp_dict
+    else:
+        return None
 
 
 def format_species_name(species: str):
@@ -370,52 +409,35 @@ def main():
     species_name = format_species_name(args.species)
     keywords = args.keywords
 
-    print(f"Getting experiments corresponding to species {species_name}")
-    species_experiments = get_species_experiments(species_name)
-    print(f"Found {len(species_experiments)} experiments")
+    logger.info(f"Getting experiments corresponding to species {species_name}")
+    experiments = get_species_experiments(species_name)
+    logger.info(f"Found {len(experiments)} experiments")
+
+    logger.info("Parsing experiments")
+    with Pool() as pool:
+        results = pool.map(parse_experiment, experiments)
 
     if keywords:
-        print(f"Filtering experiments corresponding to keywords {keywords}")
-        selected_accessions = []
-        found_dict = {}
-        with Pool(cpu_count()) as pool:
-            items = [
-                (
-                    exp_dict,
-                    keywords,
-                )
-                for exp_dict in species_experiments
-            ]
-            results = pool.starmap(search_keywords_in_experiment, items)
-            for result in results:
-                if result is not None:
-                    accession = result["data"]["experiment"]["accession"]
-                    selected_accessions.append(accession)
-                    found_dict[accession] = result["found"]
+        logger.info(f"Filtering experiments with keywords {keywords}")
+        func = partial(filter_experiment, keywords=keywords)
+        with Pool() as pool:
+            results = [res for res in pool.map(func, results) if res is not None]
 
-        if not selected_accessions:
-            raise RuntimeError(
-                "Could not find experiments for species {args.species} and keywords {args.keywords}"
-            )
+        if results:
+            logger.info(f"Kept {len(results)} experiments")
         else:
-            print(
-                f"Kept {len(selected_accessions)} experiments:\n{selected_accessions}"
+            raise RuntimeError(
+                f"Could not find experiments for species {args.species} and keywords {args.keywords}"
             )
 
-        print(f"Writing logs of found keywords to {JSON_OUTFILE_NAME}")
-        with open(JSON_OUTFILE_NAME, "w") as fout:
-            json.dump(found_dict, fout)
-
-    else:
-        print("No keywords specified. Keeping all experiments")
-        selected_accessions = [
-            exp_dict["experimentAccession"] for exp_dict in species_experiments
-        ]
-        print(selected_accessions)
-
-    print(f"Writing accessions to {ACCESSION_OUTFILE_NAME}")
+    selected_accessions = [exp_dict["accession"] for exp_dict in results]
+    logger.info(f"Writing accessions to {ACCESSION_OUTFILE_NAME}")
     with open(ACCESSION_OUTFILE_NAME, "w") as fout:
         fout.writelines([f"{acc}\n" for acc in selected_accessions])
+
+    logger.info(f"Writing filtered experiments to {FILTERED_EXPERIMENTS_OUTFILE_NAME}")
+    with open(FILTERED_EXPERIMENTS_OUTFILE_NAME, "w") as fout:
+        json.dump(results, fout)
 
 
 if __name__ == "__main__":

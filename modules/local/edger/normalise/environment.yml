@@ -1,0 +1,8 @@
+name: edger_normalise
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - conda-forge::r-base==4.3.3
+  - bioconda::bioconductor-edger==4.0.16
+  - conda-forge::r-optparse==1.7.5

@@ -1,0 +1,27 @@
+nextflow_process {
+
+    name "Test Process MERGE_COUNTS"
+    script "modules/local/merge_counts/main.nf"
+    process "MERGE_COUNTS"
+    tag "merge"
+    tag "module"
+
+    test("Should run without failures") {
+
+        when {
+            process {
+                """
+                ch_counts = Channel.fromPath( '$projectDir/tests/test_data/merge_counts/input/counts*.csv', checkIfExists: true).collect()
+                input[0] = ch_counts
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

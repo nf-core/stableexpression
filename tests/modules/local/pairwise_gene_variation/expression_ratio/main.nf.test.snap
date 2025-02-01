@@ -1,0 +1,33 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "ratios.0.1.parquet:md5,b0999933fae92eab5ba6e01a17a352df"
+                ],
+                "1": [
+                    [
+                        "EXPRESSION_RATIO",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "EXPRESSION_RATIO",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "data": [
+                    "ratios.0.1.parquet:md5,b0999933fae92eab5ba6e01a17a352df"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-29T15:30:55.228354841"
+    }
+}

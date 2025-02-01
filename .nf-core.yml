@@ -1,2 +1,31 @@
+bump_version: null
+lint:
+  files_exist:
+    - conf/igenomes.config
+    - conf/igenomes_ignored.config
+    - conf/igenomes.config
+    - conf/igenomes_ignored.config
+  files_unchanged:
+    - assets/nf-core-stableexpression_logo_light.png
+    - .github/PULL_REQUEST_TEMPLATE.md
+  nextflow_config:
+    - params.input
+  template_strings:
+    - tests/test_data/pairwise_gene_variation/compute_m_measure/input/std.0.0.parquet
+    - tests/test_data/pairwise_gene_variation/compute_m_measure/input/std.1.2.parquet
+nf_core_version: 3.2.0
+org_path: null
 repository_type: pipeline
-nf_core_version: "2.14.1"
+template:
+  author: Olivier Coen
+  description: This pipeline is dedicated to finding the most stable genes across
+    count datasets
+  force: false
+  is_nfcore: true
+  name: stableexpression
+  org: nf-core
+  outdir: .
+  skip_features:
+    - igenomes
+    - fastqc
+  version: 1.0dev

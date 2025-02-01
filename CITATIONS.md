@@ -10,18 +10,25 @@
 
 ## Pipeline tools
 
-## [Expression Atlas](https://www.ebi.ac.uk/gxa/home)
+- [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+
+> Andrews, S. (2010). FastQC: A Quality Control Tool for High Throughput Sequence Data [Online].
+
+- [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
+
+> Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.
+
+- [Expression Atlas](https://www.ebi.ac.uk/gxa/home)
 
 > Papatheodorou I, Fonseca NA, Keays M, Tang YA, Barrera E, Bazant W, Burke M, Füllgrabe A, Muñoz-Pomer Fuentes A, George N, Huerta L, Koskinen S, Mohammed S, Geniza M, Preece J, Jaiswal P, Jarnuczak AF, Huber W, Stegle O, Vizcaino JA, Brazma A, Petryszak R. Expression Atlas: gene and protein expression across multiple studies and organisms. Nucleic Acids Res. 2017 Nov 20;46(Database issue):D246–D251. doi: 10.1093/nar/gkx1158. PubMed PMID: 29165655.
 
-## [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost)
+- [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost)
 
 > Reimand J, Kull M, Peterson H, Hansen J, Vilo J. g:Profiler—a web-based toolset for functional profiling of gene lists from large-scale experiments. Nucleic Acids Res. 2007 May 3;35(Web Server issue):W193–W200. doi:10.1093/nar/gkm226. PubMed PMID: 17478515.
 
-## [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
+- [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
 
-> Love MI, Huber W & Anders S. Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome Biol
-> . 2014;15(12):550. doi: 10.1186/s13059-014-0550-8. PubMed PMID: 25516281.
+> Love MI, Huber W & Anders S. Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome Biology. 2014;15(12):550. doi: 10.1186/s13059-014-0550-8. PubMed PMID: 25516281.
 
 ## [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)
 

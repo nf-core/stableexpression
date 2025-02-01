@@ -1,38 +1,230 @@
 {
-    "Map Ensembl IDs to themselves": {
+    "Custom mapping": {
         "content": [
-            [
-                "counts.ensembl_ids_renamed.csv:md5,7fce29e696d35cf612c8c8c06b77fd56"
-            ]
+            {
+                "0": [
+                    [
+                        [
+                            
+                        ],
+                        "counts.ensembl_ids_renamed.csv:md5,b2f45fd17fcb2688ea08b94527f70c1f"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    "counts.ensembl_ids_mapping.csv:md5,6ff8d8f71b9df7a1b08ff0bfda8da755"
+                ],
+                "3": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "4": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "pandas",
+                        "2.2.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "requests",
+                        "2.32.3"
+                    ]
+                ],
+                "metadata": [
+                    
+                ],
+                "renamed": [
+                    [
+                        [
+                            
+                        ],
+                        "counts.ensembl_ids_renamed.csv:md5,b2f45fd17fcb2688ea08b94527f70c1f"
+                    ]
+                ]
+            }
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2024-12-20T23:29:07.259617578"
+        "timestamp": "2025-01-29T14:23:41.626082505"
+    },
+    "Map Ensembl IDs to themselves": {
+        "content": [
+            {
+                "0": [
+                    [
+                        [
+                            
+                        ],
+                        "counts.ensembl_ids_renamed.csv:md5,ef96059e3283d4305b2c004d649ae648"
+                    ]
+                ],
+                "1": [
+                    "counts.ensembl_ids_metadata.csv:md5,608af2e5f8df9d8d2bb5829c04d6f9eb"
+                ],
+                "2": [
+                    "counts.ensembl_ids_mapping.csv:md5,a2d01dbbe84a30640825befdda3e1963"
+                ],
+                "3": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "4": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "pandas",
+                        "2.2.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "requests",
+                        "2.32.3"
+                    ]
+                ],
+                "metadata": [
+                    "counts.ensembl_ids_metadata.csv:md5,608af2e5f8df9d8d2bb5829c04d6f9eb"
+                ],
+                "renamed": [
+                    [
+                        [
+                            
+                        ],
+                        "counts.ensembl_ids_renamed.csv:md5,ef96059e3283d4305b2c004d649ae648"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-19T15:26:17.164842831"
     },
     "Map Uniprot IDs": {
         "content": [
-            [
-                "counts.uniprot_ids_renamed.csv:md5,6eceb6063772b12fe48fa81e2418424c"
-            ]
+            {
+                "0": [
+                    [
+                        [
+                            
+                        ],
+                        "counts.uniprot_ids_renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
+                    ]
+                ],
+                "1": [
+                    "counts.uniprot_ids_metadata.csv:md5,b87d6533848a3ae07b289ec6b0c4a1ff"
+                ],
+                "2": [
+                    "counts.uniprot_ids_mapping.csv:md5,fe88c79c45d45825d28f325f7a2f383e"
+                ],
+                "3": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "4": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "pandas",
+                        "2.2.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "requests",
+                        "2.32.3"
+                    ]
+                ],
+                "metadata": [
+                    "counts.uniprot_ids_metadata.csv:md5,b87d6533848a3ae07b289ec6b0c4a1ff"
+                ],
+                "renamed": [
+                    [
+                        [
+                            
+                        ],
+                        "counts.uniprot_ids_renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
+                    ]
+                ]
+            }
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2024-12-20T23:37:08.508538995"
+        "timestamp": "2025-01-19T15:26:34.63730272"
     },
     "Map NCBI IDs": {
         "content": [
-            [
-                "counts.ncbi_ids_renamed.csv:md5,6eceb6063772b12fe48fa81e2418424c"
-            ]
+            {
+                "0": [
+                    [
+                        [
+                            
+                        ],
+                        "counts.ncbi_ids_renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
+                    ]
+                ],
+                "1": [
+                    "counts.ncbi_ids_metadata.csv:md5,b87d6533848a3ae07b289ec6b0c4a1ff"
+                ],
+                "2": [
+                    "counts.ncbi_ids_mapping.csv:md5,fe4fd9005dce99b7722b84134f51badd"
+                ],
+                "3": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "4": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "pandas",
+                        "2.2.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "requests",
+                        "2.32.3"
+                    ]
+                ],
+                "metadata": [
+                    "counts.ncbi_ids_metadata.csv:md5,b87d6533848a3ae07b289ec6b0c4a1ff"
+                ],
+                "renamed": [
+                    [
+                        [
+                            
+                        ],
+                        "counts.ncbi_ids_renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
+                    ]
+                ]
+            }
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2024-12-20T23:36:51.904926841"
+        "timestamp": "2025-01-19T15:26:25.886821673"
     }
 }

@@ -66,4 +66,98 @@ nextflow_process {
 
     }
 
+    test("Invalid accession") {
+
+        tag "getdata_invalid"
+
+        when {
+
+            process {
+                """
+                input[0] = "fake-accession"
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert process.trace.succeeded().size() == 0
+            assert process.trace.failed().size() == 1
+            // check for the absence of expected output (the error is ignored but no output is produced)
+            assert process.out.design.size() == 0
+
+        }
+
+    }
+
+    test("Accession not available") {
+
+        tag "getdata_unavailable"
+
+        when {
+
+            process {
+                """
+                input[0] = "E-GEOD-161565656"
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert process.trace.succeeded().size() == 0
+            assert process.trace.failed().size() == 1
+            // check for the absence of expected output (the error is ignored but no output is produced)
+            assert process.out.design.size() == 0
+
+        }
+
+    }
+
+    test("E-MTAB-5132") {
+
+        tag "getdata_unavailable"
+
+        when {
+
+            process {
+                """
+                input[0] = "E-MTAB-5132"
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert process.trace.succeeded().size() == 0
+            assert process.trace.failed().size() == 1
+            // check for the absence of expected output (the error is ignored but no output is produced)
+            assert process.out.design.size() == 0
+        }
+
+    }
+
+    test("E-PROT-138") {
+
+        tag "getdata_unsupported"
+
+        when {
+
+            process {
+                """
+                input[0] = "E-PROT-138"
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert process.trace.succeeded().size() == 0
+            assert process.trace.failed().size() == 1
+            // check for the absence of expected output (the error is ignored but no output is produced)
+            assert process.out.design.size() == 0
+        }
+
+    }
+
 }

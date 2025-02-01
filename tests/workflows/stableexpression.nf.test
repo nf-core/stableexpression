@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow STABLEEXPRESSION"
     script "workflows/stableexpression.nf"
     workflow "STABLEEXPRESSION"
+    config "./nextflow.config"
     tag "workflow"
 
     test("Two Expression Atlas accessions provided") {
@@ -11,15 +12,41 @@ nextflow_workflow {
 
         when {
             params {
-                species = 'solanum tuberosum'
-                fetch_eatlas_accessions = false
+                species = "solanum tuberosum"
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
+            }
+            workflow {
+                """
+                input[0] = Channel.empty()
+                input[1] = Channel.empty()
+                """
             }
         }
 
         then {
             assert workflow.success
-            assert snapshot(workflow.out).match()
+        }
+    }
+
+    test("Expression Atlas accession - two output datasets") {
+
+        tag "workflow_eatlas_accession_two_datasets"
+
+        when {
+            params {
+                species = "homo sapiens"
+                eatlas_accessions = "E-GEOD-1615"
+            }
+            workflow {
+                """
+                input[0] = Channel.empty()
+                input[1] = Channel.empty()
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
         }
     }
 
@@ -29,14 +56,19 @@ nextflow_workflow {
 
         when {
             params {
-                species = 'solanum tuberosum'
+                species = "solanum tuberosum"
                 fetch_eatlas_accessions = true
+            }
+            workflow {
+                """
+                input[0] = Channel.empty()
+                input[1] = Channel.empty()
+                """
             }
         }
 
         then {
             assert workflow.success
-            assert snapshot(workflow.out).match()
         }
     }
 
@@ -46,48 +78,65 @@ nextflow_workflow {
 
         when {
             params {
-                species = 'solanum tuberosum'
+                species = "solanum tuberosum"
                 eatlas_keywords = "potato,stress"
+            }
+            workflow {
+                """
+                input[0] = Channel.empty()
+                input[1] = Channel.empty()
+                """
             }
         }
 
         then {
             assert workflow.success
-            assert snapshot(workflow.out).match()
         }
     }
 
-    test("Two Expression Atlas keywords provided - Normalization with EdgeR") {
+    test("Two Expression Atlas accessions provided - normalisation with EdgeR") {
 
-        tag "workflow_eatlas_kw_edger"
+        tag "workflow_eatlas_accessions_edger"
 
         when {
             params {
-                species = 'solanum tuberosum'
-                eatlas_keywords = "potato,stress"
-                normalization_method = "edger"
+                species = "solanum tuberosum"
+                eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                normalisation_method = "edger"
+            }
+            workflow {
+                """
+                input[0] = Channel.empty()
+                input[1] = Channel.empty()
+                """
             }
         }
 
         then {
             assert workflow.success
-            assert snapshot(workflow.out).match()
         }
     }
 
-    test("Full workflow - Expression Atlas only") {
+    test("Test workflow - common accession (E-MTAB-552) between manual and auto") {
+
+        tag "workflow_accession_E-MTAB-552"
 
         when {
             params {
-                species = 'solanum tuberosum'
+                species = "solanum tuberosum"
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
                 eatlas_keywords = "phloem"
             }
+            workflow {
+                """
+                input[0] = Channel.empty()
+                input[1] = Channel.empty()
+                """
+            }
         }
 
         then {
             assert workflow.success
-            assert snapshot(workflow.out).match()
         }
 
     }

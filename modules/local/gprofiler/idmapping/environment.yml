@@ -1,6 +1,7 @@
-name: GPROFILER_IDMAPPING
+name: gprofiler_idmapping
 channels:
   - conda-forge
 dependencies:
+  - conda-forge::python==3.12.8
   - conda-forge::pandas==2.2.3
   - conda-forge::requests==2.32.3

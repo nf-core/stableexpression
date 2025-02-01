@@ -1,0 +1,56 @@
+{
+    "Very small dataset": {
+        "content": [
+            [
+                [
+                    {
+                        "accession": "accession",
+                        "design": "design.csv:md5,a83dd6a15463b51d94f0a42c196d7933"
+                    },
+                    "counts.cpm.csv:md5,537bffb095e79d9667c955accd81e3a2"
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-29T14:20:44.011465207"
+    },
+    "One group": {
+        "content": [
+            [
+                [
+                    {
+                        "accession": "accession",
+                        "design": "design.csv:md5,28cf54802df5df4a9dc406003623c6a7"
+                    },
+                    "counts.cpm.csv:md5,680e59fd500ddd83ead508a63f3f9b48"
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-29T14:20:58.681438521"
+    },
+    "Rows with many zeros": {
+        "content": [
+            [
+                [
+                    {
+                        "accession": "accession",
+                        "design": "design.csv:md5,3cdf98e2e202b4af2687eaefd9bdd8e9"
+                    },
+                    "counts.cpm.csv:md5,f4624bdcb195b95f6e8bd9ee08470d3d"
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-29T14:20:51.214114937"
+    }
+}

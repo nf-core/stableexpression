@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/assets/schema_input.json",
+    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/assets/schema_design.json",
     "title": "nf-core/stableexpression pipeline - design schema",
-    "description": "Schema for the file provided with in the design column of the params.input CSV file",
+    "description": "Schema for the design file provided in the design column of the params.datasets CSV file",
     "type": "array",
     "items": {
         "type": "object",

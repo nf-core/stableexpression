@@ -1,0 +1,69 @@
+nextflow_process {
+
+    name "Test Process DESEQ2_NORMALISE"
+    script "modules/local/deseq2/normalise/main.nf"
+    process "DESEQ2_NORMALISE"
+    tag "deseq2"
+    tag "normalise"
+    tag "module"
+
+    test("Very small dataset") {
+
+        when {
+
+            process {
+                """
+                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalise/base/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalise/base/counts.csv')]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.cpm).match()
+        }
+
+    }
+
+    test("Rows with many zeros") {
+
+        tag "deseq2_many_zeros"
+
+        when {
+
+            process {
+                """
+                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalise/many_zeros/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalise/many_zeros/counts.csv')]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.cpm).match()
+        }
+
+    }
+
+    test("One group") {
+
+        when {
+
+            process {
+                """
+                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalise/one_group/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalise/one_group/counts.csv')]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.cpm).match()
+        }
+
+    }
+
+}

@@ -1,5 +1,4 @@
-.nextflow.*
-.nextflow/
+.nextflow*
 work/
 data/
 results/
@@ -8,9 +7,10 @@ testing/
 testing*
 *.pyc
 null/
-.nf-test/
-.nf-test.*
+.nf-test*
 .idea/
 taggers/
 tokenizers/
 corpora/
+.github/act.custom_runner.Dockerfile
+.ruff_cache

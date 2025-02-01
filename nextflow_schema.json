@@ -25,73 +25,121 @@
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
                     "fa_icon": "fas fa-folder-open"
                 },
+                "datasets": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_datasets.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing information about the input count datasets and their related experimental design.",
+                    "help_text": "The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location.",
+                    "fa_icon": "fas fa-file-csv"
+                },
                 "email": {
                     "type": "string",
                     "description": "Email address for completion summary.",
                     "fa_icon": "fas fa-envelope",
                     "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
-                }
-            }
-        },
-        "local_datasets_options": {
-            "title": "Local datasets options",
-            "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Options for local count datasets to analyze.",
-            "properties": {
-                "datasets": {
+                },
+                "multiqc_title": {
                     "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "schema": "assets/schema_input.json",
-                    "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing information about the input count datasets and their related experimental design.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
+                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+                    "fa_icon": "fas fa-file-signature"
                 }
             }
         },
         "expression_atlas_options": {
             "title": "Expression Atlas options",
             "type": "object",
-            "fa_icon": "fas fa-dna",
+            "fa_icon": "fas fa-book-atlas",
             "description": "Options for fetching datasets from Expression Atlas.",
             "properties": {
                 "fetch_eatlas_accessions": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-book-atlas",
-                    "description": "Fetch count datasets and experimental designs from Expression Atlas for this species.",
-                    "help_text": "If you want to fetch count data for this species from Expression Atlas, set this parameter to `true`. You do not need to set this parameter if you provide Expression Atlas keywords with `--eatlas_keywords`."
+                    "fa_icon": "fas fa-cloud-arrow-down",
+                    "description": "Automatically etches Expression Atlas accessions for this species. and downloads the corresponding count datasets and experimental designs.",
+                    "help_text": "If no Expression Atlas keywords are provided (with `--eatlas_keywords`) and if you want to get all Expression Atlas accessions for this species, provide this parameter."
                 },
                 "eatlas_keywords": {
                     "type": "string",
                     "description": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas.",
-                    "fa_icon": "fas fa-book-atlas",
+                    "fa_icon": "fas fa-highlighter",
                     "pattern": "([a-zA-Z,]+)",
-                    "help_text": "e.g. `--eatlas_keywords 'stress,flowering'`"
+                    "help_text": "The pipeline will select all Expression Atlas experiments that contain the provided keywords in their description of in one of the condition names. Example: `--eatlas_keywords 'stress,flowering'`"
                 },
                 "eatlas_accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Expression Atlas accession(s), separated by commas.",
-                    "fa_icon": "fas fa-book-atlas",
-                    "help_text": "e.g. `--eatlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
+                    "description": "Provide directly Expression Atlas accession(s) (separated by commas) that you want to download.",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "Example: `--eatlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
                 }
             }
         },
-        "normalization_options": {
-            "title": "Normalization options",
+        "idmapping_options": {
+            "title": "ID mapping options",
             "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Options for normalizing datasets.",
+            "fa_icon": "fas fa-map",
+            "description": "Options for mapping gene IDs.",
             "properties": {
-                "normalization_method": {
+                "skip_gprofiler": {
+                    "type": "boolean",
+                    "description": "Skip g:Profiler ID mapping step.",
+                    "fa_icon": "fas fa-ban",
+                    "help": "If you don't want to map gene IDs with g:Profiler, you can skip this step by providing `--skip_gprofiler`. It can be in particular useful if the g:Profiler is down and if you already have a custom mapping file."
+                },
+                "gene_id_mapping": {
                     "type": "string",
-                    "description": "Tool to use for normalization.",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_gene_id_mapping.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler.",
+                    "help_text": "The mapping file should be a comma-separated file with 2 columns (original_gene_id and ensembl_gene_id) and a header row.",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "gene_metadata": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_gene_metadata.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description.",
+                    "help_text": "The metadata file should be a comma-separated file with 3 columns (ensembl_gene_id, name and description) and a header row.",
+                    "fa_icon": "fas fa-file-csv"
+                }
+            }
+        },
+        "statistical_options": {
+            "title": "Statistics options",
+            "type": "object",
+            "fa_icon": "fas fa-chart-line",
+            "description": "Statistical options for normalisation and calculation of gene expression variation.",
+            "properties": {
+                "normalisation_method": {
+                    "type": "string",
+                    "description": "Tool to use for normalisation.",
                     "fa_icon": "fas fa-chart-simple",
-                    "enum": ["deseq2", "edger"]
+                    "enum": ["deseq2", "edger"],
+                    "default": "deseq2"
+                },
+                "gene_variation_method": {
+                    "type": "string",
+                    "description": "Method to use for calculation of gene expression variation.",
+                    "fa_icon": "fas fa-chart-simple",
+                    "enum": ["pairwise_gene_variation"],
+                    "default": "pairwise_gene_variation",
+                    "help_text": "Pairwise gene variation is large scale implementation of Genorm (Vandesompele et al., Genome Biology (2002))"
+                },
+                "skip_gene_variation_calc": {
+                    "type": "boolean",
+                    "description": "Skip calculation of gene expression variation.",
+                    "fa_icon": "fas fa-chart-simple",
+                    "help_text": "If you don't want to calculate gene expression variation, you can skip this step by providing `--skip_gene_variation_calc`."
                 }
             }
         },
@@ -143,41 +191,6 @@
                 }
             }
         },
-        "max_job_request_options": {
-            "title": "Max job request options",
-            "type": "object",
-            "fa_icon": "fab fa-acquisitions-incorporated",
-            "description": "Set the top limit for requested resources for any single job.",
-            "help_text": "If you are running on a smaller system, a pipeline step requesting more resources than are available may cause the Nextflow to stop the run with an error. These options allow you to cap the maximum resources requested by any single job so that the pipeline will run on your system.\n\nNote that you can not _increase_ the resources requested by any job using these options. For that you will need your own configuration file. See [the nf-core website](https://nf-co.re/usage/configuration) for details.",
-            "properties": {
-                "max_cpus": {
-                    "type": "integer",
-                    "description": "Maximum number of CPUs that can be requested for any single job.",
-                    "default": 16,
-                    "fa_icon": "fas fa-microchip",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`"
-                },
-                "max_memory": {
-                    "type": "string",
-                    "description": "Maximum amount of memory that can be requested for any single job.",
-                    "default": "128.GB",
-                    "fa_icon": "fas fa-memory",
-                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`"
-                },
-                "max_time": {
-                    "type": "string",
-                    "description": "Maximum amount of time that can be requested for any single job.",
-                    "default": "240.h",
-                    "fa_icon": "far fa-clock",
-                    "pattern": "^(\\d+\\.?\\s*(s|m|h|d|day)\\s*)+$",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`"
-                }
-            }
-        },
         "generic_options": {
             "title": "Generic options",
             "type": "object",
@@ -185,12 +198,6 @@
             "description": "Less common options for the pipeline, typically set in a config file.",
             "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
             "properties": {
-                "help": {
-                    "type": "boolean",
-                    "description": "Display help text.",
-                    "fa_icon": "fas fa-question-circle",
-                    "hidden": true
-                },
                 "version": {
                     "type": "boolean",
                     "description": "Display version and exit.",
@@ -220,6 +227,14 @@
                     "fa_icon": "fas fa-remove-format",
                     "hidden": true
                 },
+                "max_multiqc_email_size": {
+                    "type": "string",
+                    "description": "File size limit when attaching MultiQC reports to summary emails.",
+                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
+                    "default": "25.MB",
+                    "fa_icon": "fas fa-file-upload",
+                    "hidden": true
+                },
                 "monochrome_logs": {
                     "type": "boolean",
                     "description": "Do not use coloured log outputs.",
@@ -233,11 +248,42 @@
                     "help_text": "Incoming hook URL for messaging service. Currently, MS Teams and Slack are supported.",
                     "hidden": true
                 },
+                "multiqc_config": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "Custom config file to supply to MultiQC.",
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
+                },
+                "multiqc_logo": {
+                    "type": "string",
+                    "description": "Custom logo file to supply to MultiQC. File name must also be set in the MultiQC config file",
+                    "fa_icon": "fas fa-image",
+                    "hidden": true
+                },
+                "multiqc_methods_description": {
+                    "type": "string",
+                    "description": "Custom MultiQC yaml file containing HTML including a methods description.",
+                    "fa_icon": "fas fa-cog"
+                },
+                "validate_params": {
+                    "type": "boolean",
+                    "description": "Boolean whether to validate parameters against the schema at runtime",
+                    "default": true,
+                    "fa_icon": "fas fa-check-square",
+                    "hidden": true
+                },
                 "pipelines_testdata_base_path": {
                     "type": "string",
                     "fa_icon": "far fa-check-circle",
                     "description": "Base URL or local path to location of pipeline test dataset files",
                     "default": "https://raw.githubusercontent.com/nf-core/test-datasets/",
+                    "hidden": true
+                },
+                "trace_report_suffix": {
+                    "type": "string",
+                    "fa_icon": "far calendar",
+                    "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
                     "hidden": true
                 }
             }
@@ -248,19 +294,16 @@
             "$ref": "#/$defs/input_output_options"
         },
         {
-            "$ref": "#/$defs/local_datasets_options"
-        },
-        {
             "$ref": "#/$defs/expression_atlas_options"
         },
         {
-            "$ref": "#/$defs/normalization_options"
+            "$ref": "#/$defs/idmapping_options"
+        },
+        {
+            "$ref": "#/$defs/statistical_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"
-        },
-        {
-            "$ref": "#/$defs/max_job_request_options"
         },
         {
             "$ref": "#/$defs/generic_options"

@@ -1,0 +1,61 @@
+nextflow_process {
+
+    name "Test Process GENE_STATISTICS"
+    script "modules/local/gene_statistics/main.nf"
+    process "GENE_STATISTICS"
+    tag "genestats"
+    tag "module"
+
+    test("Without variation data") {
+
+        when {
+
+            process {
+                """
+                ch_counts = Channel.fromPath( '$projectDir/tests/test_data/merge_counts/output/all_counts.parquet', checkIfExists: true)
+                ch_metadata = Channel.fromPath( '$projectDir/tests/test_data/gene_statistics/input/metadata*.csv', checkIfExists: true ).collect()
+                ch_mapping = Channel.fromPath( '$projectDir/tests/test_data/gene_statistics/input/mapping*.csv', checkIfExists: true ).collect()
+                ch_m_measures = Channel.of( 'none' )
+                input[0] = ch_counts
+                input[1] = ch_metadata
+                input[2] = ch_mapping
+                input[3] = ch_m_measures
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+    test("With m-measures") {
+
+        tag "genestats_m_measure"
+
+        when {
+
+            process {
+                """
+                ch_counts = Channel.fromPath( '$projectDir/tests/test_data/merge_counts/output/all_counts.parquet', checkIfExists: true)
+                ch_metadata = Channel.fromPath( '$projectDir/tests/test_data/gene_statistics/input/metadata*.csv', checkIfExists: true ).collect()
+                ch_mapping = Channel.fromPath( '$projectDir/tests/test_data/gene_statistics/input/mapping*.csv', checkIfExists: true ).collect()
+                ch_m_measures = Channel.fromPath( '$projectDir/tests/test_data/gene_statistics/input/m_measures.csv', checkIfExists: true )
+                input[0] = ch_counts
+                input[1] = ch_metadata
+                input[2] = ch_mapping
+                input[3] = ch_m_measures
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

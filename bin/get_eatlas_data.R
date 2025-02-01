@@ -28,22 +28,60 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
     attempts <- 0
 
     while (!success && attempts < max_retries) {
-    attempts <- attempts + 1
-    tryCatch({
-        atlas_data <- getAtlasData( accession )
-        success <- TRUE
-        message("Download successful on attempt ", attempts)
-    }, error = function(e) {
-        message("Attempt ", attempts, " failed: ", e$message)
-        if (attempts < max_retries) {
-        message("Retrying in ", wait_time, " seconds...")
-        Sys.sleep(wait_time)
-        } else {
-        message("All attempts failed. Please check the URL or your connection.")
-        }
-    })
-    }
+        attempts <- attempts + 1
 
+        tryCatch({
+            atlas_data <- ExpressionAtlas::getAtlasData( accession )
+            success <- TRUE
+
+        }, warning = function(w) {
+
+            # if the accession os not valid, we stop immediately (useless to keep going)
+            if (grepl("does not look like an ArrayExpress/BioStudies experiment accession.", w$message)) {
+                warning(w$message)
+                quit(save = "no", status = 100) # quit & ignore process
+            }
+
+            # else, retrying
+            message("Attempt ", attempts, " Warning: ", w$message)
+
+            if (attempts < max_retries) {
+                warning("Retrying in ", wait_time, " seconds...")
+                Sys.sleep(wait_time)
+
+            } else {
+
+                if (grepl("550 Requested action not taken; file unavailable", w$message)) {
+                    warning(w$message)
+                    quit(save = "no", status = 100) # quit & ignore process
+                } else {
+                    warning("Unhandled warning: ", w$message)
+                    quit(save = "no", status = 1) # quit & stop workflow
+                }
+            }
+
+        }, error = function(e) {
+
+            message("Attempt ", attempts, " Message: ", e$message)
+
+            if (attempts < max_retries) {
+                warning("Retrying in ", wait_time, " seconds...")
+                Sys.sleep(wait_time)
+
+            } else {
+
+                if (grepl("Download appeared successful but no experiment summary object was found", e$message)) {
+                    warning(e$message)
+                    quit(save = "no", status = 100) # quit & ignore process
+                } else {
+                    warning("Unhandled error: ", e$message)
+                    quit(save = "no", status = 1) # quit & stop workflow
+                }
+
+            }
+        })
+    }
+    print(length(atlas_data))
     return(atlas_data)
 }
 
@@ -60,7 +98,7 @@ get_one_colour_microarray_data <- function(data) {
 
     return(list(
         count_data = exprs( data ),
-        count_type = 'normalized',
+        count_type = 'normalised',
         sample_groups = phenoData(data)$AtlasAssayGroup
     ))
 }
@@ -154,9 +192,17 @@ process_data <- function(atlas_data, accession) {
 
 args <- get_args()
 
+accession <- trimws(args$accession)
+if (startsWith(accession, "E-PROT")) {
+    warning("Ignoring the ", accession, " experiment.")
+    quit(save = "no", status = 100) # quit & ignore process
+}
+
 # searching and downloading expression atlas data
 atlas_data <- download_expression_atlas_data_with_retries(args$accession)
 
+
+print(atlas_data)
 # writing count data in atlas_data to specific CSV files
 process_data(atlas_data, args$accession)
 

@@ -1,0 +1,33 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "all_counts.parquet:md5,73784fbc1da2f1c675e04463ab5cc0d7"
+                ],
+                "1": [
+                    [
+                        "MERGE_COUNTS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "MERGE_COUNTS",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "counts": [
+                    "all_counts.parquet:md5,73784fbc1da2f1c675e04463ab5cc0d7"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-21T11:36:51.992454125"
+    }
+}
