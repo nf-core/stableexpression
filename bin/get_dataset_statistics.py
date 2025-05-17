@@ -33,6 +33,9 @@ def parse_args():
     parser.add_argument(
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
+    parser.add_argument(
+        "--output", type=str, dest="outfile_name", required=True, help="Output file"
+    )
     return parser.parse_args()
 
 
@@ -54,12 +57,11 @@ def compute_dataset_statistics(count_df: pd.DataFrame):
     return dataset_stats_df.T
 
 
-def export_count_data(dataset_stats_df: pd.DataFrame, count_file: Path):
+def export_count_data(dataset_stats_df: pd.DataFrame, outfile_name: str):
     """Export dataset statistics to CSV files."""
-    outfilename = count_file.name.replace(QUANT_NORM_SUFFIX, DATASET_STATISTICS_SUFFIX)
-    logger.info(f"Exporting dataset statistics counts to: {outfilename}")
+    logger.info(f"Exporting dataset statistics counts to: {outfile_name}")
     dataset_stats_df.index.name = SAMPLE_COLNAME
-    dataset_stats_df.to_csv(outfilename, index=True, header=True)
+    dataset_stats_df.to_csv(outfile_name, index=True, header=True)
 
 
 #####################################################
@@ -79,7 +81,7 @@ def main():
 
     dataset_stats_df = compute_dataset_statistics(count_df)
 
-    export_count_data(dataset_stats_df, count_file)
+    export_count_data(dataset_stats_df, args.outfile_name)
 
 
 if __name__ == "__main__":

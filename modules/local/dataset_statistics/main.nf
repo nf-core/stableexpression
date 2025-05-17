@@ -21,8 +21,9 @@ process DATASET_STATISTICS {
 
 
     script:
+    def prefix = task.ext.prefix ?: "${meta.dataset}"
     """
-    get_dataset_statistics.py --counts $count_file
+    get_dataset_statistics.py --counts $count_file --output ${prefix}.dataset_stats.csv
     """
 
 

@@ -35,7 +35,7 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     stub:
     """
-    touch accessions.csv
+    touch accessions.txt
     """
 
 }
