@@ -8,9 +8,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { DESEQ2_NORMALISE                     } from '../../../modules/local/deseq2/normalise/main'
-include { EDGER_NORMALISE                      } from '../../../modules/local/edger/normalise/main'
-include { QUANTILE_NORMALISE                   } from '../../../modules/local/quantile_normalisation/main'
+include { NORMALISATION_DESEQ2                 } from '../../../modules/local/normalisation/deseq2/main'
+include { NORMALISATION_EDGER                  } from '../../../modules/local/normalisation/edger/main'
+include { QUANTILE_NORMALISATION               } from '../../../modules/local/quantile_normalisation/main'
 include { DATASET_STATISTICS                   } from '../../../modules/local/dataset_statistics/main'
 
 /*
@@ -42,12 +42,12 @@ workflow EXPRESSION_NORMALISATION {
     ch_raw_rnaseq_datasets = ch_datasets.raw.filter { meta, file -> meta.platform == 'rnaseq' }
 
     if ( normalisation_method == 'deseq2' ) {
-        DESEQ2_NORMALISE( ch_raw_rnaseq_datasets )
-        ch_raw_rnaseq_datasets_normalised = DESEQ2_NORMALISE.out.cpm
+        NORMALISATION_DESEQ2( ch_raw_rnaseq_datasets )
+        ch_raw_rnaseq_datasets_normalised = NORMALISATION_DESEQ2.out.cpm
 
     } else { // 'edger'
-        EDGER_NORMALISE( ch_raw_rnaseq_datasets )
-        ch_raw_rnaseq_datasets_normalised = EDGER_NORMALISE.out.cpm
+        NORMALISATION_EDGER( ch_raw_rnaseq_datasets )
+        ch_raw_rnaseq_datasets_normalised = NORMALISATION_EDGER.out.cpm
     }
 
     //
@@ -55,8 +55,8 @@ workflow EXPRESSION_NORMALISATION {
     //
 
     // putting all normalised count datasets together and performing quantile normalisation
-    ch_datasets.normalised.concat( ch_raw_rnaseq_datasets_normalised ) | QUANTILE_NORMALISE
-    ch_quantile_normalised_datasets = QUANTILE_NORMALISE.out.counts
+    ch_datasets.normalised.concat( ch_raw_rnaseq_datasets_normalised ) | QUANTILE_NORMALISATION
+    ch_quantile_normalised_datasets = QUANTILE_NORMALISATION.out.counts
 
     //
     // MODULE: Dataset statistics

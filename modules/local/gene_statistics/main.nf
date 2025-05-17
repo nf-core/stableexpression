@@ -1,5 +1,5 @@
 process GENE_STATISTICS {
-    debug true
+
     label 'process_low'
 
     errorStrategy = {
@@ -11,8 +11,6 @@ process GENE_STATISTICS {
             return 'terminate'
         }
     }
-
-    publishDir "${params.outdir}/gene_statistics"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

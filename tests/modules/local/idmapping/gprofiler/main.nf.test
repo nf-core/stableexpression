@@ -1,8 +1,8 @@
 nextflow_process {
 
-    name "Test Process GPROFILER_IDMAPPING"
-    script "modules/local/gprofiler/idmapping/main.nf"
-    process "GPROFILER_IDMAPPING"
+    name "Test Process IDMAPPING_GPROFILER"
+    script "modules/local/idmapping/gprofiler/main.nf"
+    process "IDMAPPING_GPROFILER"
     tag "idmapping"
     tag "module"
 

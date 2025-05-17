@@ -1,8 +1,8 @@
 nextflow_process {
 
-    name "Test Process DESEQ2_NORMALISE"
-    script "modules/local/deseq2/normalise/main.nf"
-    process "DESEQ2_NORMALISE"
+    name "Test Process NORMALISATION_DESEQ2"
+    script "modules/local/normalisation/deseq2/main.nf"
+    process "NORMALISATION_DESEQ2"
     tag "deseq2"
     tag "normalise"
     tag "module"
@@ -13,8 +13,8 @@ nextflow_process {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalise/base/design.csv')]
-                input[0] = [meta, file('$projectDir/tests/test_data/normalise/base/counts.csv')]
+                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalisation/base/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/base/counts.csv')]
                 """
             }
         }
@@ -36,8 +36,8 @@ nextflow_process {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalise/many_zeros/design.csv')]
-                input[0] = [meta, file('$projectDir/tests/test_data/normalise/many_zeros/counts.csv')]
+                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalisation/many_zeros/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/many_zeros/counts.csv')]
                 """
             }
         }
@@ -57,8 +57,8 @@ nextflow_process {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalise/one_group/design.csv')]
-                input[0] = [meta, file('$projectDir/tests/test_data/normalise/one_group/counts.csv')]
+                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalisation/one_group/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/one_group/counts.csv')]
                 """
             }
         }

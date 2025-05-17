@@ -1,8 +1,8 @@
 nextflow_process {
 
-    name "Test Process EDGER_NORMALISE"
-    script "modules/local/edger/normalise/main.nf"
-    process "EDGER_NORMALISE"
+    name "Test Process NORMALISATION_EDGER"
+    script "modules/local/normalisation/edger/main.nf"
+    process "NORMALISATION_EDGER"
     tag "edger"
     tag "normalisation"
     tag "module"
@@ -13,8 +13,8 @@ nextflow_process {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalise/base/design.csv')]
-                input[0] = [meta, file('$projectDir/tests/test_data/normalise/base/counts.csv')]
+                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalisation/base/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/base/counts.csv')]
                 """
             }
         }
@@ -36,8 +36,8 @@ nextflow_process {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalise/many_zeros/design.csv')]
-                input[0] = [meta, file('$projectDir/tests/test_data/normalise/many_zeros/counts.csv')]
+                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalisation/many_zeros/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/many_zeros/counts.csv')]
                 """
             }
         }
@@ -57,8 +57,8 @@ nextflow_process {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalise/one_group/design.csv')]
-                input[0] = [meta, file('$projectDir/tests/test_data/normalise/one_group/counts.csv')]
+                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalisation/one_group/design.csv')]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/one_group/counts.csv')]
                 """
             }
         }

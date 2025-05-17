@@ -1,8 +1,6 @@
-process DESEQ2_NORMALISE {
+process NORMALISATION_DESEQ2 {
 
     label 'process_low'
-
-    publishDir "${params.outdir}/normalisation/deseq2"
 
     tag "${meta.dataset}"
 
@@ -27,7 +25,7 @@ process DESEQ2_NORMALISE {
     script:
     def design_file = meta.design
     """
-    deseq2_normalise.R --counts "$count_file" --design "$design_file"
+    normalise_with_deseq2.R --counts "$count_file" --design "$design_file"
     """
 
 

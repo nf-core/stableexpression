@@ -12,28 +12,28 @@
                 ],
                 "1": [
                     [
-                        "QUANTILE_NORMALISE",
+                        "QUANTILE_NORMALISATION",
                         "python",
                         "3.12.8"
                     ]
                 ],
                 "2": [
                     [
-                        "QUANTILE_NORMALISE",
+                        "QUANTILE_NORMALISATION",
                         "pandas",
                         "2.2.3"
                     ]
                 ],
                 "3": [
                     [
-                        "QUANTILE_NORMALISE",
+                        "QUANTILE_NORMALISATION",
                         "scikit-learn",
                         "1.6.1"
                     ]
                 ],
                 "4": [
                     [
-                        "QUANTILE_NORMALISE",
+                        "QUANTILE_NORMALISATION",
                         "pyarrow",
                         "19.0.0"
                     ]
@@ -50,8 +50,8 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.6"
+            "nextflow": "25.04.0"
         },
-        "timestamp": "2025-05-08T14:38:27.184977502"
+        "timestamp": "2025-05-14T12:01:16.0219458"
     }
 }

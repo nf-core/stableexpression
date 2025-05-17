@@ -1,8 +1,6 @@
-process QUANTILE_NORMALISE {
+process QUANTILE_NORMALISATION {
 
     label 'process_low'
-
-    publishDir "${params.outdir}/quantile_normalisation"
 
     tag "${meta.dataset}"
 

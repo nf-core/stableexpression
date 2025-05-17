@@ -1,8 +1,8 @@
 nextflow_process {
 
-    name "Test Process QUANTILE_NORMALISE"
+    name "Test Process QUANTILE_NORMALISATION"
     script "modules/local/quantile_normalisation/main.nf"
-    process "QUANTILE_NORMALISE"
+    process "QUANTILE_NORMALISATION"
     tag "quant_norm"
     tag "module"
 
@@ -12,7 +12,7 @@ nextflow_process {
             process {
                 """
                 meta = [dataset: 'test']
-                count_file = file( '$projectDir/tests/test_data/quantile_normalise/count.raw.cpm.csv', checkIfExists: true)
+                count_file = file( '$projectDir/tests/test_data/quantile_normalisation/count.raw.cpm.csv', checkIfExists: true)
                 input[0] = [meta, count_file]
                 """
             }

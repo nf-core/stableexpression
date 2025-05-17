@@ -1,4 +1,4 @@
-name: edger_normalise
+name: normalisation_edger
 channels:
   - conda-forge
   - bioconda

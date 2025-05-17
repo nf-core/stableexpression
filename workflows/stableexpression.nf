@@ -7,7 +7,7 @@
 include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/expressionatlas_fetchdata/main'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation/main.nf'
 
-include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
+include { IDMAPPING_GPROFILER                    } from '../modules/local/idmapping/gprofiler/main'
 include { MERGE_DATA                             } from '../modules/local/merge_data/main'
 include { GENE_STATISTICS                        } from '../modules/local/gene_statistics/main'
 include { MULTIQC                                } from '../modules/nf-core/multiqc/main'
@@ -68,15 +68,15 @@ workflow STABLEEXPRESSION {
 
     } else {
         // tries to map gene IDs to Ensembl IDs whenever possible
-        GPROFILER_IDMAPPING(
+        IDMAPPING_GPROFILER(
             ch_datasets.combine( ch_species ),
             params.gene_id_mapping ? Channel.fromPath( params.gene_id_mapping, checkIfExists: true ) : 'none'
         )
-        ch_datasets = GPROFILER_IDMAPPING.out.renamed
-        ch_gene_metadata = ch_gene_metadata.mix( GPROFILER_IDMAPPING.out.metadata )
+        ch_datasets = IDMAPPING_GPROFILER.out.renamed
+        ch_gene_metadata = ch_gene_metadata.mix( IDMAPPING_GPROFILER.out.metadata )
         // the gene id mappings are the sum
         // of those provided by the user and those fetched from g:Profiler
-        ch_gene_id_mapping = GPROFILER_IDMAPPING.out.mapping
+        ch_gene_id_mapping = IDMAPPING_GPROFILER.out.mapping
     }
 
     //

@@ -2,8 +2,6 @@ process DATASET_STATISTICS {
 
     label 'process_low'
 
-    publishDir "${params.outdir}/dataset_statistics"
-
     tag "${meta.dataset}"
 
     conda "${moduleDir}/environment.yml"

@@ -1,8 +1,6 @@
-process EDGER_NORMALISE {
+process NORMALISATION_EDGER {
 
     label 'process_low'
-
-    publishDir "${params.outdir}/normalisation/edger"
 
     tag "${meta.dataset}"
 
@@ -27,7 +25,7 @@ process EDGER_NORMALISE {
     script:
     def design_file = meta.design
     """
-    edger_normalise.R --counts "$count_file" --design "$design_file"
+    normalise_with_edger.R --counts "$count_file" --design "$design_file"
     """
 
 }
