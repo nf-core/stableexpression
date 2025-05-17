@@ -13,7 +13,8 @@
                     [
                         {
                             "dataset": "E_MTAB_4251_rnaseq",
-                            "design": "E_MTAB_4251_rnaseq.design.csv:md5,4f3ef7b76ca6ed1ec3157295bc4a8d84"
+                            "design": "E_MTAB_4251_rnaseq.design.csv:md5,4f3ef7b76ca6ed1ec3157295bc4a8d84",
+                            "normalised": false
                         },
                         "E_MTAB_4251_rnaseq.rnaseq.raw.counts.csv:md5,5cf27be0e00b93d5d431754ba8058687"
                     ],
@@ -57,7 +58,8 @@
                     [
                         {
                             "dataset": "E_MTAB_4251_rnaseq",
-                            "design": "E_MTAB_4251_rnaseq.design.csv:md5,4f3ef7b76ca6ed1ec3157295bc4a8d84"
+                            "design": "E_MTAB_4251_rnaseq.design.csv:md5,4f3ef7b76ca6ed1ec3157295bc4a8d84",
+                            "normalised": false
                         },
                         "E_MTAB_4251_rnaseq.rnaseq.raw.counts.csv:md5,5cf27be0e00b93d5d431754ba8058687"
                     ],
@@ -96,6 +98,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.0"
         },
-        "timestamp": "2025-05-12T16:09:37.515591183"
+        "timestamp": "2025-05-14T15:02:23.965187481"
     }
 }

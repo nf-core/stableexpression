@@ -11,10 +11,10 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                rnaseq_raw_file = file( '$projectDir/tests/test_data/custom_datasets/rnaseq.raw.csv', checkIfExists: true )
-                rnaseq_raw_design_file = file( '$projectDir/tests/test_data/custom_datasets/rnaseq.raw.design.csv', checkIfExists: true )
-                microarray_normalised_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.csv', checkIfExists: true )
-                microarray_normalised_design_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.design.csv', checkIfExists: true )
+                rnaseq_raw_file = file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.csv', checkIfExists: true )
+                rnaseq_raw_design_file = file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.design.csv', checkIfExists: true )
+                microarray_normalised_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                microarray_normalised_design_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true )
                 ch_datasets = Channel.of(
                     [ [normalised: false, design: rnaseq_raw_design_file, dataset: "rnaseq_raw", platform: "rnaseq"], rnaseq_raw_file],
                     [ [normalised: true, design: microarray_normalised_design_file, dataset: "microarray_normalised", platform: "microarray"], microarray_normalised_file ]
@@ -40,10 +40,10 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                rnaseq_raw_file = file( '$projectDir/tests/test_data/custom_datasets/rnaseq.raw.csv', checkIfExists: true )
-                rnaseq_raw_design_file = file( '$projectDir/tests/test_data/custom_datasets/rnaseq.raw.design.csv', checkIfExists: true )
-                microarray_normalised_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.csv', checkIfExists: true )
-                microarray_normalised_design_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.design.csv', checkIfExists: true )
+                rnaseq_raw_file = file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.csv', checkIfExists: true )
+                rnaseq_raw_design_file = file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.design.csv', checkIfExists: true )
+                microarray_normalised_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                microarray_normalised_design_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true )
                 ch_datasets = Channel.of(
                     [ [normalised: false, design: rnaseq_raw_design_file, dataset: "rnaseq_raw", platform: "rnaseq"], rnaseq_raw_file],
                     [ [normalised: true, design: microarray_normalised_design_file, dataset: "microarray_normalised", platform: "microarray"], microarray_normalised_file ]
@@ -69,8 +69,8 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                microarray_normalised_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.csv', checkIfExists: true )
-                microarray_normalised_design_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.design.csv', checkIfExists: true )
+                microarray_normalised_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                microarray_normalised_design_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true )
                 ch_datasets = Channel.of(
                     [ [normalised: true, design: microarray_normalised_design_file, dataset: "microarray_normalised", platform: "microarray"], microarray_normalised_file ]
                 )
