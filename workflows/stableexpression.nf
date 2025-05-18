@@ -47,7 +47,9 @@ workflow STABLEEXPRESSION {
     )
 
     // putting all datasets together (local datasets + Expression Atlas datasets)
-    ch_datasets = ch_input_datasets.concat( EXPRESSIONATLAS_FETCHDATA.out.downloaded_datasets )
+    ch_input_datasets
+        .concat( EXPRESSIONATLAS_FETCHDATA.out.downloaded_datasets )
+        .set { ch_datasets }
 
     //
     // MODULE: ID Mapping
@@ -72,11 +74,16 @@ workflow STABLEEXPRESSION {
             ch_datasets.combine( ch_species ),
             params.gene_id_mapping ? Channel.fromPath( params.gene_id_mapping, checkIfExists: true ) : 'none'
         )
-        ch_datasets = IDMAPPING_GPROFILER.out.renamed
-        ch_gene_metadata = ch_gene_metadata.mix( IDMAPPING_GPROFILER.out.metadata )
+
+        IDMAPPING_GPROFILER.out.renamed.set { ch_datasets }
+
+        ch_gene_metadata
+            .mix( IDMAPPING_GPROFILER.out.metadata )
+            .set { ch_gene_metadata }
+
         // the gene id mappings are the sum
         // of those provided by the user and those fetched from g:Profiler
-        ch_gene_id_mapping = IDMAPPING_GPROFILER.out.mapping
+        IDMAPPING_GPROFILER.out.mapping.set { ch_gene_id_mapping }
     }
 
     //
@@ -87,37 +94,23 @@ workflow STABLEEXPRESSION {
         ch_datasets,
         params.normalisation_method
     )
-    ch_normalised_counts = EXPRESSION_NORMALISATION.out.normalised_counts
-    ch_dataset_statistics = EXPRESSION_NORMALISATION.out.dataset_statistics
+
+    EXPRESSION_NORMALISATION.out.normalised_counts.set { ch_normalised_counts }
+    EXPRESSION_NORMALISATION.out.dataset_statistics.set { ch_dataset_statistics }
 
     //
     // MODULE: Merge count files and design files and filter out zero counts
     //
 
-    ch_normalised_counts
-        .map { meta, file -> [file] }
-        .collect()
-        .set { ch_count_files }
-
-    ch_normalised_counts
-        .map { meta, file -> [meta.design] }
-        .collect()
-        .set { ch_design_files }
-
-    ch_dataset_statistics
-        .map { meta, file -> [file] }
-        .collect()
-        .set { ch_dataset_stat_files }
-
     MERGE_DATA(
-        ch_count_files,
-        ch_design_files,
-        ch_dataset_stat_files,
+        ch_normalised_counts.map {  meta, file -> [file]        }.collect(),
+        ch_normalised_counts.map {  meta, file -> [meta.design] }.collect(),
+        ch_dataset_statistics.map { meta, file -> [file]        }.collect(),
         params.nb_top_gene_candidates
     )
 
-    ch_candidate_gene_counts = MERGE_DATA.out.candidate_gene_counts
-    ch_ks_stats = MERGE_DATA.out.ks_test_statistics
+    MERGE_DATA.out.candidate_gene_counts.set { ch_candidate_gene_counts }
+    MERGE_DATA.out.ks_test_statistics.set { ch_ks_stats }
 
     //
     // MODULE: Gene statistics
