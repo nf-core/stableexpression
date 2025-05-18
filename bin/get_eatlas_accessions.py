@@ -11,7 +11,7 @@ from tenacity import (
     wait_exponential,
     before_sleep_log,
 )
-import json
+import yaml
 from functools import partial
 from multiprocessing import Pool
 import nltk
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
 ACCESSION_OUTFILE_NAME = "accessions.txt"
-FILTERED_EXPERIMENTS_OUTFILE_NAME = "filtered_experiments.json"
+FILTERED_EXPERIMENTS_OUTFILE_NAME = "filtered_experiments.yaml"
 
 ##################################################################
 ##################################################################
@@ -437,7 +437,7 @@ def main():
 
     logger.info(f"Writing filtered experiments to {FILTERED_EXPERIMENTS_OUTFILE_NAME}")
     with open(FILTERED_EXPERIMENTS_OUTFILE_NAME, "w") as fout:
-        json.dump(results, fout)
+        yaml.dump(results, fout)
 
 
 if __name__ == "__main__":

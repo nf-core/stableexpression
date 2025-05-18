@@ -7,3 +7,4 @@ dependencies:
   - conda-forge::nltk==3.9.1
   - conda-forge::tenacity==9.0.0
   - conda-forge::pandas==2.2.3
+  - conda-forge::pyyaml==6.0.2
