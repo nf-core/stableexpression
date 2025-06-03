@@ -1,4 +1,16 @@
-nf_core_version: 3.2.1
+lint:
+  files_exist:
+    - conf/igenomes.config
+    - conf/igenomes_ignored.config
+    - conf/igenomes.config
+    - conf/igenomes_ignored.config
+  files_unchanged:
+    - assets/nf-core-stableexpression_logo_light.png
+    - .github/PULL_REQUEST_TEMPLATE.md
+  nextflow_config:
+    - params.input
+  schema_lint: false
+nf_core_version: 3.3.1
 repository_type: pipeline
 template:
   author: Olivier Coen
@@ -9,4 +21,7 @@ template:
   name: stableexpression
   org: nf-core
   outdir: .
+  skip_features:
+    - igenomes
+    - fastqc
   version: 1.0dev
