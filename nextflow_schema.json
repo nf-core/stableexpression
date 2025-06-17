@@ -96,7 +96,7 @@
                     "fa_icon": "fas fa-ban",
                     "help": "If you don't want to map gene IDs with g:Profiler, you can skip this step by providing `--skip_gprofiler`. It can be in particular useful if the g:Profiler is down and if you already have a custom mapping file."
                 },
-                "gene_id_mapping": {
+                "gene_id_mapping_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,

@@ -5,9 +5,10 @@
 */
 
 include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/expressionatlas_fetchdata/main'
+include { IDMAPPING                              } from '../subworkflows/local/idmapping/main.nf'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation/main.nf'
 
-include { IDMAPPING_GPROFILER                    } from '../modules/local/idmapping/gprofiler/main'
+
 include { MERGE_DATA                             } from '../modules/local/merge_data/main'
 include { GENE_STATISTICS                        } from '../modules/local/gene_statistics/main'
 include { MULTIQC                                } from '../modules/nf-core/multiqc/main'
@@ -32,71 +33,43 @@ workflow STABLEEXPRESSION {
 
 
     main:
+
     ch_multiqc_files = Channel.empty()
 
-    ch_species = Channel.value( params.species.split(' ').join('_') )
+    species = params.species.split(' ').join('_')
 
-    //
-    // SUBWORKFLOW: fetching Expression Atlas datasets if needed
-    //
+    // -----------------------------------------------------------------
+    // FETCH EXPRESSION ATLAS DATASETS IF NEEDED
+    // -----------------------------------------------------------------
 
-    EXPRESSIONATLAS_FETCHDATA( ch_species )
+    EXPRESSIONATLAS_FETCHDATA( species )
 
     // putting all datasets together (local datasets + Expression Atlas datasets)
     ch_input_datasets
         .concat( EXPRESSIONATLAS_FETCHDATA.out.downloaded_datasets )
         .set { ch_datasets }
 
-    //
-    // MODULE: ID Mapping
-    //
+    // -----------------------------------------------------------------
+    // IDMAPPING
+    // -----------------------------------------------------------------
 
-    ch_gene_metadata = Channel.empty()
-    if ( params.gene_metadata ) {
-        ch_gene_metadata = Channel.fromPath( params.gene_metadata, checkIfExists: true )
-    }
+    IDMAPPING ( ch_datasets, species )
 
-    if ( params.skip_gprofiler ) {
-
-        ch_gene_id_mapping = Channel.empty()
-        if ( params.gene_id_mapping ) {
-            // the gene id mappings will only be those provided by the user
-            ch_gene_id_mapping = Channel.fromPath( params.gene_id_mapping, checkIfExists: true )
-        }
-
-    } else {
-        // tries to map gene IDs to Ensembl IDs whenever possible
-        IDMAPPING_GPROFILER(
-            ch_datasets.combine( ch_species ),
-            params.gene_id_mapping ? Channel.fromPath( params.gene_id_mapping, checkIfExists: true ) : 'none'
-        )
-
-        IDMAPPING_GPROFILER.out.renamed.set { ch_datasets }
-
-        ch_gene_metadata
-            .mix( IDMAPPING_GPROFILER.out.metadata )
-            .set { ch_gene_metadata }
-
-        // the gene id mappings are the sum
-        // of those provided by the user and those fetched from g:Profiler
-        IDMAPPING_GPROFILER.out.mapping.set { ch_gene_id_mapping }
-    }
-
-    //
-    // SURBWORKFLOW: normalisation of raw count datasets (including RNA-seq datasets)
-    //
+    // -----------------------------------------------------------------
+    // NORMALISATION OF RAW COUNT DATASETS (INCLUDING RNA-SEQ DATASETS)
+    // -----------------------------------------------------------------
 
     EXPRESSION_NORMALISATION(
-        ch_datasets,
+        IDMAPPING.out.datasets,
         params.normalisation_method
     )
 
     EXPRESSION_NORMALISATION.out.normalised_counts.set { ch_normalised_counts }
     EXPRESSION_NORMALISATION.out.dataset_statistics.set { ch_dataset_statistics }
 
-    //
+    // -----------------------------------------------------------------
     // MODULE: Merge count files and design files and filter out zero counts
-    //
+    // -----------------------------------------------------------------
 
     MERGE_DATA(
         ch_normalised_counts.map {  meta, file -> [file]        }.collect(),
@@ -108,13 +81,14 @@ workflow STABLEEXPRESSION {
     MERGE_DATA.out.candidate_gene_counts.set { ch_candidate_gene_counts }
     MERGE_DATA.out.ks_test_statistics.set { ch_ks_stats }
 
-    //
+    // -----------------------------------------------------------------
     // MODULE: Gene statistics
-    //
+    // -----------------------------------------------------------------
+
     GENE_STATISTICS(
         MERGE_DATA.out.all_counts,
-        ch_gene_metadata.collect(),
-        ch_gene_id_mapping.collect(),
+        IDMAPPING.out.gene_metadata.collect(),
+        IDMAPPING.out.gene_id_mapping.collect(),
         params.nb_top_gene_candidates,
         ch_ks_stats,
         params.ks_pvalue_threshold

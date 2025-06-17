@@ -1,13 +1,3 @@
-//
-// Subworkflow with functionality specific to the nf-core/stableexpression pipeline
-//
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
 include { NORMALISATION_DESEQ2                 } from '../../../modules/local/normalisation/deseq2/main'
 include { NORMALISATION_EDGER                  } from '../../../modules/local/normalisation/edger/main'
 include { QUANTILE_NORMALISATION               } from '../../../modules/local/quantile_normalisation/main'

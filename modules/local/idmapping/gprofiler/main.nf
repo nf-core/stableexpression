@@ -31,7 +31,8 @@ process IDMAPPING_GPROFILER {
         'community.wave.seqera.io/library/pandas_python_requests:8c6da05a2935a952' }"
 
     input:
-    tuple val(meta), path(count_file), val(species)
+    tuple val(meta), path(count_file)
+    val species
     val gene_id_mapping_file
 
     output:

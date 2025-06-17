@@ -1,13 +1,3 @@
-//
-// Subworkflow with functionality specific to the nf-core/stableexpression pipeline
-//
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
 include { EXPRESSIONATLAS_GETACCESSIONS          } from '../../../modules/local/expressionatlas/getaccessions/main'
 include { EXPRESSIONATLAS_GETDATA                } from '../../../modules/local/expressionatlas/getdata/main'
 
@@ -20,7 +10,7 @@ include { EXPRESSIONATLAS_GETDATA                } from '../../../modules/local/
 workflow EXPRESSIONATLAS_FETCHDATA {
 
     take:
-    ch_species
+    species
 
 
     main:
@@ -31,12 +21,10 @@ workflow EXPRESSIONATLAS_FETCHDATA {
     // fetching Expression Atlas accessions if applicable
     if ( !params.skip_fetch_eatlas_accessions || params.eatlas_keywords ) {
 
-        ch_eatlas_keywords = Channel.value(  )
-
         // getting Expression Atlas accessions given a species name and keywords
         // keywords can be an empty string
         EXPRESSIONATLAS_GETACCESSIONS(
-            ch_species,
+            Channel.value( species ),
             params.eatlas_keywords
         )
 
