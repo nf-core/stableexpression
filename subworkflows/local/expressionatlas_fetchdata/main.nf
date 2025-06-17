@@ -1,5 +1,5 @@
-include { EXPRESSIONATLAS_GETACCESSIONS          } from '../../../modules/local/expressionatlas/getaccessions/main'
-include { EXPRESSIONATLAS_GETDATA                } from '../../../modules/local/expressionatlas/getdata/main'
+include { EXPRESSIONATLAS_GETACCESSIONS          } from '../../../modules/local/expressionatlas/getaccessions'
+include { EXPRESSIONATLAS_GETDATA                } from '../../../modules/local/expressionatlas/getdata'
 
 /*
 ========================================================================================
@@ -32,7 +32,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
         // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
         // removing E-PROT- accessions
         ch_accessions
-            .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
+            .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText(expression_normalisation) )
             .unique()
             .map { it -> it.trim() }
             .filter { it.startsWith('E-') && !it.startsWith('E-PROT-') }

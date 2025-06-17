@@ -1,7 +1,7 @@
-include { NORMALISATION_DESEQ2                 } from '../../../modules/local/normalisation/deseq2/main'
-include { NORMALISATION_EDGER                  } from '../../../modules/local/normalisation/edger/main'
-include { QUANTILE_NORMALISATION               } from '../../../modules/local/quantile_normalisation/main'
-include { DATASET_STATISTICS                   } from '../../../modules/local/dataset_statistics/main'
+include { NORMALISATION_DESEQ2                 } from '../../../modules/local/normalisation/deseq2'
+include { NORMALISATION_EDGER                  } from '../../../modules/local/normalisation/edger'
+include { QUANTILE_NORMALISATION               } from '../../../modules/local/quantile_normalisation'
+include { DATASET_STATISTICS                   } from '../../../modules/local/dataset_statistics'
 
 /*
 ========================================================================================

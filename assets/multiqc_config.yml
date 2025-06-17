@@ -237,7 +237,7 @@ sp:
     fn: "*top_stable_genes_summary.csv"
     max_filesize: 5000000 # 5MB
   expression_distributions_top_stable_genes:
-    fn: "*top_stable_genes_transposed_counts.csv"
+    fn: "*top_stable_genes_transposed_counts*.csv"
     max_filesize: 50000000 # 50MB
   gene_statistics:
     fn: "*stats_all_genes.csv"

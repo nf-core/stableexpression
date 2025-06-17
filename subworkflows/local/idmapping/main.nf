@@ -1,4 +1,4 @@
-include { IDMAPPING_GPROFILER                    } from '../../../modules/local/idmapping/gprofiler/main'
+include { IDMAPPING_GPROFILER                    } from '../../../modules/local/idmapping/gprofiler'
 
 /*
 ========================================================================================
