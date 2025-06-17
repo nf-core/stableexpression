@@ -23,7 +23,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
     ch_species
     eatlas_accessions
     eatlas_keywords
-    fetch_eatlas_accessions
+    skip_fetch_eatlas_accessions
 
 
     main:
@@ -31,7 +31,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
     ch_accessions = Channel.fromList( eatlas_accessions.tokenize(',') )
 
     // fetching Expression Atlas accessions if applicable
-    if ( fetch_eatlas_accessions || eatlas_keywords ) {
+    if ( !skip_fetch_eatlas_accessions || eatlas_keywords ) {
 
         //
         // MODULE: Expression Atlas - Get accessions

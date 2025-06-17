@@ -56,11 +56,11 @@
             "fa_icon": "fas fa-book-atlas",
             "description": "Options for fetching datasets from Expression Atlas.",
             "properties": {
-                "fetch_eatlas_accessions": {
+                "skip_fetch_eatlas_accessions": {
                     "type": "boolean",
                     "fa_icon": "fas fa-cloud-arrow-down",
-                    "description": "Automatically etches Expression Atlas accessions for this species. and downloads the corresponding count datasets and experimental designs.",
-                    "help_text": "If no Expression Atlas keywords are provided (with `--eatlas_keywords`) and if you want to get all Expression Atlas accessions for this species, provide this parameter."
+                    "description": "Skip fetching Expression Atlas accessions.",
+                    "help_text": "Expression Atlas accessions are automatically fetched by default. You can skip this step by setting this parameter."
                 },
                 "eatlas_keywords": {
                     "type": "string",

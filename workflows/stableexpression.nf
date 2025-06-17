@@ -43,7 +43,7 @@ workflow STABLEEXPRESSION {
         ch_species,
         params.eatlas_accessions,
         params.eatlas_keywords,
-        params.fetch_eatlas_accessions
+        params.skip_fetch_eatlas_accessions
     )
 
     // putting all datasets together (local datasets + Expression Atlas datasets)

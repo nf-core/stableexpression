@@ -147,16 +147,6 @@ def validateInputParameters(params) {
         error('You must provide a species name')
     }
 
-    // checking that the user has provided at least one dataset and / or expression atlas arguments
-    if (
-        !params.datasets
-        && !params.eatlas_accessions
-        && !params.fetch_eatlas_accessions
-        && !params.eatlas_keywords
-        ) {
-        error('You must provide at least either --datasets or --fetch_eatlas_accessions or --eatlas_accessions or --eatlas_keywords')
-    }
-
     // if expression atlas accessions are provided, checking that they are well formated
     if ( params.eatlas_accessions ) {
         for ( accession in params.eatlas_accessions.tokenize(',') ) {
