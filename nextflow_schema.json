@@ -75,6 +75,12 @@
                     "description": "Provide directly Expression Atlas accession(s) (separated by commas) that you want to download.",
                     "fa_icon": "fas fa-id-card",
                     "help_text": "Example: `--eatlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
+                },
+                "accessions_only": {
+                    "type": "boolean",
+                    "description": "Only get accessions from Expression Atlas and exit.",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "Use this option if you want to only get Expression Atlas accessions and skip the rest of the pipeline."
                 }
             }
         },

@@ -6,7 +6,7 @@ nextflow_workflow {
     tag "expressionatlas_fetchdata"
     tag "subworkflow"
 
-    test("Should run without failures") {
+    test("Download Expression Atlas datasets") {
 
         when {
             workflow {
@@ -15,6 +15,35 @@ nextflow_workflow {
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
                 eatlas_keywords = "potato,stress"
                 skip_fetch_eatlas_accessions = false
+                accessions_only = false
+
+                input[0] = Channel.value( species.split(' ').join('_') )
+                input[1] = eatlas_accessions
+                input[2] = eatlas_keywords
+                input[3] = fetch_eatlas_accessions
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("Download Expression Atlas accessions only") {
+
+        when {
+            workflow {
+                """
+                species = 'solanum tuberosum'
+                eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
+                eatlas_keywords = "potato,stress"
+                skip_fetch_eatlas_accessions = false
+                accessions_only = true
 
                 input[0] = Channel.value( species.split(' ').join('_') )
                 input[1] = eatlas_accessions

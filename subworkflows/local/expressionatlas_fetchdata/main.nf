@@ -21,40 +21,40 @@ workflow EXPRESSIONATLAS_FETCHDATA {
 
     take:
     ch_species
-    eatlas_accessions
-    eatlas_keywords
-    skip_fetch_eatlas_accessions
 
 
     main:
 
-    ch_accessions = Channel.fromList( eatlas_accessions.tokenize(',') )
+    ch_accessions = Channel.fromList( params.eatlas_accessions.tokenize(',') )
+    ch_eatlas_datasets = Channel.empty()
 
     // fetching Expression Atlas accessions if applicable
-    if ( !skip_fetch_eatlas_accessions || eatlas_keywords ) {
+    if ( !params.skip_fetch_eatlas_accessions || params.eatlas_keywords ) {
 
-        //
-        // MODULE: Expression Atlas - Get accessions
-        //
-        ch_eatlas_keywords = Channel.value( eatlas_keywords )
+        ch_eatlas_keywords = Channel.value(  )
 
         // getting Expression Atlas accessions given a species name and keywords
         // keywords can be an empty string
-        EXPRESSIONATLAS_GETACCESSIONS( ch_species, ch_eatlas_keywords )
+        EXPRESSIONATLAS_GETACCESSIONS(
+            ch_species,
+            params.eatlas_keywords
+        )
 
         // appending to accessions provided by the user
         // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
         // removing E-PROT- accessions
-        ch_accessions = ch_accessions
-                            .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
-                            .unique()
-                            .map { it -> it.trim() }
-                            .filter { it.startsWith('E-') && !it.startsWith('E-PROT-') }
+        ch_accessions
+            .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
+            .unique()
+            .map { it -> it.trim() }
+            .filter { it.startsWith('E-') && !it.startsWith('E-PROT-') }
+            .set ( ch_accessions )
     }
 
-    //
-    // MODULE: Expression Atlas - Get data
-    //
+    if ( params.accessions_only ) {
+        log.info "Exporting Expression Atlas accessions and exiting."
+        System.exit(0)
+    }
 
     // Downloading Expression Atlas data for each accession in ch_accessions
     EXPRESSIONATLAS_GETDATA( ch_accessions )

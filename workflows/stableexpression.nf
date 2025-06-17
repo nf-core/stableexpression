@@ -33,18 +33,14 @@ workflow STABLEEXPRESSION {
 
     main:
     ch_multiqc_files = Channel.empty()
+
     ch_species = Channel.value( params.species.split(' ').join('_') )
 
     //
     // SUBWORKFLOW: fetching Expression Atlas datasets if needed
     //
 
-    EXPRESSIONATLAS_FETCHDATA(
-        ch_species,
-        params.eatlas_accessions,
-        params.eatlas_keywords,
-        params.skip_fetch_eatlas_accessions
-    )
+    EXPRESSIONATLAS_FETCHDATA( ch_species )
 
     // putting all datasets together (local datasets + Expression Atlas datasets)
     ch_input_datasets
