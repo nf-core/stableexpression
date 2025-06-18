@@ -17,7 +17,13 @@ workflow EXPRESSIONATLAS_FETCHDATA {
 
     ch_eatlas_datasets = Channel.empty()
 
-    ch_accessions = Channel.fromList( params.eatlas_accessions.tokenize(',') )
+    ch_eatlas_accessions_file = params.eatlas_accessions_file ? Channel.fromPath(params.eatlas_accessions_file, checkIfExists: true) : Channel.empty()
+
+    Channel.fromList( params.eatlas_accessions.tokenize(',') )
+        .mix( ch_eatlas_accessions_file.splitText() )
+        .unique()
+        .map { it -> it.trim() }
+        .set { ch_input_accessions }
 
     // fetching Expression Atlas accessions if applicable
     if ( !params.skip_fetch_eatlas_accessions || params.eatlas_keywords ) {
@@ -29,14 +35,29 @@ workflow EXPRESSIONATLAS_FETCHDATA {
             params.eatlas_keywords
         )
 
+        ch_exclude_eatlas_accessions_file = params.exclude_eatlas_accessions_file ? Channel.fromPath(params.exclude_eatlas_accessions_file, checkIfExists: true) : Channel.empty()
+
+        // getting accessions to exclude and preparing in the right format
+        Channel.fromList( params.exclude_eatlas_accessions.tokenize(',') )
+            .mix( ch_exclude_eatlas_accessions_file.splitText() )
+            .unique()
+            .map { it -> it.trim() }
+            .toList()
+            .map { lst -> [lst] } // list of lists : mandatory when combining in the next step
+            .set { ch_excluded_accessions }
+
         // appending to accessions provided by the user
         // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
         // removing E-PROT- accessions
-        ch_accessions
-            .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
+        // removing excluded accessions
+        ch_input_accessions
+            .mix( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
             .unique()
             .map { it -> it.trim() }
             .filter { it.startsWith('E-') && !it.startsWith('E-PROT-') }
+            .combine ( ch_excluded_accessions )
+            .filter { accession, excluded_accessions -> !(accession in excluded_accessions) }
+            .map { accession, excluded_accessions -> accession }
             .set { ch_accessions }
     }
 

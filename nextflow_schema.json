@@ -33,7 +33,7 @@
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.csv$",
                     "description": "Path to comma-separated file containing information about the input count datasets and their related experimental design.",
-                    "help_text": "The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location.",
+                    "help_text": "The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. Combine with --skip_fetch_eatlas_accessions if you only want to analyse local datasets.",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "email": {
@@ -67,20 +67,43 @@
                     "description": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas.",
                     "fa_icon": "fas fa-highlighter",
                     "pattern": "([a-zA-Z,]+)",
-                    "help_text": "The pipeline will select all Expression Atlas experiments that contain the provided keywords in their description of in one of the condition names. Example: `--eatlas_keywords 'stress,flowering'`"
+                    "help_text": "The pipeline will select all Expression Atlas experiments that contain the provided keywords in their description of in one of the condition names. Example: `--eatlas_keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set."
                 },
                 "eatlas_accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Provide directly Expression Atlas accession(s) (separated by commas) that you want to download.",
+                    "description": "Provide directly in command line Expression Atlas accession(s) (separated by commas) that you want to download.",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "Example: `--eatlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
+                    "help_text": "Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
+                },
+                "eatlas_accessions_file": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "File containing Expression Atlas accession(s) that you want to download. One accession per line.",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "Example: `--eatlas_accessions_file included_accessions.txt`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
                 },
                 "accessions_only": {
                     "type": "boolean",
                     "description": "Only get accessions from Expression Atlas and exit.",
                     "fa_icon": "fas fa-id-card",
                     "help_text": "Use this option if you want to only get Expression Atlas accessions and skip the rest of the pipeline."
+                },
+                "exclude_eatlas_accessions": {
+                    "type": "string",
+                    "pattern": "([A-Z0-9-]+,?)+",
+                    "description": "Provide directly in command line Expression Atlas accessions (separated by commas) that you want to exclude.",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "Example: `--exclude_eatlas_accessions E-MTAB-552,E-GEOD-61690`"
+                },
+                "exclude_eatlas_accessions_file": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "File containing Expression Atlas accession(s) that you want to exclude. One accession per line.",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "Example: `--exclude_eatlas_accessions_file excluded_accessions.txt`."
                 }
             }
         },

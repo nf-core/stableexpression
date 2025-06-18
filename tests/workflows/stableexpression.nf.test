@@ -162,13 +162,64 @@ nextflow_workflow {
         then {
             assert workflow.success
             with(workflow.out.multiqc_report[0]) {
-                assertAll(
+                assertAll(eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
                     { assert path(get(0)).readLines().any { it.contains('MultiQC: A modular tool') } },
                     { assert path(get(0)).readLines().any { it.contains('Data was processed using nf-core/stableexpression') } }
                 )
             }
         }
 
+    }
+
+    test("Accessions only") {
+
+        tag "included_excluded_accessions"
+
+        when {
+            params {
+                species = "solanum tuberosum"
+                accessions_only = true
+            }
+            workflow {
+                """
+                input[0] = Channel.empty()
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+    }
+
+    test("Included and excluded accessions") {
+
+        tag "included_excluded_accessions"
+
+        when {
+            params {
+                species = "solanum tuberosum"
+                eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                exclude_eatlas_accessions = "E-MTAB-4251"
+                eatlas_accessions_file = file( '$projectDir/tests/test_data/misc/accessions_to_include.txt.txt', checkIfExists: true)
+                exclude_eatlas_accessions_file = file( '$projectDir/tests/test_data/misc/excluded_accessions.txt', checkIfExists: true)
+            }
+            workflow {
+                """
+                input[0] = Channel.empty()
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            with(workflow.out.multiqc_report[0]) {
+                assertAll(
+                    { assert path(get(0)).readLines().any { it.contains('MultiQC: A modular tool') } },
+                    { assert path(get(0)).readLines().any { it.contains('Data was processed using nf-core/stableexpression') } }
+                )
+            }
+        }
     }
 
 }
