@@ -10,22 +10,19 @@ workflow IDMAPPING {
 
     take:
     ch_datasets
-    species
+    ch_species
 
     main:
 
-    def ch_gene_metadata = params.gene_metadata ? Channel.fromPath( params.gene_metadata, checkIfExists: true ) : Channel.empty()
+    ch_gene_metadata = params.gene_metadata ? Channel.fromPath( params.gene_metadata, checkIfExists: true ) : Channel.empty()
+    ch_gene_id_mapping = params.gene_id_mapping_file ? Channel.fromPath( params.gene_id_mapping, checkIfExists: true ) : Channel.empty()
 
-    if ( params.skip_gprofiler ) {
-
-        def ch_gene_id_mapping = params.gene_id_mapping_file ? Channel.fromPath( params.gene_id_mapping, checkIfExists: true ) : Channel.empty()
-
-    } else {
+    if ( !params.skip_gprofiler ) {
 
         // tries to map gene IDs to Ensembl IDs whenever possible
         IDMAPPING_GPROFILER(
             ch_datasets,
-            species,
+            ch_species,
             params.gene_id_mapping_file ? Channel.fromPath( params.gene_id_mapping_file, checkIfExists: true ) : 'none'
         )
 

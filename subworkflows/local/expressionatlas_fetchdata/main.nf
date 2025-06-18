@@ -10,13 +10,14 @@ include { EXPRESSIONATLAS_GETDATA                } from '../../../modules/local/
 workflow EXPRESSIONATLAS_FETCHDATA {
 
     take:
-    species
+    ch_species
 
 
     main:
 
-    ch_accessions = Channel.fromList( params.eatlas_accessions.tokenize(',') )
     ch_eatlas_datasets = Channel.empty()
+
+    ch_accessions = Channel.fromList( params.eatlas_accessions.tokenize(',') )
 
     // fetching Expression Atlas accessions if applicable
     if ( !params.skip_fetch_eatlas_accessions || params.eatlas_keywords ) {
@@ -24,7 +25,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
         // getting Expression Atlas accessions given a species name and keywords
         // keywords can be an empty string
         EXPRESSIONATLAS_GETACCESSIONS(
-            Channel.value( species ),
+            ch_species,
             params.eatlas_keywords
         )
 
@@ -32,30 +33,29 @@ workflow EXPRESSIONATLAS_FETCHDATA {
         // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
         // removing E-PROT- accessions
         ch_accessions
-            .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText(expression_normalisation) )
+            .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
             .unique()
             .map { it -> it.trim() }
             .filter { it.startsWith('E-') && !it.startsWith('E-PROT-') }
-            .set ( ch_accessions )
+            .set { ch_accessions }
     }
 
-    if ( params.accessions_only ) {
-        log.info "Exporting Expression Atlas accessions and exiting."
-        System.exit(0)
+    if ( !params.accessions_only ) {
+
+        // Downloading Expression Atlas data for each accession in ch_accessions
+        EXPRESSIONATLAS_GETDATA( ch_accessions )
+
+        // adding dataset id (accession + data_type) in the file meta
+        ch_etlas_design = addDatasetIdToMetadata( EXPRESSIONATLAS_GETDATA.out.design.flatten() )
+        ch_eatlas_counts = addDatasetIdToMetadata( EXPRESSIONATLAS_GETDATA.out.counts.flatten() )
+
+        // adding design files to the meta of their respective count files
+        ch_eatlas_datasets = groupFilesByDatasetId( ch_etlas_design, ch_eatlas_counts )
+
+        // adding normalisation state in the meta
+        augmentToMetadata( ch_eatlas_datasets )
+
     }
-
-    // Downloading Expression Atlas data for each accession in ch_accessions
-    EXPRESSIONATLAS_GETDATA( ch_accessions )
-
-    // adding dataset id (accession + data_type) in the file meta
-    ch_etlas_design = addDatasetIdToMetadata( EXPRESSIONATLAS_GETDATA.out.design.flatten() )
-    ch_eatlas_counts = addDatasetIdToMetadata( EXPRESSIONATLAS_GETDATA.out.counts.flatten() )
-
-    // adding design files to the meta of their respective count files
-    ch_eatlas_datasets = groupFilesByDatasetId( ch_etlas_design, ch_eatlas_counts )
-
-    // adding normalisation state in the meta
-    augmentToMetadata( ch_eatlas_datasets )
 
     emit:
     downloaded_datasets = ch_eatlas_datasets

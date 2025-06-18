@@ -1,5 +1,10 @@
 include { MULTIQC                                } from '../../../modules/nf-core/multiqc'
 
+include { customSoftwareVersionsToYAML           } from '../utils_nfcore_stableexpression_pipeline'
+include { methodsDescriptionText                 } from '../utils_nfcore_stableexpression_pipeline'
+include { paramsSummaryMultiqc                   } from '../../nf-core/utils_nfcore_pipeline'
+include { paramsSummaryMap                       } from 'plugin/nf-schema'
+
 /*
 ========================================================================================
     SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
