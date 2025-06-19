@@ -11,10 +11,14 @@ nextflow_process {
         when {
             process {
                 """
-                meta = []
-                count_file = file("$projectDir/tests/test_data/idmapping/base/counts.ensembl_ids.csv", checkIfExists: true)
-                input[0] = [meta, count_file, "Solanum tuberosum"]
-                input[1] = ''
+                input[0] = Channel.of(
+                    [
+                        [ dataset: "test" ],
+                        file("$projectDir/tests/test_data/idmapping/base/counts.ensembl_ids.csv", checkIfExists: true)
+                    ]
+                )
+                input[1] = "Solanum tuberosum"
+                input[2] = Channel.value([])
                 """
             }
         }
@@ -33,10 +37,14 @@ nextflow_process {
         when {
             process {
                 """
-                meta = []
-                count_file = file("$projectDir/tests/test_data/idmapping/base/counts.ncbi_ids.csv", checkIfExists: true)
-                input[0] = [meta, count_file, "Arabidopsis thaliana"]
-                input[1] = ''
+                input[0] = Channel.of(
+                    [
+                        [ dataset: "test" ],
+                        file("$projectDir/tests/test_data/idmapping/base/counts.ncbi_ids.csv", checkIfExists: true)
+                    ]
+                )
+                input[1] = "Arabidopsis thaliana"
+                input[2] = Channel.value([])
                 """
             }
         }
@@ -56,10 +64,14 @@ nextflow_process {
         when {
             process {
                 """
-                meta = []
-                count_file = file("$projectDir/tests/test_data/idmapping/base/counts.uniprot_ids.csv", checkIfExists: true)
-                input[0] = [meta, count_file, "Arabidopsis thaliana"]
-                input[1] = ''
+                input[0] = Channel.of(
+                    [
+                        [ dataset: "test" ],
+                        file("$projectDir/tests/test_data/idmapping/base/counts.uniprot_ids.csv", checkIfExists: true)
+                    ]
+                )
+                input[1] = "Arabidopsis thaliana"
+                input[2] = Channel.value([])
                 """
             }
         }
@@ -80,10 +92,14 @@ nextflow_process {
         when {
             process {
                 """
-                meta = []
-                count_file = file("$projectDir/tests/test_data/idmapping/empty/counts.csv", checkIfExists: true)
-                input[0] = [meta, count_file, "Arabidopsis thaliana"]
-                input[1] = ''
+                input[0] = Channel.of(
+                    [
+                        [ dataset: "test" ],
+                        file("$projectDir/tests/test_data/idmapping/empty/counts.csv", checkIfExists: true)
+                    ]
+                )
+                input[1] = "Arabidopsis thaliana"
+                input[2] = Channel.value([])
                 """
             }
         }
@@ -109,10 +125,14 @@ nextflow_process {
         when {
             process {
                 """
-                meta = []
-                count_file = file("$projectDir/tests/test_data/idmapping/not_found/counts.csv", checkIfExists: true)
-                input[0] = [meta, count_file, "Homo sapiens"]
-                input[1] = ''
+                input[0] = Channel.of(
+                    [
+                        [ dataset: "test" ],
+                        file("$projectDir/tests/test_data/idmapping/not_found/counts.csv", checkIfExists: true)
+                    ]
+                )
+                input[1] = "Homo sapiens"
+                input[2] = Channel.value([])
                 """
             }
         }
@@ -138,11 +158,14 @@ nextflow_process {
         when {
             process {
                 """
-                meta = []
-                count_file = file("$projectDir/tests/test_data/idmapping/base/counts.ensembl_ids.csv", checkIfExists: true)
-                custom_mapping_file = file("$projectDir/tests/test_data/idmapping/custom/mapping.csv", checkIfExists: true)
-                input[0] = [meta, count_file, "Solanum tuberosum"]
-                input[1] = custom_mapping_file
+                input[0] = Channel.of(
+                    [
+                        [ dataset: "test" ],
+                        file("$projectDir/tests/test_data/idmapping/base/counts.ensembl_ids.csv", checkIfExists: true)
+                    ]
+                )
+                input[1] = "Solanum tuberosum"
+                input[2] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/custom/mapping.csv", checkIfExists: true)
                 """
             }
         }

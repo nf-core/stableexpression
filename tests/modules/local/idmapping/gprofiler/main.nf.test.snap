@@ -4,14 +4,14 @@
             {
                 "0": [
                     [
-                        [
-
-                        ],
+                        {
+                            "dataset": "test"
+                        },
                         "counts.ensembl_ids.renamed.csv:md5,b2f45fd17fcb2688ea08b94527f70c1f"
                     ]
                 ],
                 "1": [
-
+                    
                 ],
                 "2": [
                     "counts.ensembl_ids.mapping.csv:md5,6ff8d8f71b9df7a1b08ff0bfda8da755"
@@ -38,13 +38,13 @@
                     ]
                 ],
                 "metadata": [
-
+                    
                 ],
                 "renamed": [
                     [
-                        [
-
-                        ],
+                        {
+                            "dataset": "test"
+                        },
                         "counts.ensembl_ids.renamed.csv:md5,b2f45fd17fcb2688ea08b94527f70c1f"
                     ]
                 ]
@@ -52,18 +52,18 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "25.04.0"
+            "nextflow": "25.04.4"
         },
-        "timestamp": "2025-05-14T11:36:14.264437894"
+        "timestamp": "2025-06-19T11:14:19.745663367"
     },
     "Map Ensembl IDs to themselves": {
         "content": [
             {
                 "0": [
                     [
-                        [
-
-                        ],
+                        {
+                            "dataset": "test"
+                        },
                         "counts.ensembl_ids.renamed.csv:md5,ef96059e3283d4305b2c004d649ae648"
                     ]
                 ],
@@ -99,9 +99,9 @@
                 ],
                 "renamed": [
                     [
-                        [
-
-                        ],
+                        {
+                            "dataset": "test"
+                        },
                         "counts.ensembl_ids.renamed.csv:md5,ef96059e3283d4305b2c004d649ae648"
                     ]
                 ]
@@ -109,18 +109,18 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "25.04.0"
+            "nextflow": "25.04.4"
         },
-        "timestamp": "2025-05-14T11:35:32.690454163"
+        "timestamp": "2025-06-19T11:13:33.025821232"
     },
     "Map Uniprot IDs": {
         "content": [
             {
                 "0": [
                     [
-                        [
-
-                        ],
+                        {
+                            "dataset": "test"
+                        },
                         "counts.uniprot_ids.renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
                     ]
                 ],
@@ -156,9 +156,9 @@
                 ],
                 "renamed": [
                     [
-                        [
-
-                        ],
+                        {
+                            "dataset": "test"
+                        },
                         "counts.uniprot_ids.renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
                     ]
                 ]
@@ -166,18 +166,18 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "25.04.0"
+            "nextflow": "25.04.4"
         },
-        "timestamp": "2025-05-14T11:35:50.772485621"
+        "timestamp": "2025-06-19T11:13:53.45455109"
     },
     "Map NCBI IDs": {
         "content": [
             {
                 "0": [
                     [
-                        [
-
-                        ],
+                        {
+                            "dataset": "test"
+                        },
                         "counts.ncbi_ids.renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
                     ]
                 ],
@@ -213,9 +213,9 @@
                 ],
                 "renamed": [
                     [
-                        [
-
-                        ],
+                        {
+                            "dataset": "test"
+                        },
                         "counts.ncbi_ids.renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
                     ]
                 ]
@@ -223,8 +223,8 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "25.04.0"
+            "nextflow": "25.04.4"
         },
-        "timestamp": "2025-05-14T11:35:41.055648628"
+        "timestamp": "2025-06-19T11:13:42.529805072"
     }
 }

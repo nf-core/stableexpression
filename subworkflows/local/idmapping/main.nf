@@ -23,7 +23,7 @@ workflow IDMAPPING {
         IDMAPPING_GPROFILER(
             ch_datasets,
             ch_species,
-            params.gene_id_mapping_file ? Channel.fromPath( params.gene_id_mapping_file, checkIfExists: true ) : 'none'
+            params.gene_id_mapping_file ? Channel.fromPath( params.gene_id_mapping_file, checkIfExists: true ) : Channel.value( [] )
         )
 
         IDMAPPING_GPROFILER.out.renamed.set { ch_datasets }
