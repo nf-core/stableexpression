@@ -33,6 +33,8 @@ process GENE_STATISTICS {
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """

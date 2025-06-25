@@ -49,6 +49,8 @@ process EXPRESSIONATLAS_GETDATA {
     tuple val("${task.process}"), val('R'),               eval('Rscript -e "cat(R.version.string)" | sed "s/R version //"'),            topic: versions
     tuple val("${task.process}"), val('ExpressionAtlas'), eval('Rscript -e "cat(as.character(packageVersion(\'ExpressionAtlas\')))"'),  topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """

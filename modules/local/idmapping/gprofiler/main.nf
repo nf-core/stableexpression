@@ -43,6 +43,8 @@ process IDMAPPING_GPROFILER {
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),     topic: versions
     tuple val("${task.process}"), val('requests'), eval('python3 -c "import requests; print(requests.__version__)"'), topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     def custom_mapping_arg = gene_id_mapping_file ? "--custom-mappings $gene_id_mapping_file" : ""

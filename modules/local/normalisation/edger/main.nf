@@ -21,6 +21,8 @@ process NORMALISATION_EDGER {
     tuple val("${task.process}"), val('R'),     eval('Rscript -e "cat(R.version.string)" | sed "s/R version //"'),  topic: versions
     tuple val("${task.process}"), val('edgeR'), eval('Rscript -e "cat(as.character(packageVersion(\'edgeR\')))"'),  topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     def design_file = meta.design
