@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/nextflow_schema.json",
     "title": "nf-core/stableexpression pipeline parameters",
-    "description": "\nThis pipeline is dedicated to finding the most stable genes across count datasets\n",
+    "description": "\nPipeline dedicated to finding the most stable genes across count datasets\n",
     "type": "object",
     "$defs": {
         "input_output_options": {
@@ -14,15 +14,16 @@
             "properties": {
                 "species": {
                     "type": "string",
-                    "description": "Species name.",
+                    "description": "Species name",
                     "fa_icon": "fas fa-hippo",
                     "pattern": "([a-zA-Z]+)[_ ]([a-zA-Z]+)",
-                    "help_text": "e.g. `--species 'Arabidopsis thaliana'` or `--species 'homo_sapiens'`"
+                    "help_text": "Genus and species may be separated by ` ` or `_`. Example: `--species 'Arabidopsis thaliana'` or `--species 'homo_sapiens'`"
                 },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
-                    "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
+                    "description": "Output directory",
+                    "help_text": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
                     "fa_icon": "fas fa-folder-open"
                 },
                 "datasets": {
@@ -32,8 +33,8 @@
                     "schema": "assets/schema_datasets.json",
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing information about the input count datasets and their related experimental design.",
-                    "help_text": "The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. Combine with --skip_fetch_eatlas_accessions if you only want to analyse local datasets.",
+                    "description": "User count datasets",
+                    "help_text": "Path to comma-separated file containing information about the input count datasets and their related experimental design. The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. Combine with --skip_fetch_eatlas_accessions if you only want to analyse local datasets.",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "email": {
@@ -45,7 +46,8 @@
                 },
                 "multiqc_title": {
                     "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+                    "description": "MultiQC report title",
+                    "help_text": "Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
                 }
             }
@@ -59,30 +61,30 @@
                 "skip_fetch_eatlas_accessions": {
                     "type": "boolean",
                     "fa_icon": "fas fa-cloud-arrow-down",
-                    "description": "Skip fetching Expression Atlas accessions.",
+                    "description": "Skip fetching Expression Atlas accessions",
                     "help_text": "Expression Atlas accessions are automatically fetched by default. You can skip this step by setting this parameter."
                 },
                 "eatlas_keywords": {
                     "type": "string",
-                    "description": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas.",
+                    "description": "Expression Atlas keywords",
                     "fa_icon": "fas fa-highlighter",
                     "pattern": "([a-zA-Z,]+)",
-                    "help_text": "The pipeline will select all Expression Atlas experiments that contain the provided keywords in their description of in one of the condition names. Example: `--eatlas_keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set."
+                    "help_text": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas. The pipeline will select all Expression Atlas experiments that contain the provided keywords in their description of in one of the condition names. Example: `--eatlas_keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set."
                 },
                 "eatlas_accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Provide directly in command line Expression Atlas accession(s) (separated by commas) that you want to download.",
+                    "description": "Expression Atlas accessions",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
+                    "help_text": "Provide directly in command line Expression Atlas accession(s) (separated by commas) that you want to download. Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
                 },
                 "eatlas_accessions_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "description": "File containing Expression Atlas accession(s) that you want to download. One accession per line.",
+                    "description": "File with Expression Atlas accessions",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "Example: `--eatlas_accessions_file included_accessions.txt`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
+                    "help_text": "File containing Expression Atlas accession(s) that you want to download. One accession per line.Example: `--eatlas_accessions_file included_accessions.txt`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
                 },
                 "accessions_only": {
                     "type": "boolean",
@@ -93,17 +95,17 @@
                 "exclude_eatlas_accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Provide directly in command line Expression Atlas accessions (separated by commas) that you want to exclude.",
+                    "description": "Expression Atlas accession to exclude",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "Example: `--exclude_eatlas_accessions E-MTAB-552,E-GEOD-61690`"
+                    "help_text": "Provide directly in command line Expression Atlas accessions (separated by commas) that you want to exclude. Example: `--exclude_eatlas_accessions E-MTAB-552,E-GEOD-61690`"
                 },
                 "exclude_eatlas_accessions_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "description": "File containing Expression Atlas accession(s) that you want to exclude. One accession per line.",
+                    "description": "File with Expression Atlas accessions to exclude",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "Example: `--exclude_eatlas_accessions_file excluded_accessions.txt`."
+                    "help_text": "File containing Expression Atlas accession(s) that you want to exclude. One accession per line. Example: `--exclude_eatlas_accessions_file excluded_accessions.txt`."
                 }
             }
         },
@@ -115,7 +117,7 @@
             "properties": {
                 "skip_gprofiler": {
                     "type": "boolean",
-                    "description": "Skip g:Profiler ID mapping step.",
+                    "description": "Skip g:Profiler ID mapping step",
                     "fa_icon": "fas fa-ban",
                     "help": "If you don't want to map gene IDs with g:Profiler, you can skip this step by providing `--skip_gprofiler`. It can be in particular useful if the g:Profiler is down and if you already have a custom mapping file."
                 },
@@ -126,8 +128,8 @@
                     "schema": "assets/schema_gene_id_mapping.json",
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler.",
-                    "help_text": "The mapping file should be a comma-separated file with 2 columns (original_gene_id and ensembl_gene_id) and a header row.",
+                    "description": "Custom gene id mapping file",
+                    "help_text": "Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler. The mapping file should be a comma-separated file with 2 columns (original_gene_id and ensembl_gene_id) and a header row.",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "gene_metadata": {
@@ -137,8 +139,8 @@
                     "schema": "assets/schema_gene_metadata.json",
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description.",
-                    "help_text": "The metadata file should be a comma-separated file with 3 columns (ensembl_gene_id, name and description) and a header row.",
+                    "description": "Custom gene metadata file",
+                    "help_text": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (ensembl_gene_id, name and description) and a header row.",
                     "fa_icon": "fas fa-file-csv"
                 }
             }
@@ -151,14 +153,14 @@
             "properties": {
                 "normalisation_method": {
                     "type": "string",
-                    "description": "Tool to use for normalisation.",
+                    "description": "Tool to use for normalisation",
                     "fa_icon": "fas fa-chart-simple",
                     "enum": ["deseq2", "edger"],
                     "default": "deseq2"
                 },
                 "nb_top_gene_candidates": {
                     "type": "integer",
-                    "description": "Number of candidate genes to keep in the final list.",
+                    "description": "Number of candidate genes to keep",
                     "fa_icon": "fas fa-chart-simple",
                     "minimum": 1,
                     "default": 1000,
@@ -166,7 +168,7 @@
                 },
                 "ks_pvalue_threshold": {
                     "type": "number",
-                    "description": "Threshold for KS p-value for considering samples counts as a uniform distribution.",
+                    "description": "Threshold for KS p-value for considering samples counts as a uniform distribution",
                     "fa_icon": "fas fa-chart-simple",
                     "maximum": 1,
                     "default": 0,

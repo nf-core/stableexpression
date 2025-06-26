@@ -1,0 +1,8 @@
+categories:
+  - Transcriptomics
+description: my_scription
+homepage_url: my_tool_homepage
+long_description: my_long_description
+name: nf_core_stableexpression
+owner: olivier_coen
+remote_repository_url: my_github_url
