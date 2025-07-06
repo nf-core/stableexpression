@@ -1,4 +1,0 @@
-nextflow
-singularity
-planemo
-pandas

@@ -1,0 +1,463 @@
+{
+    "summary": {
+        "num_errors": 0,
+        "num_failures": 0,
+        "num_skips": 0,
+        "num_tests": 3
+    },
+    "tests": [
+        {
+            "data": {
+                "inputs": {
+                    "input_output_options|datasets|count_datasets": [
+                        {
+                            "id": "d77c1c1553d8ae81",
+                            "src": "hda"
+                        },
+                        {
+                            "id": "8f49e6aa49bd8f4e",
+                            "src": "hda"
+                        }
+                    ],
+                    "input_output_options|datasets|experimental_designs": [
+                        {
+                            "id": "b93aa8e2a35b8857",
+                            "src": "hda"
+                        },
+                        {
+                            "id": "d10e079854ce5c69",
+                            "src": "hda"
+                        }
+                    ],
+                    "input_output_options|datasets|provide_datasets": true,
+                    "input_output_options|datasets|samplesheet": {
+                        "id": "f14d691d132db03a",
+                        "src": "hda"
+                    },
+                    "input_output_options|skip_fetch_eatlas_accessions": true,
+                    "input_output_options|species": "solanum tuberosum"
+                },
+                "job": {
+                    "command_line": "python '/home/olivier/repositories/nf-core-stableexpression/galaxy/tool/rebuild_samplesheet.py' --in /tmp/tmppbklvq_q/files/3/5/f/dataset_35f02710-5dc7-48d3-beeb-6670fe961d3c.dat --out renamed_samplesheet.csv --count-files /tmp/tmppbklvq_q/files/a/0/7/dataset_a07a6342-8e00-47d9-83d1-ebd4c14037e0.dat,/tmp/tmppbklvq_q/files/3/4/9/dataset_34937997-5658-430c-b9d7-521063b31b61.dat --count-filenames  microarray.normalised.csv rnaseq.raw.csv --design-files /tmp/tmppbklvq_q/files/3/2/5/dataset_32558adb-41a2-4e78-a0fb-dd3fb60e5cfc.dat,/tmp/tmppbklvq_q/files/c/1/e/dataset_c1e00074-715d-4205-af0b-d52abd151ae5.dat --design-filenames  microarray.normalised.design.csv rnaseq.raw.design.csv    && nextflow run OlivierCoen/stableexpression -r dev -latest -profile apptainer -ansi-log false --outdir ./results --species \"solanum tuberosum\"  --datasets renamed_samplesheet.csv --skip_fetch_eatlas_accessions --skip_fetch_eatlas_accessions --normalisation_method \"deseq2\" --nb_top_gene_candidates 1000 --ks_pvalue_threshold 0.0",
+                    "command_version": "1.0dev",
+                    "copied_from_job_id": null,
+                    "create_time": "2025-07-07T13:34:47.305076",
+                    "dependencies": [],
+                    "exit_code": 0,
+                    "external_id": "2189932",
+                    "galaxy_version": "25.0",
+                    "handler": null,
+                    "history_id": "f14d691d132db03a",
+                    "id": "b53dd89ac6a51dd9",
+                    "inputs": {
+                        "input_output_options|datasets|count_datasets": {
+                            "id": "d77c1c1553d8ae81",
+                            "src": "hda",
+                            "uuid": "a07a6342-8e00-47d9-83d1-ebd4c14037e0"
+                        },
+                        "input_output_options|datasets|count_datasets1": {
+                            "id": "d77c1c1553d8ae81",
+                            "src": "hda",
+                            "uuid": "a07a6342-8e00-47d9-83d1-ebd4c14037e0"
+                        },
+                        "input_output_options|datasets|count_datasets2": {
+                            "id": "8f49e6aa49bd8f4e",
+                            "src": "hda",
+                            "uuid": "34937997-5658-430c-b9d7-521063b31b61"
+                        },
+                        "input_output_options|datasets|experimental_designs": {
+                            "id": "b93aa8e2a35b8857",
+                            "src": "hda",
+                            "uuid": "32558adb-41a2-4e78-a0fb-dd3fb60e5cfc"
+                        },
+                        "input_output_options|datasets|experimental_designs1": {
+                            "id": "b93aa8e2a35b8857",
+                            "src": "hda",
+                            "uuid": "32558adb-41a2-4e78-a0fb-dd3fb60e5cfc"
+                        },
+                        "input_output_options|datasets|experimental_designs2": {
+                            "id": "d10e079854ce5c69",
+                            "src": "hda",
+                            "uuid": "c1e00074-715d-4205-af0b-d52abd151ae5"
+                        },
+                        "input_output_options|datasets|samplesheet": {
+                            "id": "f14d691d132db03a",
+                            "src": "hda",
+                            "uuid": "35f02710-5dc7-48d3-beeb-6670fe961d3c"
+                        }
+                    },
+                    "job_messages": [],
+                    "job_metrics": [],
+                    "job_runner_name": null,
+                    "job_stderr": "",
+                    "job_stdout": "",
+                    "model_class": "Job",
+                    "output_collections": {},
+                    "outputs": {
+                        "multiqc_report": {
+                            "id": "b53dd89ac6a51dd9",
+                            "src": "hda",
+                            "uuid": "02b60d90-cbc8-4a41-8656-71abf653b621"
+                        },
+                        "top_stable_genes_summary": {
+                            "id": "4e217783f5b35092",
+                            "src": "hda",
+                            "uuid": "7c59b178-207b-462b-8808-ec7425201f75"
+                        }
+                    },
+                    "params": {
+                        "__input_ext": "\"txt\"",
+                        "chromInfo": "\"/tmp/tmppbklvq_q/galaxy-dev/tool-data/shared/ucsc/chrom/?.len\"",
+                        "dbkey": "\"?\"",
+                        "expression_atlas_options": "{\"accessions_only\": false, \"eatlas_accessions\": null, \"eatlas_accessions_file\": null, \"eatlas_keywords\": null, \"exclude_eatlas_accessions\": null, \"exclude_eatlas_accessions_file\": null}",
+                        "idmapping_options": "{\"gene_id_mapping_file\": null, \"gene_metadata\": null, \"skip_gprofiler\": false}",
+                        "input_output_options": "{\"datasets\": {\"__current_case__\": 0, \"count_datasets\": {\"values\": [{\"id\": 2, \"src\": \"hda\"}, {\"id\": 3, \"src\": \"hda\"}]}, \"experimental_designs\": {\"values\": [{\"id\": 4, \"src\": \"hda\"}, {\"id\": 5, \"src\": \"hda\"}]}, \"provide_datasets\": true, \"samplesheet\": {\"values\": [{\"id\": 1, \"src\": \"hda\"}]}}, \"skip_fetch_eatlas_accessions\": true, \"species\": \"solanum tuberosum\"}",
+                        "statistical_options": "{\"ks_pvalue_threshold\": \"0.0\", \"nb_top_gene_candidates\": \"1000\", \"normalisation_method\": \"deseq2\"}"
+                    },
+                    "state": "ok",
+                    "stderr": "",
+                    "stdout": "N E X T F L O W  ~  version 25.04.6\nPulling OlivierCoen/stableexpression ...\n Already-up-to-date\nLaunching `https://github.com/OlivierCoen/stableexpression` [infallible_sanger] DSL2 - revision: 139de1d916 [dev]\n\n-\u001b[2m----------------------------------------------------\u001b[0m-\n                                        \u001b[0;32m,--.\u001b[0;30m/\u001b[0;32m,-.\u001b[0m\n\u001b[0;34m        ___     __   __   __   ___     \u001b[0;32m/,-._.--~'\u001b[0m\n\u001b[0;34m  |\\ | |__  __ /  ` /  \\ |__) |__         \u001b[0;33m}  {\u001b[0m\n\u001b[0;34m  | \\| |       \\__, \\__/ |  \\ |___     \u001b[0;32m\\`-._,-`-,\u001b[0m\n                                        \u001b[0;32m`._,._,'\u001b[0m\n\u001b[0;35m  nf-core/stableexpression 1.0dev\u001b[0m\n-\u001b[2m----------------------------------------------------\u001b[0m-\n\u001b[1mInput/output options\u001b[0m\n  \u001b[0;34mspecies                     : \u001b[0;32msolanum tuberosum\u001b[0m\n  \u001b[0;34moutdir                      : \u001b[0;32m./results\u001b[0m\n  \u001b[0;34mdatasets                    : \u001b[0;32mrenamed_samplesheet.csv\u001b[0m\n  \u001b[0;34mskip_fetch_eatlas_accessions: \u001b[0;32mtrue\u001b[0m\n\n\u001b[1mStatistics options\u001b[0m\n  \u001b[0;34mks_pvalue_threshold         : \u001b[0;32m0.0\u001b[0m\n\n\u001b[1mGeneric options\u001b[0m\n  \u001b[0;34mmax_multiqc_email_size      : \u001b[0;32m25.MB\u001b[0m\n  \u001b[0;34mtrace_report_suffix         : \u001b[0;32m2025-07-07_15-34-55\u001b[0m\n\n\u001b[1mCore Nextflow options\u001b[0m\n  \u001b[0;34mrevision                    : \u001b[0;32mdev\u001b[0m\n  \u001b[0;34mrunName                     : \u001b[0;32minfallible_sanger\u001b[0m\n  \u001b[0;34mcontainerEngine             : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mlaunchDir                   : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/6/working\u001b[0m\n  \u001b[0;34mworkDir                     : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/6/working/work\u001b[0m\n  \u001b[0;34mprojectDir                  : \u001b[0;32m/home/olivier/.nextflow/assets/OlivierCoen/stableexpression\u001b[0m\n  \u001b[0;34muserName                    : \u001b[0;32molivier\u001b[0m\n  \u001b[0;34mprofile                     : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mconfigFiles                 : \u001b[0;32m\u001b[0m\n\n!! Only displaying parameters that differ from the pipeline defaults !!\n-\u001b[2m----------------------------------------------------\u001b[0m-\n* The nf-core framework\n    https://doi.org/10.1038/s41587-020-0439-x\n\n* Software dependencies\n    https://github.com/nf-core/stableexpression/blob/main/CITATIONS.md\n\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_python_requests:8c6da05a2935a952 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/community.wave.seqera.io-library-pandas_python_requests-8c6da05a2935a952.img]\n[fa/056a72] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (dataset_a07a6342-8e00-47d9-83d1-ebd4c14037e0)\n[07/8e178c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (dataset_34937997-5658-430c-b9d7-521063b31b61)\nPulling Apptainer image docker://community.wave.seqera.io/library/bioconductor-deseq2_r-base_r-optparse:c84cd7ffdb298fa7 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/community.wave.seqera.io-library-bioconductor-deseq2_r-base_r-optparse-c84cd7ffdb298fa7.img]\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scikit-learn:6f85e3c4d1706e81 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scikit-learn-6f85e3c4d1706e81.img]\n[dd/9ac587] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (dataset_a07a6342-8e00-47d9-83d1-ebd4c14037e0)\n[18/8d0d97] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (dataset_34937997-5658-430c-b9d7-521063b31b61)\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scipy:7cad0d297a717147 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scipy-7cad0d297a717147.img]\n[4e/9c4b12] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (dataset_a07a6342-8e00-47d9-83d1-ebd4c14037e0)\n[58/0c2003] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (dataset_34937997-5658-430c-b9d7-521063b31b61)\n[f0/d63cd8] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (dataset_34937997-5658-430c-b9d7-521063b31b61)\nPulling Apptainer image docker://community.wave.seqera.io/library/polars_python:cab787b788e5eba7 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/community.wave.seqera.io-library-polars_python-cab787b788e5eba7.img]\n[19/9b4dd5] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MERGE_DATA\n[2b/8ceec2] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:GENE_STATISTICS\nPulling Apptainer image docker://quay.io/biocontainers/multiqc:1.27--pyhdfd78af_0 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/quay.io-biocontainers-multiqc-1.27--pyhdfd78af_0.img]\n[d3/a84151] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MULTIQC_WORKFLOW:MULTIQC\n-\u001b[0;35m[nf-core/stableexpression]\u001b[0;32m Pipeline completed successfully\u001b[0m-\n",
+                    "tool_id": "nf_core_stableexpression",
+                    "tool_stderr": "",
+                    "tool_stdout": "N E X T F L O W  ~  version 25.04.6\nPulling OlivierCoen/stableexpression ...\n Already-up-to-date\nLaunching `https://github.com/OlivierCoen/stableexpression` [infallible_sanger] DSL2 - revision: 139de1d916 [dev]\n\n-\u001b[2m----------------------------------------------------\u001b[0m-\n                                        \u001b[0;32m,--.\u001b[0;30m/\u001b[0;32m,-.\u001b[0m\n\u001b[0;34m        ___     __   __   __   ___     \u001b[0;32m/,-._.--~'\u001b[0m\n\u001b[0;34m  |\\ | |__  __ /  ` /  \\ |__) |__         \u001b[0;33m}  {\u001b[0m\n\u001b[0;34m  | \\| |       \\__, \\__/ |  \\ |___     \u001b[0;32m\\`-._,-`-,\u001b[0m\n                                        \u001b[0;32m`._,._,'\u001b[0m\n\u001b[0;35m  nf-core/stableexpression 1.0dev\u001b[0m\n-\u001b[2m----------------------------------------------------\u001b[0m-\n\u001b[1mInput/output options\u001b[0m\n  \u001b[0;34mspecies                     : \u001b[0;32msolanum tuberosum\u001b[0m\n  \u001b[0;34moutdir                      : \u001b[0;32m./results\u001b[0m\n  \u001b[0;34mdatasets                    : \u001b[0;32mrenamed_samplesheet.csv\u001b[0m\n  \u001b[0;34mskip_fetch_eatlas_accessions: \u001b[0;32mtrue\u001b[0m\n\n\u001b[1mStatistics options\u001b[0m\n  \u001b[0;34mks_pvalue_threshold         : \u001b[0;32m0.0\u001b[0m\n\n\u001b[1mGeneric options\u001b[0m\n  \u001b[0;34mmax_multiqc_email_size      : \u001b[0;32m25.MB\u001b[0m\n  \u001b[0;34mtrace_report_suffix         : \u001b[0;32m2025-07-07_15-34-55\u001b[0m\n\n\u001b[1mCore Nextflow options\u001b[0m\n  \u001b[0;34mrevision                    : \u001b[0;32mdev\u001b[0m\n  \u001b[0;34mrunName                     : \u001b[0;32minfallible_sanger\u001b[0m\n  \u001b[0;34mcontainerEngine             : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mlaunchDir                   : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/6/working\u001b[0m\n  \u001b[0;34mworkDir                     : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/6/working/work\u001b[0m\n  \u001b[0;34mprojectDir                  : \u001b[0;32m/home/olivier/.nextflow/assets/OlivierCoen/stableexpression\u001b[0m\n  \u001b[0;34muserName                    : \u001b[0;32molivier\u001b[0m\n  \u001b[0;34mprofile                     : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mconfigFiles                 : \u001b[0;32m\u001b[0m\n\n!! Only displaying parameters that differ from the pipeline defaults !!\n-\u001b[2m----------------------------------------------------\u001b[0m-\n* The nf-core framework\n    https://doi.org/10.1038/s41587-020-0439-x\n\n* Software dependencies\n    https://github.com/nf-core/stableexpression/blob/main/CITATIONS.md\n\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_python_requests:8c6da05a2935a952 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/community.wave.seqera.io-library-pandas_python_requests-8c6da05a2935a952.img]\n[fa/056a72] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (dataset_a07a6342-8e00-47d9-83d1-ebd4c14037e0)\n[07/8e178c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (dataset_34937997-5658-430c-b9d7-521063b31b61)\nPulling Apptainer image docker://community.wave.seqera.io/library/bioconductor-deseq2_r-base_r-optparse:c84cd7ffdb298fa7 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/community.wave.seqera.io-library-bioconductor-deseq2_r-base_r-optparse-c84cd7ffdb298fa7.img]\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scikit-learn:6f85e3c4d1706e81 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scikit-learn-6f85e3c4d1706e81.img]\n[dd/9ac587] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (dataset_a07a6342-8e00-47d9-83d1-ebd4c14037e0)\n[18/8d0d97] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (dataset_34937997-5658-430c-b9d7-521063b31b61)\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scipy:7cad0d297a717147 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scipy-7cad0d297a717147.img]\n[4e/9c4b12] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (dataset_a07a6342-8e00-47d9-83d1-ebd4c14037e0)\n[58/0c2003] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (dataset_34937997-5658-430c-b9d7-521063b31b61)\n[f0/d63cd8] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (dataset_34937997-5658-430c-b9d7-521063b31b61)\nPulling Apptainer image docker://community.wave.seqera.io/library/polars_python:cab787b788e5eba7 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/community.wave.seqera.io-library-polars_python-cab787b788e5eba7.img]\n[19/9b4dd5] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MERGE_DATA\n[2b/8ceec2] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:GENE_STATISTICS\nPulling Apptainer image docker://quay.io/biocontainers/multiqc:1.27--pyhdfd78af_0 [cache /tmp/tmppbklvq_q/job_working_directory/000/6/working/work/singularity/quay.io-biocontainers-multiqc-1.27--pyhdfd78af_0.img]\n[d3/a84151] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MULTIQC_WORKFLOW:MULTIQC\n-\u001b[0;35m[nf-core/stableexpression]\u001b[0;32m Pipeline completed successfully\u001b[0m-\n",
+                    "update_time": "2025-07-07T13:35:48.617986",
+                    "user_email": "planemo@galaxyproject.org",
+                    "user_id": "f14d691d132db03a"
+                },
+                "status": "success",
+                "test_index": 0,
+                "time_seconds": 79.66745114326477,
+                "tool_id": "nf_core_stableexpression",
+                "tool_version": "1.0dev"
+            },
+            "has_data": true,
+            "id": "nf_core_stableexpression-0"
+        },
+        {
+            "data": {
+                "inputs": {
+                    "input_output_options|species": "solanum tuberosum"
+                },
+                "job": {
+                    "command_line": "echo \"No user dataset provided\"    && nextflow run OlivierCoen/stableexpression -r dev -latest -profile apptainer -ansi-log false --outdir ./results --species \"solanum tuberosum\"  --normalisation_method \"deseq2\" --nb_top_gene_candidates 1000 --ks_pvalue_threshold 0.0",
+                    "command_version": "1.0dev",
+                    "copied_from_job_id": null,
+                    "create_time": "2025-07-07T13:35:49.408354",
+                    "dependencies": [
+                        {
+                            "cacheable": false,
+                            "dependency_resolver": {
+                                "auto_init": true,
+                                "auto_install": true,
+                                "can_uninstall_dependencies": true,
+                                "ensure_channels": "conda-forge,bioconda",
+                                "model_class": "CondaDependencyResolver",
+                                "prefix": "/home/olivier/miniconda3",
+                                "read_only": false,
+                                "resolver_type": "conda",
+                                "resolves_simple_dependencies": true,
+                                "use_local": false,
+                                "versionless": false
+                            },
+                            "dependency_type": "conda",
+                            "environment_path": "/home/olivier/miniconda3/envs/mulled-v1-07f6cfb22b452fc0be855ecba9cd73b57bf68b9e0f328b7d8a5bb8363ec2f8bf",
+                            "exact": true,
+                            "model_class": "MergedCondaDependency",
+                            "name": "nextflow",
+                            "version": "25.04.6"
+                        },
+                        {
+                            "cacheable": false,
+                            "dependency_resolver": {
+                                "auto_init": true,
+                                "auto_install": true,
+                                "can_uninstall_dependencies": true,
+                                "ensure_channels": "conda-forge,bioconda",
+                                "model_class": "CondaDependencyResolver",
+                                "prefix": "/home/olivier/miniconda3",
+                                "read_only": false,
+                                "resolver_type": "conda",
+                                "resolves_simple_dependencies": true,
+                                "use_local": false,
+                                "versionless": false
+                            },
+                            "dependency_type": "conda",
+                            "environment_path": "/home/olivier/miniconda3/envs/mulled-v1-07f6cfb22b452fc0be855ecba9cd73b57bf68b9e0f328b7d8a5bb8363ec2f8bf",
+                            "exact": true,
+                            "model_class": "MergedCondaDependency",
+                            "name": "apptainer",
+                            "version": "1.4.1"
+                        },
+                        {
+                            "cacheable": false,
+                            "dependency_resolver": {
+                                "auto_init": true,
+                                "auto_install": true,
+                                "can_uninstall_dependencies": true,
+                                "ensure_channels": "conda-forge,bioconda",
+                                "model_class": "CondaDependencyResolver",
+                                "prefix": "/home/olivier/miniconda3",
+                                "read_only": false,
+                                "resolver_type": "conda",
+                                "resolves_simple_dependencies": true,
+                                "use_local": false,
+                                "versionless": false
+                            },
+                            "dependency_type": "conda",
+                            "environment_path": "/home/olivier/miniconda3/envs/mulled-v1-07f6cfb22b452fc0be855ecba9cd73b57bf68b9e0f328b7d8a5bb8363ec2f8bf",
+                            "exact": true,
+                            "model_class": "MergedCondaDependency",
+                            "name": "openjdk",
+                            "version": "23.0.2"
+                        }
+                    ],
+                    "exit_code": 0,
+                    "external_id": "2198635",
+                    "galaxy_version": "25.0",
+                    "handler": null,
+                    "history_id": "d77c1c1553d8ae81",
+                    "id": "4e217783f5b35092",
+                    "inputs": {},
+                    "job_messages": [],
+                    "job_metrics": [],
+                    "job_runner_name": null,
+                    "job_stderr": "",
+                    "job_stdout": "",
+                    "model_class": "Job",
+                    "output_collections": {},
+                    "outputs": {
+                        "multiqc_report": {
+                            "id": "2f686cc81a8947ff",
+                            "src": "hda",
+                            "uuid": "f802e5f0-25e1-486a-b305-4426ff321221"
+                        },
+                        "top_stable_genes_summary": {
+                            "id": "74b2595b34860659",
+                            "src": "hda",
+                            "uuid": "c8db12f8-d089-425b-8d7f-0cebf8c352a5"
+                        }
+                    },
+                    "params": {
+                        "__input_ext": "\"data\"",
+                        "chromInfo": "\"/tmp/tmppbklvq_q/galaxy-dev/tool-data/shared/ucsc/chrom/?.len\"",
+                        "dbkey": "\"?\"",
+                        "expression_atlas_options": "{\"accessions_only\": false, \"eatlas_accessions\": null, \"eatlas_accessions_file\": null, \"eatlas_keywords\": null, \"exclude_eatlas_accessions\": null, \"exclude_eatlas_accessions_file\": null}",
+                        "idmapping_options": "{\"gene_id_mapping_file\": null, \"gene_metadata\": null, \"skip_gprofiler\": false}",
+                        "input_output_options": "{\"datasets\": {\"__current_case__\": 1, \"provide_datasets\": false}, \"skip_fetch_eatlas_accessions\": false, \"species\": \"solanum tuberosum\"}",
+                        "statistical_options": "{\"ks_pvalue_threshold\": \"0.0\", \"nb_top_gene_candidates\": \"1000\", \"normalisation_method\": \"deseq2\"}"
+                    },
+                    "state": "ok",
+                    "stderr": "",
+                    "stdout": "No user dataset provided\nN E X T F L O W  ~  version 25.04.6\nPulling OlivierCoen/stableexpression ...\n Already-up-to-date\nLaunching `https://github.com/OlivierCoen/stableexpression` [intergalactic_pauling] DSL2 - revision: 139de1d916 [dev]\n\n-\u001b[2m----------------------------------------------------\u001b[0m-\n                                        \u001b[0;32m,--.\u001b[0;30m/\u001b[0;32m,-.\u001b[0m\n\u001b[0;34m        ___     __   __   __   ___     \u001b[0;32m/,-._.--~'\u001b[0m\n\u001b[0;34m  |\\ | |__  __ /  ` /  \\ |__) |__         \u001b[0;33m}  {\u001b[0m\n\u001b[0;34m  | \\| |       \\__, \\__/ |  \\ |___     \u001b[0;32m\\`-._,-`-,\u001b[0m\n                                        \u001b[0;32m`._,._,'\u001b[0m\n\u001b[0;35m  nf-core/stableexpression 1.0dev\u001b[0m\n-\u001b[2m----------------------------------------------------\u001b[0m-\n\u001b[1mInput/output options\u001b[0m\n  \u001b[0;34mspecies               : \u001b[0;32msolanum tuberosum\u001b[0m\n  \u001b[0;34moutdir                : \u001b[0;32m./results\u001b[0m\n\n\u001b[1mStatistics options\u001b[0m\n  \u001b[0;34mks_pvalue_threshold   : \u001b[0;32m0.0\u001b[0m\n\n\u001b[1mGeneric options\u001b[0m\n  \u001b[0;34mmax_multiqc_email_size: \u001b[0;32m25.MB\u001b[0m\n  \u001b[0;34mtrace_report_suffix   : \u001b[0;32m2025-07-07_15-35-57\u001b[0m\n\n\u001b[1mCore Nextflow options\u001b[0m\n  \u001b[0;34mrevision              : \u001b[0;32mdev\u001b[0m\n  \u001b[0;34mrunName               : \u001b[0;32mintergalactic_pauling\u001b[0m\n  \u001b[0;34mcontainerEngine       : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mlaunchDir             : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/7/working\u001b[0m\n  \u001b[0;34mworkDir               : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/7/working/work\u001b[0m\n  \u001b[0;34mprojectDir            : \u001b[0;32m/home/olivier/.nextflow/assets/OlivierCoen/stableexpression\u001b[0m\n  \u001b[0;34muserName              : \u001b[0;32molivier\u001b[0m\n  \u001b[0;34mprofile               : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mconfigFiles           : \u001b[0;32m\u001b[0m\n\n!! Only displaying parameters that differ from the pipeline defaults !!\n-\u001b[2m----------------------------------------------------\u001b[0m-\n* The nf-core framework\n    https://doi.org/10.1038/s41587-020-0439-x\n\n* Software dependencies\n    https://github.com/nf-core/stableexpression/blob/main/CITATIONS.md\n\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/nltk_pandas_python_pyyaml_pruned:2218f9c10723fbf3 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-nltk_pandas_python_pyyaml_pruned-2218f9c10723fbf3.img]\n[1f/c49a85] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETACCESSIONS\nPulling Apptainer image docker://community.wave.seqera.io/library/bioconductor-expressionatlas_r-base_r-optparse:ca0f8cd9d3f44af9 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-bioconductor-expressionatlas_r-base_r-optparse-ca0f8cd9d3f44af9.img]\n[9a/9a4cd2] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-4251)\n[f9/c5afe9] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-7711)\n[ff/ca3fdb] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-4301)\n[cf/054e1d] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-5038)\n[b9/4a7438] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-552)\n[e0/6636bb] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-GEOD-61690)\n[87/3dd640] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-GEOD-77826)\n[36/e011ea] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-5215)\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_python_requests:8c6da05a2935a952 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-pandas_python_requests-8c6da05a2935a952.img]\n[34/4b621f] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_GEOD_77826_rnaseq)\n[59/26bbb6] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_4251_rnaseq)\n[d3/ba509a] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_7711_rnaseq)\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/bioconductor-deseq2_r-base_r-optparse:c84cd7ffdb298fa7 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-bioconductor-deseq2_r-base_r-optparse-c84cd7ffdb298fa7.img]\n[b4/3cb17c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_5038_rnaseq)\n[af/419079] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_GEOD_61690_rnaseq)\n[31/91c25c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_4301_rnaseq)\n[20/eb8d95] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_5215_rnaseq)\n[9f/9131f9] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_552_rnaseq)\n[04/09f0f7] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_GEOD_77826_rnaseq)\n[22/23cbcf] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_4251_rnaseq)\n[a5/75e84d] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_7711_rnaseq)\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scikit-learn:6f85e3c4d1706e81 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scikit-learn-6f85e3c4d1706e81.img]\n[c8/f80f4e] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_5038_rnaseq)\n[a5/6663fb] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_GEOD_61690_rnaseq)\n[31/a97a9d] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_4301_rnaseq)\n[5e/e3acd4] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_5215_rnaseq)\n[ce/aee630] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_552_rnaseq)\n[e6/616f1a] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_4251_rnaseq)\n[63/3c20fe] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_GEOD_77826_rnaseq)\n[0b/88927c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_7711_rnaseq)\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scipy:7cad0d297a717147 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scipy-7cad0d297a717147.img]\n[27/d62eca] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_5038_rnaseq)\n[28/3ddfd3] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_GEOD_61690_rnaseq)\n[4c/314be3] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_4301_rnaseq)\n[aa/b72868] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_5215_rnaseq)\n[33/301a93] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_552_rnaseq)\n[48/e9e634] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_4251_rnaseq)\n[de/22b91c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_GEOD_77826_rnaseq)\n[02/28863b] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_7711_rnaseq)\n[70/48c1c4] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_5038_rnaseq)\n[d6/3320ec] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_GEOD_61690_rnaseq)\n[ac/3b0515] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_4301_rnaseq)\n[88/5c00b6] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_5215_rnaseq)\n[c7/15b347] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_552_rnaseq)\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/polars_python:cab787b788e5eba7 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-polars_python-cab787b788e5eba7.img]\n[f8/fa4aca] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MERGE_DATA\n[2c/a6954a] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:GENE_STATISTICS\nPulling Apptainer image docker://quay.io/biocontainers/multiqc:1.27--pyhdfd78af_0 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/quay.io-biocontainers-multiqc-1.27--pyhdfd78af_0.img]\n[5c/c1a568] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MULTIQC_WORKFLOW:MULTIQC\n-\u001b[0;35m[nf-core/stableexpression]\u001b[0;32m Pipeline completed successfully\u001b[0m-\n",
+                    "tool_id": "nf_core_stableexpression",
+                    "tool_stderr": "",
+                    "tool_stdout": "No user dataset provided\nN E X T F L O W  ~  version 25.04.6\nPulling OlivierCoen/stableexpression ...\n Already-up-to-date\nLaunching `https://github.com/OlivierCoen/stableexpression` [intergalactic_pauling] DSL2 - revision: 139de1d916 [dev]\n\n-\u001b[2m----------------------------------------------------\u001b[0m-\n                                        \u001b[0;32m,--.\u001b[0;30m/\u001b[0;32m,-.\u001b[0m\n\u001b[0;34m        ___     __   __   __   ___     \u001b[0;32m/,-._.--~'\u001b[0m\n\u001b[0;34m  |\\ | |__  __ /  ` /  \\ |__) |__         \u001b[0;33m}  {\u001b[0m\n\u001b[0;34m  | \\| |       \\__, \\__/ |  \\ |___     \u001b[0;32m\\`-._,-`-,\u001b[0m\n                                        \u001b[0;32m`._,._,'\u001b[0m\n\u001b[0;35m  nf-core/stableexpression 1.0dev\u001b[0m\n-\u001b[2m----------------------------------------------------\u001b[0m-\n\u001b[1mInput/output options\u001b[0m\n  \u001b[0;34mspecies               : \u001b[0;32msolanum tuberosum\u001b[0m\n  \u001b[0;34moutdir                : \u001b[0;32m./results\u001b[0m\n\n\u001b[1mStatistics options\u001b[0m\n  \u001b[0;34mks_pvalue_threshold   : \u001b[0;32m0.0\u001b[0m\n\n\u001b[1mGeneric options\u001b[0m\n  \u001b[0;34mmax_multiqc_email_size: \u001b[0;32m25.MB\u001b[0m\n  \u001b[0;34mtrace_report_suffix   : \u001b[0;32m2025-07-07_15-35-57\u001b[0m\n\n\u001b[1mCore Nextflow options\u001b[0m\n  \u001b[0;34mrevision              : \u001b[0;32mdev\u001b[0m\n  \u001b[0;34mrunName               : \u001b[0;32mintergalactic_pauling\u001b[0m\n  \u001b[0;34mcontainerEngine       : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mlaunchDir             : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/7/working\u001b[0m\n  \u001b[0;34mworkDir               : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/7/working/work\u001b[0m\n  \u001b[0;34mprojectDir            : \u001b[0;32m/home/olivier/.nextflow/assets/OlivierCoen/stableexpression\u001b[0m\n  \u001b[0;34muserName              : \u001b[0;32molivier\u001b[0m\n  \u001b[0;34mprofile               : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mconfigFiles           : \u001b[0;32m\u001b[0m\n\n!! Only displaying parameters that differ from the pipeline defaults !!\n-\u001b[2m----------------------------------------------------\u001b[0m-\n* The nf-core framework\n    https://doi.org/10.1038/s41587-020-0439-x\n\n* Software dependencies\n    https://github.com/nf-core/stableexpression/blob/main/CITATIONS.md\n\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/nltk_pandas_python_pyyaml_pruned:2218f9c10723fbf3 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-nltk_pandas_python_pyyaml_pruned-2218f9c10723fbf3.img]\n[1f/c49a85] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETACCESSIONS\nPulling Apptainer image docker://community.wave.seqera.io/library/bioconductor-expressionatlas_r-base_r-optparse:ca0f8cd9d3f44af9 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-bioconductor-expressionatlas_r-base_r-optparse-ca0f8cd9d3f44af9.img]\n[9a/9a4cd2] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-4251)\n[f9/c5afe9] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-7711)\n[ff/ca3fdb] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-4301)\n[cf/054e1d] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-5038)\n[b9/4a7438] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-552)\n[e0/6636bb] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-GEOD-61690)\n[87/3dd640] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-GEOD-77826)\n[36/e011ea] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-5215)\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_python_requests:8c6da05a2935a952 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-pandas_python_requests-8c6da05a2935a952.img]\n[34/4b621f] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_GEOD_77826_rnaseq)\n[59/26bbb6] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_4251_rnaseq)\n[d3/ba509a] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_7711_rnaseq)\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/bioconductor-deseq2_r-base_r-optparse:c84cd7ffdb298fa7 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-bioconductor-deseq2_r-base_r-optparse-c84cd7ffdb298fa7.img]\n[b4/3cb17c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_5038_rnaseq)\n[af/419079] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_GEOD_61690_rnaseq)\n[31/91c25c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_4301_rnaseq)\n[20/eb8d95] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_5215_rnaseq)\n[9f/9131f9] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_552_rnaseq)\n[04/09f0f7] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_GEOD_77826_rnaseq)\n[22/23cbcf] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_4251_rnaseq)\n[a5/75e84d] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_7711_rnaseq)\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scikit-learn:6f85e3c4d1706e81 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scikit-learn-6f85e3c4d1706e81.img]\n[c8/f80f4e] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_5038_rnaseq)\n[a5/6663fb] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_GEOD_61690_rnaseq)\n[31/a97a9d] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_4301_rnaseq)\n[5e/e3acd4] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_5215_rnaseq)\n[ce/aee630] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_552_rnaseq)\n[e6/616f1a] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_4251_rnaseq)\n[63/3c20fe] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_GEOD_77826_rnaseq)\n[0b/88927c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_7711_rnaseq)\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scipy:7cad0d297a717147 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scipy-7cad0d297a717147.img]\n[27/d62eca] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_5038_rnaseq)\n[28/3ddfd3] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_GEOD_61690_rnaseq)\n[4c/314be3] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_4301_rnaseq)\n[aa/b72868] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_5215_rnaseq)\n[33/301a93] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_552_rnaseq)\n[48/e9e634] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_4251_rnaseq)\n[de/22b91c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_GEOD_77826_rnaseq)\n[02/28863b] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_7711_rnaseq)\n[70/48c1c4] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_5038_rnaseq)\n[d6/3320ec] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_GEOD_61690_rnaseq)\n[ac/3b0515] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_4301_rnaseq)\n[88/5c00b6] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_5215_rnaseq)\n[c7/15b347] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_552_rnaseq)\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/polars_python:cab787b788e5eba7 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/community.wave.seqera.io-library-polars_python-cab787b788e5eba7.img]\n[f8/fa4aca] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MERGE_DATA\n[2c/a6954a] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:GENE_STATISTICS\nPulling Apptainer image docker://quay.io/biocontainers/multiqc:1.27--pyhdfd78af_0 [cache /tmp/tmppbklvq_q/job_working_directory/000/7/working/work/singularity/quay.io-biocontainers-multiqc-1.27--pyhdfd78af_0.img]\n[5c/c1a568] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MULTIQC_WORKFLOW:MULTIQC\n-\u001b[0;35m[nf-core/stableexpression]\u001b[0;32m Pipeline completed successfully\u001b[0m-\n",
+                    "update_time": "2025-07-07T13:40:17.207952",
+                    "user_email": "planemo@galaxyproject.org",
+                    "user_id": "f14d691d132db03a"
+                },
+                "status": "success",
+                "test_index": 1,
+                "time_seconds": 268.3443777561188,
+                "tool_id": "nf_core_stableexpression",
+                "tool_version": "1.0dev"
+            },
+            "has_data": true,
+            "id": "nf_core_stableexpression-1"
+        },
+        {
+            "data": {
+                "inputs": {
+                    "input_output_options|datasets|count_datasets": [
+                        {
+                            "id": "1749056fc9e975ac",
+                            "src": "hda"
+                        },
+                        {
+                            "id": "ace316e9ce92c65a",
+                            "src": "hda"
+                        }
+                    ],
+                    "input_output_options|datasets|experimental_designs": [
+                        {
+                            "id": "093c5f960045e43a",
+                            "src": "hda"
+                        },
+                        {
+                            "id": "063a55387997889b",
+                            "src": "hda"
+                        }
+                    ],
+                    "input_output_options|datasets|provide_datasets": true,
+                    "input_output_options|datasets|samplesheet": {
+                        "id": "e7b79b392ebf8da8",
+                        "src": "hda"
+                    },
+                    "input_output_options|species": "solanum tuberosum"
+                },
+                "job": {
+                    "command_line": "python '/home/olivier/repositories/nf-core-stableexpression/galaxy/tool/rebuild_samplesheet.py' --in /tmp/tmppbklvq_q/files/7/6/2/dataset_762f4e43-a746-4274-9f6a-ce01101735cd.dat --out renamed_samplesheet.csv --count-files /tmp/tmppbklvq_q/files/6/9/d/dataset_69d3f92c-2be0-4deb-a415-fea0c6b418d1.dat,/tmp/tmppbklvq_q/files/3/6/7/dataset_3671e188-4fd4-41ab-ad36-517ad81c4465.dat --count-filenames  microarray.normalised.csv rnaseq.raw.csv --design-files /tmp/tmppbklvq_q/files/e/f/9/dataset_ef9df148-00cb-485d-b28e-6caf887a48e6.dat,/tmp/tmppbklvq_q/files/8/6/3/dataset_863e9d57-3c97-4a70-b305-688a48c3642d.dat --design-filenames  microarray.normalised.design.csv rnaseq.raw.design.csv    && nextflow run OlivierCoen/stableexpression -r dev -latest -profile apptainer -ansi-log false --outdir ./results --species \"solanum tuberosum\"  --datasets renamed_samplesheet.csv --normalisation_method \"deseq2\" --nb_top_gene_candidates 1000 --ks_pvalue_threshold 0.0",
+                    "command_version": "1.0dev",
+                    "copied_from_job_id": null,
+                    "create_time": "2025-07-07T13:40:34.899637",
+                    "dependencies": [
+                        {
+                            "cacheable": false,
+                            "dependency_resolver": {
+                                "auto_init": true,
+                                "auto_install": true,
+                                "can_uninstall_dependencies": true,
+                                "ensure_channels": "conda-forge,bioconda",
+                                "model_class": "CondaDependencyResolver",
+                                "prefix": "/home/olivier/miniconda3",
+                                "read_only": false,
+                                "resolver_type": "conda",
+                                "resolves_simple_dependencies": true,
+                                "use_local": false,
+                                "versionless": false
+                            },
+                            "dependency_type": "conda",
+                            "environment_path": "/home/olivier/miniconda3/envs/mulled-v1-07f6cfb22b452fc0be855ecba9cd73b57bf68b9e0f328b7d8a5bb8363ec2f8bf",
+                            "exact": true,
+                            "model_class": "MergedCondaDependency",
+                            "name": "nextflow",
+                            "version": "25.04.6"
+                        },
+                        {
+                            "cacheable": false,
+                            "dependency_resolver": {
+                                "auto_init": true,
+                                "auto_install": true,
+                                "can_uninstall_dependencies": true,
+                                "ensure_channels": "conda-forge,bioconda",
+                                "model_class": "CondaDependencyResolver",
+                                "prefix": "/home/olivier/miniconda3",
+                                "read_only": false,
+                                "resolver_type": "conda",
+                                "resolves_simple_dependencies": true,
+                                "use_local": false,
+                                "versionless": false
+                            },
+                            "dependency_type": "conda",
+                            "environment_path": "/home/olivier/miniconda3/envs/mulled-v1-07f6cfb22b452fc0be855ecba9cd73b57bf68b9e0f328b7d8a5bb8363ec2f8bf",
+                            "exact": true,
+                            "model_class": "MergedCondaDependency",
+                            "name": "apptainer",
+                            "version": "1.4.1"
+                        },
+                        {
+                            "cacheable": false,
+                            "dependency_resolver": {
+                                "auto_init": true,
+                                "auto_install": true,
+                                "can_uninstall_dependencies": true,
+                                "ensure_channels": "conda-forge,bioconda",
+                                "model_class": "CondaDependencyResolver",
+                                "prefix": "/home/olivier/miniconda3",
+                                "read_only": false,
+                                "resolver_type": "conda",
+                                "resolves_simple_dependencies": true,
+                                "use_local": false,
+                                "versionless": false
+                            },
+                            "dependency_type": "conda",
+                            "environment_path": "/home/olivier/miniconda3/envs/mulled-v1-07f6cfb22b452fc0be855ecba9cd73b57bf68b9e0f328b7d8a5bb8363ec2f8bf",
+                            "exact": true,
+                            "model_class": "MergedCondaDependency",
+                            "name": "openjdk",
+                            "version": "23.0.2"
+                        }
+                    ],
+                    "exit_code": 0,
+                    "external_id": "2239136",
+                    "galaxy_version": "25.0",
+                    "handler": null,
+                    "history_id": "8f49e6aa49bd8f4e",
+                    "id": "093c5f960045e43a",
+                    "inputs": {
+                        "input_output_options|datasets|count_datasets": {
+                            "id": "1749056fc9e975ac",
+                            "src": "hda",
+                            "uuid": "69d3f92c-2be0-4deb-a415-fea0c6b418d1"
+                        },
+                        "input_output_options|datasets|count_datasets1": {
+                            "id": "1749056fc9e975ac",
+                            "src": "hda",
+                            "uuid": "69d3f92c-2be0-4deb-a415-fea0c6b418d1"
+                        },
+                        "input_output_options|datasets|count_datasets2": {
+                            "id": "ace316e9ce92c65a",
+                            "src": "hda",
+                            "uuid": "3671e188-4fd4-41ab-ad36-517ad81c4465"
+                        },
+                        "input_output_options|datasets|experimental_designs": {
+                            "id": "093c5f960045e43a",
+                            "src": "hda",
+                            "uuid": "ef9df148-00cb-485d-b28e-6caf887a48e6"
+                        },
+                        "input_output_options|datasets|experimental_designs1": {
+                            "id": "093c5f960045e43a",
+                            "src": "hda",
+                            "uuid": "ef9df148-00cb-485d-b28e-6caf887a48e6"
+                        },
+                        "input_output_options|datasets|experimental_designs2": {
+                            "id": "063a55387997889b",
+                            "src": "hda",
+                            "uuid": "863e9d57-3c97-4a70-b305-688a48c3642d"
+                        },
+                        "input_output_options|datasets|samplesheet": {
+                            "id": "e7b79b392ebf8da8",
+                            "src": "hda",
+                            "uuid": "762f4e43-a746-4274-9f6a-ce01101735cd"
+                        }
+                    },
+                    "job_messages": [],
+                    "job_metrics": [],
+                    "job_runner_name": null,
+                    "job_stderr": "",
+                    "job_stdout": "",
+                    "model_class": "Job",
+                    "output_collections": {},
+                    "outputs": {
+                        "multiqc_report": {
+                            "id": "c5287a5f0f3a1faf",
+                            "src": "hda",
+                            "uuid": "86ef096d-8ff5-4e37-a58e-169dd3c38c49"
+                        },
+                        "top_stable_genes_summary": {
+                            "id": "60efb04c06cc3091",
+                            "src": "hda",
+                            "uuid": "d2ab28b3-8f62-4bba-9eb5-322e16024164"
+                        }
+                    },
+                    "params": {
+                        "__input_ext": "\"txt\"",
+                        "chromInfo": "\"/tmp/tmppbklvq_q/galaxy-dev/tool-data/shared/ucsc/chrom/?.len\"",
+                        "dbkey": "\"?\"",
+                        "expression_atlas_options": "{\"accessions_only\": false, \"eatlas_accessions\": null, \"eatlas_accessions_file\": null, \"eatlas_keywords\": null, \"exclude_eatlas_accessions\": null, \"exclude_eatlas_accessions_file\": null}",
+                        "idmapping_options": "{\"gene_id_mapping_file\": null, \"gene_metadata\": null, \"skip_gprofiler\": false}",
+                        "input_output_options": "{\"datasets\": {\"__current_case__\": 0, \"count_datasets\": {\"values\": [{\"id\": 11, \"src\": \"hda\"}, {\"id\": 12, \"src\": \"hda\"}]}, \"experimental_designs\": {\"values\": [{\"id\": 13, \"src\": \"hda\"}, {\"id\": 14, \"src\": \"hda\"}]}, \"provide_datasets\": true, \"samplesheet\": {\"values\": [{\"id\": 10, \"src\": \"hda\"}]}}, \"skip_fetch_eatlas_accessions\": false, \"species\": \"solanum tuberosum\"}",
+                        "statistical_options": "{\"ks_pvalue_threshold\": \"0.0\", \"nb_top_gene_candidates\": \"1000\", \"normalisation_method\": \"deseq2\"}"
+                    },
+                    "state": "ok",
+                    "stderr": "",
+                    "stdout": "N E X T F L O W  ~  version 25.04.6\nPulling OlivierCoen/stableexpression ...\n Already-up-to-date\nLaunching `https://github.com/OlivierCoen/stableexpression` [grave_hodgkin] DSL2 - revision: 139de1d916 [dev]\n\n-\u001b[2m----------------------------------------------------\u001b[0m-\n                                        \u001b[0;32m,--.\u001b[0;30m/\u001b[0;32m,-.\u001b[0m\n\u001b[0;34m        ___     __   __   __   ___     \u001b[0;32m/,-._.--~'\u001b[0m\n\u001b[0;34m  |\\ | |__  __ /  ` /  \\ |__) |__         \u001b[0;33m}  {\u001b[0m\n\u001b[0;34m  | \\| |       \\__, \\__/ |  \\ |___     \u001b[0;32m\\`-._,-`-,\u001b[0m\n                                        \u001b[0;32m`._,._,'\u001b[0m\n\u001b[0;35m  nf-core/stableexpression 1.0dev\u001b[0m\n-\u001b[2m----------------------------------------------------\u001b[0m-\n\u001b[1mInput/output options\u001b[0m\n  \u001b[0;34mspecies               : \u001b[0;32msolanum tuberosum\u001b[0m\n  \u001b[0;34moutdir                : \u001b[0;32m./results\u001b[0m\n  \u001b[0;34mdatasets              : \u001b[0;32mrenamed_samplesheet.csv\u001b[0m\n\n\u001b[1mStatistics options\u001b[0m\n  \u001b[0;34mks_pvalue_threshold   : \u001b[0;32m0.0\u001b[0m\n\n\u001b[1mGeneric options\u001b[0m\n  \u001b[0;34mmax_multiqc_email_size: \u001b[0;32m25.MB\u001b[0m\n  \u001b[0;34mtrace_report_suffix   : \u001b[0;32m2025-07-07_15-40-39\u001b[0m\n\n\u001b[1mCore Nextflow options\u001b[0m\n  \u001b[0;34mrevision              : \u001b[0;32mdev\u001b[0m\n  \u001b[0;34mrunName               : \u001b[0;32mgrave_hodgkin\u001b[0m\n  \u001b[0;34mcontainerEngine       : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mlaunchDir             : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/13/working\u001b[0m\n  \u001b[0;34mworkDir               : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/13/working/work\u001b[0m\n  \u001b[0;34mprojectDir            : \u001b[0;32m/home/olivier/.nextflow/assets/OlivierCoen/stableexpression\u001b[0m\n  \u001b[0;34muserName              : \u001b[0;32molivier\u001b[0m\n  \u001b[0;34mprofile               : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mconfigFiles           : \u001b[0;32m\u001b[0m\n\n!! Only displaying parameters that differ from the pipeline defaults !!\n-\u001b[2m----------------------------------------------------\u001b[0m-\n* The nf-core framework\n    https://doi.org/10.1038/s41587-020-0439-x\n\n* Software dependencies\n    https://github.com/nf-core/stableexpression/blob/main/CITATIONS.md\n\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/nltk_pandas_python_pyyaml_pruned:2218f9c10723fbf3 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-nltk_pandas_python_pyyaml_pruned-2218f9c10723fbf3.img]\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_python_requests:8c6da05a2935a952 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-pandas_python_requests-8c6da05a2935a952.img]\n[86/9fbf39] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (dataset_3671e188-4fd4-41ab-ad36-517ad81c4465)\n[e5/47d907] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (dataset_69d3f92c-2be0-4deb-a415-fea0c6b418d1)\n[87/da389d] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETACCESSIONS\nPulling Apptainer image docker://community.wave.seqera.io/library/bioconductor-deseq2_r-base_r-optparse:c84cd7ffdb298fa7 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-bioconductor-deseq2_r-base_r-optparse-c84cd7ffdb298fa7.img]\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scikit-learn:6f85e3c4d1706e81 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scikit-learn-6f85e3c4d1706e81.img]\n[51/7cb214] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (dataset_69d3f92c-2be0-4deb-a415-fea0c6b418d1)\n[30/76ffa2] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (dataset_3671e188-4fd4-41ab-ad36-517ad81c4465)\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scipy:7cad0d297a717147 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scipy-7cad0d297a717147.img]\n[8b/cb4e47] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (dataset_69d3f92c-2be0-4deb-a415-fea0c6b418d1)\nPulling Apptainer image docker://community.wave.seqera.io/library/bioconductor-expressionatlas_r-base_r-optparse:ca0f8cd9d3f44af9 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-bioconductor-expressionatlas_r-base_r-optparse-ca0f8cd9d3f44af9.img]\n[50/62910a] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-552)\n[99/0032bc] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-4251)\n[b0/fea57e] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-4301)\n[5d/78028e] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-GEOD-61690)\n[b3/c3b0b4] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-GEOD-77826)\n[ef/e42508] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-5038)\n[bd/3fa292] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-7711)\n[8f/a81318] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-5215)\n[51/2fe86b] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_4301_rnaseq)\n[fb/1074e5] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_552_rnaseq)\n[43/8d985d] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_GEOD_61690_rnaseq)\n[92/138d42] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_GEOD_77826_rnaseq)\n[db/dd3fbf] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_4251_rnaseq)\n[44/dc08c9] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_5038_rnaseq)\n[0c/f4f46e] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_5215_rnaseq)\n[cd/61f87c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_7711_rnaseq)\n[65/24c205] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_552_rnaseq)\n[f6/f1cf3f] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_4301_rnaseq)\n[9b/fe7347] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_GEOD_61690_rnaseq)\n[ed/bd7ad2] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_GEOD_77826_rnaseq)\n[47/b13d0c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_4251_rnaseq)\n[c7/3de644] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_5038_rnaseq)\n[26/a49898] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_5215_rnaseq)\n[5c/fa0cee] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_7711_rnaseq)\n[2b/6ee60b] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (dataset_3671e188-4fd4-41ab-ad36-517ad81c4465)\n[b2/a196a7] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_552_rnaseq)\n[41/7dc9e1] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_4301_rnaseq)\n[01/673e26] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_GEOD_61690_rnaseq)\n[b8/8fb0eb] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_GEOD_77826_rnaseq)\n[30/ee19b6] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_4251_rnaseq)\n[f9/f2b9b6] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_5038_rnaseq)\n[ca/18206e] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_5215_rnaseq)\n[22/7e80e7] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_7711_rnaseq)\n[bc/d70f60] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (dataset_3671e188-4fd4-41ab-ad36-517ad81c4465)\n[58/2d50b7] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_552_rnaseq)\n[1e/aeb2b1] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_4301_rnaseq)\n[29/8ca339] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_GEOD_61690_rnaseq)\n[af/164cba] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_GEOD_77826_rnaseq)\n[77/7abd5c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_4251_rnaseq)\n[20/cc6ed1] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_5038_rnaseq)\n[77/61b951] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_5215_rnaseq)\n[21/f6cbd4] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_7711_rnaseq)\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/polars_python:cab787b788e5eba7 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-polars_python-cab787b788e5eba7.img]\n[f7/b8e320] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MERGE_DATA\n[cb/7f5612] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:GENE_STATISTICS\nPulling Apptainer image docker://quay.io/biocontainers/multiqc:1.27--pyhdfd78af_0 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/quay.io-biocontainers-multiqc-1.27--pyhdfd78af_0.img]\n[61/43e626] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MULTIQC_WORKFLOW:MULTIQC\n-\u001b[0;35m[nf-core/stableexpression]\u001b[0;32m Pipeline completed successfully\u001b[0m-\n",
+                    "tool_id": "nf_core_stableexpression",
+                    "tool_stderr": "",
+                    "tool_stdout": "N E X T F L O W  ~  version 25.04.6\nPulling OlivierCoen/stableexpression ...\n Already-up-to-date\nLaunching `https://github.com/OlivierCoen/stableexpression` [grave_hodgkin] DSL2 - revision: 139de1d916 [dev]\n\n-\u001b[2m----------------------------------------------------\u001b[0m-\n                                        \u001b[0;32m,--.\u001b[0;30m/\u001b[0;32m,-.\u001b[0m\n\u001b[0;34m        ___     __   __   __   ___     \u001b[0;32m/,-._.--~'\u001b[0m\n\u001b[0;34m  |\\ | |__  __ /  ` /  \\ |__) |__         \u001b[0;33m}  {\u001b[0m\n\u001b[0;34m  | \\| |       \\__, \\__/ |  \\ |___     \u001b[0;32m\\`-._,-`-,\u001b[0m\n                                        \u001b[0;32m`._,._,'\u001b[0m\n\u001b[0;35m  nf-core/stableexpression 1.0dev\u001b[0m\n-\u001b[2m----------------------------------------------------\u001b[0m-\n\u001b[1mInput/output options\u001b[0m\n  \u001b[0;34mspecies               : \u001b[0;32msolanum tuberosum\u001b[0m\n  \u001b[0;34moutdir                : \u001b[0;32m./results\u001b[0m\n  \u001b[0;34mdatasets              : \u001b[0;32mrenamed_samplesheet.csv\u001b[0m\n\n\u001b[1mStatistics options\u001b[0m\n  \u001b[0;34mks_pvalue_threshold   : \u001b[0;32m0.0\u001b[0m\n\n\u001b[1mGeneric options\u001b[0m\n  \u001b[0;34mmax_multiqc_email_size: \u001b[0;32m25.MB\u001b[0m\n  \u001b[0;34mtrace_report_suffix   : \u001b[0;32m2025-07-07_15-40-39\u001b[0m\n\n\u001b[1mCore Nextflow options\u001b[0m\n  \u001b[0;34mrevision              : \u001b[0;32mdev\u001b[0m\n  \u001b[0;34mrunName               : \u001b[0;32mgrave_hodgkin\u001b[0m\n  \u001b[0;34mcontainerEngine       : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mlaunchDir             : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/13/working\u001b[0m\n  \u001b[0;34mworkDir               : \u001b[0;32m/tmp/tmppbklvq_q/job_working_directory/000/13/working/work\u001b[0m\n  \u001b[0;34mprojectDir            : \u001b[0;32m/home/olivier/.nextflow/assets/OlivierCoen/stableexpression\u001b[0m\n  \u001b[0;34muserName              : \u001b[0;32molivier\u001b[0m\n  \u001b[0;34mprofile               : \u001b[0;32mapptainer\u001b[0m\n  \u001b[0;34mconfigFiles           : \u001b[0;32m\u001b[0m\n\n!! Only displaying parameters that differ from the pipeline defaults !!\n-\u001b[2m----------------------------------------------------\u001b[0m-\n* The nf-core framework\n    https://doi.org/10.1038/s41587-020-0439-x\n\n* Software dependencies\n    https://github.com/nf-core/stableexpression/blob/main/CITATIONS.md\n\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/nltk_pandas_python_pyyaml_pruned:2218f9c10723fbf3 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-nltk_pandas_python_pyyaml_pruned-2218f9c10723fbf3.img]\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_python_requests:8c6da05a2935a952 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-pandas_python_requests-8c6da05a2935a952.img]\n[86/9fbf39] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (dataset_3671e188-4fd4-41ab-ad36-517ad81c4465)\n[e5/47d907] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (dataset_69d3f92c-2be0-4deb-a415-fea0c6b418d1)\n[87/da389d] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETACCESSIONS\nPulling Apptainer image docker://community.wave.seqera.io/library/bioconductor-deseq2_r-base_r-optparse:c84cd7ffdb298fa7 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-bioconductor-deseq2_r-base_r-optparse-c84cd7ffdb298fa7.img]\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scikit-learn:6f85e3c4d1706e81 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scikit-learn-6f85e3c4d1706e81.img]\n[51/7cb214] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (dataset_69d3f92c-2be0-4deb-a415-fea0c6b418d1)\n[30/76ffa2] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (dataset_3671e188-4fd4-41ab-ad36-517ad81c4465)\nPulling Apptainer image docker://community.wave.seqera.io/library/pandas_pyarrow_python_scipy:7cad0d297a717147 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-pandas_pyarrow_python_scipy-7cad0d297a717147.img]\n[8b/cb4e47] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (dataset_69d3f92c-2be0-4deb-a415-fea0c6b418d1)\nPulling Apptainer image docker://community.wave.seqera.io/library/bioconductor-expressionatlas_r-base_r-optparse:ca0f8cd9d3f44af9 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-bioconductor-expressionatlas_r-base_r-optparse-ca0f8cd9d3f44af9.img]\n[50/62910a] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-552)\n[99/0032bc] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-4251)\n[b0/fea57e] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-4301)\n[5d/78028e] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-GEOD-61690)\n[b3/c3b0b4] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-GEOD-77826)\n[ef/e42508] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-5038)\n[bd/3fa292] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-7711)\n[8f/a81318] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSIONATLAS_FETCHDATA:EXPRESSIONATLAS_GETDATA (E-MTAB-5215)\n[51/2fe86b] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_4301_rnaseq)\n[fb/1074e5] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_552_rnaseq)\n[43/8d985d] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_GEOD_61690_rnaseq)\n[92/138d42] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_GEOD_77826_rnaseq)\n[db/dd3fbf] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_4251_rnaseq)\n[44/dc08c9] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_5038_rnaseq)\n[0c/f4f46e] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_5215_rnaseq)\n[cd/61f87c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:IDMAPPING:IDMAPPING_GPROFILER (E_MTAB_7711_rnaseq)\n[65/24c205] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_552_rnaseq)\n[f6/f1cf3f] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_4301_rnaseq)\n[9b/fe7347] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_GEOD_61690_rnaseq)\n[ed/bd7ad2] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_GEOD_77826_rnaseq)\n[47/b13d0c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_4251_rnaseq)\n[c7/3de644] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_5038_rnaseq)\n[26/a49898] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_5215_rnaseq)\n[5c/fa0cee] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:NORMALISATION_DESEQ2 (E_MTAB_7711_rnaseq)\n[2b/6ee60b] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (dataset_3671e188-4fd4-41ab-ad36-517ad81c4465)\n[b2/a196a7] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_552_rnaseq)\n[41/7dc9e1] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_4301_rnaseq)\n[01/673e26] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_GEOD_61690_rnaseq)\n[b8/8fb0eb] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_GEOD_77826_rnaseq)\n[30/ee19b6] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_4251_rnaseq)\n[f9/f2b9b6] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_5038_rnaseq)\n[ca/18206e] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_5215_rnaseq)\n[22/7e80e7] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:QUANTILE_NORMALISATION (E_MTAB_7711_rnaseq)\n[bc/d70f60] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (dataset_3671e188-4fd4-41ab-ad36-517ad81c4465)\n[58/2d50b7] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_552_rnaseq)\n[1e/aeb2b1] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_4301_rnaseq)\n[29/8ca339] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_GEOD_61690_rnaseq)\n[af/164cba] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_GEOD_77826_rnaseq)\n[77/7abd5c] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_4251_rnaseq)\n[20/cc6ed1] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_5038_rnaseq)\n[77/61b951] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_5215_rnaseq)\n[21/f6cbd4] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:EXPRESSION_NORMALISATION:DATASET_STATISTICS (E_MTAB_7711_rnaseq)\nWARN: Apptainer cache directory has not been defined -- Remote image will be stored in the path: /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity -- Use the environment variable NXF_APPTAINER_CACHEDIR to specify a different location\nPulling Apptainer image docker://community.wave.seqera.io/library/polars_python:cab787b788e5eba7 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/community.wave.seqera.io-library-polars_python-cab787b788e5eba7.img]\n[f7/b8e320] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MERGE_DATA\n[cb/7f5612] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:GENE_STATISTICS\nPulling Apptainer image docker://quay.io/biocontainers/multiqc:1.27--pyhdfd78af_0 [cache /tmp/tmppbklvq_q/job_working_directory/000/13/working/work/singularity/quay.io-biocontainers-multiqc-1.27--pyhdfd78af_0.img]\n[61/43e626] Submitted process > NFCORE_STABLEEXPRESSION:STABLEEXPRESSION:MULTIQC_WORKFLOW:MULTIQC\n-\u001b[0;35m[nf-core/stableexpression]\u001b[0;32m Pipeline completed successfully\u001b[0m-\n",
+                    "update_time": "2025-07-07T13:45:08.624371",
+                    "user_email": "planemo@galaxyproject.org",
+                    "user_id": "f14d691d132db03a"
+                },
+                "status": "success",
+                "test_index": 2,
+                "time_seconds": 291.48228931427,
+                "tool_id": "nf_core_stableexpression",
+                "tool_version": "1.0dev"
+            },
+            "has_data": true,
+            "id": "nf_core_stableexpression-2"
+        }
+    ],
+    "version": "0.1"
+}

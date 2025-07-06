@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<toolbox monitor="true">
-  <section id="local" name="local_tool">
-    <tool file="/local_tools/tool.xml" />
-      <tool file="/local_tools/tool.xml" />
-  </section>
-</toolbox>

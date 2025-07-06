@@ -3,6 +3,7 @@ import requests
 import re
 from dataclasses import dataclass, field
 from typing import ClassVar
+from packaging.version import parse as vparse
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,7 +13,11 @@ logger = logging.getLogger(__name__)
 class BaseConfigFormatter:
     CONFIG_FILE: ClassVar[Path] = Path(__file__).parents[4] / "nextflow.config"
     MAIN_FILE: ClassVar[Path] = Path(__file__).parents[4] / "main.nf"
-    PACKAGES: ClassVar[list] = ["nextflow", "singularity"]
+    PACKAGES_REPOS: ClassVar[dict] = {
+        "nextflow": "bioconda",
+        "apptainer": "conda-forge",
+        "openjdk": "conda-forge",
+    }
 
     pipeline_version: str = field(init=False)
     package_version: dict = field(init=False, default_factory=dict)
@@ -20,8 +25,8 @@ class BaseConfigFormatter:
 
     def __post_init__(self):
         # CONDA PACKAGE VERSIONS
-        for package in self.PACKAGES:
-            self.package_version[package] = self.get_package_version(package)
+        for package, repo in self.PACKAGES_REPOS.items():
+            self.package_version[package] = self.get_package_version(package, repo)
 
         # PARSING CONFIG
         with open(self.CONFIG_FILE, "r") as f:
@@ -30,16 +35,20 @@ class BaseConfigFormatter:
         self.pipeline_version = self.get_pipeline_version(pipeline_config)
 
     @classmethod
-    def get_package_version(cls, package_name: str) -> str:
+    def get_package_version(cls, package: str, repo: str) -> str:
         """
         Get latest pip version of package
         """
-        url = f"https://pypi.org/pypi/{package_name}/json"
+        logger.info(f"Getting latest version of package {package}")
+        url = f" https://api.anaconda.org/package/{repo}/{package}"
         try:
             response = requests.get(url)
             response.raise_for_status()
             data = response.json()
-            return data["info"]["version"]
+            versions = sorted(
+                data["versions"], reverse=True, key=vparse
+            )  # from latest to oldest
+            return versions[0]  # most recent
         except requests.RequestException as e:
             raise RuntimeError(f"Error fetching version info: {e}")
 
