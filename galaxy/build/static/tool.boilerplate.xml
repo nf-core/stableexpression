@@ -6,6 +6,7 @@ VERSION="PIPELINE_VERSION"; echo "$VERSION"
     <requirements>
         <requirement type="package" version="NEXTFLOW_VERSION">nextflow</requirement>
         <requirement type="package" version="SINGULARITY_VERSION">singularity</requirement>
+        <requirement type="package">openjdk</requirement>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         #if $input_output_options.datasets.samplesheet:
@@ -20,7 +21,7 @@ VERSION="PIPELINE_VERSION"; echo "$VERSION"
                 #set $design_filenames += ' ' + str($experimental_design.name)
             #end for
 
-            python '$__tool_directory__/rebuild_samplesheet.py'
+            python '${__tool_directory__}/rebuild_samplesheet.py'
                 --in $input_output_options.datasets.samplesheet
                 --out renamed_samplesheet.csv
                 --count-files $input_output_options.datasets.count_datasets
@@ -38,6 +39,7 @@ VERSION="PIPELINE_VERSION"; echo "$VERSION"
         && nextflow run OlivierCoen/stableexpression
             -r dev -latest
             -profile singularity
+            -work-dir '${__tool_directory__}/work'
             --outdir ./results
 PARAMETERS
 

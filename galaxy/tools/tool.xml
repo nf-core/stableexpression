@@ -28,14 +28,14 @@ VERSION="1.0dev"; echo "$VERSION"
                 --design-files $input_output_options.datasets.experimental_designs
                 --design-filenames $design_filenames
 
-        #else:
+        #else
             echo "No user dataset provided"
 
         #end if
 
         && nextflow run OlivierCoen/stableexpression
             -r dev -latest
-            -profile singularity
+            -profile conda
             --outdir ./results
 			--species "$input_output_options.species"
 

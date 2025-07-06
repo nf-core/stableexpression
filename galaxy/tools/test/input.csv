@@ -1,3 +1,0 @@
-counts,design,platform,normalised
-/path/to/count1.csv,/path/to/design1.csv,microarray,true
-/path/to/count2.csv,/path/to/design2.csv,rnaseq,false

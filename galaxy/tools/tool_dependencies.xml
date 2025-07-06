@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<tool_dependency>
+    <package name="nextflow" version="25.04.06">
+        <install version="1.0">
+            <actions>
+                <action type="set_environment">NXF_OFFLINE=false</action>
+                <action type="shell_command">curl -s https://get.nextflow.io | bash</action>
+                <action type="shell_command">chmod +x nextflow</action>
+            </actions>
+        </install>
+    </package>
+</tool_dependency>
