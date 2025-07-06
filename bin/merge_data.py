@@ -12,7 +12,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 ALL_COUNTS_PARQUET_OUTFILENAME = "all_counts.parquet"
-ALL_DESIGNS_OUTFILENAME = "all_designs.csv"
 GENE_COUNT_STATS_OUTFILENAME = "gene_count_statistics.csv"
 SKEWNESS_STATS_OUTFILENAME = "skewness_statistics.csv"
 KS_TEST_STATS_OUTFILENAME = "ks_test_statistics.csv"
@@ -49,9 +48,6 @@ def parse_args():
     )
     parser.add_argument(
         "--counts", type=str, dest="count_files", required=True, help="Count files"
-    )
-    parser.add_argument(
-        "--designs", type=str, dest="design_files", required=True, help="Design files"
     )
     parser.add_argument(
         "--stats",
@@ -158,24 +154,6 @@ def get_nb_rows(lf: pl.LazyFrame) -> int:
 
 
 #####################################################
-# DESIGNS
-#####################################################
-
-
-def parse_design_file(design_file: Path) -> pl.DataFrame:
-    design_df = pl.read_csv(design_file, has_header=True)
-    # adding batch name from file stem if not present
-    if "batch" not in design_df.columns:
-        design_df = design_df.with_columns(pl.lit(design_file.stem).alias("batch"))
-    return design_df.select("batch", "condition", "sample")
-
-
-def merge_designs(design_files: list[Path]) -> pl.DataFrame:
-    design_dfs = [parse_design_file(design_file) for design_file in design_files]
-    return pl.concat(design_dfs, how="vertical")
-
-
-#####################################################
 # STATISTICS
 #####################################################
 
@@ -237,16 +215,12 @@ def get_candidate_gene_counts(
 
 def export_data(
     count_df: pl.DataFrame,
-    design_df: pl.DataFrame,
     candidate_gene_counts_df: pl.DataFrame,
     corr_df: pl.DataFrame,
 ):
     """Export gene expression data."""
     logger.info(f"Exporting normalised counts to: {ALL_COUNTS_PARQUET_OUTFILENAME}")
     count_df.write_parquet(ALL_COUNTS_PARQUET_OUTFILENAME)
-
-    logger.info(f"Exporting designs to: {ALL_DESIGNS_OUTFILENAME}")
-    design_df.write_csv(ALL_DESIGNS_OUTFILENAME)
 
     logger.info(
         f"Exporting candidate gene counts to: {CANDIDATE_GENE_COUNTS_PARQUET_OUTFILENAME}"
@@ -279,13 +253,10 @@ def export_individual_statistics(dataset_stats_df: pl.DataFrame):
 def main():
     args = parse_args()
     count_files = [Path(file) for file in args.count_files.split(" ")]
-    design_files = [Path(file) for file in args.design_files.split(" ")]
     dataset_stat_files = [Path(file) for file in args.dataset_stat_files.split(" ")]
 
     # putting all counts into a single dataframe
     count_df = get_counts(count_files)
-    # putting all design data into a single dataframe
-    design_df = merge_designs(design_files)
     # putting all stats data into a single dataframe
     dataset_stats_df = merge_stats(dataset_stat_files)
 
@@ -296,7 +267,7 @@ def main():
     # adding stat about divergence to mean distribution
     corr_df = compute_distances_to_mean(count_df)
 
-    export_data(count_df, design_df, candidate_gene_counts_df, corr_df)
+    export_data(count_df, candidate_gene_counts_df, corr_df)
     export_individual_statistics(dataset_stats_df)
 
 

@@ -72,4 +72,25 @@ nextflow_process {
 
     }
 
+    test("Without design") {
+
+        when {
+
+            process {
+                """
+                meta = [ accession: "accession" ]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/base/counts.csv')]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out.cpm).match() }
+            )
+        }
+
+    }
+
 }

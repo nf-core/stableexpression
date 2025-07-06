@@ -66,9 +66,8 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         MERGE_DATA(
-            ch_normalised_counts.map {  meta, file -> [file]        }.collect(),
-            ch_normalised_counts.map {  meta, file -> [meta.design] }.collect(),
-            ch_dataset_statistics.map { meta, file -> [file]        }.collect(),
+            ch_normalised_counts.map {  meta, file -> [file] }.collect(),
+            ch_dataset_statistics.map { meta, file -> [file] }.collect(),
             params.nb_top_gene_candidates
         )
 
@@ -99,7 +98,7 @@ workflow STABLEEXPRESSION {
             .mix( MERGE_DATA.out.gene_count_statistics.collect() )
             .mix( MERGE_DATA.out.skewness_statistics.collect() )
             .mix( ch_ks_stats.collect() )
-            .mix ( MERGE_DATA.out.distribution_correlations.collect() )
+            .mix( MERGE_DATA.out.distribution_correlations.collect() )
             .set { ch_multiqc_files }
 
         MULTIQC_WORKFLOW( ch_multiqc_files )

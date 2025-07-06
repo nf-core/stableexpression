@@ -34,8 +34,13 @@ remove_all_zero_columns <- function(df) {
 
 check_samples <- function(count_matrix, design_data) {
     # check if the column names of count_matrix match the sample names
-    if (!all(colnames(count_matrix) == design_data$sample)) {
+    if (!all( colnames(count_matrix) == design_data$sample )) {
         stop("Sample names in the count matrix do not match the design data.")
+    }
+    # check for extra samples
+    extra_samples <- setdiff( colnames(count_matrix), design_data$sample )
+    if (length(extra_samples) > 0) {
+        warning("The following samples are in the count matrix but not in design: ", paste(extra_samples, collapse = ", "))
     }
 }
 
@@ -73,15 +78,27 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     print(paste('Normalizing counts in:', count_file))
 
     count_data <- read.csv(args$count_file, row.names = 1)
-    design_data <- read.csv(design_file)
 
     count_matrix <- as.matrix(count_data)
     # in some rare datasets, columns can contain only zeros
     # we do not consider these columns
     count_matrix <- remove_all_zero_columns(count_matrix)
 
-    # getting design data
-    design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
+    if ( is.null(design_file) ) {
+
+        # faking a design table
+        design_data <- data.frame(
+            sample = colnames(count_matrix),
+            condition = rep("A", ncol(count_matrix))
+        )
+
+    } else {
+
+        # getting design data
+        design_data <- read.csv(design_file)
+        # removing extra samples in design table
+        design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
+    }
 
     # check if the column names of count_matrix match the sample names
     check_samples(count_matrix, design_data)

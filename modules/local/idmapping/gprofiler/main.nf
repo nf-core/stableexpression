@@ -48,8 +48,6 @@ process IDMAPPING_GPROFILER {
 
     script:
     def custom_mapping_arg = gene_id_mapping_file ? "--custom-mappings $gene_id_mapping_file" : ""
-    println gene_id_mapping_file
-    println custom_mapping_arg
     """
     map_ids_to_ensembl.py \
         --count-file "$count_file" \

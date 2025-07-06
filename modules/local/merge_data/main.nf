@@ -9,13 +9,11 @@ process MERGE_DATA {
 
     input:
     path count_files, stageAs: "?/*"
-    path design_files, stageAs: "?/*"
     path dataset_stat_files, stageAs: "?/*"
     val nb_candidate_genes
 
     output:
     path 'all_counts.parquet',                                                                                        emit: all_counts
-    path 'all_designs.csv',                                                                                           emit: all_designs
     path 'gene_count_statistics.csv',                                                                                 emit: gene_count_statistics
     path 'skewness_statistics.csv',                                                                                   emit: skewness_statistics
     path 'ks_test_statistics.csv',                                                                                    emit: ks_test_statistics
@@ -31,7 +29,6 @@ process MERGE_DATA {
     """
     merge_data.py \
         --counts "$count_files" \
-        --designs "$design_files" \
         --stats "$dataset_stat_files" \
         --nb-candidate-genes $nb_candidate_genes
     """

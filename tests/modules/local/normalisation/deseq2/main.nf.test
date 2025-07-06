@@ -13,8 +13,10 @@ nextflow_process {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalisation/base/design.csv')]
-                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/base/counts.csv')]
+                input[0] = [
+                    [ accession: "accession", design: file('$projectDir/tests/test_data/normalisation/base/design.csv') ],
+                    file('$projectDir/tests/test_data/normalisation/base/counts.csv')
+                ]
                 """
             }
         }
@@ -36,8 +38,10 @@ nextflow_process {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalisation/many_zeros/design.csv')]
-                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/many_zeros/counts.csv')]
+                input[0] = [
+                    [ accession: "accession", design: file('$projectDir/tests/test_data/normalisation/many_zeros/design.csv') ],
+                    file('$projectDir/tests/test_data/normalisation/many_zeros/counts.csv')
+                ]
                 """
             }
         }
@@ -57,8 +61,35 @@ nextflow_process {
 
             process {
                 """
-                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalisation/one_group/design.csv')]
-                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/one_group/counts.csv')]
+                input[0] = [
+                    [ accession: "accession", design: file('$projectDir/tests/test_data/normalisation/one_group/design.csv') ],
+                    file('$projectDir/tests/test_data/normalisation/one_group/counts.csv')
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out.cpm).match() }
+            )
+        }
+
+    }
+
+    test("Without design") {
+
+        tag "deseq2_wo_design"
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ accession: "accession" ],
+                    file('$projectDir/tests/test_data/normalisation/base/counts.csv')
+                ]
                 """
             }
         }

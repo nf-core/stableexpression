@@ -35,6 +35,6 @@
                 "meta": ["normalised"]
             }
         },
-        "required": ["counts", "design", "platform", "normalised"]
+        "required": ["counts", "platform", "normalised"]
     }
 }

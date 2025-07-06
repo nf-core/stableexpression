@@ -29,18 +29,27 @@ get_args <- function() {
 
 check_samples <- function(count_matrix, design_data) {
     # check if the column names of count_matrix match the sample names
-    if (!all(colnames(count_matrix) == design_data$sample)) {
+    if (!all( colnames(count_matrix) == design_data$sample )) {
         stop("Sample names in the count matrix do not match the design data.")
+    }
+    # check for extra samples
+    extra_samples <- setdiff( colnames(count_matrix), design_data$sample )
+    if (length(extra_samples) > 0) {
+        warning("The following samples are in the count matrix but not in design: ", paste(extra_samples, collapse = ", "))
     }
 }
 
 prefilter_counts <- function(count_matrix, design_data) {
-    # see https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
-    # getting size of smallest group
-    group_sizes <- table(design_data$condition)
-    smallest_group_size <- min(group_sizes)
-    # keep genes with at least 10 counts over a certain number of samples
-    keep <- rowSums(count_matrix >= 10) >= smallest_group_size
+    if (is.null(design_data)) {
+        keep <- rowSums(count_matrix >= 10) >= 1
+    } else {
+        # see https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+        # getting size of smallest group
+        group_sizes <- table(design_data$condition)
+        smallest_group_size <- min(group_sizes)
+        # keep genes with at least 10 counts over a certain number of samples
+        keep <- rowSums(count_matrix >= 10) >= smallest_group_size
+    }
     filtered_count_matrix <- count_matrix[keep,]
     return(filtered_count_matrix)
 }
@@ -86,15 +95,26 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     # DESeq2 does not accept that so we must convert them into integers
     count_data[] <- lapply(count_data, as.integer)
 
-    design_data <- read.csv(design_file)
-
     count_matrix <- as.matrix(count_data)
     # in some rare datasets, columns can contain only zeros
     # we do not consider these columns
     count_matrix <- remove_all_zero_columns(count_matrix)
 
-    # getting design data
-    design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
+    if ( is.null(design_file) ) {
+
+        # faking a design table
+        design_data <- data.frame(
+            sample = colnames(count_matrix),
+            condition = rep("A", ncol(count_matrix))
+        )
+
+    } else {
+
+        # getting design data
+        design_data <- read.csv(design_file)
+        # removing extra samples in design table
+        design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
+    }
 
     # check if the column names of count_matrix match the sample names
     check_samples(count_matrix, design_data)
@@ -103,6 +123,11 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
         row.names = design_data$sample,
         condition = factor(design_data$condition)
     )
+
+    # reorder count matrix columns to match design row order
+    # this is absolutely mandatory
+    # see https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html at part "Count matrix input"
+    count_matrix <- count_matrix[, design_data$sample ]
 
     # pre-filter genes with low counts
     filtered_count_matrix <- prefilter_counts(count_matrix, design_data)
@@ -116,7 +141,6 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     # add a small pseudocount to avoid zero counts
     filtered_count_matrix <- replace_zero_counts_with_pseudocounts(filtered_count_matrix)
 
-    # create DESeq2 object
     # if the number of distinct conditions is only 1, DESeq2 returns an error
     num_unique_conditions <- length(unique(design_data$condition))
     if (num_unique_conditions == 1) {

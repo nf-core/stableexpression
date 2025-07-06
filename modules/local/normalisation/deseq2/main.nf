@@ -25,9 +25,9 @@ process NORMALISATION_DESEQ2 {
     task.ext.when == null || task.ext.when
 
     script:
-    def design_file = meta.design
+    def design_arg = meta.design ? "--design ${meta.design}" : ""
     """
-    normalise_with_deseq2.R --counts "$count_file" --design "$design_file"
+    normalise_with_deseq2.R --counts $count_file $design_arg
     """
 
 

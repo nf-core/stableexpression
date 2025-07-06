@@ -115,7 +115,7 @@ def groupFilesByDatasetId(ch_design, ch_counts) {
         .filter {
             it.get(1).size() == 2 // only groups with two files
         }
-        .filter { // only groups with first file as design file and second one as count file
+        .filter { // only groups with first file as design file and second one as count fileWARN: java.net.ConnectException: Connexion refusée
             meta, files ->
                 files.get(0).name.endsWith('.design.csv') && !files.get(1).name.endsWith('.design.csv')
         }
