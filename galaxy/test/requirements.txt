@@ -1,0 +1,4 @@
+nextflow
+singularity
+planemo
+pandas

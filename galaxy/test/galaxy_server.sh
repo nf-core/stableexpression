@@ -2,7 +2,9 @@
 
 DOCKER_IMAGE=quay.io/bgruening/galaxy
 PORT=8080
-tool_dir="$(dirname $(dirname $(readlink -f "$0")))/tools"
+galaxy_dir="$(dirname $(dirname $(readlink -f "$0")))"
+tool_dir="${galaxy_dir}/tools"
+static_dir="${galaxy_dir}/static"
 
 status() {
     if [[ $(sudo lsof -i :$PORT) ]]; then
@@ -23,6 +25,7 @@ start() {
             -p 8021:21 \
             -p 8022:22 \
             -v $tool_dir:/local_tools \
+            -v ${static_dir}/galaxy.yml:/etc/galaxy/galaxy.yml \
             -e GALAXY_CONFIG_TOOL_CONFIG_FILE=/etc/galaxy/tool_conf.xml,/local_tools/tool_conf.xml \
             $DOCKER_IMAGE
         echo "Galaxy started !"

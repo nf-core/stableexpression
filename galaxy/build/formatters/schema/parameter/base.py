@@ -1,0 +1,155 @@
+from dataclasses import dataclass
+from typing import ClassVar
+
+
+@dataclass
+class Validator:
+    PATTERN: ClassVar[str] = (
+        '\t\t\t<validator type="{type}" message="{message}">{expression}</validator>\n'
+    )
+
+    type: str
+    message: str
+    expression: str
+
+    def __str__(self):
+        return self.PATTERN.format(
+            type=self.type, message=self.message, expression=self.expression
+        )
+
+
+@dataclass
+class Option:
+    PATTERN: ClassVar[str] = (
+        '\t\t\t<option value="{option}"{selected_arg}>{label}</option>\n'
+    )
+
+    value: str
+    default_value: str
+    optional: bool
+
+    def __str__(self):
+        selected_arg = ' selected="true"' if self.value == self.default_value else ""
+        return self.PATTERN.format(
+            option=self.value, label=self.value.capitalize(), selected_arg=selected_arg
+        )
+
+
+@dataclass
+class BaseParameterFormatter:
+    NF_TYPES_TO_GALAXY: ClassVar[dict] = {
+        "string": "text",
+        "boolean": "boolean",
+        "integer": "integer",
+        "number": "float",
+    }
+
+    param: str
+    section: str
+    param_dict: dict
+    optional: bool
+
+    @staticmethod
+    def enrich_input_param(input_param_str: str, args: list[str]) -> str:
+        # opening param for enrichment
+        input_param_str = input_param_str.replace(" />", ">\n")
+        # adding each arg in a separate line
+        for arg in args:
+            input_param_str += "\t" + arg
+        # closing
+        input_param_str += "\t\t\t</param>"
+        return input_param_str
+
+    def get_input(self) -> str:
+        """
+        building input param
+        """
+
+        input_param_str = '\t\t\t<param name="{param}" type="{type}" {label}{format}{value}{min}{max}{true_false}{help}{optional} />'
+
+        param_format = ""
+        param_label = ""
+        param_help = ""
+        param_true_false = ""
+        param_value = ""
+        param_min = ""
+        param_max = ""
+        param_optional = ' optional="true"' if self.optional else ' optional="false"'
+
+        param_type = self.param_dict["type"]
+        default_value = self.param_dict.get("default")
+
+        if param_type == "string" and self.param_dict.get("format") == "file-path":
+            input_type = "data"
+            # removing extension check as files are renamed in <hash>.dat files by Galaxy
+            """
+            if pattern := self.param_dict.get("pattern"):
+                # TODO: handle multiple extensions
+                extension = pattern.split(".")[-1].strip("$")
+                param_format = f' format="{extension}"'
+            """
+
+        else:
+            input_type = self.NF_TYPES_TO_GALAXY[param_type]
+
+            if param_type == "boolean":
+                param_true_false = f' truevalue="--{self.param}" falsevalue=""'
+
+            elif param_type in ["integer", "number"]:
+                if minimum := self.param_dict.get("minimum"):
+                    param_min = f' min="{minimum}"'
+                if maximum := self.param_dict.get("maximum"):
+                    param_max = f' max="{maximum}"'
+
+            elif param_type == "string":
+                # TODO: handle (rare) case where bot enum and pattern are given
+                if pattern := self.param_dict.get("pattern"):  # regex
+                    msg = f"must match regular expression {pattern}"
+                    validator = Validator(type="regex", message=msg, expression=pattern)
+                    input_param_str = self.enrich_input_param(
+                        input_param_str, args=[str(validator)]
+                    )
+
+        # handle parameter with enum (options)
+        if option_values := self.param_dict.get("enum"):
+            input_type = "select"
+            options = [
+                Option(value, default_value, self.optional) for value in option_values
+            ]
+            input_param_str = self.enrich_input_param(
+                input_param_str, args=[str(option) for option in options]
+            )
+
+        else:
+            if default_value is not None:
+                param_value = f' value="{default_value}"'
+
+        if description := self.param_dict.get("description"):
+            param_label = f'label="{description}"'
+        if help_text := self.param_dict.get("help_text"):
+            param_help = f' help="{help_text}"'
+
+        return input_param_str.format(
+            param=self.param,
+            type=input_type,
+            label=param_label,
+            format=param_format,
+            value=param_value,
+            min=param_min,
+            max=param_max,
+            true_false=param_true_false,
+            help=param_help,
+            optional=param_optional,
+        )
+
+    def get_cli(self) -> str:
+        # extra quotes if string parameter
+        value = (
+            f'"${self.section}.{self.param}"'
+            if self.param_dict["type"] == "string"
+            else f"${self.section}.{self.param}"
+        )
+        if self.optional:
+            return f"\t\t\t#if ${self.section}.{self.param}\n\t\t\t  --{self.param} {value}\n\t\t\t#end if"
+        else:
+            return f"\t\t\t--{self.param} {value}"

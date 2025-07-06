@@ -1,21 +1,22 @@
 from pathlib import Path
-import subprocess
+import requests
 import re
 from dataclasses import dataclass, field
 from typing import ClassVar
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
 class BaseConfigFormatter:
-    CONFIG_FILE: ClassVar[Path] = Path(__file__).parents[2] / "nextflow.config"
-    MAIN_FILE: ClassVar[Path] = Path(__file__).parents[2] / "main.nf"
-    NXF_VERSION_COMMAND_TEMPLATE: ClassVar[str] = (
-        "micromamba search --override-channels --channel bioconda 'pkg' | grep pkg | awk '{print $2}' | sort | tail -1"
-    )
+    CONFIG_FILE: ClassVar[Path] = Path(__file__).parents[4] / "nextflow.config"
+    MAIN_FILE: ClassVar[Path] = Path(__file__).parents[4] / "main.nf"
     PACKAGES: ClassVar[list] = ["nextflow", "singularity"]
 
     pipeline_version: str = field(init=False)
     package_version: dict = field(init=False, default_factory=dict)
+    executable: str = field(init=False)
 
     def __post_init__(self):
         # CONDA PACKAGE VERSIONS
@@ -31,30 +32,27 @@ class BaseConfigFormatter:
     @classmethod
     def get_package_version(cls, package_name: str) -> str:
         """
-        Get latest conda version of package
+        Get latest pip version of package
         """
-        nxf_version_command = cls.NXF_VERSION_COMMAND_TEMPLATE.replace(
-            "pkg", package_name
-        )
-        result = subprocess.run(
-            nxf_version_command, shell=True, capture_output=True, text=True, check=True
-        )
-
-        if result.stderr:
-            raise RuntimeError(f"Command error: {result.stderr}")
-
-        return result.stdout.strip("\n")
+        url = f"https://pypi.org/pypi/{package_name}/json"
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+            return data["info"]["version"]
+        except requests.RequestException as e:
+            raise RuntimeError(f"Error fetching version info: {e}")
 
     @staticmethod
     def get_pipeline_version(pipeline_config: str):
-        # Regular expression to find the manifest block and extract the version
+        # regular expression to find the manifest block and extract the version
         manifest_pattern = re.compile(r"manifest\s*{\s*(.*?)\s*}", re.DOTALL)
         manifest_match = manifest_pattern.search(pipeline_config)
         version = None
 
         if manifest_match:
             manifest_content = manifest_match.group(1)
-            # Regular expression to find the version field
+            # regular expression to find the version field
             version_pattern = re.compile(r'version\s*=\s*[\'"](.*?)[\'"]')
             version_match = version_pattern.search(manifest_content)
 
