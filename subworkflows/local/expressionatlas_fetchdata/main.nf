@@ -16,6 +16,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
     main:
 
     ch_eatlas_datasets = Channel.empty()
+    ch_fetched_accessions = Channel.empty()
 
     ch_eatlas_accessions_file = params.eatlas_accessions_file ? Channel.fromPath(params.eatlas_accessions_file, checkIfExists: true) : Channel.empty()
 
@@ -34,32 +35,34 @@ workflow EXPRESSIONATLAS_FETCHDATA {
             ch_species,
             params.eatlas_keywords
         )
+        EXPRESSIONATLAS_GETACCESSIONS.out.txt.set { ch_fetched_accessions }
 
-        ch_exclude_eatlas_accessions_file = params.exclude_eatlas_accessions_file ? Channel.fromPath(params.exclude_eatlas_accessions_file, checkIfExists: true) : Channel.empty()
-
-        // getting accessions to exclude and preparing in the right format
-        Channel.fromList( params.exclude_eatlas_accessions.tokenize(',') )
-            .mix( ch_exclude_eatlas_accessions_file.splitText() )
-            .unique()
-            .map { it -> it.trim() }
-            .toList()
-            .map { lst -> [lst] } // list of lists : mandatory when combining in the next step
-            .set { ch_excluded_accessions }
-
-        // appending to accessions provided by the user
-        // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
-        // removing E-PROT- accessions
-        // removing excluded accessions
-        ch_input_accessions
-            .mix( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
-            .unique()
-            .map { it -> it.trim() }
-            .filter { it.startsWith('E-') && !it.startsWith('E-PROT-') }
-            .combine ( ch_excluded_accessions )
-            .filter { accession, excluded_accessions -> !(accession in excluded_accessions) }
-            .map { accession, excluded_accessions -> accession }
-            .set { ch_accessions }
     }
+
+    ch_exclude_eatlas_accessions_file = params.exclude_eatlas_accessions_file ? Channel.fromPath(params.exclude_eatlas_accessions_file, checkIfExists: true) : Channel.empty()
+
+    // getting accessions to exclude and preparing in the right format
+    Channel.fromList( params.exclude_eatlas_accessions.tokenize(',') )
+        .mix( ch_exclude_eatlas_accessions_file.splitText() )
+        .unique()
+        .map { it -> it.trim() }
+        .toList()
+        .map { lst -> [lst] } // list of lists : mandatory when combining in the next step
+        .set { ch_excluded_accessions }
+
+    // appending to accessions provided by the user
+    // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
+    // removing E-PROT- accessions
+    // removing excluded accessions
+    ch_input_accessions
+        .mix( ch_fetched_accessions.splitText() )
+        .unique()
+        .map { it -> it.trim() }
+        .filter { it.startsWith('E-') && !it.startsWith('E-PROT-') }
+        .combine ( ch_excluded_accessions )
+        .filter { accession, excluded_accessions -> !(accession in excluded_accessions) }
+        .map { accession, excluded_accessions -> accession }
+        .set { ch_accessions }
 
     if ( !params.accessions_only ) {
 
