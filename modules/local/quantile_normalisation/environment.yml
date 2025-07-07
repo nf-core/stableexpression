@@ -1,8 +1,0 @@
-name: quant_norm
-channels:
-  - conda-forge
-dependencies:
-  - conda-forge::python==3.12.8
-  - conda-forge::pandas==2.2.3
-  - conda-forge::scikit-learn==1.6.1
-  - conda-forge::pyarrow==19.0.0

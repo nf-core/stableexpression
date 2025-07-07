@@ -2,7 +2,7 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     label 'process_low'
 
-    conda "${moduleDir}/environment.yml"
+    conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5e/5e3d9b407277b8bb8f8850eba40724b1cae9bd6e11ae0019011af82e6ac17cd4/data':
         'community.wave.seqera.io/library/nltk_pandas_python_pyyaml_pruned:2218f9c10723fbf3' }"

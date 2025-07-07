@@ -8,7 +8,7 @@ process NORMALISATION_DESEQ2 {
     // the subsequent steps will not be run for this dataset
     errorStrategy { task.exitStatus == 100 ? 'ignore' : 'terminate' }
 
-    conda "${moduleDir}/environment.yml"
+    conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ce/cef7164b168e74e5db11dcd9acf6172d47ed6753e4814c68f39835d0c6c22f6d/data':
         'community.wave.seqera.io/library/bioconductor-deseq2_r-base_r-optparse:c84cd7ffdb298fa7' }"
