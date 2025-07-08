@@ -17,7 +17,7 @@ class DatasetsParameterFormatter(BaseParameterFormatter):
         ).replace(self.param, "samplesheet")
         # changing label
         input_param_str = re.sub(
-            r'label="[\s\w]*"', 'label="Samplesheet"', input_param_str
+            r'label="[\s\w]*"', 'format="csv" label="Samplesheet"', input_param_str
         )
 
         # adding conditional statement
@@ -25,8 +25,8 @@ class DatasetsParameterFormatter(BaseParameterFormatter):
                 <param name="provide_datasets" type="boolean" label="Provide custom count datasets?" />
                 <when value="true">
         {input_param_str}
-                    <param name="count_datasets" label="Count datasets" type="data" multiple="true" optional="false" help="User count datasets in CSV format" />
-                    <param name="experimental_designs" label="Experimental designs" type="data" multiple="true" optional="true" help="Experimental designs relative to the provided count datasets" />
+                    <param name="count_datasets" label="Count datasets" type="data" format="csv" multiple="true" optional="false" help="User count datasets in CSV format" />
+                    <param name="experimental_designs" label="Experimental designs" type="data" format="csv" multiple="true" optional="true" help="Experimental designs relative to the provided count datasets" />
                 </when>
                 <when value="false">
                 </when>

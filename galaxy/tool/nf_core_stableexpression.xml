@@ -1,13 +1,13 @@
 <tool id="nf_core_stableexpression" name="nf-core/stableexpression" version="1.0dev">
     <description>Pipeline dedicated to finding the most stable genes across count datasets</description>
-    <version_command><![CDATA[
-VERSION="1.0dev"; echo "$VERSION"
-    ]]></version_command>
     <requirements>
         <requirement type="package" version="25.04.6">nextflow</requirement>
         <requirement type="package" version="1.4.1">apptainer</requirement>
         <requirement type="package" version="23.0.2">openjdk</requirement>
     </requirements>
+    <version_command><![CDATA[
+VERSION="1.0dev"; echo "$VERSION"
+    ]]></version_command>
     <command detect_errors="exit_code"><![CDATA[
 
         ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -97,9 +97,9 @@ VERSION="1.0dev"; echo "$VERSION"
  			<conditional name="datasets">
                 <param name="provide_datasets" type="boolean" label="Provide custom count datasets?" />
                 <when value="true">
-        			<param name="samplesheet" type="data" label="Samplesheet" help="Path to CSV file containing information about the input count samplesheet and their related experimental design. The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, and for each user count dataset, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. Combine with --skip_fetch_eatlas_accessions if you only want to analyse your own count samplesheet." optional="false" />
-                    <param name="count_datasets" label="Count datasets" type="data" multiple="true" optional="false" help="User count datasets in CSV format" />
-                    <param name="experimental_designs" label="Experimental designs" type="data" multiple="true" optional="true" help="Experimental designs relative to the provided count datasets" />
+        			<param name="samplesheet" type="data" format="csv" label="Samplesheet" help="Path to CSV file containing information about the input count samplesheet and their related experimental design. The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, and for each user count dataset, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. Combine with --skip_fetch_eatlas_accessions if you only want to analyse your own count samplesheet." optional="false" />
+                    <param name="count_datasets" label="Count datasets" type="data" format="csv" multiple="true" optional="false" help="User count datasets in CSV format" />
+                    <param name="experimental_designs" label="Experimental designs" type="data" format="csv" multiple="true" optional="true" help="Experimental designs relative to the provided count datasets" />
                 </when>
                 <when value="false">
                 </when>
@@ -108,7 +108,7 @@ VERSION="1.0dev"; echo "$VERSION"
 		</section>
 		<section name="expression_atlas_options" title="Expression Atlas options" help="Options for fetching datasets from Expression Atlas." expanded="false">
 			<param name="eatlas_keywords" type="text" label="Expression Atlas keywords" help="Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas. The pipeline will select all Expression Atlas experiments that contain the provided keywords in their description of in one of the condition names. Example: `--eatlas_keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set." optional="true">
-				<validator type="regex" message="must match regular expression ([a-zA-Z,]+)">([a-zA-Z,]+)</validator>
+				<validator type="regex" message="must match regular expression ([a-zA-Z, ]+)">([a-zA-Z,]+)</validator>
 			</param>
 			<param name="eatlas_accessions" type="text" label="Expression Atlas accessions" help="Provide directly in command line Expression Atlas accession(s) (separated by commas) that you want to download. Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used." optional="true">
 				<validator type="regex" message="must match regular expression ([A-Z0-9-]+,?)+">([A-Z0-9-]+,?)+</validator>
