@@ -3,7 +3,9 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
+
 import requests
+import pandas as pd
 from tenacity import (
     retry,
     retry_if_exception_type,
@@ -23,7 +25,10 @@ logger = logging.getLogger(__name__)
 
 ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
 ACCESSION_OUTFILE_NAME = "accessions.txt"
-FILTERED_EXPERIMENTS_OUTFILE_NAME = "filtered_experiments.yaml"
+ALL_EXPERIMENTS_METADATA_OUTFILE_NAME = "all_experiments.metadata.tsv"
+SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME = "species_experiments.metadata.tsv"
+FILTERED_EXPERIMENTS_METADATA_OUTFILE_NAME = "filtered_experiments.metadata.tsv"
+FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME = "filtered_experiments.keywords.yaml"
 
 ##################################################################
 ##################################################################
@@ -58,7 +63,9 @@ class ExpressionAtlasNothingFoundError(Exception):
 
 def parse_args():
     parser = argparse.ArgumentParser("Get expression atlas accessions")
-    parser.add_argument("--species", type=str, help="Species to convert IDs for")
+    parser.add_argument(
+        "--species", type=str, help="Search Expression Atlas for this specific species"
+    )
     parser.add_argument(
         "--keywords",
         type=str,
@@ -163,7 +170,7 @@ def get_all_candidate_target_words(sentence: str):
 
 def word_in_sentence(word: str, sentence: str):
     """
-    Checks if a word (or a stemmed version of it) is in a sentence, or if it is a
+    Check if a word (or a stemmed version of it) is in a sentence, or if it is a
     subword of a stemmed version of any word in the sentence.
 
     Parameters
@@ -314,11 +321,25 @@ def get_properties_values(exp_dict: dict):
     return list(set(values))
 
 
-def get_species_experiments(
-    species: str,
-):
+def get_eatlas_experiments():
     """
-    Gets all experiments for a given species
+    Gets all experiments from Expression Atlas
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    experiments : list
+        A list of experiment dictionaries
+    """
+    data = get_data(ALL_EXP_URL)
+    return data["experiments"]
+
+
+def get_species_experiments(experiments: list[dict], species: str):
+    """
+    Gets all experiments for a given species from Expression Atlas
 
     Parameters
     ----------
@@ -330,12 +351,11 @@ def get_species_experiments(
     experiments : list
         A list of experiment dictionaries
     """
-    data = get_data(ALL_EXP_URL)
-    experiments = []
-    for exp_dict in data["experiments"]:
+    species_experiments = []
+    for exp_dict in experiments:
         if exp_dict["species"] == species:
-            experiments.append(exp_dict)
-    return experiments
+            species_experiments.append(exp_dict)
+    return species_experiments
 
 
 def get_experiment_data(exp_dict: dict):
@@ -380,7 +400,7 @@ def keywords_in_experiment(fields: list[str], keywords: list[str]):
     ]
 
 
-def filter_experiment(exp_dict: dict, keywords: list[str]):
+def filter_experiment_with_keywords(exp_dict: dict, keywords: list[str]):
     all_searchable_fields = [exp_dict["description"]] + exp_dict["properties"]
     found_keywords = keywords_in_experiment(all_searchable_fields, keywords)
     # only returning experiments if found keywords
@@ -389,6 +409,17 @@ def filter_experiment(exp_dict: dict, keywords: list[str]):
         return exp_dict
     else:
         return None
+
+
+def get_metadata_for_selected_experiments(
+    experiments: list[dict], results: list[dict]
+) -> list[dict]:
+    filtered_accessions = [result_dict["accession"] for result_dict in results]
+    return [
+        exp_dict
+        for exp_dict in experiments
+        if get_experiment_accesssion(exp_dict) in filtered_accessions
+    ]
 
 
 def format_species_name(species: str):
@@ -405,39 +436,93 @@ def format_species_name(species: str):
 def main():
     args = parse_args()
 
+    results = None
+    selected_accessions = []
+    selected_experiments = []
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # PARSING EXPRESSION ATLAS
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     # Getting arguments
     species_name = format_species_name(args.species)
     keywords = args.keywords
 
     logger.info(f"Getting experiments corresponding to species {species_name}")
-    experiments = get_species_experiments(species_name)
-    logger.info(f"Found {len(experiments)} experiments")
+    all_experiments = get_eatlas_experiments()
+    species_experiments = get_species_experiments(all_experiments, species_name)
+    logger.info(
+        f"Found {len(species_experiments)} experiments for species {species_name}"
+    )
 
     logger.info("Parsing experiments")
     with Pool() as pool:
-        results = pool.map(parse_experiment, experiments)
+        results = pool.map(parse_experiment, species_experiments)
 
     if keywords:
         logger.info(f"Filtering experiments with keywords {keywords}")
-        func = partial(filter_experiment, keywords=keywords)
+        func = partial(filter_experiment_with_keywords, keywords=keywords)
         with Pool() as pool:
             results = [res for res in pool.map(func, results) if res is not None]
 
-        if results:
-            logger.info(f"Kept {len(results)} experiments")
-        else:
-            raise RuntimeError(
-                f"Could not find experiments for species {args.species} and keywords {args.keywords}"
-            )
+    if results:
+        logger.info(f"Kept {len(results)} experiments")
+        # getting accessions of selected experiments
+        selected_accessions = [exp_dict["accession"] for exp_dict in results]
+        # keeping metadata only for selected experiments
+        selected_experiments = get_metadata_for_selected_experiments(
+            species_experiments, results
+        )
 
-    selected_accessions = [exp_dict["accession"] for exp_dict in results]
+    else:
+        logger.warning(
+            f"Could not find experiments for species {species_name} and keywords {keywords}"
+        )
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # EXPORTING DATA
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    # exporting list of accessions
     logger.info(f"Writing accessions to {ACCESSION_OUTFILE_NAME}")
     with open(ACCESSION_OUTFILE_NAME, "w") as fout:
         fout.writelines([f"{acc}\n" for acc in selected_accessions])
 
-    logger.info(f"Writing filtered experiments to {FILTERED_EXPERIMENTS_OUTFILE_NAME}")
-    with open(FILTERED_EXPERIMENTS_OUTFILE_NAME, "w") as fout:
-        yaml.dump(results, fout)
+    # exporting metadata
+    logger.info(
+        f"Writing metadata of all experiments to {ALL_EXPERIMENTS_METADATA_OUTFILE_NAME}"
+    )
+    df = pd.DataFrame.from_dict(all_experiments)
+    df.to_csv(ALL_EXPERIMENTS_METADATA_OUTFILE_NAME, sep="\t", index=False, header=True)
+
+    # exporting metadata
+    logger.info(
+        f"Writing metadata of all experiments for species {species_name} to {SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME}"
+    )
+    df = pd.DataFrame.from_dict(species_experiments)
+    df.to_csv(
+        SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME, sep="\t", index=False, header=True
+    )
+
+    if selected_experiments:
+        logger.info(
+            f"Writing metadata of filtered experiments to {FILTERED_EXPERIMENTS_METADATA_OUTFILE_NAME}"
+        )
+        df = pd.DataFrame.from_dict(selected_experiments)
+        df.to_csv(
+            FILTERED_EXPERIMENTS_METADATA_OUTFILE_NAME,
+            sep="\t",
+            index=False,
+            header=True,
+        )
+
+    if results is not None:
+        # exporting list of selected experiments with their keywords
+        logger.info(
+            f"Writing filtered experiments with keywords to {FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME}"
+        )
+        with open(FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME, "w") as fout:
+            yaml.dump(results, fout)
 
 
 if __name__ == "__main__":
