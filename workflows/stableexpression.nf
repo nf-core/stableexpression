@@ -26,7 +26,14 @@ workflow STABLEEXPRESSION {
 
     main:
 
-    multiqc_report = Channel.empty()
+
+    ch_top_stable_genes_summary = Channel.empty()
+    ch_all_genes_statistics = Channel.empty()
+    ch_top_stable_genes_transposed_counts = Channel.empty()
+    ch_gene_count_statistics = Channel.empty()
+    ch_skewness_statistics = Channel.empty()
+    ch_ks_stats = Channel.empty()
+    ch_distribution_correlations = Channel.empty()
 
     ch_species = Channel.value( params.species.split(' ').join('_') )
 
@@ -73,6 +80,9 @@ workflow STABLEEXPRESSION {
 
         MERGE_DATA.out.candidate_gene_counts.set { ch_candidate_gene_counts }
         MERGE_DATA.out.ks_test_statistics.set { ch_ks_stats }
+        MERGE_DATA.out.gene_count_statistics.set { ch_gene_count_statistics }
+        MERGE_DATA.out.skewness_statistics.set { ch_skewness_statistics }
+        MERGE_DATA.out.distribution_correlations.set { ch_distribution_correlations }
 
         // -----------------------------------------------------------------
         // GENE STATISTICS
@@ -87,25 +97,32 @@ workflow STABLEEXPRESSION {
             params.ks_pvalue_threshold
         )
 
-        // -----------------------------------------------------------------
-        // MULTIQC
-        // -----------------------------------------------------------------
-
-        Channel.empty()
-            .mix( GENE_STATISTICS.out.top_stable_genes_summary.collect() )
-            .mix( GENE_STATISTICS.out.all_statistics.collect() )
-            .mix( GENE_STATISTICS.out.top_stable_genes_transposed_counts.collect() )
-            .mix( MERGE_DATA.out.gene_count_statistics.collect() )
-            .mix( MERGE_DATA.out.skewness_statistics.collect() )
-            .mix( ch_ks_stats.collect() )
-            .mix( MERGE_DATA.out.distribution_correlations.collect() )
-            .set { ch_multiqc_files }
-
-        MULTIQC_WORKFLOW( ch_multiqc_files )
-
-        MULTIQC_WORKFLOW.out.report.toList().set { multiqc_report }
+        GENE_STATISTICS.out.top_stable_genes_summary.set { ch_top_stable_genes_summary }
+        GENE_STATISTICS.out.all_statistics.set { ch_all_genes_statistics }
+        GENE_STATISTICS.out.top_stable_genes_transposed_counts.set { ch_top_stable_genes_transposed_counts }
 
     }
+
+    // -----------------------------------------------------------------
+    // MULTIQC
+    // -----------------------------------------------------------------
+
+    Channel.empty()
+        .mix( ch_top_stable_genes_summary.collect() )
+        .mix( ch_all_genes_statistics.collect() )
+        .mix( ch_top_stable_genes_transposed_counts.collect() )
+        .mix( ch_gene_count_statistics.collect() )
+        .mix( ch_skewness_statistics.collect() )
+        .mix( ch_ks_stats.collect() )
+        .mix( ch_distribution_correlations.collect() )
+        .mix( Channel.topic('all_eatlas_experiment_metadata').collect() )
+        .mix( Channel.topic('filtered_eatlas_experiment_metadata').collect() )
+        .set { ch_multiqc_files }
+
+    MULTIQC_WORKFLOW( ch_multiqc_files )
+
+    MULTIQC_WORKFLOW.out.report.toList().set { multiqc_report }
+
 
     emit:
         multiqc_report

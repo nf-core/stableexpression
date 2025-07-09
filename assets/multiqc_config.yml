@@ -228,6 +228,24 @@ custom_data:
           Pearson correlation
         color: "#bf812d"
 
+  eatlas_filtered_experiments_metadata:
+    section_name: "Expression Atlas metadata - filtered"
+    file_format: "tsv"
+    no_violin: true
+    sort_rows: false
+    description: |
+      Metadata of Expression Atlas accessions filtered relatively to the provided species (and optionally the provided keywords)
+    plot_type: "table"
+
+  eatlas_all_experiments_metadata:
+    section_name: "Expression Atlas metadata - all"
+    file_format: "tsv"
+    no_violin: true
+    sort_rows: false
+    description: |
+      Metadata of Expression Atlas accessions filtered relatively to the provided species (and optionally the provided keywords)
+    plot_type: "table"
+
 #violin_downsample_after: 10000
 
 log_filesize_limit: 10000000000 # 10GB
@@ -250,3 +268,7 @@ sp:
     fn: "*ks_test_statistics.csv"
   distribution_correlations:
     fn: "*distribution_correlations.csv"
+  eatlas_filtered_experiments_metadata:
+    fn: "*filtered_experiments.metadata.tsv"
+  eatlas_all_experiments_metadata:
+    fn: "*all_experiments.metadata.tsv"

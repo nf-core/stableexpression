@@ -35,7 +35,12 @@ workflow EXPRESSIONATLAS_FETCHDATA {
             ch_species,
             params.eatlas_keywords
         )
-        EXPRESSIONATLAS_GETACCESSIONS.out.txt.set { ch_fetched_accessions }
+        EXPRESSIONATLAS_GETACCESSIONS.out.accessions.splitText().set { ch_fetched_accessions }
+
+        // printing message if no accession could be retrieved from Expression Atlas
+        ch_fetched_accessions
+            .ifEmpty('No Expression Atlas accession could be retrieved!')
+            .view()
 
     }
 
@@ -55,7 +60,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
     // removing E-PROT- accessions
     // removing excluded accessions
     ch_input_accessions
-        .mix( ch_fetched_accessions.splitText() )
+        .mix( ch_fetched_accessions )
         .unique()
         .map { it -> it.trim() }
         .filter { it.startsWith('E-') && !it.startsWith('E-PROT-') }
