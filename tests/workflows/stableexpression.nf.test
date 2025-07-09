@@ -12,35 +12,8 @@ nextflow_workflow {
 
         when {
             params {
-                species = "solanum tuberosum"
+                species = "beta vulgaris"
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
-            }
-            workflow {
-                """
-                input[0] = Channel.empty()
-                """
-            }
-        }
-
-        then {
-            assert workflow.success
-            with(workflow.out.multiqc_report[0]) {
-                assertAll(
-                    { assert path(get(0)).readLines().any { it.contains('MultiQC: A modular tool') } },
-                    { assert path(get(0)).readLines().any { it.contains('Data was processed using nf-core/stableexpression') } }
-                )
-            }
-        }
-    }
-
-    test("Expression Atlas accession - two output datasets") {
-
-        tag "workflow_eatlas_accession_two_datasets"
-
-        when {
-            params {
-                species = "homo sapiens"
-                eatlas_accessions = "E-GEOD-1615"
             }
             workflow {
                 """
@@ -66,7 +39,7 @@ nextflow_workflow {
 
         when {
             params {
-                species = "solanum tuberosum"
+                species = "beta vulgaris"
                 fetch_eatlas_accessions = true
             }
             workflow {
@@ -93,7 +66,7 @@ nextflow_workflow {
 
         when {
             params {
-                species = "solanum tuberosum"
+                species = "beta vulgaris"
                 eatlas_keywords = "potato,stress"
             }
             workflow {
@@ -177,7 +150,7 @@ nextflow_workflow {
 
         when {
             params {
-                species = "solanum tuberosum"
+                species = "beta vulgaris"
                 accessions_only = true
             }
             workflow {
