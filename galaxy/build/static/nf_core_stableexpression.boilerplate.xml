@@ -43,6 +43,7 @@ VERSION="PIPELINE_VERSION"; echo "$VERSION"
         ## Running pipeline
         ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+        && nextflow drop -f OlivierCoen/stableexpression
         && nextflow run OlivierCoen/stableexpression
             -r dev -latest
             -profile apptainer
