@@ -65,14 +65,14 @@ VERSION="1.0dev"; echo "$VERSION"
 			#if $expression_atlas_options.eatlas_accessions_file
 			  --eatlas_accessions_file "$expression_atlas_options.eatlas_accessions_file"
 			#end if
-			#if $expression_atlas_options.accessions_only
-			  --accessions_only $expression_atlas_options.accessions_only
-			#end if
 			#if $expression_atlas_options.exclude_eatlas_accessions
 			  --exclude_eatlas_accessions "$expression_atlas_options.exclude_eatlas_accessions"
 			#end if
 			#if $expression_atlas_options.exclude_eatlas_accessions_file
 			  --exclude_eatlas_accessions_file "$expression_atlas_options.exclude_eatlas_accessions_file"
+			#end if
+			#if $expression_atlas_options.accessions_only
+			  --accessions_only $expression_atlas_options.accessions_only
 			#end if
 			#if $idmapping_options.skip_gprofiler
 			  --skip_gprofiler $idmapping_options.skip_gprofiler
@@ -108,17 +108,17 @@ VERSION="1.0dev"; echo "$VERSION"
 		</section>
 		<section name="expression_atlas_options" title="Expression Atlas options" help="Options for fetching datasets from Expression Atlas." expanded="false">
 			<param name="eatlas_keywords" type="text" label="Expression Atlas keywords" help="Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas. The pipeline will select all Expression Atlas experiments that contain the provided keywords in their description of in one of the condition names. Example: `--eatlas_keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set." optional="true">
-				<validator type="regex" message="must match regular expression ([a-zA-Z, ]+)">([a-zA-Z,]+)</validator>
+				<validator type="regex" message="must match regular expression ([a-zA-Z,]+)">([a-zA-Z,]+)</validator>
 			</param>
 			<param name="eatlas_accessions" type="text" label="Expression Atlas accessions" help="Provide directly in command line Expression Atlas accession(s) (separated by commas) that you want to download. Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used." optional="true">
 				<validator type="regex" message="must match regular expression ([A-Z0-9-]+,?)+">([A-Z0-9-]+,?)+</validator>
 			</param>
 			<param name="eatlas_accessions_file" type="data" label="File with Expression Atlas accessions" help="File containing Expression Atlas accession(s) that you want to download. One accession per line.Example: `--eatlas_accessions_file included_accessions.txt`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used." optional="true" />
-			<param name="accessions_only" type="boolean" label="Only get accessions from Expression Atlas and exit." truevalue="--accessions_only" falsevalue="" help="Use this option if you want to only get Expression Atlas accessions and skip the rest of the pipeline." optional="true" />
 			<param name="exclude_eatlas_accessions" type="text" label="Expression Atlas accession to exclude" help="Provide directly in command line Expression Atlas accessions (separated by commas) that you want to exclude. Example: `--exclude_eatlas_accessions E-MTAB-552,E-GEOD-61690`" optional="true">
 				<validator type="regex" message="must match regular expression ([A-Z0-9-]+,?)+">([A-Z0-9-]+,?)+</validator>
 			</param>
 			<param name="exclude_eatlas_accessions_file" type="data" label="File with Expression Atlas accessions to exclude" help="File containing Expression Atlas accession(s) that you want to exclude. One accession per line. Example: `--exclude_eatlas_accessions_file excluded_accessions.txt`." optional="true" />
+			<param name="accessions_only" type="boolean" label="Only get accessions from Expression Atlas and exit." truevalue="--accessions_only" falsevalue="" help="Use this option if you only want to get Expression Atlas accessions and skip the rest of the pipeline." optional="true" />
 		</section>
 		<section name="idmapping_options" title="ID mapping options" help="Options for mapping gene IDs." expanded="false">
 			<param name="skip_gprofiler" type="boolean" label="Skip g:Profiler ID mapping step" truevalue="--skip_gprofiler" falsevalue="" optional="true" />
@@ -140,7 +140,7 @@ VERSION="1.0dev"; echo "$VERSION"
     </outputs>
     <tests>
         <test>
-            <param name="species" value="solanum tuberosum"/>
+            <param name="species" value="solanum_tuberosum"/>
             <param name="skip_fetch_eatlas_accessions" value="true"/>
             <param name="provide_datasets" value="true"/>
             <param name="samplesheet" value="input.csv"/>
@@ -159,7 +159,8 @@ VERSION="1.0dev"; echo "$VERSION"
             </output>
         </test>
         <test>
-            <param name="species" value="solanum tuberosum"/>
+            <param name="species" value="beta vulgaris"/>
+            <param name="eatlas_keywords" value="leaf"/>
             <output name="top_stable_genes_summary">
                 <assert_contents>
                     <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />
@@ -173,7 +174,7 @@ VERSION="1.0dev"; echo "$VERSION"
             </output>
         </test>
         <test>
-            <param name="species" value="solanum tuberosum"/>
+            <param name="species" value="beta vulgaris"/>
             <param name="provide_datasets" value="true"/>
             <param name="samplesheet" value="input.csv"/>
             <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
