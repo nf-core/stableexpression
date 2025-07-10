@@ -58,7 +58,8 @@ if __name__ == "__main__":
             row["counts"] = count_names_to_files[original_count_filename]
             if "design" in row:
                 original_design_filename = Path(row["design"]).name
-                row["design"] = design_names_to_files[original_design_filename]
+                # the design is optional
+                row["design"] = design_names_to_files.get(original_design_filename, "")
             renamed_rows.append(row)
 
     with open(args.outfile, "w", newline="") as fout:
