@@ -1,5 +1,7 @@
 categories:
   - Transcriptomics
+  - RNA
+  - Micro-array Analysis
 description: Pipeline dedicated to finding the most stable genes across count datasets
 homepage_url: https://nf-co.re/stableexpression/
 long_description: |
