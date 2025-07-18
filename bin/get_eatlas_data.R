@@ -2,8 +2,10 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
+suppressPackageStartupMessages(library("ExpressionAtlas"))
 library(ExpressionAtlas)
 library(optparse)
+
 
 #####################################################
 #####################################################
@@ -127,7 +129,7 @@ export_count_data <- function(result, batch_id) {
 
     # exporting to CSV file
     # index represents gene names
-    print(paste('Exporting count data to file', outfilename))
+    cat(paste('Exporting count data to file', outfilename))
     write.table(result$count_data, outfilename, sep = ',', row.names = TRUE, col.names = TRUE, quote = FALSE)
 }
 
@@ -143,7 +145,7 @@ export_metadata <- function(result, batch_id) {
     )
 
     outfilename <- paste0(batch_id, '.design.csv')
-    print(paste('Exporting design data to file', outfilename))
+    cat(paste('Exporting design data to file', outfilename))
     write.table(df, outfilename, sep = ',', row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
 
@@ -161,9 +163,9 @@ process_data <- function(atlas_data, accession) {
         # getting count dataframe
         tryCatch({
 
-            if (data_type == 'rnaseq') {
+            if ( data_type == 'rnaseq' ) {
                 result <- get_rnaseq_data(data)
-            } else if (startsWith(data_type, 'A-AFFY-')) {
+            } else if ( startsWith(data_type, 'A-') ) { # typically: A-AFFY- or A-GEOD-
                 result <- get_one_colour_microarray_data(data)
             } else {
                 stop(paste('ERROR: Unknown data type:', data_type))
@@ -172,7 +174,7 @@ process_data <- function(atlas_data, accession) {
         }, error = function(e) {
             print(paste("Caught an error: ", e$message))
             print(paste('ERROR: Could not get assay data for experiment ID', accession, 'and data type', data_type))
-            skip_iteration <- TRUE
+            skip_iteration <<- TRUE
         })
 
         # If an error occurred, skip to the next iteration
@@ -198,6 +200,8 @@ process_data <- function(atlas_data, accession) {
 #####################################################
 
 args <- get_args()
+
+cat(paste("Getting data for accession", args$accession, "\n"))
 
 accession <- trimws(args$accession)
 if (startsWith(accession, "E-PROT")) {
