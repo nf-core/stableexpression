@@ -3,6 +3,7 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
+import sys
 import polars as pl
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -211,6 +212,11 @@ def get_counts(
     valid_samples = ks_stats_df.filter(
         ks_stats_df[KS_TEST_COLNAME] > ks_pvalue_threshold
     )[SAMPLE_COLNAME].to_list()
+
+    if not valid_samples:
+        logger.error("No more valid sample to process...")
+        sys.exit(101)
+
     # filtering the count dataframe to keep only the valid samples
     return count_lf.select([ENSEMBL_GENE_ID_COLNAME] + valid_samples)
 

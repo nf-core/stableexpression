@@ -11,6 +11,7 @@ process DATASET_STATISTICS {
 
     input:
     tuple val(meta), path(count_file)
+    val target_distribution
 
     output:
     tuple val(meta), path('*.dataset_stats.csv'),                                                                       emit: stats
@@ -25,7 +26,10 @@ process DATASET_STATISTICS {
     script:
     def prefix = task.ext.prefix ?: "${meta.dataset}"
     """
-    get_dataset_statistics.py --counts $count_file --output ${prefix}.dataset_stats.csv
+    get_dataset_statistics.py \
+        --counts $count_file \
+        --target-distrib $target_distribution \
+        --output ${prefix}.dataset_stats.csv
     """
 
 

@@ -9,6 +9,13 @@ process GENE_STATISTICS {
                 + "Please check the provided accessions and datasets and run again"
                 )
             return 'terminate'
+        } else if (task.exitStatus == 101) {
+            log.error(
+                "No more valid sample after checking p-value of Kolmogorow-Smirnoff test against target distribution! "
+                + "You can try a more flexible approach by setting again the value of the ks_pvalue_threshold parameter. "
+                + "Provide a negative value to disable this filter."
+            )
+            return 'terminate'
         }
     }
 

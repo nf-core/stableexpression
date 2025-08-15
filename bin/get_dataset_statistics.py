@@ -16,7 +16,9 @@ DATASET_STATISTICS_SUFFIX = ".dataset_stats.csv"
 
 ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 SAMPLE_COLNAME = "sample"
-KS_TEST_COLNAME = "kolmogorov_smirnov_to_uniform_dist_pvalue"
+KS_TEST_COLNAME = "kolmogorov_smirnov_pvalue"
+
+ALLOWED_TARGET_DISTRIBUTIONS = ["normal", "uniform"]
 
 
 #####################################################
@@ -36,23 +38,46 @@ def parse_args():
     parser.add_argument(
         "--output", type=str, dest="outfile_name", required=True, help="Output file"
     )
+    parser.add_argument(
+        "--target-distrib",
+        type=str,
+        dest="target_distribution",
+        required=True,
+        choices=ALLOWED_TARGET_DISTRIBUTIONS,
+        help="Target distribution to map counts to",
+    )
     return parser.parse_args()
 
 
-def compute_kolmogorov_smirnov_test_to_uniform_distribution(count_df: pd.DataFrame):
-    """Compute Kolmogorov-Smirnov test to uniform distribution."""
+def compute_kolmogorov_smirnov_test_to_target_distribution(
+    count_df: pd.DataFrame, target_distribution: str
+) -> pd.Series:
+    """Compute Kolmogorov-Smirnov test to target distribution."""
+
+    if target_distribution == "normal":
+        cum_distrib_function = stats.norm.cdf
+    elif target_distribution == "uniform":
+        cum_distrib_function = stats.uniform.cdf
+    else:
+        raise ValueError(f"Unknown target distribution: {target_distribution}")
+
     ks_tests = pd.Series(index=count_df.columns)
     for col in count_df.columns:
-        ks = stats.ks_1samp(count_df[col], stats.uniform.cdf, nan_policy="omit")
+        ks = stats.ks_1samp(count_df[col], cum_distrib_function, nan_policy="omit")
         ks_tests[col] = ks.pvalue
+
     return ks_tests
 
 
-def compute_dataset_statistics(count_df: pd.DataFrame):
+def compute_dataset_statistics(
+    count_df: pd.DataFrame, target_distribution: str
+) -> pd.DataFrame:
     dataset_stats_df = count_df.describe()
     dataset_stats_df.loc["skewness"] = count_df.skew()
-    # for each sample, test distance to uniform distribution
-    ks_tests = compute_kolmogorov_smirnov_test_to_uniform_distribution(count_df)
+    # for each sample, test distance to target distribution
+    ks_tests = compute_kolmogorov_smirnov_test_to_target_distribution(
+        count_df, target_distribution
+    )
     dataset_stats_df.loc[KS_TEST_COLNAME] = ks_tests
     return dataset_stats_df.T
 
@@ -79,7 +104,7 @@ def main():
     count_df = pd.read_parquet(count_file)
     count_df.set_index(ENSEMBL_GENE_ID_COLNAME, inplace=True)
 
-    dataset_stats_df = compute_dataset_statistics(count_df)
+    dataset_stats_df = compute_dataset_statistics(count_df, args.target_distribution)
 
     export_count_data(dataset_stats_df, args.outfile_name)
 

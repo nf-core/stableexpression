@@ -22,7 +22,7 @@ ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 STATISTIC_TYPE_COLNAME = "stat_type"
 GENE_COUNT_COLNAME = "count"
 SKEWNESS_COLNAME = "skewness"
-KS_TEST_COLNAME = "kolmogorov_smirnov_to_uniform_dist_pvalue"
+KS_TEST_COLNAME = "kolmogorov_smirnov_pvalue"
 SAMPLE_COLNAME = "sample"
 
 STAT_COLNAME_TO_PARAMS = {

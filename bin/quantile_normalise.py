@@ -15,7 +15,8 @@ QUANT_NORM_SUFFIX = ".quant_norm.parquet"
 
 ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 N_QUANTILES = 1000
-OUTPUT_DISTRIBUTION = "uniform"
+
+ALLOWED_TARGET_DISTRIBUTIONS = ["normal", "uniform"]
 
 
 #####################################################
@@ -32,15 +33,23 @@ def parse_args():
     parser.add_argument(
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
+    parser.add_argument(
+        "--target-distrib",
+        type=str,
+        dest="target_distribution",
+        required=True,
+        choices=ALLOWED_TARGET_DISTRIBUTIONS,
+        help="Target distribution to map counts to",
+    )
     return parser.parse_args()
 
 
-def quantile_normalize(data: pd.DataFrame):
+def quantile_normalize(data: pd.DataFrame, target_distribution: str):
     """
     Quantile normalize a data matrix based on a target distribution.
     """
     transformer = QuantileTransformer(
-        n_quantiles=N_QUANTILES, output_distribution=OUTPUT_DISTRIBUTION
+        n_quantiles=N_QUANTILES, output_distribution=target_distribution
     )
 
     normalised_data = pd.DataFrame(index=data.index, columns=data.columns)
@@ -72,7 +81,7 @@ def main():
     count_df = pd.read_csv(count_file, index_col=0)
     count_df.index.name = ENSEMBL_GENE_ID_COLNAME
 
-    quantile_normalized_counts = quantile_normalize(count_df)
+    quantile_normalized_counts = quantile_normalize(count_df, args.target_distribution)
 
     export_count_data(quantile_normalized_counts, count_file)
 

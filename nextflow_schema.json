@@ -155,7 +155,16 @@
                     "description": "Tool to use for normalisation",
                     "fa_icon": "fas fa-chart-simple",
                     "enum": ["deseq2", "edger"],
-                    "default": "deseq2"
+                    "default": "deseq2",
+                    "help_text": "Raw RNAseq data must be normalised before further processing. You can select the package used for normalisation."
+                },
+                "quant_norm_target_distrib": {
+                    "type": "string",
+                    "description": "Target distribution to map to during quantile normalisation",
+                    "fa_icon": "fas fa-chart-simple",
+                    "enum": ["normal", "uniform"],
+                    "default": "normal",
+                    "help_text": "All sample counts get quantile normalised and mapped to a specific distribution so that subsequent can compare them. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
                 },
                 "nb_top_gene_candidates": {
                     "type": "integer",

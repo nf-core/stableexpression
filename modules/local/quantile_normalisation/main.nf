@@ -11,6 +11,7 @@ process QUANTILE_NORMALISATION {
 
     input:
     tuple val(meta), path(count_file)
+    val target_distribution
 
     output:
     tuple val(meta), path('*.quant_norm.parquet'),                                                                      emit: counts
@@ -24,7 +25,9 @@ process QUANTILE_NORMALISATION {
 
     script:
     """
-    quantile_normalise.py --counts $count_file
+    quantile_normalise.py \
+        --counts $count_file \
+        --target-distrib $target_distribution
     """
 
     stub:

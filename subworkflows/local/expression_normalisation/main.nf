@@ -14,7 +14,7 @@ workflow EXPRESSION_NORMALISATION {
     take:
     ch_datasets
     normalisation_method
-
+    quant_norm_target_distrib
 
     main:
 
@@ -45,14 +45,24 @@ workflow EXPRESSION_NORMALISATION {
     //
 
     // putting all normalised count datasets together and performing quantile normalisation
-    ch_datasets.normalised.concat( ch_raw_rnaseq_datasets_normalised ) | QUANTILE_NORMALISATION
+    ch_datasets.normalised
+        .mix( ch_raw_rnaseq_datasets_normalised )
+        .set { quant_norm_input }
+
+    QUANTILE_NORMALISATION (
+        quant_norm_input,
+        quant_norm_target_distrib
+    )
     ch_quantile_normalised_datasets = QUANTILE_NORMALISATION.out.counts
 
     //
     // MODULE: Dataset statistics
     //
 
-    DATASET_STATISTICS( ch_quantile_normalised_datasets )
+    DATASET_STATISTICS(
+        ch_quantile_normalised_datasets,
+        quant_norm_target_distrib
+    )
 
     emit:
     normalised_counts = ch_quantile_normalised_datasets

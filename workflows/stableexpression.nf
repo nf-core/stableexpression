@@ -62,7 +62,8 @@ workflow STABLEEXPRESSION {
 
         EXPRESSION_NORMALISATION(
             IDMAPPING.out.datasets,
-            params.normalisation_method
+            params.normalisation_method,
+            params.quant_norm_target_distrib
         )
 
         EXPRESSION_NORMALISATION.out.normalised_counts.set { ch_normalised_counts }

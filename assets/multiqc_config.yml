@@ -192,12 +192,12 @@ custom_data:
         color: "#bf812d"
 
   uniform_distribution_probabilities:
-    section_name: "Probabilities of uniform count distribution"
+    section_name: "Probabilities of normal / uniform count distribution"
     file_format: "csv"
     description: |
-      Pvalue of Kolmogorov-Smirnov test to uniform distribution.
-      The higher the pvalue, the more likely the distribution is uniform.
-      If the pvalue < 0.05, the null hypothesis is rejected and the distribution is not uniform.
+      Pvalue of Kolmogorov-Smirnov test to normal / uniform distribution.
+      The higher the pvalue, the more likely the distribution is normal / uniform.
+      If the pvalue < 0.05, the null hypothesis is rejected and the distribution is not normal / uniform.
       Samples showing a pvalue lower than the threshold (set in parameters) when not considered for stability scoring.
     plot_type: "linegraph"
     pconfig:
@@ -206,10 +206,10 @@ custom_data:
       logswitch_active: true
       logswitch_label: "Log10"
     headers:
-      kolmogorov_smirnov_to_uniform_dist_pvalue:
-        title: "KS test to uniform distribution - pvalue"
+      kolmogorov_smirnov_pvalue:
+        title: "KS test to normal / uniform distribution - pvalue"
         description: |
-          Pvalue of Kolmogorov-Smirnov test to uniform distribution.
+          Pvalue of Kolmogorov-Smirnov test to normal / uniform distribution.
         color: "#bf812d"
 
   distribution_correlations:
