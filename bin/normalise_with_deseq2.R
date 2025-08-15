@@ -2,6 +2,7 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
+suppressPackageStartupMessages(library("DESeq2"))
 library(DESeq2)
 library(optparse)
 
@@ -50,7 +51,7 @@ prefilter_counts <- function(count_matrix, design_data) {
         # keep genes with at least 10 counts over a certain number of samples
         keep <- rowSums(count_matrix >= 10) >= smallest_group_size
     }
-    filtered_count_matrix <- count_matrix[keep,]
+    filtered_count_matrix <- count_matrix[keep, , drop = FALSE] # drop = FALSE: keep dataframe structure even if only one column remains
     return(filtered_count_matrix)
 }
 
@@ -87,8 +88,6 @@ get_cpm_counts <- function(normalised_counts, filtered_count_matrix) {
 
 get_normalised_cpm_counts <- function(count_file, design_file) {
 
-    print(paste('Normalizing counts in:', count_file))
-
     count_data <- read.csv(count_file, row.names = 1)
 
     # data should all be integers but sometimes they are integers converted to floats (1234 -> 1234.0)
@@ -101,15 +100,12 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     count_matrix <- remove_all_zero_columns(count_matrix)
 
     if ( is.null(design_file) ) {
-
         # faking a design table
         design_data <- data.frame(
             sample = colnames(count_matrix),
             condition = rep("A", ncol(count_matrix))
         )
-
     } else {
-
         # getting design data
         design_data <- read.csv(design_file)
         # removing extra samples in design table
@@ -135,7 +131,8 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     # if the dataframe is now empty, stop the process
     if (nrow(filtered_count_matrix) == 0) {
         message("No genes left after pre-filtering.")
-        quit(save = "no", status = 100)
+        #quit(save = "no", status = 100)
+        quit(save = "no", status = 0)
     }
 
     # add a small pseudocount to avoid zero counts
@@ -158,7 +155,7 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
 
 export_data <- function(cpm_counts, filename) {
     filename <- sub("\\.csv$", ".cpm.csv", filename)
-    print(paste('Exporting normalised counts per million to:', filename))
+    cat(paste('Exporting normalised counts per million to:', filename, "\n"))
     write.table(cpm_counts, filename, sep = ',', row.names = TRUE, col.names = NA, quote = FALSE)
 }
 
@@ -170,6 +167,7 @@ export_data <- function(cpm_counts, filename) {
 
 args <- get_args()
 
+cat(paste("Normalising counts in", args$count_file, "\n"))
 cpm_counts <- get_normalised_cpm_counts(args$count_file, args$design_file)
 
 export_data(cpm_counts, basename(args$count_file))
