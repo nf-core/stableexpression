@@ -55,7 +55,7 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
 
                 if (grepl("550 Requested action not taken; file unavailable", w$message)) {
                     warning(w$message)
-                    quit(save = "no", status = 100) # quit & ignore process
+                    quit(save = "no", status = 101) # quit & ignore process
                 } else if (grepl("Failure when receiving data from the peer", w$message)) {
                     warning(w$message)
                     quit(save = "no", status = 100) # quit & ignore process

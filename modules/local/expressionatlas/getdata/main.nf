@@ -26,14 +26,18 @@ process EXPRESSIONATLAS_GETDATA {
             log.warn("Unhandled error occurred with accession: ${accession}")
             return 'ignore'
         } else if (task.exitStatus == 137) { // override default behaviour to sleep some time before retry
-            // in case of OOM errors, we wait a bit and try again
-            sleep(Math.pow(2, task.attempt) * 2000 as long)
-            return 'retry'
+            // in case of OOM errors, we wait a bit and try again (2 retries)
+            if ( task.attempt in <= 2) {
+                sleep(Math.pow(2, task.attempt) * 2000 as long)
+                return 'retry'
+            } else {
+                log.error("${accession} caused Out of Memory error multiple times. Ignoring this accession.")
+                return 'ignore'
+            }
         } else {
             return 'terminate'
         }
     }
-    maxRetries = 5
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

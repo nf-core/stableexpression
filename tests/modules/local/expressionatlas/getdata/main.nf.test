@@ -158,4 +158,27 @@ nextflow_process {
 
     }
 
+    test("E-MTAB-3578 :: serverside error 550") {
+
+        tag "getdata_error_550"
+
+        when {
+
+            process {
+                """
+                input[0] = "E-MTAB-3578"
+                """
+            }
+        }
+
+        // check for the absence of expected output (the error is ignored but no output is produced)
+        then {
+            assert process.success
+            assert process.trace.succeeded().size() == 0
+            assert process.trace.failed().size() == 1
+            assert process.out.design.size() == 0
+        }
+
+    }
+
 }

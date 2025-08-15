@@ -35,12 +35,10 @@ workflow EXPRESSIONATLAS_FETCHDATA {
             ch_species,
             params.eatlas_keywords
         )
-        EXPRESSIONATLAS_GETACCESSIONS.out.accessions.splitText().set { ch_fetched_accessions }
 
-        // printing message if no accession could be retrieved from Expression Atlas
-        ch_fetched_accessions
-            .ifEmpty('No Expression Atlas accession could be retrieved!')
-            .view()
+        EXPRESSIONATLAS_GETACCESSIONS.out.accessions
+            .splitText()
+            .set { ch_fetched_accessions }
 
     }
 
