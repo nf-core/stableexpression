@@ -28,8 +28,8 @@ indent_style = unset
 [/assets/email*]
 indent_size = unset
 
-# ignore python and markdown
-[*.{py,md}]
+# ignore python, nf tests and markdown
+[*.{py,md,test}]
 indent_style = unset
 
 # ignore ro-crate metadata files
