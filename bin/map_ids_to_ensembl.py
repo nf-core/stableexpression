@@ -7,7 +7,16 @@ import pandas as pd
 from pathlib import Path
 import argparse
 import logging
+import urllib3
 import sys
+
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_delay,
+    wait_exponential,
+    before_sleep_log,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -86,6 +95,12 @@ def chunk_list(lst: list, chunksize: int):
     return [lst[i : i + chunksize] for i in range(0, len(lst), chunksize)]
 
 
+@retry(
+    retry=retry_if_exception_type(urllib3.exceptions.ProtocolError),
+    stop=stop_after_delay(600),
+    wait=wait_exponential(multiplier=1, min=1, max=30),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+)
 def request_conversion(
     gene_ids: list,
     species: str,

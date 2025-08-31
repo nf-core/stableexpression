@@ -27,8 +27,8 @@ process IDMAPPING_GPROFILER {
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/aa/aad4e61f15d97b7c0a24a4e3ee87a11552464fb7110f530e43bdc9acc374cf13/data':
-        'community.wave.seqera.io/library/pandas_python_requests:8c6da05a2935a952' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5c/5c28c8e613c062828aaee4b950029bc90a1a1aa94d5f61016a588c8ec7be8b65/data':
+        'community.wave.seqera.io/library/pandas_requests_tenacity:5ba56df089a9d718' }"
 
     input:
     tuple val(meta), path(count_file)
@@ -49,9 +49,9 @@ process IDMAPPING_GPROFILER {
     script:
     def custom_mapping_arg = gene_id_mapping_file ? "--custom-mappings $gene_id_mapping_file" : ""
     """
-    map_ids_to_ensembl.py \
-        --count-file "$count_file" \
-        --species "$species" \
+    map_ids_to_ensembl.py \\
+        --count-file "$count_file" \\
+        --species "$species" \\
         $custom_mapping_arg
     """
 
