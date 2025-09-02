@@ -31,9 +31,11 @@ workflow EXPRESSIONATLAS_FETCHDATA {
 
         // getting Expression Atlas accessions given a species name and keywords
         // keywords can be an empty string
+        def eatlas_platform = params.eatlas_platform?: 'none'
         EXPRESSIONATLAS_GETACCESSIONS(
             ch_species,
-            params.eatlas_keywords
+            params.eatlas_keywords,
+            eatlas_platform
         )
 
         EXPRESSIONATLAS_GETACCESSIONS.out.accessions

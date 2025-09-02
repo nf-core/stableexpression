@@ -10,6 +10,7 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     input:
     val species
     val keywords
+    val platform
 
     output:
     path "accessions.txt",                                                                                            emit: accessions
@@ -28,24 +29,24 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     script:
     def keywords_string = keywords.split(',').collect { it.trim() }.join(' ')
-
-    // the folder where nltk will download data needs to be writable (necessary for singularity)
-    if (keywords_string == "") {
-        """
-        NLTK_DATA=$PWD get_eatlas_accessions.py \\
-            --species $species
-        """
-    } else {
-        """
-        NLTK_DATA=$PWD get_eatlas_accessions.py \\
-            --species $species \\
-            --keywords $keywords_string
-        """
+    def args = " --species $species"
+    if ( keywords_string != "" ) {
+        args += " --keywords $keywords_string"
     }
+    if ( platform != 'none' ) {
+        args += " --platform $platform"
+    }
+    // the folder where nltk will download data needs to be writable (necessary for singularity)
+    """
+    NLTK_DATA=$PWD get_eatlas_accessions.py $args
+    """
 
     stub:
     """
-    touch accessions.txt all_experiments.metadata.tsv filtered_experiments.metadata.tsv filtered_experiments.keywords.yaml
+    touch accessions.txt \\
+        all_experiments.metadata.tsv \\
+        filtered_experiments.metadata.tsv \\
+        filtered_experiments.keywords.yaml
     """
 
 }

@@ -63,7 +63,7 @@
             "fa_icon": "fas fa-book-atlas",
             "description": "Options for fetching datasets from Expression Atlas.",
             "properties": {
-                "eatlas_keywords": {
+                    "eatlas_keywords": {
                     "type": "string",
                     "description": "Expression Atlas keywords",
                     "fa_icon": "fas fa-highlighter",
@@ -76,6 +76,13 @@
                     "description": "Expression Atlas accessions",
                     "fa_icon": "fas fa-id-card",
                     "help_text": "Provide directly in command line Expression Atlas accession(s) (separated by commas) that you want to download. Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
+                },
+                "eatlas_platform": {
+                    "type": "string",
+                    "enum": ["rnaseq", "microarray"],
+                    "description": "Only download Expression Atlas experiments from this platform",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "By default, data from all platform are downloaded. If this parameter is specified, a filter is applied to get data from only one specific type of platform."
                 },
                 "eatlas_accessions_file": {
                     "type": "string",

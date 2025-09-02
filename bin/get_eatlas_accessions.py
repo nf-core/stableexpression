@@ -72,6 +72,11 @@ def parse_args():
         nargs="*",
         help="Keywords to search for in experiment description",
     )
+    parser.add_argument(
+        "--platform",
+        type=str,
+        help="Platform type"
+    )
     return parser.parse_args()
 
 
@@ -337,12 +342,39 @@ def get_eatlas_experiments():
     return data["experiments"]
 
 
+def get_platform_specific_experiments(experiments: list[dict], platform: str):
+    """
+    Gets all experiments for a given platform from Expression Atlas
+    Possible platforms in Expression Atlas are 'rnaseq', 'microarray', 'proteomics'
+
+    Parameters
+    ----------
+    experiments: list[str]
+    platform : str
+        Name of platform. Example: "rnaseq"
+
+    Returns
+    -------
+    experiments : list
+        A list of experiment dictionaries
+    """
+    platform_experiments = []
+    for exp_dict in experiments:
+        if technology_type := exp_dict.get("technologyType"):
+            parsed_technology_type = technology_type[0] if isinstance(technology_type, list) else technology_type
+            parsed_platform = parsed_technology_type.lower().split(" ")[0].replace("-", "")
+            if platform == parsed_platform:
+                platform_experiments.append(exp_dict)
+    return platform_experiments
+
+
 def get_species_experiments(experiments: list[dict], species: str):
     """
     Gets all experiments for a given species from Expression Atlas
 
     Parameters
     ----------
+    experiments: list[str]
     species : str
         Name of species. Example: "Arabidopsis thaliana"
 
@@ -450,6 +482,11 @@ def main():
 
     logger.info(f"Getting experiments corresponding to species {species_name}")
     all_experiments = get_eatlas_experiments()
+
+    if args.platform:
+        logger.info(f"Getting experiments corresponding to platform {args.platform}")
+        all_experiments = get_platform_specific_experiments(all_experiments, args.platform)
+
     species_experiments = get_species_experiments(all_experiments, species_name)
     logger.info(
         f"Found {len(species_experiments)} experiments for species {species_name}"
