@@ -22,6 +22,47 @@ def get_count_columns(lf: pl.LazyFrame) -> list[str]:
     return lf.select(pl.exclude(ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
 
 
+############################################################################
+# POLARS EXTENSIONS
+############################################################################
+
+@pl.api.register_expr_namespace("row")
+class StatsExtension:
+    def __init__(self, expr: pl.Expr):
+        self._expr = expr
+
+    def not_null_values(self):
+        return (
+            self._expr
+            .list
+            .drop_nulls()
+            .list
+        )
+
+    def mean(self) -> pl.Expr:
+        """Mean over non nulls values in row"""
+        return self.not_null_values().mean()
+
+
+    def std(self) -> pl.Expr:
+        """Std over non nulls values in row"""
+        return self.not_null_values().std()
+
+    def median(self) -> pl.Expr:
+        """Median over non nulls values in row"""
+        return self.not_null_values().median()
+
+    def mad(self) -> pl.Expr:
+        """Median Absolute Deviation over non nulls values in row"""
+        return (
+            self.not_null_values()
+            .eval(
+                (pl.element() - pl.element().median()).abs().median()
+            ) # returns a list with one element
+            .list.first()
+        )
+
+
 
 @dataclass
 class StabilityScorer:
@@ -30,6 +71,8 @@ class StabilityScorer:
         VAR_COEFF="variation_coefficient",
         STD="standard_deviation",
         MEAN="mean",
+        MEDIAN="median",
+        MAD="median_absolute_deviation",
         EXPRESSION_LEVEL_QUANTILE_INTERVAL="expression_level_quantile_interval",
         EXPRESSION_LEVEL_STATUS="expression_level_status",
         NB_NULLS="total_nb_nulls",
@@ -102,13 +145,18 @@ class StabilityScorer:
         logger.info("Getting descriptive statistics")
         # computing main stats
         augmented_count_lf = self.count_lf.with_columns(
-            mean=pl.concat_list(self.count_columns).list.drop_nulls().list.mean(),
-            std=pl.concat_list(self.count_columns).list.drop_nulls().list.std(),
+            mean=pl.concat_list(self.count_columns).row.mean(),
+            std=pl.concat_list(self.count_columns).row.std(),
+            median=pl.concat_list(self.count_columns).row.median(),
+            mad=pl.concat_list(self.count_columns).row.mad()
         )
+
         return augmented_count_lf.select(
             pl.col(ENSEMBL_GENE_ID_COLNAME),
             pl.col("mean").alias(self.get_colname("MEAN")),
             pl.col("std").alias(self.get_colname("STD")),
+            pl.col("median").alias(self.get_colname("MEDIAN")),
+            pl.col("mad").alias(self.get_colname("MAD")),
             (pl.col("std") / pl.col("mean")).alias(self.get_colname("VAR_COEFF")),
         )
 
@@ -149,9 +197,11 @@ class StabilityScorer:
 
     def compute_stability_score(self):
         logger.info("Computing stability score")
+        # get nb of valid samples (those not showing too many null values)
         nb_valid_samples = self.gene_count_per_sample_df.select(pl.len()).item() - len(
             self.samples_with_low_gene_count
         )
+        # for each gene, get ratio of nb of null values among all valid samples
         ratio_nb_nulls = (
             self.stat_lf.select(
                 pl.col(self.get_colname("NB_NULLS_VALID_SAMPLES")) / nb_valid_samples
@@ -159,10 +209,18 @@ class StabilityScorer:
             .collect()
             .to_series()
         )
+        ##################################################
+        # FORMULA FOR STABILITY SCORE
+        ##################################################
         expr = (
-            pl.col(self.get_colname("STD")) + ratio_nb_nulls * self.WEIGHT_RATIO_NB_NULLS
+            pl.col(self.get_colname("VAR_COEFF")) + ratio_nb_nulls * self.WEIGHT_RATIO_NB_NULLS
         )
-        self.stat_lf = self.stat_lf.with_columns(expr.alias(self.get_colname("STABILITY_SCORE")))
+        ##################################################
+        ##################################################
+        # add stability score column
+        self.stat_lf = self.stat_lf.with_columns(
+            expr.alias(self.get_colname("STABILITY_SCORE"))
+        )
 
     def compute_statistics_and_score(self) -> pl.LazyFrame:
         logger.info("Computing statistics and stability score")

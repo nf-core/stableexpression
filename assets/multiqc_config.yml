@@ -35,8 +35,8 @@ custom_data:
     sort_rows: false
     description: |
       Expression descriptive statistics of all genes, ranked by stability.
-      Expression were normalised and cpm (counts per million) were used for all calculations.
-      Genes are sorted by M-measure - from the most stable to the least stable.
+      Expression was first normalised dataset per dataset, then log2(cpm + 1) transformed (cpm :counts per million) and finally fitted to [0, 1] using quantile normalisation.
+      Genes are sorted by stability score - from the most stable to the least stable.
     plot_type: "table"
     pconfig:
       col1_header: "Rank"
@@ -51,25 +51,32 @@ custom_data:
       standard_deviation:
         title: "Std"
         description: |
-          Standard deviation of the expression across samples.
-          For each sample, expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+          Standard deviation of the expression across all samples.
         format: "{:,.4f}"
       variation_coefficient:
         title: "Var coeff"
         description: |
-          Variation coefficient: std(expression) / mean(expression).
-          For each sample, expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+          Variation coefficient ( std(expression) / mean(expression) ) across all samples.
         format: "{:,.4f}"
       mean:
         title: "Average"
         description: |
-          Average expression across samples.
-          For each sample, expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+          Average expression across all samples.
+        format: "{:,.4f}"
+      median:
+        title: "Median"
+        description: |
+          Median expression across all samples.
+        format: "{:,.4f}"
+      median_absolute_deviation:
+        title: "Mad"
+        description: |
+          Median absolute deviation of the expression across all samples.
         format: "{:,.4f}"
       expression_level_status:
         title: "Expression level"
         description: |
-          Indication about the average gene expression level compared to the whole pool of genes.
+          Indication about the average gene expression level across all samples (compared to the whole pool of genes).
           Expression in [0, 0.05]: Very low expression.
           Expression in [0.05, 0.1]: Low expression.
           Expression in [0.1, 0.9]: Medium range.
@@ -101,25 +108,32 @@ custom_data:
       rnaseq_standard_deviation:
         title: "Std [RNA-seq only]"
         description: |
-          Standard deviation of the expression across samples.
-          For each sample, expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+          Standard deviation of the expression across RNA-Seq samples.
         format: "{:,.4f}"
       rnaseq_variation_coefficient:
         title: "Var coeff [RNA-seq only]"
         description: |
-          Variation coefficient: std(expression) / mean(expression).
-          For each sample, expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+          Variation coefficient ( std(expression) / mean(expression) ) across RNA-Seq samples.
         format: "{:,.4f}"
       rnaseq_mean:
         title: "Average [RNA-seq only]"
         description: |
           Average expression across samples.
-          For each sample, expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+        format: "{:,.4f}"
+      rnaseq_median:
+        title: "Median [RNA-seq only]"
+        description: |
+          Median expression across RNA-Seq samples.
+        format: "{:,.4f}"
+      rnaseq_median_absolute_deviation:
+        title: "Mad [RNA-seq only]"
+        description: |
+          Median absolute deviation of the expression across RNA-Seq samples.
         format: "{:,.4f}"
       rnaseq_expression_level_status:
         title: "Expression level [RNA-seq only]"
         description: |
-          Indication about the average gene expression level compared to the whole pool of genes.
+          Indication about the average gene expression level across RNA-Seq samples (compared to the whole pool of genes).
           Expression in [0, 0.05]: Very low expression.
           Expression in [0.05, 0.1]: Low expression.
           Expression in [0.1, 0.9]: Medium range.
@@ -139,25 +153,32 @@ custom_data:
       microarray_standard_deviation:
         title: "Std [Microarray only]"
         description: |
-          Standard deviation of the expression across samples.
-          For each sample, expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+          Standard deviation of the expression across Microarray samples.
         format: "{:,.4f}"
       microarray_variation_coefficient:
         title: "Var coeff [Microarray only]"
         description: |
-          Variation coefficient: std(expression) / mean(expression).
-          For each sample, expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+          Variation coefficient ( std(expression) / mean(expression) ) across Microarray samples.
         format: "{:,.4f}"
       microarray_mean:
         title: "Average [Microarray only]"
         description: |
-          Average expression across samples.
-          For each sample, expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+          Average expression across Microarray samples.
+        format: "{:,.4f}"
+      microarray_median:
+        title: "Median [Microarray only]"
+        description: |
+          Median expression across Microarray samples.
+        format: "{:,.4f}"
+      microarray_median_absolute_deviation:
+        title: "Mad [Microarray only]"
+        description: |
+          Median absolute deviation of the expression across Microarray samples.
         format: "{:,.4f}"
       microarray_expression_level_status:
         title: "Expression level [Microarray only]"
         description: |
-          Indication about the average gene expression level compared to the whole pool of genes.
+          Indication about the average gene expression level across Microarray samples (compared to the whole pool of genes).
           Expression in [0, 0.05]: Very low expression.
           Expression in [0.05, 0.1]: Low expression.
           Expression in [0.1, 0.9]: Medium range.
@@ -185,19 +206,19 @@ custom_data:
       rnaseq_total_nb_nulls:
         title: "Nb nulls [RNA-seq only]"
         description: |
-          Number of samples in which the gene is not represented.
+          Number of RNA-Seq samples in which the gene is not represented.
       rnaseq_nb_nulls_valid_samples:
         title: "Nb nulls (valid samples) [RNA-seq only]"
         description: |
-          Number of samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+          Number of RNA-Seq samples in which the gene is not represented, excluding samples with particularly low overall gene count.
       microarray_total_nb_nulls:
         title: "Nb nulls [Microarray only]"
         description: |
-          Number of samples in which the gene is not represented.
+          Number of Microarray samples in which the gene is not represented.
       microarray_nb_nulls_valid_samples:
         title: "Nb nulls (valid samples) [Microarray only]"
         description: |
-          Number of samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+          Number of Microarray samples in which the gene is not represented, excluding samples with particularly low overall gene count.
 
   expression_distributions_top_stable_genes:
     section_name: "Expression distribution of the top stable genes (ranked by stability)"
@@ -206,7 +227,7 @@ custom_data:
       sort_samples: false
     description: |
       Distribution of gene expression across samples for the most stable genes.
-      For each sample, expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+
       Genes are ranked from the most stable to the least stable.
     plot_type: "boxplot"
     #xlab: Expression
