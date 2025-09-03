@@ -3,21 +3,17 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
-import sys
 import polars as pl
 from pathlib import Path
-from dataclasses import dataclass, field
 import logging
+
+from stability_scorer import StabilityScorer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # nb of top stable genes to select and to display at the end
 DEFAULT_NB_TOP_STABLE_GENES = 1000
-# we want to select samples that show a particularly low nb of genes
-MIN_RATIO_GENE_COUNT_TO_MEAN = 0.75  # experimentally chosen
-WEIGHT_RATIO_NB_NULLS = 1
-
 
 # outfile names
 TOP_STABLE_GENE_SUMMARY_OUTFILENAME = "top_stable_genes_summary.csv"
@@ -46,22 +42,6 @@ EXPRESSION_LEVEL_STATUS_COLNAME = "expression_level_status"
 NB_NULLS_COLNAME = "total_nb_nulls"
 NB_NULLS_VALID_SAMPLES_COLNAME = "nb_nulls_valid_samples"
 
-RNASEQ_VARIATION_COEFFICIENT_COLNAME = "rnaseq_variation_coefficient"
-RNASEQ_STANDARD_DEVIATION_COLNAME = "rnaseq_standard_deviation"
-RNASEQ_MEAN_COLNAME = "rnaseq_mean"
-RNASEQ_EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME = "rnaseq_expression_level_quantile_interval"
-RNASEQ_EXPRESSION_LEVEL_STATUS_COLNAME = "rnaseq_expression_level_status"
-RNASEQ_NB_NULLS_COLNAME = "rnaseq_total_nb_nulls"
-RNASEQ_NB_NULLS_VALID_SAMPLES_COLNAME = "rnaseq_nb_nulls_valid_samples"
-
-MICROARRAY_VARIATION_COEFFICIENT_COLNAME = "microarray_variation_coefficient"
-MICROARRAY_STANDARD_DEVIATION_COLNAME = "microarray_standard_deviation"
-MICROARRAY_MEAN_COLNAME = "microarray_mean"
-MICROARRAY_EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME = "microarray_expression_level_quantile_interval"
-MICROARRAY_EXPRESSION_LEVEL_STATUS_COLNAME = "microarray_expression_level_status"
-MICROARRAY_NB_NULLS_COLNAME = "microarray_total_nb_nulls"
-MICROARRAY_NB_NULLS_VALID_SAMPLES_COLNAME = "microarray_nb_nulls_valid_samples"
-
 STATISTICS_COLS = [
     RANK_COLNAME,
     ENSEMBL_GENE_ID_COLNAME,
@@ -71,25 +51,17 @@ STATISTICS_COLS = [
     MEAN_COLNAME,
     EXPRESSION_LEVEL_STATUS_COLNAME,
     NB_NULLS_COLNAME,
-    NB_NULLS_VALID_SAMPLES_COLNAME,
-    RNASEQ_VARIATION_COEFFICIENT_COLNAME,
-    RNASEQ_STANDARD_DEVIATION_COLNAME,
-    RNASEQ_MEAN_COLNAME,
-    RNASEQ_EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME,
-    RNASEQ_EXPRESSION_LEVEL_STATUS_COLNAME,
-    RNASEQ_NB_NULLS_COLNAME,
-    RNASEQ_NB_NULLS_VALID_SAMPLES_COLNAME,
-    MICROARRAY_VARIATION_COEFFICIENT_COLNAME,
-    MICROARRAY_STANDARD_DEVIATION_COLNAME,
-    MICROARRAY_MEAN_COLNAME,
-    MICROARRAY_EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME,
-    MICROARRAY_EXPRESSION_LEVEL_STATUS_COLNAME,
-    MICROARRAY_NB_NULLS_COLNAME,
-    MICROARRAY_NB_NULLS_VALID_SAMPLES_COLNAME,
-    GENE_NAME_COLNAME,
-    GENE_DESCRIPTION_COLNAME,
-    ORIGINAL_GENE_IDS_COLNAME,
+    NB_NULLS_VALID_SAMPLES_COLNAME
 ]
+
+# making complete list of columns to export
+final_cols = []
+for col in STATISTICS_COLS:
+    final_cols.append(col)
+    for platform in ["rnaseq", "microarray"]:
+        final_cols.append(f"{platform}_{col}")
+# adding gene description columns
+final_cols += [GENE_NAME_COLNAME, GENE_DESCRIPTION_COLNAME, ORIGINAL_GENE_IDS_COLNAME]
 
 ALL_GENES_STATS_COLS = [
     ENSEMBL_GENE_ID_COLNAME,
@@ -117,10 +89,18 @@ def parse_args():
         description="Get statistics from count data for each gene"
     )
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts",
+        type=Path,
+        dest="count_file",
+        required=True,
+        help="Count file"
     )
     parser.add_argument(
-        "--stats", type=str, dest="platform_stat_files", required=True, help="Platform stat file"
+        "--stats",
+        type=str,
+        dest="platform_stat_files",
+        required=True,
+        help="Platform stat file"
     )
     parser.add_argument(
         "--metadata",
@@ -140,6 +120,7 @@ def parse_args():
         help="Number of top stable genes to show",
     )
     return parser.parse_args()
+
 
 
 def is_valid_lf(lf: pl.LazyFrame, file: Path) -> bool:
@@ -203,6 +184,14 @@ def cast_count_columns_to_float32(lf: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
+def join_data_on_gene_id( stat_lf: pl.LazyFrame, *lfs) -> pl.LazyFrame:
+    """Merge the statistics dataframe with the metadata dataframe and the mapping dataframe."""
+    # we need to ensure that the index of stat_lf are strings
+    for lf in lfs:
+        stat_lf = stat_lf.join(lf, on=ENSEMBL_GENE_ID_COLNAME, how="left")
+    return stat_lf
+
+
 def get_counts(file: Path) -> pl.LazyFrame:
     # sorting dataframe (necessary to get consistent output)
     return pl.scan_parquet(file).sort(ENSEMBL_GENE_ID_COLNAME, descending=False)
@@ -228,6 +217,7 @@ def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
         .alias(ORIGINAL_GENE_IDS_COLNAME)
     )
 
+
 def get_platform_statistics(platform_stat_files: list[Path]) -> pl.LazyFrame:
     """Retrieve and concatenate metadata from a list of platform-specific statistics files."""
     lf = pl.scan_csv(platform_stat_files[0])
@@ -236,19 +226,6 @@ def get_platform_statistics(platform_stat_files: list[Path]) -> pl.LazyFrame:
             new_df = pl.scan_csv(file)
             lf = lf.join(new_df, on=ENSEMBL_GENE_ID_COLNAME, how="left")
     return lf
-
-
-def merge_data(
-    stat_lf: pl.LazyFrame, platform_stat_lf: pl.LazyFrame, metadata_lf: pl.LazyFrame, mapping_lf: pl.LazyFrame
-) -> pl.LazyFrame:
-    """Merge the statistics dataframe with the metadata dataframe and the mapping dataframe."""
-    # we need to ensure that the index of stat_lf are strings
-    return (
-        stat_lf
-        .join(platform_stat_lf, on=ENSEMBL_GENE_ID_COLNAME, how="left")
-        .join(metadata_lf, on=ENSEMBL_GENE_ID_COLNAME, how="left")
-        .join(mapping_lf, on=ENSEMBL_GENE_ID_COLNAME, how="left")
-    )
 
 
 def sort_dataframe(lf: pl.LazyFrame) -> pl.LazyFrame:
@@ -290,8 +267,9 @@ def get_top_stable_gene_summary(
         .replace_strict(mapping_dict)
         .alias(EXPRESSION_LEVEL_STATUS_COLNAME)
     )
+
     return lf.select(
-        [column for column in STATISTICS_COLS if column in lf.collect_schema().names()]
+        [column for column in final_cols if column in lf.collect_schema().names()]
     )
 
 
@@ -373,142 +351,6 @@ def export_data(
 
 #####################################################
 #####################################################
-# CLASSES
-#####################################################
-#####################################################
-
-
-@dataclass
-class StabilityScorer:
-    count_lf: pl.LazyFrame
-
-    gene_count_per_sample_df: pl.DataFrame = field(init=False)
-    stat_lf: pl.LazyFrame = field(init=False)
-    count_columns: list[str] = field(init=False)
-    samples_with_low_gene_count: list[str] = field(init=False)
-
-    def __post_init__(self):
-        self.count_columns = get_count_columns(self.count_lf)
-        self.gene_count_per_sample_df = self.get_gene_counts_per_sample()
-        self.samples_with_low_gene_count = self.get_samples_with_low_gene_count()
-
-    def get_valid_counts(self) -> pl.LazyFrame:
-        return self.count_lf.select(pl.exclude(ENSEMBL_GENE_ID_COLNAME))
-
-    def get_gene_counts_per_sample(self) -> pl.DataFrame:
-        """
-        Get the number of non-null values per sample.
-        :return:
-        A polars dataframe containing 2 columns:
-            - sample: name of the sample
-            - nb_not_nulls: number of non-null values
-        """
-        return (
-            self.count_lf.select(pl.exclude(ENSEMBL_GENE_ID_COLNAME))
-            .count()
-            .collect()
-            .transpose(
-                include_header=True, header_name="sample", column_names=["count"]
-            )
-        )
-
-    def get_samples_with_low_gene_count(self) -> list[str]:
-        mean_gene_count = self.gene_count_per_sample_df[GENE_COUNT_COLNAME].mean()
-        return (
-            self.gene_count_per_sample_df.filter(
-                (pl.col(GENE_COUNT_COLNAME) / mean_gene_count)
-                < MIN_RATIO_GENE_COUNT_TO_MEAN
-            )
-            .select(SAMPLE_COLNAME)
-            .to_series()
-            .to_list()
-        )
-
-    def get_main_statistics(self) -> pl.LazyFrame:
-        """
-        Compute count descriptive statistics for each gene in the count dataframe.
-        """
-        logger.info("Getting descriptive statistics")
-        # computing main stats
-        augmented_count_lf = self.count_lf.with_columns(
-            mean=pl.concat_list(self.count_columns).list.drop_nulls().list.mean(),
-            std=pl.concat_list(self.count_columns).list.drop_nulls().list.std(),
-        )
-        return augmented_count_lf.select(
-            pl.col(ENSEMBL_GENE_ID_COLNAME),
-            pl.col("mean").alias(MEAN_COLNAME),
-            pl.col("std").alias(STANDARD_DEVIATION_COLNAME),
-            (pl.col("std") / pl.col("mean")).alias(VARIATION_COEFFICIENT_COLNAME),
-        )
-
-    def compute_nb_null_values(self):
-        # the samples showing a low gene count will not be taken into account for the zero count penalty
-        cols_to_exclude = [ENSEMBL_GENE_ID_COLNAME] + self.samples_with_low_gene_count
-        total_nb_nulls = (
-            self.count_lf.select(pl.exclude(ENSEMBL_GENE_ID_COLNAME).is_null())
-            .collect()
-            .sum_horizontal()
-        )
-        nb_nulls_valid_samples = (
-            self.count_lf.select(pl.exclude(cols_to_exclude).is_null())
-            .collect()
-            .sum_horizontal()
-        )
-        self.stat_lf = self.stat_lf.with_columns(
-            total_nb_nulls.alias(NB_NULLS_COLNAME),
-            nb_nulls_valid_samples.alias(NB_NULLS_VALID_SAMPLES_COLNAME),
-        )
-
-    def get_quantile_intervals(self):
-        """
-        Compute the quantile intervals for the mean expression levels of each gene in the dataframe.
-
-        The function assigns to each gene a quantile interval of its mean cpm compared to all genes.
-        """
-        logger.info("Getting cpm quantiles")
-        self.stat_lf = self.stat_lf.with_columns(
-            (pl.col(MEAN_COLNAME).rank() / pl.col(MEAN_COLNAME).count() * NB_QUANTILES)
-            .floor()
-            .cast(pl.Int8)
-            # we want the only value = NB_QUANTILES to be NB_QUANTILES - 1
-            # because the last quantile interval is [NB_QUANTILES - 1, NB_QUANTILES]
-            .replace({NB_QUANTILES: NB_QUANTILES - 1})
-            .alias(EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
-        )
-
-    def compute_stability_score(self):
-        logger.info("Computing stability score")
-        nb_valid_samples = self.gene_count_per_sample_df.select(pl.len()).item() - len(
-            self.samples_with_low_gene_count
-        )
-        ratio_nb_nulls = (
-            self.stat_lf.select(
-                pl.col(NB_NULLS_VALID_SAMPLES_COLNAME) / nb_valid_samples
-            )
-            .collect()
-            .to_series()
-        )
-        expr = (
-            pl.col(STANDARD_DEVIATION_COLNAME) + ratio_nb_nulls * WEIGHT_RATIO_NB_NULLS
-        )
-        self.stat_lf = self.stat_lf.with_columns(expr.alias(STABILITY_SCORE_COLNAME))
-
-    def compute_statistics_and_score(self) -> pl.LazyFrame:
-        logger.info("Computing statistics and stability score")
-        # getting expression statistics
-        self.stat_lf = self.get_main_statistics()
-        # adding column for nb of null values for each gene
-        self.compute_nb_null_values()
-        # computing stability score
-        self.compute_stability_score()
-        # getting quantile intervals
-        self.get_quantile_intervals()
-
-        return self.stat_lf
-
-
-#####################################################
-#####################################################
 # MAIN
 #####################################################
 #####################################################
@@ -519,7 +361,7 @@ def main():
     metadata_files = [Path(file) for file in args.metadata_files.split(" ")]
     mapping_files = [Path(file) for file in args.mapping_files.split(" ")]
     platform_stat_files = [Path(file) for file in args.platform_stat_files.split(" ")]
-    print(platform_stat_files)
+
     count_lf = get_counts(args.count_file)
 
     # getting metadata and mappings
@@ -532,7 +374,7 @@ def main():
     stat_lf = stability_scorer.compute_statistics_and_score()
 
     # add gene name, description and original gene IDs
-    stat_lf = merge_data(stat_lf, platform_stat_df, metadata_lf, mapping_lf)
+    stat_lf = join_data_on_gene_id(stat_lf, platform_stat_df, metadata_lf, mapping_lf)
 
     # sort genes according to the metrics present in the dataframe
     stat_lf = sort_dataframe(stat_lf)
@@ -552,8 +394,6 @@ def main():
     top_stable_genes_counts_df = get_top_stable_genes_counts(
         count_lf, top_stable_genes_summary_lf
     )
-
-    print(top_stable_genes_counts_df)
 
     # exporting computed data
     export_data(
