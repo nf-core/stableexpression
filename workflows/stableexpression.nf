@@ -7,10 +7,11 @@
 include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/expressionatlas_fetchdata'
 include { IDMAPPING                              } from '../subworkflows/local/idmapping'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
+include { DATA_CLEANSING                         } from '../subworkflows/local/data_cleansing'
+include { MERGE_COMPUTE_STATS                    } from '../subworkflows/local/merge_compute_stats'
 include { MULTIQC_WORKFLOW                       } from '../subworkflows/local/multiqc'
 
-include { MERGE_DATA                             } from '../modules/local/merge_data'
-include { GENE_STATISTICS                        } from '../modules/local/gene_statistics'
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -30,10 +31,6 @@ workflow STABLEEXPRESSION {
     ch_top_stable_genes_summary = Channel.empty()
     ch_all_genes_statistics = Channel.empty()
     ch_top_stable_genes_transposed_counts = Channel.empty()
-    ch_gene_count_statistics = Channel.empty()
-    ch_skewness_statistics = Channel.empty()
-    ch_ks_stats = Channel.empty()
-    ch_distribution_correlations = Channel.empty()
 
     ch_species = Channel.value( params.species.split(' ').join('_') )
 
@@ -63,44 +60,33 @@ workflow STABLEEXPRESSION {
         EXPRESSION_NORMALISATION(
             IDMAPPING.out.datasets,
             params.normalisation_method,
-            params.quant_norm_target_distrib
+            params.quantile_normalisation_target_distribution
         )
 
-        EXPRESSION_NORMALISATION.out.normalised_counts.set { ch_normalised_counts }
-        EXPRESSION_NORMALISATION.out.dataset_statistics.set { ch_dataset_statistics }
-
         // -----------------------------------------------------------------
-        // MERGE COUNT FILES AND DESIGN FILES AND FILTER OUT ZERO COUNTS
+        // GET STATISTICS DATASET BY DATASET AND PERFORM SOME CLEANING OPERATIONS
         // -----------------------------------------------------------------
 
-        MERGE_DATA(
-            ch_normalised_counts.map {  meta, file -> [file] }.collect(),
-            ch_dataset_statistics.map { meta, file -> [file] }.collect(),
-            params.nb_top_gene_candidates
-        )
-
-        MERGE_DATA.out.candidate_gene_counts.set { ch_candidate_gene_counts }
-        MERGE_DATA.out.ks_test_statistics.set { ch_ks_stats }
-        MERGE_DATA.out.gene_count_statistics.set { ch_gene_count_statistics }
-        MERGE_DATA.out.skewness_statistics.set { ch_skewness_statistics }
-        MERGE_DATA.out.distribution_correlations.set { ch_distribution_correlations }
-
-        // -----------------------------------------------------------------
-        // GENE STATISTICS
-        // -----------------------------------------------------------------
-
-        GENE_STATISTICS(
-            MERGE_DATA.out.all_counts,
-            IDMAPPING.out.gene_metadata.collect(),
-            IDMAPPING.out.gene_id_mapping.collect(),
-            params.nb_top_gene_candidates,
-            ch_ks_stats,
+        DATA_CLEANSING(
+            EXPRESSION_NORMALISATION.out.normalised_counts,
+            params.quantile_normalisation_target_distribution,
             params.ks_pvalue_threshold
         )
 
-        GENE_STATISTICS.out.top_stable_genes_summary.set { ch_top_stable_genes_summary }
-        GENE_STATISTICS.out.all_statistics.set { ch_all_genes_statistics }
-        GENE_STATISTICS.out.top_stable_genes_transposed_counts.set { ch_top_stable_genes_transposed_counts }
+        // -----------------------------------------------------------------
+        // MERGE DATA AND COMPUTE VARIOUS STATISTICS
+        // -----------------------------------------------------------------
+
+        MERGE_COMPUTE_STATS (
+            DATA_CLEANSING.out.cleaned_counts,
+            IDMAPPING.out.gene_metadata,
+            IDMAPPING.out.gene_id_mapping
+
+        )
+
+        MERGE_COMPUTE_STATS.out.top_stable_genes_summary.set { ch_top_stable_genes_summary }
+        MERGE_COMPUTE_STATS.out.all_genes_statistics.set { ch_all_genes_statistics }
+        MERGE_COMPUTE_STATS.out.top_stable_genes_transposed_counts.set { ch_top_stable_genes_transposed_counts }
 
     }
 
@@ -112,10 +98,6 @@ workflow STABLEEXPRESSION {
         .mix( ch_top_stable_genes_summary.collect() )
         .mix( ch_all_genes_statistics.collect() )
         .mix( ch_top_stable_genes_transposed_counts.collect() )
-        .mix( ch_gene_count_statistics.collect() )
-        .mix( ch_skewness_statistics.collect() )
-        .mix( ch_ks_stats.collect() )
-        .mix( ch_distribution_correlations.collect() )
         .mix( Channel.topic('all_eatlas_experiment_metadata').collect() )
         .mix( Channel.topic('filtered_eatlas_experiment_metadata').collect() )
         .set { ch_multiqc_files }

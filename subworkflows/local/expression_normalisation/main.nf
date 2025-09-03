@@ -1,7 +1,6 @@
 include { NORMALISATION_DESEQ2                 } from '../../../modules/local/normalisation/deseq2'
 include { NORMALISATION_EDGER                  } from '../../../modules/local/normalisation/edger'
 include { QUANTILE_NORMALISATION               } from '../../../modules/local/quantile_normalisation'
-include { DATASET_STATISTICS                   } from '../../../modules/local/dataset_statistics'
 
 /*
 ========================================================================================
@@ -14,7 +13,7 @@ workflow EXPRESSION_NORMALISATION {
     take:
     ch_datasets
     normalisation_method
-    quant_norm_target_distrib
+    quantile_normalisation_target_distribution
 
     main:
 
@@ -51,22 +50,12 @@ workflow EXPRESSION_NORMALISATION {
 
     QUANTILE_NORMALISATION (
         quant_norm_input,
-        quant_norm_target_distrib
+        quantile_normalisation_target_distribution
     )
-    ch_quantile_normalised_datasets = QUANTILE_NORMALISATION.out.counts
 
-    //
-    // MODULE: Dataset statistics
-    //
-
-    DATASET_STATISTICS(
-        ch_quantile_normalised_datasets,
-        quant_norm_target_distrib
-    )
 
     emit:
-    normalised_counts = ch_quantile_normalised_datasets
-    dataset_statistics = DATASET_STATISTICS.out.stats
+    normalised_counts                   = QUANTILE_NORMALISATION.out.counts
 
 }
 

@@ -1,4 +1,4 @@
-process GENE_STATISTICS {
+process COMPUTE_GLOBAL_GENE_STATISTICS {
 
     label 'process_low'
 
@@ -8,13 +8,6 @@ process GENE_STATISTICS {
                 "No count could be found before merging datasets! "
                 + "Please check the provided accessions and datasets and run again"
                 )
-            return 'terminate'
-        } else if (task.exitStatus == 101) {
-            log.error(
-                "No more valid sample after checking p-value of Kolmogorow-Smirnoff test against target distribution! "
-                + "You can try a more flexible approach by setting again the value of the ks_pvalue_threshold parameter. "
-                + "Provide a negative value to disable this filter."
-            )
             return 'terminate'
         }
     }
@@ -26,16 +19,14 @@ process GENE_STATISTICS {
 
     input:
     path count_file
+    path platform_statistic_files, stageAs: "?/*"
     path metadata_files, stageAs: "?/*"
     path mapping_files, stageAs: "?/*"
     val nb_top_stable_genes
-    path ks_stats_file
-    val ks_pvalue_threshold
 
     output:
     path 'top_stable_genes_summary.csv',                                                                              emit: top_stable_genes_summary
     path 'stats_all_genes.csv',                                                                                       emit: all_statistics
-    path 'all_counts_filtered.parquet',                                                                               emit: all_counts
     path 'top_stable_genes_transposed_counts_filtered.csv',                                                           emit: top_stable_genes_transposed_counts
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
@@ -45,13 +36,12 @@ process GENE_STATISTICS {
 
     script:
     """
-    get_gene_statistics.py \
-        --counts $count_file \
-        --metadata "$metadata_files" \
-        --mappings "$mapping_files" \
-        --nb-top-stable-genes $nb_top_stable_genes \
-        --ks-stats $ks_stats_file \
-        --ks-pvalue-threshold $ks_pvalue_threshold
+    compute_final_gene_statistics.py \\
+        --counts $count_file \\
+        --stats "$platform_statistic_files" \\
+        --metadata "$metadata_files" \\
+        --mappings "$mapping_files" \\
+        --nb-top-stable-genes $nb_top_stable_genes
     """
 
 }

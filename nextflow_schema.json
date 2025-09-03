@@ -82,7 +82,7 @@
                     "enum": ["rnaseq", "microarray"],
                     "description": "Only download Expression Atlas experiments from this platform",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "By default, data from all platform are downloaded. If this parameter is specified, a filter is applied to get data from only one specific type of platform."
+                    "help_text": "By default, data from all platform are downloaded. If this parameter is specified, a filter is applied to get data from only one specific type of platform. This filter is only used while fetching appropriate Expression atlas accessions. It will not filter accessions provided with --eatlas_accessions or --eatlas_accessions_file."
                 },
                 "eatlas_accessions_file": {
                     "type": "string",
@@ -165,12 +165,12 @@
                     "default": "deseq2",
                     "help_text": "Raw RNAseq data must be normalised before further processing. You can select the package used for normalisation."
                 },
-                "quant_norm_target_distrib": {
+                "quantile_normalisation_target_distribution": {
                     "type": "string",
                     "description": "Target distribution to map to during quantile normalisation",
                     "fa_icon": "fas fa-chart-simple",
                     "enum": ["normal", "uniform"],
-                    "default": "normal",
+                    "default": "uniform",
                     "help_text": "All sample counts get quantile normalised and mapped to a specific distribution so that subsequent can compare them. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
                 },
                 "nb_top_gene_candidates": {
