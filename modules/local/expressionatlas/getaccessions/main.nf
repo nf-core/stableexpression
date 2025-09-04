@@ -1,6 +1,6 @@
 process EXPRESSIONATLAS_GETACCESSIONS {
 
-    label 'process_low'
+    label 'process_medium'
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
