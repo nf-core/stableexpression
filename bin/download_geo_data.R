@@ -3,10 +3,12 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 suppressPackageStartupMessages(library("GEOquery"))
+suppressPackageStartupMessages(library("dplyr"))
 library(GEOquery)
 library(optparse)
-library(biomaRt)
+library(dplyr)
 
+options(error = traceback)
 
 #####################################################
 #####################################################
@@ -49,149 +51,183 @@ get_samples_for_species <- function(eset, species) {
   pheno$geo_accession[keep]
 }
 
+
+get_columns_for_grouping <- function(df) {
+
+    base_columns <- c("characteristics", "treatment_protocol", "label_protocol", "extract_protocol", "growth_protocol")
+
+    columns_to_group <- c()
+    for (base_col in base_columns) {
+      ch1_col <- paste0(base_col, "_ch1")
+      ch2_col <- paste0(base_col, "_ch2")
+
+      if (ch1_col %in% colnames(df)) {
+        columns_to_group <- c(columns_to_group, ch1_col)
+      }
+      if (ch2_col %in% colnames(df)) {
+        columns_to_group <- c(columns_to_group, ch2_col)
+      }
+    }
+
+    return(columns_to_group)
+}
+
+
+build_design_dataframe <- function(df, accession) {
+    message("Build design dataframe")
+
+    columns_to_group <- get_columns_for_grouping(df)
+
+    design_df <- df %>%
+      mutate(sample = rownames(.)) %>%
+      group_by(!!!syms(columns_to_group)) %>%
+      mutate(group_num = cur_group_id()) %>%
+      ungroup() %>%
+      mutate(
+        group = paste0("G", group_num),
+        batch = accession
+      ) %>%
+      select(sample, group, batch) %>%
+      arrange(group)
+
+    return(design_df)
+}
+
+
 download_geo_data_with_retries <- function(accession, species, max_retries = 3, wait_time = 5) {
+
     success <- FALSE
     attempts <- 0
-    print(listEnsemblGenomes())
-    ensembl_plants <- useEnsemblGenomes(biomart = "plants_mart")
-    print(searchDatasets(ensembl_plants, pattern = species))
 
     while (!success && attempts < max_retries) {
-
         attempts <- attempts + 1
-        geo_data <- GEOquery::getGEO( accession )
-        eset <- geo_data[[ 1 ]]
-        # inspect available sample metadata
-        species_samples <- get_samples_for_species(eset, species)
-        # List all variable names
-        #print(colnames(pData(eset)))
 
-        for (file in names(geo_data)) {
+        tryCatch({
+            geo_data <- GEOquery::getGEO( accession )
+            success <- TRUE
 
-            data <- geo_data [[ file ]]
+        }, error = function(e) {
 
-            #print(data)
-            #counts <- exprs(data)
-            #samples <- pData(data)
-            #features <- fData(data)
-            #print("samples")
-            #print(samples)
-             #print("features")
-            #print(head(features))
-            #print(counts)
-            #print(samples)
-            #print(features)
+            message("Attempt ", attempts, " Message: ", e$message)
 
-        }
-        success <- TRUE
+            if (attempts < max_retries) {
+                warning("Retrying in ", wait_time, " seconds...")
+                Sys.sleep(wait_time)
+
+            } else {
+                warning("Unhandled error: ", e$message)
+                quit(save = "no", status = 102) # quit & stop workflow
+            }
+        })
 
     }
 
     return(geo_data)
+
 }
 
-get_rnaseq_data <- function(data) {
-    return(list(
-        count_data = assays( data )$counts,
-        platform = 'rnaseq',
-        count_type = 'raw', # rnaseq data are raw in ExpressionAtlas
-        sample_groups = colData(data)$AtlasAssayGroup
-        ))
+
+check_microarray_normalisation <- function(df) {
+
+  vals <- unlist(df, use.names = FALSE)
+  vals <- vals[!is.na(vals)]
+
+  all_integers <- all(abs(vals - round(vals)) < 1e-8)
+  value_range <- range(vals, na.rm = TRUE)
+
+  if (value_range[2] <= 20) {
+    message("Normalized, log2 scale (e.g. RMA, quantile)")
+  } else if (all_integers) {
+    message("Raw probe intensities (unnormalized CEL-like data)")
+    quit(save = "no", status = 102)
+  } else if (value_range[2] > 1000) {
+    message("Normalized but not log-transformed (e.g. MAS5, raw intensities)")
+    quit(save = "no", status = 102)
+  } else {
+    message("Unclear data origin, check GEO metadata")
+    quit(save = "no", status = 102)
+  }
 }
 
-get_one_colour_microarray_data <- function(data) {
-    return(list(
-        count_data = exprs( data ),
-        platform = 'microarray',
-        count_type = 'normalised', # one colour microarray data are already normalised in ExpressionAtlas
-        sample_groups = phenoData(data)$AtlasAssayGroup
-    ))
+
+clean_count_data <- function(df) {
+    message("Cleaning counts")
+    # removes rows that are all NA
+    df <- df[rowSums(!is.na(df)) > 0, ]
+
 }
 
-get_batch_id <- function(accession, data_type) {
-    batch_id <- paste0(accession, '_', data_type)
-    # cleaning
-    batch_id <- gsub("-", "_", batch_id)
-    return(batch_id)
+
+process_data <- function(atlas_data, accession, species) {
+
+    eset <- geo_data[[ 1 ]]
+    #print(exprs(eset))
+    # Get metadata table
+    metadata_df <- pData(eset)
+    design_df <- build_design_dataframe(metadata_df, accession)
+
+    # get samples corresponding to species
+    species_samples <- get_samples_for_species(eset, species)
+
+    # filter design dataframe
+    design_df <- design_df %>%
+        filter(sample %in% species_samples)
+
+    if ( length(names(geo_data)) > 1 ) {
+        warning("Multiple data files were found")
+        quit(save = "no", status = 100) # quit & ignore process
+    }
+
+    file <- names(geo_data)[[ 1 ]]
+
+    data <- geo_data [[ file ]]
+    #print(fData(data))
+    # get count data for samples corresponding to the species of interest
+    count_df <- data.frame(exprs(data)) %>%
+        select(all_of(species_samples))
+
+    # checking that data are from RMA pipeline and followed proper normalisation
+    # raises error otherwise
+    check_microarray_normalisation(count_df)
+
+    # clean counts:
+    # * removes rows that are all NA
+    count_df <- clean_count_data(count_df)
+
+    # exporting count data to CSV
+    export_count_data(count_df, accession)
+
+    # exporting metadata to CSV
+    export_metadata(design_df, accession)
 }
 
-get_new_sample_names <- function(result, batch_id) {
-    new_colnames <- paste0(batch_id, '_', colnames(result$count_data))
-    return(new_colnames)
-}
 
-export_count_data <- function(result, batch_id) {
+export_count_data <- function(count_df, batch_id) {
 
     # renaming columns, to make them specific to accession and data type
-    colnames(result$count_data) <- get_new_sample_names(result, batch_id)
+    colnames(count_df) <- paste0(batch_id, '_', colnames(count_df))
 
-    outfilename <- paste0(batch_id, '.', result$platform, '.', result$count_type, '.counts.csv')
+    outfilename <- paste0(batch_id, '.microarray.normalised.counts.csv')
 
     # exporting to CSV file
     # index represents gene names
-    cat(paste('Exporting count data to file', outfilename))
-    write.table(result$count_data, outfilename, sep = ',', row.names = TRUE, col.names = TRUE, quote = FALSE)
+    message(paste('Exporting count data to file', outfilename))
+    write.table(count_df, outfilename, sep = ',', row.names = TRUE, col.names = TRUE, quote = FALSE)
 }
 
-export_metadata <- function(result, batch_id) {
+export_metadata <- function(design_df, batch_id) {
 
-    new_colnames <- get_new_sample_names(result, batch_id)
-    batch_list <- rep(batch_id, length(new_colnames))
+    new_sample_names <- paste0(batch_id, '_', design_df$sample)
 
-    df <- data.frame(
-        batch = batch_list,
-        condition = result$sample_groups,
-        sample = new_colnames
-    )
+    df <- design_df %>%
+        mutate(sample = new_sample_names ) %>%
+        select(sample, group, batch)
 
     outfilename <- paste0(batch_id, '.design.csv')
-    cat(paste('Exporting design data to file', outfilename))
+    message(paste('Exporting design data to file', outfilename))
     write.table(df, outfilename, sep = ',', row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
 
-
-process_data <- function(atlas_data, accession) {
-
-    eset <- atlas_data[[ accession ]]
-
-    # looping through each data type (ex: 'rnaseq') in the experiment
-    for (data_type in names(eset)) {
-
-        data <- eset[[ data_type ]]
-
-        skip_iteration <- FALSE
-        # getting count dataframe
-        tryCatch({
-
-            if ( data_type == 'rnaseq' ) {
-                result <- get_rnaseq_data(data)
-            } else if ( startsWith(data_type, 'A-') ) { # typically: A-AFFY- or A-GEOD-
-                result <- get_one_colour_microarray_data(data)
-            } else {
-                stop(paste('ERROR: Unknown data type:', data_type))
-            }
-
-        }, error = function(e) {
-            print(paste("Caught an error: ", e$message))
-            print(paste('ERROR: Could not get assay data for experiment ID', accession, 'and data type', data_type))
-            skip_iteration <<- TRUE
-        })
-
-        # If an error occurred, skip to the next iteration
-        if (skip_iteration) {
-            next
-        }
-
-        #batch_id <- get_batch_id(accession, data_type)
-
-        # exporting count data to CSV
-        #export_count_data(result, batch_id)
-
-        # exporting metadata to CSV
-        #export_metadata(result, batch_id)
-    }
-
-}
 
 #####################################################
 #####################################################
@@ -207,6 +243,7 @@ species <- format_species_name(args$species)
 # searching and downloading expression atlas data
 geo_data <- download_geo_data_with_retries(args$accession, species)
 
-# writing count data in atlas_data to specific CSV files
-#process_data(atlas_data, args$accession)
+process_data(geo_data, args$accession, args$species)
+
+
 
