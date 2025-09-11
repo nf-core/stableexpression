@@ -32,6 +32,10 @@ from gprofiler_utils import convert_ids
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# set a custom writable directory before any Entrez operations
+# mandatory for running the script in an apptainer container
+#Entrez.Parser.Parser.directory("/tmp/biopython")
+
 ACCESSION_OUTFILE_NAME = "accessions.txt"
 SPECIES_DATASETS_OUTFILE_NAME = "species_datasets.metadata.tsv"
 FILTERED_DATASETS_METADATA_OUTFILE_NAME = "filtered_datasets.metadata.tsv"
@@ -103,7 +107,6 @@ def parse_args():
     parser.add_argument(
         "--platform",
         type=str,
-        #required=True,
         help="Platform type"
     )
     parser.add_argument(
@@ -135,6 +138,7 @@ def fetch_geo_datasets_for_species(species: str) -> list[dict]:
 
     Entrez.email = ENTREZ_EMAIL
     query = f'"{species}"[Organism] AND "gse"[Entry Type] AND "expression profiling by array"[DataSet Type]'
+    logger.info(f"Fetching GEO datasets with query: {query}")
 
     # getting list of all datasets IDs for this species
     # we need possibly to perform multiple queries because the max number of returned results is capped
@@ -148,6 +152,12 @@ def fetch_geo_datasets_for_species(species: str) -> list[dict]:
         # getting total nb of entries
         if not nb_entries:
             nb_entries = int(record["Count"])
+
+            # if there is no entry for this species
+            if nb_entries == 0:
+                logger.info(f"No entries found for query: {query}")
+                return []
+
         # setting next cursor to the next group
         retstart += ENTREZ_QUERY_MAX_RESULTS
 

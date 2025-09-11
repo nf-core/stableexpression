@@ -1,6 +1,6 @@
 process NORMALISATION_DESEQ2 {
 
-    label 'process_low'
+    label 'process_single'
 
     tag "${meta.dataset}"
 

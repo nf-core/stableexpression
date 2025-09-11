@@ -13,13 +13,13 @@ nextflow_workflow {
                 """
                 species = 'solanum tuberosum'
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
-                eatlas_keywords = "potato,stress"
+                keywords = "potato,stress"
                 skip_fetch_eatlas_accessions = false
                 accessions_only = false
 
                 input[0] = Channel.value( species.split(' ').join('_') )
                 input[1] = eatlas_accessions
-                input[2] = eatlas_keywords
+                input[2] = keywords
                 input[3] = fetch_eatlas_accessions
                 """
             }
@@ -41,13 +41,13 @@ nextflow_workflow {
                 """
                 species = 'solanum tuberosum'
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
-                eatlas_keywords = "potato,stress"
+                keywords = "potato,stress"
                 skip_fetch_eatlas_accessions = false
                 accessions_only = true
 
                 input[0] = Channel.value( species.split(' ').join('_') )
                 input[1] = eatlas_accessions
-                input[2] = eatlas_keywords
+                input[2] = keywords
                 input[3] = fetch_eatlas_accessions
                 """
             }
@@ -73,7 +73,7 @@ nextflow_workflow {
 
                 input[0] = Channel.value( species.split(' ').join('_') )
                 input[1] = eatlas_accessions
-                input[2] = eatlas_keywords
+                input[2] = keywords
                 input[3] = fetch_eatlas_accessions
                 """
             }

@@ -1,6 +1,6 @@
 process COMPUTE_GENE_STATISTICS_PER_PLATFORM {
 
-    label 'process_low'
+    label 'process_medium'
 
     errorStrategy = {
         if (task.exitStatus == 100) {

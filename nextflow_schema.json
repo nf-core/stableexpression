@@ -36,11 +36,32 @@
                     "help_text": "Path to CSV file containing information about the input count datasets and their related experimental design. The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, and for each user count dataset, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. Combine with --skip_fetch_eatlas_accessions if you only want to analyse your own count datasets.",
                     "fa_icon": "fas fa-file-csv"
                 },
-                "skip_fetch_eatlas_accessions": {
+                "keywords": {
+                    "type": "string",
+                    "description": "Keywords used for selecting specific Expression Atlas / GEO accessions",
+                    "default": "",
+                    "fa_icon": "fas fa-highlighter",
+                    "pattern": "([a-zA-Z,]+)",
+                    "help_text": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas and / or GEO datasets. The pipeline will select all Expression Atlas experiments / GEO datasets that contain the provided keywords in their description of in one of the condition names. Example: `--keywords 'stress,flowering'`. This parameter is unused if both --skip_fetch_eatlas_accessions and --skip_fetch_geo_accessions are set."
+                },
+                "platform": {
+                    "type": "string",
+                    "enum": ["rnaseq", "microarray"],
+                    "description": "Only download from this platform",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "By default, data from all platform are downloaded. If this parameter is specified, a filter is applied to get data from only one specific type of platform. This filter is only used while fetching appropriate Expression atlas / GEO accessions. It will not filter accessions provided directly by the user."
+                },
+                "accessions_only": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-cloud-arrow-down",
-                    "description": "Skip fetching Expression Atlas accessions",
-                    "help_text": "Expression Atlas accessions are automatically fetched by default. Set this parameter to use your own count datasets only."
+                    "description": "Only get accessions from Expression Atlas / GEO and exit.",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "Use this option if you only want to get Expression Atlas accessions and skip the rest of the pipeline."
+                },
+                "download_only": {
+                    "type": "boolean",
+                    "description": "Only get accessions from Expression Atlas / GEO and download the selected datasets.",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "Use this option if you only want to get Expression Atlas / GEO accessions, download the selected data, and skip the rest of the pipeline."
                 },
                 "email": {
                     "type": "string",
@@ -61,41 +82,33 @@
             "title": "Expression Atlas options",
             "type": "object",
             "fa_icon": "fas fa-book-atlas",
-            "description": "Options for fetching datasets from Expression Atlas.",
+            "description": "Options for fetching experiment data from Expression Atlas.",
             "properties": {
-                    "eatlas_keywords": {
-                    "type": "string",
-                    "description": "Expression Atlas keywords",
-                    "fa_icon": "fas fa-highlighter",
-                    "pattern": "([a-zA-Z,]+)",
-                    "help_text": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas. The pipeline will select all Expression Atlas experiments that contain the provided keywords in their description of in one of the condition names. Example: `--eatlas_keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set."
+                "skip_fetch_eatlas_accessions": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-cloud-arrow-down",
+                    "description": "Skip fetching Expression Atlas accessions",
+                    "help_text": "Expression Atlas accessions are automatically fetched by default. Set this parameter to skip this step."
                 },
                 "eatlas_accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Expression Atlas accessions",
+                    "description": "Expression Atlas accession(s) to include",
                     "fa_icon": "fas fa-id-card",
                     "help_text": "Provide directly in command line Expression Atlas accession(s) (separated by commas) that you want to download. Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
-                },
-                "eatlas_platform": {
-                    "type": "string",
-                    "enum": ["rnaseq", "microarray"],
-                    "description": "Only download Expression Atlas experiments from this platform",
-                    "fa_icon": "fas fa-id-card",
-                    "help_text": "By default, data from all platform are downloaded. If this parameter is specified, a filter is applied to get data from only one specific type of platform. This filter is only used while fetching appropriate Expression atlas accessions. It will not filter accessions provided with --eatlas_accessions or --eatlas_accessions_file."
                 },
                 "eatlas_accessions_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "description": "File with Expression Atlas accessions",
+                    "description": "File containing Expression Atlas accession(s) to download",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "File containing Expression Atlas accession(s) that you want to download. One accession per line.Example: `--eatlas_accessions_file included_accessions.txt`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
+                    "help_text": "File containing Expression Atlas accession(s) that you want to download. One accession per line. Example: `--eatlas_accessions_file included_accessions.txt`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
                 },
                 "exclude_eatlas_accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Expression Atlas accession to exclude",
+                    "description": "Expression Atlas accession(s) to exclude",
                     "fa_icon": "fas fa-id-card",
                     "help_text": "Provide directly in command line Expression Atlas accessions (separated by commas) that you want to exclude. Example: `--exclude_eatlas_accessions E-MTAB-552,E-GEOD-61690`"
                 },
@@ -103,15 +116,53 @@
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "description": "File with Expression Atlas accessions to exclude",
+                    "description": "File containing Expression Atlas accession(s) to exclude",
                     "fa_icon": "fas fa-id-card",
                     "help_text": "File containing Expression Atlas accession(s) that you want to exclude. One accession per line. Example: `--exclude_eatlas_accessions_file excluded_accessions.txt`."
-                },
-                "accessions_only": {
+                }
+            }
+        },
+        "geo_dataset_options": {
+            "title": "GEO dataset options",
+            "type": "object",
+            "fa_icon": "fas fa-book-atlas",
+            "description": "Options for fetching datasets from NCBI GEO.",
+            "properties": {
+                "skip_fetch_geo_accessions": {
                     "type": "boolean",
-                    "description": "Only get accessions from Expression Atlas and exit.",
+                    "fa_icon": "fas fa-cloud-arrow-down",
+                    "description": "Skip fetching GEO accessions",
+                    "help_text": "GEO accessions are automatically fetched by default. Set this parameter to skip this step."
+                },
+                "geo_accessions": {
+                    "type": "string",
+                    "pattern": "([A-Z0-9-]+,?)+",
+                    "description": "GEO accession(s) to include",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "Use this option if you only want to get Expression Atlas accessions and skip the rest of the pipeline."
+                    "help_text": "Provide directly in command line GEO series accession(s) (separated by commas) that you want to download. Example: `--geo_accessions GSE8165,GSE8161`. Combine with --skip_fetch_geo_accessions if you want only these accessions to be used."
+                },
+                "geo_accessions_file": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "File containing GEO accession(s) to download",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "File containing GEO series accession(s) that you want to download. One accession per line. Example: `--geo_accessions_file included_accessions.txt`. Combine with --skip_fetch_geo_accessions if you want only these accessions to be used."
+                },
+                "exclude_geo_accessions": {
+                    "type": "string",
+                    "pattern": "([A-Z0-9-]+,?)+",
+                    "description": "GEO accession(s) to exclude",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "Provide directly in command line GEO series accessions (separated by commas) that you want to exclude. Example: `--exclude_geo_accessions GSE8165,GSE8161`"
+                },
+                "exclude_geo_accessions_file": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "File containing GEO accession(s) to exclude",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "File containing GEO series accession(s) that you want to exclude. One accession per line. Example: `--exclude_geo_accessions_file excluded_accessions.txt`."
                 }
             }
         },

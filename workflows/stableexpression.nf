@@ -5,6 +5,7 @@
 */
 
 include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/expressionatlas_fetchdata'
+include { GEO_FETCHDATA                          } from '../subworkflows/local/geo_fetchdata'
 include { IDMAPPING                              } from '../subworkflows/local/idmapping'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
 include { DATA_CLEANSING                         } from '../subworkflows/local/data_cleansing'
@@ -40,11 +41,24 @@ workflow STABLEEXPRESSION {
 
     EXPRESSIONATLAS_FETCHDATA( ch_species )
 
-    if ( !params.accessions_only ) {
+    // getting accessions to exclude from GEO
+    EXPRESSIONATLAS_FETCHDATA.out.accessions
+        .filter { accession -> accession.startsWith("E-GEOD-") }
+        .map { accession -> accession.replace("E-GEOD-", "GSE")}
+        .view()
+        .set { ch_excluded_geo_accessions }
+
+    GEO_FETCHDATA (
+        ch_species,
+        ch_excluded_geo_accessions
+    )
+
+    if ( !params.accessions_only && !params.download_only ) {
 
         // putting all datasets together (local datasets + Expression Atlas datasets)
         ch_input_datasets
             .concat( EXPRESSIONATLAS_FETCHDATA.out.downloaded_datasets )
+            .concat( GEO_FETCHDATA.out.downloaded_datasets )
             .set { ch_datasets }
 
         // -----------------------------------------------------------------

@@ -1,6 +1,6 @@
 process NORMALISATION_EDGER {
 
-    label 'process_low'
+    label 'process_single'
 
     tag "${meta.dataset}"
 

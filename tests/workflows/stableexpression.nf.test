@@ -67,7 +67,7 @@ nextflow_workflow {
         when {
             params {
                 species = "beta vulgaris"
-                eatlas_keywords = "potato,stress"
+                keywords = "potato,stress"
             }
             workflow {
                 """
@@ -123,7 +123,7 @@ nextflow_workflow {
             params {
                 species = "solanum tuberosum"
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
-                eatlas_keywords = "phloem"
+                keywords = "phloem"
             }
             workflow {
                 """

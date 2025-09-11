@@ -85,7 +85,7 @@ INPUTS
         </test>
         <test>
             <param name="species" value="beta vulgaris"/>
-            <param name="eatlas_keywords" value="leaf"/>
+            <param name="keywords" value="leaf"/>
             <output name="top_stable_genes_summary">
                 <assert_contents>
                     <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />

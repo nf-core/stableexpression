@@ -1,0 +1,87 @@
+{
+    "Beta vulgaris": {
+        "content": [
+            {
+                "0": [
+                    "accessions.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "1": [
+                    [
+                        "filtered_datasets.metadata.tsv:md5,3aab7ebb4309c0839514fb3115466569",
+                        "rejected_datasets.metadata.tsv:md5,a39a681edb1a293ccd687b7fa84290a9",
+                        "selected_datasets.metadata.tsv:md5,3aab7ebb4309c0839514fb3115466569",
+                        "species_datasets.metadata.tsv:md5,360fddb142ccd3a44aac82ec262ccc87"
+                    ]
+                ],
+                "2": [
+                    "selected_datasets.keywords.yaml:md5,2eff480907cde020adb64a6da3e1b007"
+                ],
+                "3": [
+                    [
+                        "GEO_GETACCESSIONS",
+                        "python",
+                        "3.13.7"
+                    ]
+                ],
+                "4": [
+                    [
+                        "GEO_GETACCESSIONS",
+                        "requests",
+                        "2.32.5"
+                    ]
+                ],
+                "5": [
+                    [
+                        "GEO_GETACCESSIONS",
+                        "nltk",
+                        "3.9.1"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETACCESSIONS",
+                        "pyyaml",
+                        "6.0.2"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETACCESSIONS",
+                        "pandas",
+                        "2.3.2"
+                    ]
+                ],
+                "8": [
+                    [
+                        "GEO_GETACCESSIONS",
+                        "xmltodict",
+                        "0.14.2"
+                    ]
+                ],
+                "9": [
+                    [
+                        "GEO_GETACCESSIONS",
+                        "biopython",
+                        "1.85"
+                    ]
+                ],
+                "accessions": [
+                    "accessions.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "metadata": [
+                    [
+                        "filtered_datasets.metadata.tsv:md5,3aab7ebb4309c0839514fb3115466569",
+                        "rejected_datasets.metadata.tsv:md5,a39a681edb1a293ccd687b7fa84290a9",
+                        "selected_datasets.metadata.tsv:md5,3aab7ebb4309c0839514fb3115466569",
+                        "species_datasets.metadata.tsv:md5,360fddb142ccd3a44aac82ec262ccc87"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.6"
+        },
+        "timestamp": "2025-09-11T08:57:04.392847619"
+    }
+}

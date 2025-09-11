@@ -116,7 +116,7 @@ download_geo_data_with_retries <- function(accession, species, max_retries = 3, 
 
             } else {
                 warning("Unhandled error: ", e$message)
-                quit(save = "no", status = 102) # quit & stop workflow
+                quit(save = "no", status = 100) # quit & stop workflow
             }
         })
 
@@ -139,13 +139,13 @@ check_microarray_normalisation <- function(df) {
     message("Normalized, log2 scale (e.g. RMA, quantile)")
   } else if (all_integers) {
     message("Raw probe intensities (unnormalized CEL-like data)")
-    quit(save = "no", status = 102)
+    quit(save = "no", status = 110)
   } else if (value_range[2] > 1000) {
     message("Normalized but not log-transformed (e.g. MAS5, raw intensities)")
-    quit(save = "no", status = 102)
+    quit(save = "no", status = 111)
   } else {
     message("Unclear data origin, check GEO metadata")
-    quit(save = "no", status = 102)
+    quit(save = "no", status = 112)
   }
 }
 
@@ -175,7 +175,7 @@ process_data <- function(atlas_data, accession, species) {
 
     if ( length(names(geo_data)) > 1 ) {
         warning("Multiple data files were found")
-        quit(save = "no", status = 100) # quit & ignore process
+        quit(save = "no", status = 101) # quit & ignore process
     }
 
     file <- names(geo_data)[[ 1 ]]

@@ -77,7 +77,7 @@ Now you can run the pipeline as follows:
 >   -profile docker \
 >   --species <SPECIES> \
 >   --eatlas_accessions <ACCESSIONS> \
->   --eatlas_keywords <KEYWORDS> \
+>   --keywords <KEYWORDS> \
 >   --datasets ./datasets.csv \
 >   --outdir ./results
 > ```

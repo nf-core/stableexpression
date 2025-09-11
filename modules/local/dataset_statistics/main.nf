@@ -1,6 +1,6 @@
 process DATASET_STATISTICS {
 
-    label 'process_low'
+    label 'process_single'
 
     tag "${meta.dataset}"
 

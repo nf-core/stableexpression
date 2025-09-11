@@ -1,6 +1,6 @@
 process IDMAPPING_GPROFILER {
 
-    label 'process_low'
+    label 'process_single'
 
     tag "${meta.dataset}"
 

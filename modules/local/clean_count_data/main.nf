@@ -1,6 +1,6 @@
 process CLEAN_COUNT_DATA {
 
-    label 'process_low'
+    label 'process_single'
 
     errorStrategy = {
         if (task.exitStatus == 101) {

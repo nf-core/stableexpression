@@ -28,7 +28,7 @@ The pipeline fetches Expression Atlas accessions for the provided species / keyw
 nextflow run nf-core/stableexpression \
    -profile <conda/docker/singularity/.../institute> \
    --species <SPECIES_NAME> \
-   --eatlas_keywords <KEYWORDS SEPARATED BY COMMAS>
+   --keywords <KEYWORDS SEPARATED BY COMMAS>
    --outdir <OUTDIR>
 ```
 
@@ -118,7 +118,7 @@ Example usage:
 >   -profile docker \
 >   --species "Arabidopsis thaliana" \
 >   --eatlas_accessions "E-MTAB-552,E-GEOD-61690" \
->   --eatlas_keywords "stress,flowering" \
+>   --keywords "stress,flowering" \
 >   --datasets ./datasets.csv \
 >   --outdir ./results
 > ```

@@ -1,6 +1,6 @@
 process COMPUTE_GLOBAL_GENE_STATISTICS {
 
-    label 'process_low'
+    label 'process_high'
 
     errorStrategy = {
         if (task.exitStatus == 100) {

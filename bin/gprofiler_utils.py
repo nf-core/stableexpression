@@ -16,6 +16,11 @@ from tenacity import (
     before_sleep_log,
 )
 
+from requests.exceptions import (
+    HTTPError,
+    ConnectionError
+)
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -101,41 +106,49 @@ def request_conversion(
             "g:Profiler main server appears down, trying with the beta server..."
         )
 
-    response = requests.post(
-        url=url,
-        json={
-            "organism": organism,
-            "query": gene_ids,
-            "target": target_database
-        }
-    )
+    server_appears_down = False
 
     try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as err:
-        if err.response.status_code == 502:
-            # server appears down
-            if attempts == 0:
-                # we only tried with the main server, we try with the beta server
-                return request_conversion(
-                    gene_ids,
-                    species,
-                    target_database=target_database,
-                    url=GPROFILER_CONVERT_BETA_API_ENDPOINT,
-                    attempts=1,
-                )
+        response = requests.post(
+            url=url,
+            json={
+                "organism": organism,
+                "query": gene_ids,
+                "target": target_database
+            }
+        )
+    except requests.exceptions.ConnectionError:
+        server_appears_down = True
+    else:
+        try:
+            response.raise_for_status()
+        except (HTTPError, ConnectionError) as err:
+            if err.response.status_code == 502:
+                server_appears_down = True
             else:
-                # both servers appear down, we stop here...
-                logger.error(
-                    "g:Profiler servers (main and beta) seem to be down... Please retry later... "
-                    "If you have gene ID mappings and / or gene metadata for these datasets, you can provide them "
-                    "directly using the `--gene_id_mapping` and `--gene_metadata` parameters respectively, "
-                    "and by skipping the g:Profiler ID mapping step with `--skip_gprofiler`."
-                )
-                sys.exit(102)
+                logger.error(f"Error {err.response.status_code} while converting IDs: {err}")
+                sys.exit(101)
 
-        logger.error(f"Error {err.response.status_code} while converting IDs: {err}")
-        sys.exit(101)
+
+    if server_appears_down:
+        if attempts == 0:
+            logger.warning("g:Profiler main server appears down, trying with the beta server...")
+            return request_conversion(
+                gene_ids,
+                species,
+                target_database=target_database,
+                url=GPROFILER_CONVERT_BETA_API_ENDPOINT,
+                attempts=1,
+            )
+        else:
+            # both servers appear down, we stop here...
+            logger.error(
+                "g:Profiler servers (main and beta) seem to be down... Please retry later... "
+                "If you have gene ID mappings and / or gene metadata for these datasets, you can provide them "
+                "directly using the `--gene_id_mapping` and `--gene_metadata` parameters respectively, "
+                "and by skipping the g:Profiler ID mapping step with `--skip_gprofiler`."
+            )
+            sys.exit(102)
 
     return response.json()["result"]
 

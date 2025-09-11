@@ -292,3 +292,68 @@ def customSoftwareVersionsToYAML(versions) {
 
 
 
+/*
+========================================================================================
+    FUNCTIONS FOR FORMATTING DATA FETCHED FROM EXPRESSION ATLAS / GEO
+========================================================================================
+*/
+
+//
+// Get Expression Atlas Batch ID (accession + data_type) from file stem
+//
+def addDatasetIdToMetadata( ch_files ) {
+    return ch_files
+            .map {
+                file ->
+                    def meta = [dataset: file.getSimpleName()]
+                    [meta, file]
+            }
+}
+
+//
+// Groups design and data files by accession and data_type
+// Design and count files have necessarily the same dataset ID (same file stem)
+//
+def groupFilesByDatasetId(ch_design, ch_counts) {
+    return ch_design
+        .concat( ch_counts ) // puts counts at the end of the resulting channel
+        .groupTuple() // groups by dataset ID; design files are necessarily BEFORE count files
+        .filter {
+            it.get(1).size() == 2 // only groups with two files
+        }
+        .filter { // only groups with first file as design file and second one as count fileWARN: java.net.ConnectException: Connexion refusée
+            meta, files ->
+                files.get(0).name.endsWith('.design.csv') && !files.get(1).name.endsWith('.design.csv')
+        }
+        .map { // putting design file in meta
+            meta, files ->
+                def new_meta = meta + [design: files[0]]
+                [new_meta, files[1]]
+        }
+}
+
+def getNthPartFromEnd(String s, int n) {
+    def tokens = s.tokenize('.')
+    return tokens[tokens.size() - n]
+}
+
+//
+// Add normalised: true / false in meta
+//
+def augmentToMetadata( ch_files ) {
+    return ch_files
+            .map {
+                meta, file ->
+                    if ( getNthPartFromEnd(file.name, 3) == 'raw' ) {
+                        meta.normalised = false
+                    } else {
+                        meta.normalised = true
+                    }
+                    meta.platform = getNthPartFromEnd(file.name, 4)
+                    [meta, file]
+            }
+}
+
+
+
+
