@@ -75,7 +75,7 @@ get_cpm_counts <- function(dge) {
 
 get_normalised_cpm_counts <- function(count_file, design_file) {
 
-    print(paste('Normalizing counts in:', count_file))
+    message(paste('Normalizing counts in:', count_file))
 
     count_data <- read.csv(args$count_file, row.names = 1)
 
@@ -84,21 +84,10 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     # we do not consider these columns
     count_matrix <- remove_all_zero_columns(count_matrix)
 
-    if ( is.null(design_file) ) {
-
-        # faking a design table
-        design_data <- data.frame(
-            sample = colnames(count_matrix),
-            condition = rep("A", ncol(count_matrix))
-        )
-
-    } else {
-
-        # getting design data
-        design_data <- read.csv(design_file)
-        # removing extra samples in design table
-        design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
-    }
+    # getting design data
+    design_data <- read.csv(design_file)
+    # removing extra samples in design table
+    design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
 
     # check if the column names of count_matrix match the sample names
     check_samples(count_matrix, design_data)
@@ -132,7 +121,7 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
 
 export_data <- function(cpm_counts, filename) {
     filename <- sub("\\.csv$", ".cpm.csv", filename)
-    print(paste('Exporting normalised counts per million to:', filename))
+    message(paste('Exporting normalised counts per million to:', filename))
     write.table(cpm_counts, filename, sep = ',', row.names = TRUE, col.names = NA, quote = FALSE)
 }
 
@@ -143,6 +132,11 @@ export_data <- function(cpm_counts, filename) {
 #####################################################
 
 args <- get_args()
+
+if ( is.null(args$design_file) ) {
+    message("A design dataframe must be provided.")
+    quit(save = "no", status = 1)
+}
 
 cpm_counts <- get_normalised_cpm_counts(args$count_file, args$design_file)
 
