@@ -129,7 +129,6 @@ def request_conversion(
                 logger.error(f"Error {err.response.status_code} while converting IDs: {err}")
                 sys.exit(101)
 
-
     if server_appears_down:
         if attempts == 0:
             logger.warning("g:Profiler main server appears down, trying with the beta server...")

@@ -114,7 +114,11 @@ def parse_args():
         help="Metadata file",
     )
     parser.add_argument(
-        "--mappings", type=str, dest="mapping_files", required=True, help="Mapping file"
+        "--mappings",
+        type=str,
+        dest="mapping_files",
+        required=True,
+        help="Mapping file"
     )
     parser.add_argument(
         "--nb-top-stable-genes",

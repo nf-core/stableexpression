@@ -1,4 +1,5 @@
-include { MERGE_COUNTS                           } from '../../../modules/local/merge_counts'
+include { MERGE_COUNTS                           } from '../../../modules/local/merge/counts'
+include { MERGE_DESIGNS                          } from '../../../modules/local/merge/designs'
 include { COMPUTE_GLOBAL_GENE_STATISTICS         } from '../../../modules/local/compute_gene_statistics/global'
 
 include { MERGE_COMPUTE_STATS_PER_PLATFORM as MERGE_COMPUTE_STATS_MICROARRAY } from '../merge_compute_stats_per_platform'
@@ -39,6 +40,15 @@ workflow MERGE_COMPUTE_STATS {
         .set { ch_all_counts }
 
     MERGE_COUNTS( ch_all_counts.collect() )
+
+    // -----------------------------------------------------------------
+    // MERGE ALL DESIGNS IN A SINGLE TABLE
+    // -----------------------------------------------------------------
+    ch_normalised_counts
+        .map { meta, file -> meta.design }
+        .set { ch_designs }
+
+    MERGE_DESIGNS( ch_designs.collect() )
 
     // -----------------------------------------------------------------
     // GENE STATISTICS

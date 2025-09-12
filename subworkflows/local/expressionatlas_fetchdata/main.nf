@@ -70,7 +70,6 @@ workflow EXPRESSIONATLAS_FETCHDATA {
         .combine ( ch_excluded_accessions )
         .filter { accession, excluded_accessions -> !(accession in excluded_accessions) }
         .map { accession, excluded_accessions -> accession }
-        .view()
         .set { ch_accessions }
 
     if ( !params.accessions_only ) {

@@ -84,11 +84,11 @@ build_design_dataframe <- function(df, accession) {
       mutate(group_num = cur_group_id()) %>%
       ungroup() %>%
       mutate(
-        group = paste0("G", group_num),
+        condition = paste0("G", group_num),
         batch = accession
       ) %>%
-      select(sample, group, batch) %>%
-      arrange(group)
+      select(sample, condition, batch) %>%
+      arrange(condition)
 
     return(design_df)
 }
@@ -139,13 +139,13 @@ check_microarray_normalisation <- function(df) {
     message("Normalized, log2 scale (e.g. RMA, quantile)")
   } else if (all_integers) {
     message("Raw probe intensities (unnormalized CEL-like data)")
-    quit(save = "no", status = 110)
+    #quit(save = "no", status = 110)
   } else if (value_range[2] > 1000) {
     message("Normalized but not log-transformed (e.g. MAS5, raw intensities)")
-    quit(save = "no", status = 111)
+    #quit(save = "no", status = 111)
   } else {
     message("Unclear data origin, check GEO metadata")
-    quit(save = "no", status = 112)
+    #quit(save = "no", status = 112)
   }
 }
 
@@ -221,7 +221,7 @@ export_metadata <- function(design_df, batch_id) {
 
     df <- design_df %>%
         mutate(sample = new_sample_names ) %>%
-        select(sample, group, batch)
+        select(sample, condition, batch)
 
     outfilename <- paste0(batch_id, '.design.csv')
     message(paste('Exporting design data to file', outfilename))

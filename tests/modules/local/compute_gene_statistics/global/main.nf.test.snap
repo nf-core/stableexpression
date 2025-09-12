@@ -1,0 +1,45 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "top_stable_genes_summary.csv:md5,625915d58bdbeb59174ca3efbd74c509"
+                ],
+                "1": [
+                    "stats_all_genes.csv:md5,8b18e7b9360d9a24c10a3ceca1fed802"
+                ],
+                "2": [
+                    "top_stable_genes_transposed_counts_filtered.csv:md5,049ac577898d74c820004ed83761f52f"
+                ],
+                "3": [
+                    [
+                        "COMPUTE_GLOBAL_GENE_STATISTICS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "4": [
+                    [
+                        "COMPUTE_GLOBAL_GENE_STATISTICS",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "all_statistics": [
+                    "stats_all_genes.csv:md5,8b18e7b9360d9a24c10a3ceca1fed802"
+                ],
+                "top_stable_genes_summary": [
+                    "top_stable_genes_summary.csv:md5,625915d58bdbeb59174ca3efbd74c509"
+                ],
+                "top_stable_genes_transposed_counts": [
+                    "top_stable_genes_transposed_counts_filtered.csv:md5,049ac577898d74c820004ed83761f52f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.6"
+        },
+        "timestamp": "2025-09-11T11:20:17.827642173"
+    }
+}

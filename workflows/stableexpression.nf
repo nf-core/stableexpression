@@ -45,7 +45,6 @@ workflow STABLEEXPRESSION {
     EXPRESSIONATLAS_FETCHDATA.out.accessions
         .filter { accession -> accession.startsWith("E-GEOD-") }
         .map { accession -> accession.replace("E-GEOD-", "GSE")}
-        .view()
         .set { ch_excluded_geo_accessions }
 
     GEO_FETCHDATA (

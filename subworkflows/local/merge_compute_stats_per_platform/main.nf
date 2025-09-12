@@ -1,4 +1,4 @@
-include { MERGE_COUNTS                                      } from '../../../modules/local/merge_counts'
+include { MERGE_COUNTS                                      } from '../../../modules/local/merge/counts'
 include { COMPUTE_GENE_STATISTICS_PER_PLATFORM              } from '../../../modules/local/compute_gene_statistics/per_platform'
 
 /*
