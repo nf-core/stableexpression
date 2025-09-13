@@ -1,0 +1,64 @@
+{
+    "Small dataset - Real expression values": {
+        "content": [
+            {
+                "0": [
+                    "stabilities.csv:md5,c93b8577b3f2073e04881323e711e137"
+                ],
+                "1": [
+                    [
+                        "NORMFINDER",
+                        "python",
+                        "3.13.7"
+                    ]
+                ],
+                "2": [
+                    [
+                        "NORMFINDER",
+                        "polars",
+                        "1.33.1"
+                    ]
+                ],
+                "stabilities": [
+                    "stabilities.csv:md5,c93b8577b3f2073e04881323e711e137"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.6"
+        },
+        "timestamp": "2025-09-13T18:08:22.097656317"
+    },
+    "Very small dataset - Cq values": {
+        "content": [
+            {
+                "0": [
+                    "stabilities.csv:md5,81863dc328421715ae9580ede5bbc318"
+                ],
+                "1": [
+                    [
+                        "NORMFINDER",
+                        "python",
+                        "3.13.7"
+                    ]
+                ],
+                "2": [
+                    [
+                        "NORMFINDER",
+                        "polars",
+                        "1.33.1"
+                    ]
+                ],
+                "stabilities": [
+                    "stabilities.csv:md5,81863dc328421715ae9580ede5bbc318"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.6"
+        },
+        "timestamp": "2025-09-13T17:40:05.554966039"
+    }
+}
