@@ -5,6 +5,8 @@
 import argparse
 import polars as pl
 from pathlib import Path
+from sklearn.preprocessing import QuantileTransformer
+import numpy as np
 from dataclasses import dataclass, field
 from typing import ClassVar
 import logging
@@ -21,37 +23,59 @@ STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.csv"
 @dataclass
 class StabilityScorer:
 
+    N_QUANTILES: ClassVar[int] = 1000
+
     WEIGHT: ClassVar[dict] = {
-        "std": 1000,
-        "cv": 1000,
-        "mad": 1000,
-        "normfinder": 1000,
-        "genorm": 1,
+        config.VARIATION_COEFFICIENT_COLNAME: 0.7,
+        config.MAD_COLNAME: 0.1,
+        config.NORMFINDER_STABILITY_VALUE_COLNAME: 0.1,
+        config.GENORM_M_MEASURE_COLNAME: 0.1
     }
 
-    WEIGHT_RATIO_NB_NULLS_TO_SCORING: ClassVar[float] = 0.01
+    WEIGHT_RATIO_NB_NULLS_TO_SCORING: ClassVar[float] = 1
 
     lf: pl.LazyFrame
-    scoring_base: str
-
-    stability_base_col: str = field(init=False)
-    weight_stability_base: float = field(init=False)
 
     def __post_init__(self):
-        self.stability_base_col = config.SCORING_BASE_TO_STABILITY_SCORE_COLUMN[self.scoring_base]
-        self.weight_stability_base = self.WEIGHT.get(self.scoring_base, 1)
         self.compute_stability_score()
+
+
+    @staticmethod
+    def quantile_normalise(data: pl.Series):
+        """
+        Quantile normalize a series
+        """
+        array = data.to_numpy().reshape(-1, 1)
+        transformer = QuantileTransformer(output_distribution="uniform")
+        normalised_array = transformer.fit_transform(array)
+        return pl.Series(data.name, normalised_array.ravel())
 
 
     def compute_stability_score(self) -> pl.LazyFrame:
         logger.info("Computing stability score for candidate genes")
+        columns = self.lf.collect_schema().names()
+
+        normalised_data = {}
+        for col in self.WEIGHT:
+            if col not in columns:
+                continue
+            data = self.lf.select(col).collect().to_series()
+            normalised_data[col] = self.quantile_normalise(data)
+
+        # replacing original data with quantile normalised ones
+        self.lf = self.lf.with_columns(data for data in normalised_data.values())
+
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # GENERAL FORMULA FOR STABILITY
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         stability_scoring_expr = (
-            pl.col(self.stability_base_col) * self.weight_stability_base
-            + pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME) * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
+            pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME) * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
         )
+        for col, weight in self.WEIGHT.items():
+            if col not in columns:
+                continue
+            stability_scoring_expr += (pl.col(col) * weight)
+
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         expr = (
@@ -97,14 +121,6 @@ def parse_args():
         dest="stability_files",
         required=True,
         help="Output files of Normfinder / Genorm",
-    )
-    parser.add_argument(
-        "--scoring-base",
-        type=str,
-        dest="scoring_base",
-        required=True,
-        help="Base statistical measurement (computed: Normfinder, Genorm) "
-             "or descriptive (standard deviation, coefficient of variation) to use as base for stability scoring."
     )
 
     return parser.parse_args()
@@ -158,7 +174,7 @@ def main():
     lf = stat_df.join(stability_df, on=config.ENSEMBL_GENE_ID_COLNAME, how="left")
 
     # sort genes according to the metrics present in the dataframe
-    stability_scorer = StabilityScorer(lf, scoring_base=args.scoring_base)
+    stability_scorer = StabilityScorer(lf)
     scored_lf = stability_scorer.get_statistics_with_stability_scores()
 
     # exporting computed data

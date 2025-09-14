@@ -51,8 +51,18 @@ custom_data:
       stability_score:
         title: "Stability score"
         description: |
-          Final stability score (used for sorting)
-        format: "{:,.4f}"
+          Final stability score : the lower, the better
+        format: "{:,.6f}"
+      standard_deviation:
+        title: "Standard deviation"
+        description: |
+          Standard deviation of the expression across all samples.
+        format: "{:,.6f}"
+      variation_coefficient:
+        title: "Coefficient of variation"
+        description: |
+          Variation coefficient ( std(expression) / mean(expression) ) across all samples.
+        format: "{:,.6f}"
       normfinder_stability_value:
         title: "Normfinder stability value "
         description: |
@@ -62,17 +72,7 @@ custom_data:
         title: "Genorm M-measure"
         description: |
           M-measure as computed by Genorm
-        format: "{:,.4f}"
-      standard_deviation:
-        title: "Std"
-        description: |
-          Standard deviation of the expression across all samples.
-        format: "{:,.4f}"
-      variation_coefficient:
-        title: "Var coeff"
-        description: |
-          Variation coefficient ( std(expression) / mean(expression) ) across all samples.
-        format: "{:,.4f}"
+        format: "{:,.6f}"
       mean:
         title: "Average"
         description: |
@@ -271,26 +271,31 @@ custom_data:
       col1_header: "Ensembl Gene ID"
     headers:
       # colors from https://colorbrewer2.org/#type=diverging&scheme=BrBG&n=8
-      m_measure:
-        title: "Gene stability M-measure"
-        description: |
-          Gene stability measure M as defined in Vandesompele et al., Genome Biology (2002)
-        color: "#bf812d"
       standard_deviation:
         title: "Standard deviation"
         description: |
           Standard deviation of the expression across samples
         color: "#bf812d"
       variation_coefficient:
-        title: "Variation coefficient"
+        title: "Coefficient of variation"
         description: |
-          Ratio of standard deviation to mean
+          Coefficient of variation (ratio of standard deviation to mean)
         color: "#f6e8c3"
       mean:
         title: "Average"
         description: |
           Average expression across samples.
           Expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
+        color: "#01665e"
+      normfinder_stability_value:
+        title: "Normfinder stability value "
+        description: |
+          Stability value as computed by Normfinder
+        color: "#01665e"
+      genorm_m_measure:
+        title: "Genorm M-measure"
+        description: |
+          M-measure as computed by Genorm
         color: "#01665e"
 
   gene_counts:

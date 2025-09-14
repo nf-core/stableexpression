@@ -58,8 +58,7 @@ workflow STABILITY_SCORING {
 
     COMPUTE_STABILITY_SCORES (
         ch_stats,
-        ch_stability_scores.collect(),
-        params.scoring_base
+        ch_stability_scores.collect()
     )
 
 

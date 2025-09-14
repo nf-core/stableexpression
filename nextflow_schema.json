@@ -242,19 +242,11 @@
             "properties": {
                 "candidate_selection_descriptor": {
                     "type": "string",
-                    "description": "Stratistic description for prior gene candidate selection",
+                    "description": "Statistic descriptor for prior gene candidate selection",
                     "fa_icon": "fas fa-chart-simple",
                     "enum": ["std", "cv", "mad"],
                     "default": "std",
                     "help_text": "Candidate genes are chosen based on a certain statistical descriptor. Set this parameter to modify the descriptor used."
-                },
-                "scoring_base": {
-                    "type": "string",
-                    "description": "Base statistics to use for stability scoring",
-                    "fa_icon": "fas fa-chart-simple",
-                    "enum": ["std", "cv", "mad", "normfinder", "genorm"],
-                    "default": "std",
-                    "help_text": "Base statistical measurement (computed: Normfinder, Genorm) or descriptive (standard deviation, coefficient of variation) to use as base for stability scoring."
                 },
                 "skip_genorm": {
                     "type": "boolean",

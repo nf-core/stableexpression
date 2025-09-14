@@ -45,7 +45,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def quantile_normalize(data: pd.DataFrame, target_distribution: str):
+def quantile_normalise(data: pd.DataFrame, target_distribution: str):
     """
     Quantile normalize a data matrix based on a target distribution.
     """
@@ -82,7 +82,7 @@ def main():
     count_df = pd.read_csv(count_file, index_col=0)
     count_df.index.name = config.ENSEMBL_GENE_ID_COLNAME
 
-    quantile_normalized_counts = quantile_normalize(count_df, args.target_distribution)
+    quantile_normalized_counts = quantile_normalise(count_df, args.target_distribution)
 
     export_count_data(quantile_normalized_counts, count_file)
 
