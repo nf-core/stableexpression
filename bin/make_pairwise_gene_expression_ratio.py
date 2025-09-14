@@ -7,10 +7,10 @@ from pathlib import Path
 import argparse
 import logging
 
+import config
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 
 #####################################################
 #####################################################
@@ -39,14 +39,14 @@ def parse_args():
 
 
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the ENSEMBL_GENE_ID_COLNAME column.
+    """Get all column names except the config.ENSEMBL_GENE_ID_COLNAME column.
 
-    The ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
+    The config.ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
     """
     return [
         col
         for col in lf.collect_schema().names()
-        if not col.startswith(ENSEMBL_GENE_ID_COLNAME)
+        if not col.startswith(config.ENSEMBL_GENE_ID_COLNAME)
     ]
 
 
@@ -59,7 +59,7 @@ def compute_ratios(file: Path, low_memory: bool) -> pl.LazyFrame:
         if not col.endswith("_other")
     }
     return cross_join_lf.select(
-        [pl.col(ENSEMBL_GENE_ID_COLNAME), pl.col(f"{ENSEMBL_GENE_ID_COLNAME}_other")]
+        [pl.col(config.ENSEMBL_GENE_ID_COLNAME), pl.col(f"{config.ENSEMBL_GENE_ID_COLNAME}_other")]
         + [
             (pl.col(col) / pl.col(other_col)).log(base=2).alias(f"{col}_log_ratio")
             for col, other_col in column_pairs.items()

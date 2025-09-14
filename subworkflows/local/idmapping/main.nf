@@ -2,7 +2,7 @@ include { IDMAPPING_GPROFILER                    } from '../../../modules/local/
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
+    SUBWORKFLOW TO MAP ORIGINAL IDS TO ENSEMBL GENE IDS
 ========================================================================================
 */
 

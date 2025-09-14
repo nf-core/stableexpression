@@ -48,6 +48,21 @@ custom_data:
         title: "Ensembl Gene ID"
         description: |
           Gene IDs as shown in Ensembl
+      stability_score:
+        title: "Stability score"
+        description: |
+          Final stability score (used for sorting)
+        format: "{:,.4f}"
+      normfinder_stability_value:
+        title: "Normfinder stability value "
+        description: |
+          Stability value as computed by Normfinder
+        format: "{:,.6f}"
+      genorm_m_measure:
+        title: "Genorm M-measure"
+        description: |
+          M-measure as computed by Genorm
+        format: "{:,.4f}"
       standard_deviation:
         title: "Std"
         description: |
@@ -195,30 +210,42 @@ custom_data:
             - s_eq: "Low expression"
           very_low:
             - s_eq: "Very low expression"
-      total_nb_nulls:
-        title: "Nb nulls"
+      ratio_nulls_in_all_samples:
+        title: "Ratio null values (all samples)"
         description: |
-          Number of samples in which the gene is not represented.
-      nb_nulls_valid_samples:
-        title: "Nb nulls (valid samples)"
+          Ratio of samples in which the gene is not represented.
+      ratio_nulls_in_valid_samples:
+        title: "Ratio null values (valid samples)"
         description: |
-          Number of samples in which the gene is not represented, excluding samples with particularly low overall gene count.
-      rnaseq_total_nb_nulls:
-        title: "Nb nulls [RNA-seq only]"
+          Ratio of samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+      ratio_zeros:
+        title: "Ratio zero values"
         description: |
-          Number of RNA-Seq samples in which the gene is not represented.
-      rnaseq_nb_nulls_valid_samples:
-        title: "Nb nulls (valid samples) [RNA-seq only]"
+          Ratio of samples in which the gene has a zero value.
+      rnaseq_ratio_nulls_in_all_samples:
+        title: "Ratio null values (all samples) [RNA-seq only]"
         description: |
-          Number of RNA-Seq samples in which the gene is not represented, excluding samples with particularly low overall gene count.
-      microarray_total_nb_nulls:
-        title: "Nb nulls [Microarray only]"
+          Ratio of RNA-Seq samples in which the gene is not represented.
+      rnaseq_ratio_nulls_in_valid_samples:
+        title: "Ratio null values (valid samples) [RNA-seq only]"
         description: |
-          Number of Microarray samples in which the gene is not represented.
-      microarray_nb_nulls_valid_samples:
-        title: "Nb nulls (valid samples) [Microarray only]"
+          Ratio of RNA-Seq samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+      rnaseq_ratio_zeros:
+        title: "Ratio zero values [RNA-seq only]"
         description: |
-          Number of Microarray samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+          Ratio of RNA-Seq samples in which the gene has a zero value.
+      microarray_ratio_nulls_in_all_samples:
+        title: "Ratio null values (all samples) [Microarray only]"
+        description: |
+          Ratio of Microarray samples in which the gene is not represented.
+      microarray_ratio_nulls_in_valid_samples:
+        title: "Ratio null values (valid samples) [Microarray only]"
+        description: |
+          Ratio of Microarray samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+      microarray_ratio_zeros:
+        title: "Ratio zero values [Microarray only]"
+        description: |
+          Ratio of Microarray samples in which the gene has a zero value.
 
   expression_distributions_top_stable_genes:
     section_name: "Expression distribution of the top stable genes (ranked by stability)"

@@ -1,6 +1,6 @@
-process MERGE_COUNTS {
+process GET_CANDIDATE_GENES {
 
-    label 'process_high'
+    label 'process_single'
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -8,20 +8,23 @@ process MERGE_COUNTS {
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    path count_files, stageAs: "?/*"
+    path count_file
+    path stat_file
+    val candidate_selection_descriptor
+    val nb_top_stable_genes
 
     output:
-    path 'all_counts.parquet',                                                                                        emit: counts
+    path 'candidate_counts.parquet',                                                                                  emit: counts
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
-    when:
-    task.ext.when == null || task.ext.when
-
     script:
     """
-    merge_counts.py \\
-        --counts "$count_files"
+    get_candidate_genes.py \\
+        --counts $count_file \\
+        --stats $stat_file \\
+        --candidate_selection_descriptor $candidate_selection_descriptor \\
+        --nb-top-stable-genes $nb_top_stable_genes
     """
 
 }

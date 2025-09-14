@@ -1,6 +1,6 @@
 process NORMFINDER   {
 
-    label 'process_single'
+    label 'process_high'
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -12,7 +12,7 @@ process NORMFINDER   {
     path design_file
 
     output:
-    path('stabilities.csv'),                                                                                            emit: stabilities
+    path('stability_values.csv'),                                                                                       emit: stability_values
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                       topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),       topic: versions
 
@@ -25,7 +25,7 @@ process NORMFINDER   {
 
     stub:
     """
-    touch stabilities.csv
+    touch stability_values.csv
     """
 
 }

@@ -8,12 +8,13 @@ import pandas as pd
 from sklearn.preprocessing import QuantileTransformer
 import logging
 
+import config
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 QUANT_NORM_SUFFIX = ".quant_norm.parquet"
 
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 N_QUANTILES = 1000
 
 ALLOWED_TARGET_DISTRIBUTIONS = ["normal", "uniform"]
@@ -79,7 +80,7 @@ def main():
 
     logger.info(f"Quantile normalising {count_file.name}")
     count_df = pd.read_csv(count_file, index_col=0)
-    count_df.index.name = ENSEMBL_GENE_ID_COLNAME
+    count_df.index.name = config.ENSEMBL_GENE_ID_COLNAME
 
     quantile_normalized_counts = quantile_normalize(count_df, args.target_distribution)
 

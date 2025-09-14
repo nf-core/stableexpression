@@ -1,27 +1,26 @@
-process MERGE_COUNTS {
+process RATIO_STANDARD_VARIATION {
 
-    label 'process_high'
+    label 'process_low'
+    publishDir "${params.outdir}/genorm/ratio_standard_variations"
 
-    conda "${moduleDir}/spec-file.txt"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f8a5d02e7b31980c887253a9f118da0ef91ead1c7b158caf855199e5c5d5473/data':
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    path count_files, stageAs: "?/*"
+    path file
 
     output:
-    path 'all_counts.parquet',                                                                                        emit: counts
+    path 'std.*.parquet',                                                                                               emit: data
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
-    when:
-    task.ext.when == null || task.ext.when
 
     script:
+    def args = "--task-attempts ${task.attempt}"
     """
-    merge_counts.py \\
-        --counts "$count_files"
+    get_ratio_standard_variation.py --file $file $args
     """
 
 }

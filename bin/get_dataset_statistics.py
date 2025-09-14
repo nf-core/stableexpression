@@ -8,15 +8,14 @@ from scipy import stats
 import pandas as pd
 import logging
 
+import config
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 QUANT_NORM_SUFFIX = ".quant_norm.parquet"
 DATASET_STATISTICS_SUFFIX = ".dataset_stats.csv"
 
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
-SAMPLE_COLNAME = "sample"
-KS_TEST_COLNAME = "kolmogorov_smirnov_pvalue"
 
 ALLOWED_TARGET_DISTRIBUTIONS = ["normal", "uniform"]
 
@@ -78,14 +77,14 @@ def compute_dataset_statistics(
     ks_tests = compute_kolmogorov_smirnov_test_to_target_distribution(
         count_df, target_distribution
     )
-    dataset_stats_df.loc[KS_TEST_COLNAME] = ks_tests
+    dataset_stats_df.loc[config.KS_TEST_COLNAME] = ks_tests
     return dataset_stats_df.T
 
 
 def export_count_data(dataset_stats_df: pd.DataFrame, outfile_name: str):
     """Export dataset statistics to CSV files."""
     logger.info(f"Exporting dataset statistics counts to: {outfile_name}")
-    dataset_stats_df.index.name = SAMPLE_COLNAME
+    dataset_stats_df.index.name = config.SAMPLE_COLNAME
     dataset_stats_df.to_csv(outfile_name, index=True, header=True)
 
 
@@ -102,7 +101,7 @@ def main():
 
     logger.info(f"Computing dataset statistics for {count_file.name}")
     count_df = pd.read_parquet(count_file)
-    count_df.set_index(ENSEMBL_GENE_ID_COLNAME, inplace=True)
+    count_df.set_index(config.ENSEMBL_GENE_ID_COLNAME, inplace=True)
 
     dataset_stats_df = compute_dataset_statistics(count_df, args.target_distribution)
 

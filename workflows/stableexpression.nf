@@ -9,10 +9,12 @@ include { GEO_FETCHDATA                          } from '../subworkflows/local/g
 include { IDMAPPING                              } from '../subworkflows/local/idmapping'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
 include { DATA_CLEANSING                         } from '../subworkflows/local/data_cleansing'
-include { MERGE_COMPUTE_STATS                    } from '../subworkflows/local/merge_compute_stats'
+include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
+include { BASE_STATISTICS                        } from '../subworkflows/local/base_statistics'
+include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { MULTIQC_WORKFLOW                       } from '../subworkflows/local/multiqc'
 
-
+include { AGGREGATE_RESULTS                      } from '../modules/local/aggregate_results'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,19 +89,46 @@ workflow STABLEEXPRESSION {
         )
 
         // -----------------------------------------------------------------
-        // MERGE DATA AND COMPUTE VARIOUS STATISTICS
+        // MERGE DATA
         // -----------------------------------------------------------------
 
-        MERGE_COMPUTE_STATS (
-            DATA_CLEANSING.out.cleaned_counts,
-            IDMAPPING.out.gene_metadata,
-            IDMAPPING.out.gene_id_mapping
+        MERGE_DATA ( DATA_CLEANSING.out.cleaned_counts )
+        MERGE_DATA.out.all_counts.set { ch_all_counts }
 
+        // -----------------------------------------------------------------
+        // COMPUTE BASE STATISTICS FOR ALL GENES
+        // -----------------------------------------------------------------
+
+        BASE_STATISTICS (
+            ch_all_counts,
+            MERGE_DATA.out.rnaseq_counts,
+            MERGE_DATA.out.microarray_counts
         )
 
-        MERGE_COMPUTE_STATS.out.top_stable_genes_summary.set { ch_top_stable_genes_summary }
-        MERGE_COMPUTE_STATS.out.all_genes_statistics.set { ch_all_genes_statistics }
-        MERGE_COMPUTE_STATS.out.top_stable_genes_transposed_counts.set { ch_top_stable_genes_transposed_counts }
+        // -----------------------------------------------------------------
+        // GET CANDIDATES AS REFERENCE GENE AND COMPUTES VARIOUS STABILITY VALUES
+        // -----------------------------------------------------------------
+
+        STABILITY_SCORING (
+            ch_all_counts,
+            MERGE_DATA.out.whole_design,
+            BASE_STATISTICS.out.stats
+        )
+
+        // -----------------------------------------------------------------
+        // AGGREGATE ALL RESULTS FOR MULTIQC
+        // -----------------------------------------------------------------
+
+        AGGREGATE_RESULTS (
+            ch_all_counts,
+            STABILITY_SCORING.out.summary_statistics,
+            IDMAPPING.out.gene_metadata,
+            IDMAPPING.out.gene_id_mapping
+        )
+
+        AGGREGATE_RESULTS.out.top_stable_genes_summary.set { ch_top_stable_genes_summary }
+        AGGREGATE_RESULTS.out.stats_all_genes.set { ch_all_genes_statistics }
+        AGGREGATE_RESULTS.out.top_stable_genes_transposed_counts_filtered.set { ch_top_stable_genes_transposed_counts }
 
     }
 

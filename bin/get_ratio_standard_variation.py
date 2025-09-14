@@ -7,11 +7,10 @@ from pathlib import Path
 import argparse
 import logging
 
+import config
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
-RATIOS_STDS_COLNAME = "ratios_stds"
 
 # experimentally chosen
 RATIO_CHUNK_SIZE = 100
@@ -48,14 +47,14 @@ def get_nb_rows(lf: pl.LazyFrame):
 
 
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the ENSEMBL_GENE_ID_COLNAME column.
+    """Get all column names except the config.ENSEMBL_GENE_ID_COLNAME column.
 
-    The ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
+    The config.ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
     """
     return [
         col
         for col in lf.collect_schema().names()
-        if not col.startswith(ENSEMBL_GENE_ID_COLNAME)
+        if not col.startswith(config.ENSEMBL_GENE_ID_COLNAME)
     ]
 
 
@@ -81,38 +80,38 @@ def compute_standard_deviations(file: Path, low_memory: bool) -> pl.LazyFrame:
         ],
         how="horizontal",
     ).select(
-        pl.col("ratios").list.std(ddof=0).alias(RATIOS_STDS_COLNAME),
-        pl.col(ENSEMBL_GENE_ID_COLNAME),
-        pl.col(f"{ENSEMBL_GENE_ID_COLNAME}_other"),
+        pl.col("ratios").list.std(ddof=0).alias(config.RATIOS_STD_COLNAME),
+        pl.col(config.ENSEMBL_GENE_ID_COLNAME),
+        pl.col(f"{config.ENSEMBL_GENE_ID_COLNAME}_other"),
     )
 
 
 def get_column_standard_deviations(std_lf: pl.LazyFrame, column: str) -> pl.LazyFrame:
-    # column is either ENSEMBL_GENE_ID_COLNAME or f"{ENSEMBL_GENE_ID_COLNAME}_other"
+    # column is either config.ENSEMBL_GENE_ID_COLNAME or f"{config.ENSEMBL_GENE_ID_COLNAME}_other"
     return (
         std_lf.group_by(column)
-        .agg(RATIOS_STDS_COLNAME)  # getting list of ratio std for this gene
+        .agg(config.RATIOS_STD_COLNAME)  # getting list of ratio std for this gene
         .select(
-            pl.col(column).alias(ENSEMBL_GENE_ID_COLNAME), pl.col(RATIOS_STDS_COLNAME)
+            pl.col(column).alias(config.ENSEMBL_GENE_ID_COLNAME), pl.col(config.RATIOS_STD_COLNAME)
         )
     )
 
 
 def group_standard_deviations(std_lf: pl.LazyFrame) -> pl.LazyFrame:
     # getting the standard devs for genes in the ensembl_gene_id column
-    std_a = get_column_standard_deviations(std_lf, column=ENSEMBL_GENE_ID_COLNAME)
+    std_a = get_column_standard_deviations(std_lf, column=config.ENSEMBL_GENE_ID_COLNAME)
     # getting the standard devs for genes in the ensembl_gene_id_other column
     std_b = get_column_standard_deviations(
-        std_lf, column=f"{ENSEMBL_GENE_ID_COLNAME}_other"
+        std_lf, column=f"{config.ENSEMBL_GENE_ID_COLNAME}_other"
     )
     # concatenating both dataframes vertically
     # if both lists of gene ids are the identical,
     # we need to collect values only for one column to avoid duplicates
     return (
         pl.concat([std_a, std_b], how="vertical")
-        .unique(subset=ENSEMBL_GENE_ID_COLNAME)
+        .unique(subset=config.ENSEMBL_GENE_ID_COLNAME)
         .sort(
-            ENSEMBL_GENE_ID_COLNAME
+            config.ENSEMBL_GENE_ID_COLNAME
         )  # only needed to have consistent output (for snapshots)
     )
 

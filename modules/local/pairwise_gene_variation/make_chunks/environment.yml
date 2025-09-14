@@ -1,6 +1,0 @@
-name: make_chunks
-channels:
-  - conda-forge
-dependencies:
-  - conda-forge::python==3.12.8
-  - conda-forge::polars==1.17.1

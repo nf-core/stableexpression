@@ -6,8 +6,9 @@ import argparse
 import sys
 import polars as pl
 from pathlib import Path
-from dataclasses import dataclass, field
 import logging
+
+import config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -15,10 +16,6 @@ logger = logging.getLogger(__name__)
 # outfile names
 ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME = "cleaned_counts_filtered.parquet"
 
-# column names
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
-SAMPLE_COLNAME = "sample"
-KS_TEST_COLNAME = "kolmogorov_smirnov_to_uniform_dist_pvalue"
 
 #####################################################
 #####################################################
@@ -98,27 +95,25 @@ def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame
 
 
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the ENSEMBL_GENE_ID_COLNAME column.
+    """Get all column names except the config.ENSEMBL_GENE_ID_COLNAME column.
 
-    The ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
+    The config.ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
     """
-    return lf.select(pl.exclude(ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
+    return lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
 
 
 def get_counts(
     file: Path,
 ) -> pl.LazyFrame:
     # sorting dataframe (necessary to get consistent output)
-    return pl.scan_parquet(file).sort(ENSEMBL_GENE_ID_COLNAME, descending=False)
+    return pl.scan_parquet(file).sort(config.ENSEMBL_GENE_ID_COLNAME, descending=False)
 
 
 def remove_samples_with_low_ks_pvalue(
     count_lf: pl.LazyFrame, ks_stats_file: Path, ks_pvalue_threshold: str
 ) -> pl.LazyFrame:
 
-    ks_stats_df = pl.read_csv(
-        ks_stats_file, has_header=True, new_columns=[SAMPLE_COLNAME, KS_TEST_COLNAME]
-    )
+    ks_stats_df = pl.read_csv(ks_stats_file, has_header=True).select([config.SAMPLE_COLNAME, config.KS_TEST_COLNAME])
 
     # parsing threshold
     try:
@@ -130,8 +125,8 @@ def remove_samples_with_low_ks_pvalue(
 
     # logging number of samples excluded from analysis
     not_valid_samples = ks_stats_df.filter(
-        ks_stats_df[KS_TEST_COLNAME] <= ks_pvalue_threshold
-    )[SAMPLE_COLNAME].to_list()
+        ks_stats_df[config.KS_TEST_COLNAME] <= ks_pvalue_threshold
+    )[config.SAMPLE_COLNAME].to_list()
 
     if not_valid_samples:
         logger.warning(
@@ -142,15 +137,15 @@ def remove_samples_with_low_ks_pvalue(
 
     # getting samples for which the Kolmogorov-Smirnov test pvalue is above the threshold
     valid_samples = ks_stats_df.filter(
-        ks_stats_df[KS_TEST_COLNAME] > ks_pvalue_threshold
-    )[SAMPLE_COLNAME].to_list()
+        ks_stats_df[config.KS_TEST_COLNAME] > ks_pvalue_threshold
+    )[config.SAMPLE_COLNAME].to_list()
 
     if not valid_samples:
         logger.error("No more valid sample to process...")
         sys.exit(101)
 
     # filtering the count dataframe to keep only the valid samples
-    return count_lf.select([ENSEMBL_GENE_ID_COLNAME] + valid_samples)
+    return count_lf.select([config.ENSEMBL_GENE_ID_COLNAME] + valid_samples)
 
 
 def export_data( all_counts_lf: pl.LazyFrame):

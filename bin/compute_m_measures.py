@@ -7,12 +7,10 @@ from pathlib import Path
 import argparse
 import logging
 
+import config
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
-RATIOS_STD_COLNAME = "ratios_stds"
-M_MEASURE_COLNAME = "m_measure"
 
 M_MEASURE_OUTFILE_NAME = "m_measures.csv"
 
@@ -61,19 +59,19 @@ def concat_all_std_data(files: list[Path], low_memory: bool) -> pl.LazyFrame:
     lfs = [pl.scan_parquet(file, low_memory=low_memory) for file in files]
     lf = pl.concat(lfs)
     return (
-        lf.explode(RATIOS_STD_COLNAME)
-        .group_by(ENSEMBL_GENE_ID_COLNAME)
-        .agg(pl.col(RATIOS_STD_COLNAME))
+        lf.explode(config.RATIOS_STD_COLNAME)
+        .group_by(config.ENSEMBL_GENE_ID_COLNAME)
+        .agg(pl.col(config.RATIOS_STD_COLNAME))
     )
 
 
 def compute_m_measures(lf: pl.LazyFrame) -> pl.LazyFrame:
     return lf.select(
-        pl.col(ENSEMBL_GENE_ID_COLNAME),
+        pl.col(config.ENSEMBL_GENE_ID_COLNAME),
         (
-            pl.col(RATIOS_STD_COLNAME).list.sum()
-            / (pl.col(RATIOS_STD_COLNAME).list.len() - 1)
-        ).alias(M_MEASURE_COLNAME),
+            pl.col(config.RATIOS_STD_COLNAME).list.sum()
+            / (pl.col(config.RATIOS_STD_COLNAME).list.len() - 1)
+        ).alias(config.GENORM_M_MEASURE_COLNAME),
     )
 
 
@@ -102,7 +100,7 @@ def main():
     #############################################################################
     # MAKING A FOLDER FOR EACH CHUNK OF GENE IDS
     #############################################################################
-    gene_ids = count_lf.select(ENSEMBL_GENE_ID_COLNAME).collect().to_series().to_list()
+    gene_ids = count_lf.select(config.ENSEMBL_GENE_ID_COLNAME).collect().to_series().to_list()
     gene_ids = sorted(gene_ids)
 
     chunksize = max(
@@ -137,7 +135,7 @@ def main():
             # writing all data corresponding to this group of gene IDs in a specific folder
             outfile = gene_id_chunk_folder / f"chunk.{i}.parquet"
             concat_df = concat_lf.filter(
-                pl.col(ENSEMBL_GENE_ID_COLNAME).is_in(gene_id_list_chunk)
+                pl.col(config.ENSEMBL_GENE_ID_COLNAME).is_in(gene_id_list_chunk)
             ).collect()
             concat_df.write_parquet(outfile)
 
@@ -154,7 +152,7 @@ def main():
             chunk_files = list(gene_id_chunk_folder.iterdir())
 
             concat_lf = concat_all_std_data(chunk_files, low_memory).sort(
-                ENSEMBL_GENE_ID_COLNAME
+                config.ENSEMBL_GENE_ID_COLNAME
             )
 
             # computing M measures for these gene IDs
@@ -164,11 +162,11 @@ def main():
             #################################################
             # checks
             #################################################
-            if m_measure_df[ENSEMBL_GENE_ID_COLNAME].is_duplicated().any():
+            if m_measure_df[config.ENSEMBL_GENE_ID_COLNAME].is_duplicated().any():
                 raise ValueError("Duplicate values found for gene IDs!")
 
             process_gene_ids = sorted(
-                m_measure_df.select(ENSEMBL_GENE_ID_COLNAME).to_series().to_list()
+                m_measure_df.select(config.ENSEMBL_GENE_ID_COLNAME).to_series().to_list()
             )
             if process_gene_ids != gene_id_list_chunks[i]:
                 raise ValueError("Incorrect gene IDs found!")
@@ -177,7 +175,7 @@ def main():
 
             unique_nb_ratios = (
                 concat_lf.with_columns(
-                    pl.col(RATIOS_STD_COLNAME).list.len().alias("length")
+                    pl.col(config.RATIOS_STD_COLNAME).list.len().alias("length")
                 )
                 .select("length")
                 .unique()

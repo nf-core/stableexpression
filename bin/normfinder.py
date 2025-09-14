@@ -10,15 +10,16 @@ from tqdm import tqdm
 from dataclasses import dataclass, field
 from typing import ClassVar
 from statistics import mean
-
 import numpy as np
 from numba import njit, prange
-
 import logging
+
+import config
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-STABILITY_OUTFILENAME = "stabilities.csv"
+STABILITY_OUTFILENAME = "stability_values.csv"
 
 
 ############################################################################
@@ -99,8 +100,6 @@ def compute_minvars(z: np.ndarray, target_idx: np.ndarray) -> np.ndarray:
 @dataclass
 class NormFinder:
 
-    ENSEMBL_GENE_ID_COLNAME: ClassVar[str] = "ensembl_gene_id"
-
     count_lf: pl.LazyFrame
     design_df: pl.DataFrame
 
@@ -132,7 +131,7 @@ class NormFinder:
         groups = list(self.group_to_samples_dict.keys())
         self.n_groups = len(groups)
 
-        self.genes = self.count_lf.select(self.ENSEMBL_GENE_ID_COLNAME).collect().to_series().to_list()
+        self.genes = self.count_lf.select(config.ENSEMBL_GENE_ID_COLNAME).collect().to_series().to_list()
         self.n_genes = len(self.genes)
 
         if self.n_genes <= 2:
@@ -156,7 +155,12 @@ class NormFinder:
         )
 
 
-    def correct_negative_values(self, intra_var_df: pl.DataFrame, group_count_df: pl.DataFrame) -> pl.DataFrame:
+    def correct_negative_values(
+        self,
+        intra_var_df: pl.DataFrame,
+        group_count_df: pl.DataFrame
+    ) -> pl.DataFrame:
+
         genes_with_negative_values = (
             intra_var_df
             .select(col for col in self.genes if
@@ -165,12 +169,16 @@ class NormFinder:
         )
 
         # getting indexes of genes for which we must compute minvar
-        indexes_of_genes_with_negative_values = [i for i, gene in enumerate(self.genes) if gene in genes_with_negative_values]
-        #transposed_df = group_count_df.transpose(include_header=True, column_names=self.genes).select(self.genes)
+        indexes_of_genes_with_negative_values = np.array(
+            [i for i, gene in enumerate(self.genes) if gene in genes_with_negative_values],
+            dtype=np.int64
+        )
+
         minvars = compute_minvars(
             group_count_df.to_numpy(),
             indexes_of_genes_with_negative_values
         )
+
         # associating back minvars to their respective gene
         minvar_dict = { gene: minvars[i] for i, gene in enumerate(genes_with_negative_values)  }
         return (
@@ -360,8 +368,8 @@ class NormFinder:
         return max(first_term - second_term, 0)
 
 
-    def apply_gamma_factor(self, gamma, diff_df, vardiff_df):
-        logger.info("Shrinking intragroup and intergroup variances using gamma factor")
+    @staticmethod
+    def apply_gamma_factor(gamma, diff_df, vardiff_df):
         difnew = diff_df * gamma / (gamma + vardiff_df)
         varnew = vardiff_df + gamma * vardiff_df / (gamma + vardiff_df)
         return difnew, varnew
@@ -372,7 +380,23 @@ class NormFinder:
         return self.apply_gamma_factor(gamma, intergroup_variance_df, group_mean_variance_df)
 
 
-    def compute_stability_values(self):
+    def get_stability_values(self, shrunk_intervar_df: pl.DataFrame, shrunk_gr_mean_var_df: pl.DataFrame):
+        return (
+            (
+                shrunk_intervar_df.select([pl.col(c).abs() for c in self.genes])
+                + shrunk_gr_mean_var_df.select([pl.col(c).sqrt() for c in self.genes])
+            )
+            .mean()
+            .transpose(
+                include_header=True,
+                header_name=config.ENSEMBL_GENE_ID_COLNAME,
+                column_names=[config.NORMFINDER_STABILITY_VALUE_COLNAME]
+            )
+        )
+
+
+
+    def compute_stability_scoring(self):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # UNBIASED INTRAGROUP VARIANCE
@@ -392,17 +416,11 @@ class NormFinder:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # STABILITY VALUES
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+        logger.info("Shrinking intragroup and intergroup variances using gamma factor")
         shrunk_intervar_df, shrunk_gr_mean_var_df = self.apply_shrinkage(intergroup_variance_df, group_mean_variance_df)
 
         logger.info("Computing stability values")
-        return (
-            (
-                shrunk_intervar_df.select([pl.col(c).abs() for c in self.genes])
-                + shrunk_gr_mean_var_df.select([pl.col(c).sqrt() for c in self.genes])
-            )
-            .mean()
-        )
+        return self.get_stability_values(shrunk_intervar_df, shrunk_gr_mean_var_df)
 
 
 #####################################################
@@ -441,7 +459,7 @@ def main():
     design_df = pl.read_csv(args.design_file)
 
     nfd = NormFinder(count_lf, design_df)
-    stabilities = nfd.compute_stability_values()
+    stabilities = nfd.compute_stability_scoring()
 
     logger.info(f"Stability values:\n{stabilities}")
     export_stability(stabilities)

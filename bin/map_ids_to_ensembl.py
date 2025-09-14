@@ -9,9 +9,12 @@ import logging
 import sys
 
 from gprofiler_utils import convert_ids
+import config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
 
 
 ##################################################################
@@ -21,9 +24,6 @@ logger = logging.getLogger(__name__)
 RENAMED_FILE_SUFFIX = ".renamed.csv"
 METADATA_FILE_SUFFIX = ".metadata.csv"
 MAPPING_FILE_SUFFIX = ".mapping.csv"
-
-ORIGINAL_GENE_ID_COLNAME = "original_gene_id"
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 
 ##################################################################
 # FUNCTIONS
@@ -74,8 +74,8 @@ def main():
         if Path(custom_mapping_file).is_file():
             custom_mapping_df = pd.read_csv(custom_mapping_file)
             custom_mappings_dict = custom_mapping_df.set_index(
-                ORIGINAL_GENE_ID_COLNAME
-            )[ENSEMBL_GENE_ID_COLNAME].to_dict()
+                config.ORIGINAL_GENE_ID_COLNAME
+            )[config.ENSEMBL_GENE_ID_COLNAME].to_dict()
 
     gene_ids_left_to_map = [
         gene_id for gene_id in gene_ids
@@ -114,12 +114,12 @@ def main():
     # renaming gene names to mapped ids using mapping dict
     df.index = df.index.map(mapping_dict)
     df.reset_index(inplace=True)
-    df.rename(columns={"index": ENSEMBL_GENE_ID_COLNAME}, inplace=True)
+    df.rename(columns={"index": config.ENSEMBL_GENE_ID_COLNAME}, inplace=True)
 
     # TODO: check is there is another way to avoid duplicate gene names
     # sometimes different gene names have the same ensembl ID
     # for now, we just get the mean of values, but this is not ideal
-    df = df.groupby(ENSEMBL_GENE_ID_COLNAME, as_index=False).mean()
+    df = df.groupby(config.ENSEMBL_GENE_ID_COLNAME, as_index=False).mean()
 
     #############################################################"
     # WRITING OUTFILES
@@ -140,7 +140,7 @@ def main():
     mapping_df = (
         pd.DataFrame(mapping_dict, index=[0])
         .T.reset_index()  # transpose: setting keys as indexes instead of columns
-        .rename(columns={"index": ORIGINAL_GENE_ID_COLNAME, 0: ENSEMBL_GENE_ID_COLNAME})
+        .rename(columns={"index": config.ORIGINAL_GENE_ID_COLNAME, 0: config.ENSEMBL_GENE_ID_COLNAME})
     )
     mapping_file = count_file.with_name(count_file.stem + MAPPING_FILE_SUFFIX)
     mapping_df.to_csv(mapping_file, index=False, header=True)

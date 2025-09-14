@@ -8,12 +8,12 @@ from pathlib import Path
 import logging
 from functools import reduce
 
+import config
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 ALL_COUNTS_PARQUET_OUTFILENAME = "all_counts.parquet"
-
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 
 
 #####################################################
@@ -40,11 +40,11 @@ def parse_args():
 
 def parse_count_file(count_file: Path) -> pl.LazyFrame:
     lf = pl.scan_parquet(count_file)
-    # in some cases, the first column may have an empty name or be different than ENSEMBL_GENE_ID_COLNAME
-    # in any case, this column must have the ENSEMBL_GENE_ID_COLNAME name
+    # in some cases, the first column may have an empty name or be different than config.ENSEMBL_GENE_ID_COLNAME
+    # in any case, this column must have the config.ENSEMBL_GENE_ID_COLNAME name
     first_column_name = lf.collect_schema().names()[0]
-    if first_column_name != ENSEMBL_GENE_ID_COLNAME:
-        lf = lf.rename({first_column_name: ENSEMBL_GENE_ID_COLNAME})
+    if first_column_name != config.ENSEMBL_GENE_ID_COLNAME:
+        lf = lf.rename({first_column_name: config.ENSEMBL_GENE_ID_COLNAME})
     return lf
 
 
@@ -74,27 +74,27 @@ def get_valid_lazy_dfs(files: list[Path]) -> list[pl.LazyFrame]:
 
 
 def join_count_dfs(lf1: pl.LazyFrame, lf2: pl.LazyFrame) -> pl.LazyFrame:
-    """Join two LazyFrames on the ENSEMBL_GENE_ID_COLNAME column.
+    """Join two LazyFrames on the config.ENSEMBL_GENE_ID_COLNAME column.
 
     The how parameter is set to "full" to include all rows from both dfs.
     The coalesce parameter is set to True to fill NaN values in the
     resulting dataframe with values from the other dataframe.
     """
-    return lf1.join(lf2, on=ENSEMBL_GENE_ID_COLNAME, how="full", coalesce=True)
+    return lf1.join(lf2, on=config.ENSEMBL_GENE_ID_COLNAME, how="full", coalesce=True)
 
 
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the ENSEMBL_GENE_ID_COLNAME column.
+    """Get all column names except the config.ENSEMBL_GENE_ID_COLNAME column.
 
-    The ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
+    The config.ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
     """
-    return lf.select(pl.exclude(ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
+    return lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
 
 
 def get_counts(files: list[Path]) -> pl.DataFrame:
     """Get all count data from a list of files.
 
-    The files are merged into a single dataframe. The ENSEMBL_GENE_ID_COLNAME column is cast
+    The files are merged into a single dataframe. The config.ENSEMBL_GENE_ID_COLNAME column is cast
     to String, and all other columns are cast to Float64.
     """
     # lazy loading
@@ -108,7 +108,7 @@ def get_counts(files: list[Path]) -> pl.DataFrame:
     # casting nans to nulls
     return (
         merged_lf.select(
-            [pl.col(ENSEMBL_GENE_ID_COLNAME).cast(pl.String)]
+            [pl.col(config.ENSEMBL_GENE_ID_COLNAME).cast(pl.String)]
             + [pl.col(column).cast(pl.Float64) for column in count_columns]
         )
         .fill_nan(None)

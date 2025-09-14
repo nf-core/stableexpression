@@ -1,6 +1,0 @@
-name: cross_join
-channels:
-  - conda-forge
-dependencies:
-  - conda-forge::python==3.12.8
-  - conda-forge::polars==1.17.1

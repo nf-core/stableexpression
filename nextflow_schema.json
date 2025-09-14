@@ -224,14 +224,6 @@
                     "default": "uniform",
                     "help_text": "All sample counts get quantile normalised and mapped to a specific distribution so that subsequent can compare them. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
                 },
-                "nb_top_gene_candidates": {
-                    "type": "integer",
-                    "description": "Number of candidate genes to keep",
-                    "fa_icon": "fas fa-chart-simple",
-                    "minimum": 1,
-                    "default": 1000,
-                    "help_text": "Number of candidate genes to keep in the final list. These candidates genes are chosen as the ones showing the least standard variation. Default is 1000."
-                },
                 "ks_pvalue_threshold": {
                     "type": "number",
                     "description": "Threshold for KS p-value for considering samples counts as a uniform distribution",
@@ -239,6 +231,44 @@
                     "maximum": 1,
                     "default": 0,
                     "help_text": "P-value threshold for the Kolmogorov-Smirnov test of samples counts against a uniform distribution. Samples showing a p-value equal or below this threshold are considered not uniform and will therefore not be considered for computation of the stability score. Examples: `0`, `'0.05'`, `'1E-27'`. Provide a negative value to disable this filter. By default, all samples showing a pvalue of 0 will be discarded."
+                }
+            }
+        },
+        "stability_scoring_options": {
+            "title": "Stability scoring options",
+            "type": "object",
+            "fa_icon": "fas fa-chart-line",
+            "description": "Options relative to assessment of stability for each gene.",
+            "properties": {
+                "candidate_selection_descriptor": {
+                    "type": "string",
+                    "description": "Stratistic description for prior gene candidate selection",
+                    "fa_icon": "fas fa-chart-simple",
+                    "enum": ["std", "cv", "mad"],
+                    "default": "std",
+                    "help_text": "Candidate genes are chosen based on a certain statistical descriptor. Set this parameter to modify the descriptor used."
+                },
+                "scoring_base": {
+                    "type": "string",
+                    "description": "Base statistics to use for stability scoring",
+                    "fa_icon": "fas fa-chart-simple",
+                    "enum": ["std", "cv", "mad", "normfinder", "genorm"],
+                    "default": "std",
+                    "help_text": "Base statistical measurement (computed: Normfinder, Genorm) or descriptive (standard deviation, coefficient of variation) to use as base for stability scoring."
+                },
+                "skip_genorm": {
+                    "type": "boolean",
+                    "description": "Skip the Genorm step",
+                    "fa_icon": "fas fa-ban",
+                    "help": "Genorm is run by default and provides additional information about gene stability. Set this parameter to skip this step."
+                },
+                "nb_top_gene_candidates": {
+                    "type": "integer",
+                    "description": "Number of candidate genes to keep for stability scoring",
+                    "fa_icon": "fas fa-chart-simple",
+                    "minimum": 1,
+                    "default": 5000,
+                    "help_text": "Number of candidate genes to keep in the final list. These candidates genes are chosen as the ones showing the least standard variation. Default is 1000."
                 }
             }
         },
@@ -399,6 +429,9 @@
         },
         {
             "$ref": "#/$defs/statistical_options"
+        },
+        {
+            "$ref": "#/$defs/stability_scoring_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"

@@ -1,6 +1,16 @@
-process MERGE_COUNTS {
+process COMPUTE_BASE_STATISTICS {
 
-    label 'process_high'
+    label 'process_medium'
+
+    errorStrategy = {
+        if (task.exitStatus == 100) {
+            log.error(
+                "No count could be found before merging datasets! "
+                + "Please check the provided accessions and datasets and run again"
+                )
+            return 'terminate'
+        }
+    }
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -8,20 +18,21 @@ process MERGE_COUNTS {
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    path count_files, stageAs: "?/*"
+    path count_file
+    val platform
 
     output:
-    path 'all_counts.parquet',                                                                                        emit: counts
+    path 'stats_all_genes.csv',                                                                                     emit: stats
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
-    when:
-    task.ext.when == null || task.ext.when
-
     script:
+    if ( platform != 'none' ) {
+        args += " --platform $platform"
+    }
     """
-    merge_counts.py \\
-        --counts "$count_files"
+    compute_base_statistics.py \\
+        --counts $count_file
     """
 
 }

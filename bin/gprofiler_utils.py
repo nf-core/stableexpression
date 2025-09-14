@@ -21,6 +21,8 @@ from requests.exceptions import (
     ConnectionError
 )
 
+import config
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -39,7 +41,7 @@ CHUNKSIZE = 2000  # number of IDs to convert at a time - may create trouble if >
 TARGET_DATABASE = "ENSG"  # Ensembl database
 COLS_TO_KEEP = ["incoming", "converted", "name", "description"]
 DESCRIPTION_PART_TO_REMOVE_REGEX = r"\s*\[Source:.*?\]"
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
+
 
 
 ##################################################################
@@ -185,7 +187,7 @@ def convert_chunk_of_ids(gene_ids: list, species: str) -> tuple[dict, pd.DataFra
 
     # DataFrame associating converted IDs to name and description
     meta_df = df.drop(columns=["incoming"]).rename(
-        columns={"converted": ENSEMBL_GENE_ID_COLNAME}
+        columns={"converted": config.ENSEMBL_GENE_ID_COLNAME}
     )
 
     meta_df["name"] = meta_df["name"].str.replace(",", ";")
