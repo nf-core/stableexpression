@@ -38,6 +38,7 @@ workflow GEO_FETCHDATA {
                 sort: true,
                 newLine: true
             )
+            .ifEmpty('none')
             .set { ch_excluded_accessions_file }
 
         // getting GEO accessions given a species name and keywords

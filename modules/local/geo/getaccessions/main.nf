@@ -11,7 +11,7 @@ process GEO_GETACCESSIONS {
     val species
     val keywords
     val platform
-    path excluded_accessions_file
+    val excluded_accessions_file
 
     output:
     path "accessions.txt",                                                                                                    emit: accessions
