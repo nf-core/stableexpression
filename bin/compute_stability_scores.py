@@ -34,47 +34,62 @@ class StabilityScorer:
 
     WEIGHT_RATIO_NB_NULLS_TO_SCORING: ClassVar[float] = 1
 
-    lf: pl.LazyFrame
+    df: pl.DataFrame
+
 
     def __post_init__(self):
         self.compute_stability_score()
 
 
     @staticmethod
-    def quantile_normalise(data: pl.Series):
+    def quantile_normalise(data: pl.Series, new_name: str) -> pl.Series:
         """
         Quantile normalize a series
         """
         array = data.to_numpy().reshape(-1, 1)
         transformer = QuantileTransformer(output_distribution="uniform")
         normalised_array = transformer.fit_transform(array)
-        return pl.Series(data.name, normalised_array.ravel())
+        return pl.Series(new_name, normalised_array.ravel())
 
 
     def compute_stability_score(self) -> pl.LazyFrame:
         logger.info("Computing stability score for candidate genes")
-        columns = self.lf.collect_schema().names()
+
+        candidate_df = self.df.filter(pl.col(config.IS_CANDIDATE_COLNAME) == 1)  # keep only candidate genes
+        non_candidate_df = self.df.filter(pl.col(config.IS_CANDIDATE_COLNAME).is_null())
 
         normalised_data = {}
+        null_data = {}
         for col in self.WEIGHT:
-            if col not in columns:
+            if col not in self.df.columns:
                 continue
-            data = self.lf.select(col).collect().to_series()
-            normalised_data[col] = self.quantile_normalise(data)
+            data = candidate_df.select(col).to_series()
+            normalised_col = f"{col}_normalised"
+            normalised_data[col] = self.quantile_normalise(data, new_name=normalised_col)
+            # creating a null column with same name
+            null_data[col] = pl.Series(normalised_col, [None] * len(non_candidate_df))
 
         # replacing original data with quantile normalised ones
-        self.lf = self.lf.with_columns(data for data in normalised_data.values())
+        candidate_df = candidate_df.with_columns(data for data in normalised_data.values())
+        # adding null columns to the non-candidate df to allow concatenation
+        non_candidate_df = non_candidate_df.with_columns(data for data in null_data.values())
+
+        # concatenating with non candidate genes to have all genes
+        self.df = pl.concat([candidate_df, non_candidate_df])
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # GENERAL FORMULA FOR STABILITY
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # adding penalty for samples with null values
+        # genes with at least one zero value are already excluded at that stage
         stability_scoring_expr = (
             pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME) * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
         )
         for col, weight in self.WEIGHT.items():
-            if col not in columns:
+            if col not in self.df.columns:
                 continue
-            stability_scoring_expr += (pl.col(col) * weight)
+            normalised_col = f"{col}_normalised"
+            stability_scoring_expr += (pl.col(normalised_col) * weight)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,12 +99,12 @@ class StabilityScorer:
             .otherwise(None)
         )
         # add stability score column
-        self.lf = self.lf.with_columns(expr.alias(config.STABILITY_SCORE_COLNAME))
-
+        self.df = self.df.with_columns(expr.alias(config.STABILITY_SCORE_COLNAME))
+        print(self.df)
 
     def get_statistics_with_stability_scores(self):
         return (
-            self.lf
+            self.df
             .sort(config.STABILITY_SCORE_COLNAME, descending=False, nulls_last=True)
             .with_row_index(name="index")
             .with_columns((pl.col("index") + 1).alias(config.RANK_COLNAME))
@@ -149,7 +164,7 @@ def get_statistics(stat_files: list[Path]) -> pl.LazyFrame:
 def export_data(scored_lf: pl.LazyFrame):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
-    scored_lf.collect().write_csv(STATISTICS_WITH_SCORES_OUTFILENAME)
+    scored_lf.write_csv(STATISTICS_WITH_SCORES_OUTFILENAME)
     logger.info("Done")
 
 
@@ -174,7 +189,7 @@ def main():
     lf = stat_df.join(stability_df, on=config.ENSEMBL_GENE_ID_COLNAME, how="left")
 
     # sort genes according to the metrics present in the dataframe
-    stability_scorer = StabilityScorer(lf)
+    stability_scorer = StabilityScorer(lf.collect())
     scored_lf = stability_scorer.get_statistics_with_stability_scores()
 
     # exporting computed data

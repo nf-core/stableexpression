@@ -53,6 +53,26 @@ custom_data:
         description: |
           Final stability score : the lower, the better
         format: "{:,.6f}"
+      variation_coefficient_normalised:
+        title: "Normalised coefficient of variation"
+        description: |
+          Quantile normalised (among candidate genes) coefficient of variation ( std(expression) / mean(expression) ) across all samples.
+        format: "{:,.6f}"
+      normfinder_stability_value_normalised:
+        title: "Normalised Normfinder stability value "
+        description: |
+          Quantile normalised (among candidate genes) stability value as computed by Normfinder
+        format: "{:,.6f}"
+      genorm_m_measure_normalised:
+        title: "Normalised Genorm M-measure"
+        description: |
+          Quantile normalised (among candidate genes) M-measure as computed by Genorm
+        format: "{:,.6f}"
+      median_absolute_deviation_normalised:
+        title: "Normalised median absolute deviation"
+        description: |
+          Quantile normalised (among candidate genes) median absolute deviation of the expression across all samples.
+        format: "{:,.4f}"
       standard_deviation:
         title: "Standard deviation"
         description: |
@@ -84,7 +104,7 @@ custom_data:
           Median expression across all samples.
         format: "{:,.4f}"
       median_absolute_deviation:
-        title: "Mad"
+        title: "Median absolute deviation"
         description: |
           Median absolute deviation of the expression across all samples.
         format: "{:,.4f}"
