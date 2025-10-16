@@ -10,7 +10,7 @@ lint:
   nextflow_config:
     - params.input
   schema_lint: false
-nf_core_version: 3.3.2
+nf_core_version: 3.4.1
 repository_type: pipeline
 template:
   author: Olivier Coen
