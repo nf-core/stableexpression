@@ -24,9 +24,6 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     tuple val("${task.process}"), val('pyyaml'),   eval('python3 -c "import yaml; print(yaml.__version__)"'),         topic: versions
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),     topic: versions
 
-    when:
-    task.ext.when == null || task.ext.when
-
     script:
     def keywords_string = keywords.split(',').collect { it.trim() }.join(' ')
     def args = " --species $species"

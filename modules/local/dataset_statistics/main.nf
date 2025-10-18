@@ -20,9 +20,6 @@ process DATASET_STATISTICS {
     tuple val("${task.process}"), val('scipy'),    eval('python3 -c "import scipy; print(scipy.__version__)"'),         topic: versions
     tuple val("${task.process}"), val('pyarrow'),  eval('python3 -c "import pyarrow; print(pyarrow.__version__)"'),     topic: versions
 
-    when:
-    task.ext.when == null || task.ext.when
-
     script:
     def prefix = task.ext.prefix ?: "${meta.dataset}"
     """
