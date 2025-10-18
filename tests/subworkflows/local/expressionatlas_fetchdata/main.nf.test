@@ -9,18 +9,20 @@ nextflow_workflow {
     test("Accessions provided + keywords") {
 
         when {
-            workflow {
-                """
-                species = 'solanum tuberosum'
+
+            params {
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
+                eatlas_accessions_file = null
+                exclude_eatlas_accessions_file = null
                 keywords = "potato,stress"
                 skip_fetch_eatlas_accessions = false
                 accessions_only = false
+            }
 
+            workflow {
+                """
+                species = 'solanum tuberosum'
                 input[0] = Channel.value( species.split(' ').join('_') )
-                input[1] = eatlas_accessions
-                input[2] = keywords
-                input[3] = fetch_eatlas_accessions
                 """
             }
         }
@@ -37,18 +39,20 @@ nextflow_workflow {
     test("Accessions only") {
 
         when {
-            workflow {
-                """
-                species = 'solanum tuberosum'
+
+            params {
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
+                eatlas_accessions_file = null
+                exclude_eatlas_accessions_file = null
                 keywords = "potato,stress"
                 skip_fetch_eatlas_accessions = false
                 accessions_only = true
+            }
 
+            workflow {
+                """
+                species = 'solanum tuberosum'
                 input[0] = Channel.value( species.split(' ').join('_') )
-                input[1] = eatlas_accessions
-                input[2] = keywords
-                input[3] = fetch_eatlas_accessions
                 """
             }
         }
@@ -65,16 +69,48 @@ nextflow_workflow {
     test("No accesssion + no keywords + multiple dataset species") {
 
         when {
+            params {
+                eatlas_accessions = ""
+                eatlas_accessions_file = null
+                exclude_eatlas_accessions_file = null
+                keywords = ""
+                skip_fetch_eatlas_accessions = false
+                accessions_only = false
+            }
+
             workflow {
                 """
                 species = 'beta vulgaris'
-                skip_fetch_eatlas_accessions = false
-                accessions_only = true
-
                 input[0] = Channel.value( species.split(' ').join('_') )
-                input[1] = eatlas_accessions
-                input[2] = keywords
-                input[3] = fetch_eatlas_accessions
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("Accessions file + Excluded accessions file") {
+
+        when {
+            params {
+                eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
+                eatlas_accessions_file = null
+                exclude_eatlas_accessions_file = null
+                keywords = ""
+                skip_fetch_eatlas_accessions = false
+                accessions_only = false
+            }
+
+            workflow {
+                """
+                species = 'beta vulgaris'
+                input[0] = Channel.value( species.split(' ').join('_') )
                 """
             }
         }

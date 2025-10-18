@@ -1,5 +1,5 @@
 {
-    "Should run without failures": {
+    "Uniform distribution": {
         "content": [
             {
                 "0": [
@@ -7,7 +7,7 @@
                         {
                             "dataset": "test"
                         },
-                        "count.raw.cpm.dataset_stats.csv:md5,93290e92d7ac9c0abdd2d9e76a7aff6b"
+                        "test.dataset_stats.csv:md5,58ce7d80967422011970661caa885506"
                     ]
                 ],
                 "1": [
@@ -43,15 +43,70 @@
                         {
                             "dataset": "test"
                         },
-                        "count.raw.cpm.dataset_stats.csv:md5,93290e92d7ac9c0abdd2d9e76a7aff6b"
+                        "test.dataset_stats.csv:md5,58ce7d80967422011970661caa885506"
                     ]
                 ]
             }
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.4"
+            "nextflow": "25.04.6"
         },
-        "timestamp": "2025-02-08T19:39:30.385303512"
+        "timestamp": "2025-10-13T17:27:00.822472835"
+    },
+    "Normal distribution": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "test.dataset_stats.csv:md5,1c7e068c9d74b0a6ac666fae4dbf3984"
+                    ]
+                ],
+                "1": [
+                    [
+                        "DATASET_STATISTICS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "DATASET_STATISTICS",
+                        "pandas",
+                        "2.2.3"
+                    ]
+                ],
+                "3": [
+                    [
+                        "DATASET_STATISTICS",
+                        "scipy",
+                        "1.15.0"
+                    ]
+                ],
+                "4": [
+                    [
+                        "DATASET_STATISTICS",
+                        "pyarrow",
+                        "19.0.0"
+                    ]
+                ],
+                "stats": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "test.dataset_stats.csv:md5,1c7e068c9d74b0a6ac666fae4dbf3984"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.6"
+        },
+        "timestamp": "2025-10-13T17:27:12.096317252"
     }
 }

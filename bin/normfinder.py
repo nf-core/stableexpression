@@ -395,7 +395,6 @@ class NormFinder:
         )
 
 
-
     def compute_stability_scoring(self):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -457,6 +456,8 @@ def main():
 
     logger.info(f"Getting design from {args.design_file}")
     design_df = pl.read_csv(args.design_file)
+    # filter design df to keep only samples that are present in the count dataframe
+    design_df = design_df.filter(pl.col("sample").is_in(count_lf.collect_schema().names()))
 
     nfd = NormFinder(count_lf, design_df)
     stabilities = nfd.compute_stability_scoring()

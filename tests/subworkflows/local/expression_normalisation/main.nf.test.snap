@@ -13,28 +13,6 @@
                         "microarray.normalised.quant_norm.parquet:md5,eabdc05374b0c21ebcfd83b01efcedd4"
                     ]
                 ],
-                "1": [
-                    [
-                        {
-                            "normalised": true,
-                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
-                            "dataset": "microarray_normalised",
-                            "platform": "microarray"
-                        },
-                        "microarray.normalised.dataset_stats.csv:md5,5b23ee1b631b5068d6845ae7a85382f5"
-                    ]
-                ],
-                "dataset_statistics": [
-                    [
-                        {
-                            "normalised": true,
-                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
-                            "dataset": "microarray_normalised",
-                            "platform": "microarray"
-                        },
-                        "microarray.normalised.dataset_stats.csv:md5,5b23ee1b631b5068d6845ae7a85382f5"
-                    ]
-                ],
                 "normalised_counts": [
                     [
                         {
@@ -50,9 +28,9 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.6"
+            "nextflow": "25.04.8"
         },
-        "timestamp": "2025-05-08T14:41:25.339980078"
+        "timestamp": "2025-10-18T11:21:43.607895608"
     },
     "EdgeR Normalisation": {
         "content": [
@@ -77,46 +55,6 @@
                         "microarray.normalised.quant_norm.parquet:md5,eabdc05374b0c21ebcfd83b01efcedd4"
                     ]
                 ],
-                "1": [
-                    [
-                        {
-                            "normalised": false,
-                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
-                            "dataset": "rnaseq_raw",
-                            "platform": "rnaseq"
-                        },
-                        "rnaseq.raw.cpm.dataset_stats.csv:md5,d5ab6a5663b62b9869cfddf31bfdac74"
-                    ],
-                    [
-                        {
-                            "normalised": true,
-                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
-                            "dataset": "microarray_normalised",
-                            "platform": "microarray"
-                        },
-                        "microarray.normalised.dataset_stats.csv:md5,5b23ee1b631b5068d6845ae7a85382f5"
-                    ]
-                ],
-                "dataset_statistics": [
-                    [
-                        {
-                            "normalised": false,
-                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
-                            "dataset": "rnaseq_raw",
-                            "platform": "rnaseq"
-                        },
-                        "rnaseq.raw.cpm.dataset_stats.csv:md5,d5ab6a5663b62b9869cfddf31bfdac74"
-                    ],
-                    [
-                        {
-                            "normalised": true,
-                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
-                            "dataset": "microarray_normalised",
-                            "platform": "microarray"
-                        },
-                        "microarray.normalised.dataset_stats.csv:md5,5b23ee1b631b5068d6845ae7a85382f5"
-                    ]
-                ],
                 "normalised_counts": [
                     [
                         {
@@ -141,9 +79,9 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.6"
+            "nextflow": "25.04.8"
         },
-        "timestamp": "2025-05-08T14:40:40.452345993"
+        "timestamp": "2025-10-18T11:21:31.647845526"
     },
     "DESeq2 Normalisation": {
         "content": [
@@ -168,46 +106,6 @@
                         "microarray.normalised.quant_norm.parquet:md5,eabdc05374b0c21ebcfd83b01efcedd4"
                     ]
                 ],
-                "1": [
-                    [
-                        {
-                            "normalised": false,
-                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
-                            "dataset": "rnaseq_raw",
-                            "platform": "rnaseq"
-                        },
-                        "rnaseq.raw.cpm.dataset_stats.csv:md5,d5ab6a5663b62b9869cfddf31bfdac74"
-                    ],
-                    [
-                        {
-                            "normalised": true,
-                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
-                            "dataset": "microarray_normalised",
-                            "platform": "microarray"
-                        },
-                        "microarray.normalised.dataset_stats.csv:md5,5b23ee1b631b5068d6845ae7a85382f5"
-                    ]
-                ],
-                "dataset_statistics": [
-                    [
-                        {
-                            "normalised": false,
-                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
-                            "dataset": "rnaseq_raw",
-                            "platform": "rnaseq"
-                        },
-                        "rnaseq.raw.cpm.dataset_stats.csv:md5,d5ab6a5663b62b9869cfddf31bfdac74"
-                    ],
-                    [
-                        {
-                            "normalised": true,
-                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
-                            "dataset": "microarray_normalised",
-                            "platform": "microarray"
-                        },
-                        "microarray.normalised.dataset_stats.csv:md5,5b23ee1b631b5068d6845ae7a85382f5"
-                    ]
-                ],
                 "normalised_counts": [
                     [
                         {
@@ -232,8 +130,8 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.6"
+            "nextflow": "25.04.8"
         },
-        "timestamp": "2025-05-08T14:39:51.31785655"
+        "timestamp": "2025-10-18T11:21:17.047635315"
     }
 }

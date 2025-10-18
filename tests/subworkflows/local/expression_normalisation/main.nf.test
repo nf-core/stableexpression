@@ -22,6 +22,7 @@ nextflow_workflow {
                 normalisation_method = "deseq2"
                 input[0] = ch_datasets
                 input[1] = normalisation_method
+                input[2] = "uniform"
                 """
             }
         }
@@ -51,6 +52,7 @@ nextflow_workflow {
                 normalisation_method = "edger"
                 input[0] = ch_datasets
                 input[1] = normalisation_method
+                input[2] = "uniform"
                 """
             }
         }
@@ -77,6 +79,7 @@ nextflow_workflow {
                 normalisation_method = "deseq2"
                 input[0] = ch_datasets
                 input[1] = normalisation_method
+                input[2] = "uniform"
                 """
             }
         }

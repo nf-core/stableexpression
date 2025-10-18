@@ -82,15 +82,15 @@ workflow EXPRESSIONATLAS_FETCHDATA {
         ch_counts = addDatasetIdToMetadata( EXPRESSIONATLAS_GETDATA.out.counts.flatten() )
 
         // adding design files to the meta of their respective count files
-        ch_datasets = groupFilesByDatasetId( ch_design, ch_counts )
+        ch_eatlas_datasets = groupFilesByDatasetId( ch_design, ch_counts )
 
         // adding normalisation state in the meta
-        augmentToMetadata( ch_datasets )
+        augmentToMetadata( ch_eatlas_datasets )
 
     }
 
     emit:
-    downloaded_datasets = ch_datasets
+    downloaded_datasets = ch_eatlas_datasets
     accessions          = ch_accessions
 
 }

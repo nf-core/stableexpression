@@ -35,23 +35,6 @@
         },
         "timestamp": "2025-01-29T14:20:12.392982447"
     },
-    "Without design": {
-        "content": [
-            [
-                [
-                    {
-                        "accession": "accession"
-                    },
-                    "counts.cpm.csv:md5,f7885ec8e4301f9650e2a0dbcc2e7467"
-                ]
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.4"
-        },
-        "timestamp": "2025-07-06T07:37:42.255878918"
-    },
     "Rows with many zeros": {
         "content": [
             [

@@ -95,35 +95,7 @@ nextflow_process {
         }
 
         then {
-            assertAll(
-                { assert process.success },
-                { assert snapshot(process.out.cpm).match() }
-            )
-        }
-
-    }
-
-    test("No gene left") {
-
-        tag "deseq2_no_gene_left"
-
-        when {
-
-            process {
-                """
-                input[0] = [
-                    [ accession: "accession" ],
-                    file('$projectDir/tests/test_data/normalisation/no_gene_left/E_GEOD_17367_A_AFFY_47.microarray.normalised.counts.csv')
-                ]
-                """
-            }
-        }
-
-         then {
-            assert process.success
-            assert process.trace.succeeded().size() == 0
-            assert process.trace.failed().size() == 1
-            assert process.out.cpm.size() == 0
+            assert !process.success
         }
 
     }

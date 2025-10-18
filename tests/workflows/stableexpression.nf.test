@@ -135,7 +135,7 @@ nextflow_workflow {
         then {
             assert workflow.success
             with(workflow.out.multiqc_report[0]) {
-                assertAll(eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
+                assertAll(
                     { assert path(get(0)).readLines().any { it.contains('MultiQC: A modular tool') } },
                     { assert path(get(0)).readLines().any { it.contains('Data was processed using nf-core/stableexpression') } }
                 )
@@ -146,7 +146,7 @@ nextflow_workflow {
 
     test("Accessions only") {
 
-        tag "included_excluded_accessions"
+        tag "workflow_accessions_only"
 
         when {
             params {
@@ -167,7 +167,7 @@ nextflow_workflow {
 
     test("Included and excluded accessions") {
 
-        tag "included_excluded_accessions"
+        tag "workflow_included_excluded_accessions"
 
         when {
             params {

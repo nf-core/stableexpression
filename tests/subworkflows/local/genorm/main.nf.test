@@ -2,7 +2,7 @@ nextflow_workflow {
 
     name "Test Workflow genorm"
     script "subworkflows/local/genorm/main.nf"
-    workflow "genorm"
+    workflow "GENORM"
     tag "subworkflow_genorm"
     tag "subworkflow"
 

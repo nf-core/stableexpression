@@ -85,10 +85,7 @@ nextflow_process {
         }
 
         then {
-            assertAll(
-                { assert process.success },
-                { assert snapshot(process.out.cpm).match() }
-            )
+            assert !process.success
         }
 
     }
