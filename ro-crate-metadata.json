@@ -99,7 +99,7 @@
             },
             "mentions": [
                 {
-                    "@id": "#ea61203f-47c5-4f0f-bd91-43195b3225f1"
+                    "@id": "#131b74e6-1c06-44fe-8e15-4987d1b14f07"
                 }
             ],
             "name": "nf-core/stableexpression"
@@ -132,7 +132,7 @@
                 }
             ],
             "dateCreated": "",
-            "dateModified": "2025-05-08T10:00:57Z",
+            "dateModified": "2025-10-19T19:52:14Z",
             "dct:conformsTo": "https://bioschemas.org/profiles/ComputationalWorkflow/1.0-RELEASE/",
             "keywords": [
                 "nf-core",
@@ -192,10 +192,10 @@
             "name": "Test suite for nf-core/stableexpression"
         },
         {
-            "@id": "#6c536155-37c4-45b0-87c2-977dd7e02196",
+            "@id": "#2316b008-0740-4e2e-b924-649112987083",
             "@type": "TestInstance",
             "name": "GitHub Actions workflow for testing nf-core/stableexpression",
-            "resource": "repos/nf-core/stableexpression/actions/workflows/ci.yml",
+            "resource": "repos/nf-core/stableexpression/actions/workflows/nf-test.yml",
             "runsOn": {
                 "@id": "https://w3id.org/ro/terms/test#GithubService"
             },
