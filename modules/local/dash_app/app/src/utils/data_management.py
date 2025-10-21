@@ -1,0 +1,80 @@
+import polars as pl
+import pandas as pd
+from functools import lru_cache
+
+from src.utils import config
+
+
+@lru_cache(maxsize=None)
+class DataManager:
+    def __init__(self):
+        self.all_counts_lf = self.get_all_count_data()
+        self.grouped_samples = self.get_samples_grouped_by_dataset()
+        self.stat_df = self.get_stat_data()
+        self.genes = self.get_sorted_genes()
+
+    @staticmethod
+    def get_all_count_data() -> pl.LazyFrame:
+        file = f"{config.DATA_FOLDER}/{config.ALL_COUNT_FILENAME}"
+        return pl.scan_parquet(file)
+
+    def get_samples_in_count_data(self) -> list[str]:
+        return (
+            self.all_counts_lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME))
+            .collect_schema()
+            .names()
+        )
+
+    def get_stat_data(self) -> pl.DataFrame:
+        file = f"{config.DATA_FOLDER}/{config.STAT_FILENAME}"
+        stat_df = pl.read_csv(file)
+        cols_to_select = ["Rank"] + [
+            col for col in stat_df.columns if col not in ["Rank", "is_candidate"]
+        ]
+        return stat_df.select(cols_to_select)
+
+    def get_samples_grouped_by_dataset(self) -> list[dict]:
+        samples_in_count_data = self.get_samples_in_count_data()
+        samples_grouped_by_dataset = []
+
+        design_file = f"{config.DATA_FOLDER}/{config.ALL_DESIGNS_FILENAME}"
+        design_df = pd.read_csv(design_file)
+
+        for group, samples in design_df.groupby(["batch", "condition"])["sample"]:
+            batch, condition = group  # unpacking
+            batch_condition_samples_dict = {
+                "group": f"Dataset: {batch} || Condition: {condition}",
+                "items": [
+                    {"value": sample, "label": sample}
+                    for sample in samples.to_list()
+                    if sample in samples_in_count_data
+                ],
+            }
+            samples_grouped_by_dataset.append(batch_condition_samples_dict)
+
+        return samples_grouped_by_dataset
+
+    def get_sorted_genes(self) -> list[str]:
+        return (
+            self.stat_df.sort(by=config.STABILITY_SCORE_COLNAME, descending=False)
+            .select(config.ENSEMBL_GENE_ID_COLNAME)
+            .to_series()
+            .to_list()
+        )
+
+    def get_gene_counts(self, gene: str) -> pd.Series:
+        return (
+            self.all_counts_lf.filter(pl.col(config.ENSEMBL_GENE_ID_COLNAME) == gene)
+            .collect()
+            .to_pandas()
+            .iloc[0]
+        )
+
+    def get_sample_counts(self, sample: str) -> pd.Series:
+        return (
+            self.all_counts_lf.select(sample)
+            .drop_nulls()
+            .collect()
+            .to_pandas()
+            .iloc[:, 0]
+        )

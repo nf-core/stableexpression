@@ -1,0 +1,9 @@
+.modebar {
+  background: transparent;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+ag-header-background-color {
+  color: green;
+}

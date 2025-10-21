@@ -28,7 +28,7 @@ process DASH_APP {
     """
     mkdir -p data
     mv ${all_counts} ${whole_design} ${genes_stats} data/
-    cp -r ${moduleDir}/app .
+    cp ${moduleDir}/app/* .
     """
 
 }
