@@ -15,6 +15,7 @@ include { STABILITY_SCORING                      } from '../subworkflows/local/s
 include { MULTIQC_WORKFLOW                       } from '../subworkflows/local/multiqc'
 
 include { AGGREGATE_RESULTS                      } from '../modules/local/aggregate_results'
+include { DASH_APP                               } from '../modules/local/dash_app'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -94,6 +95,7 @@ workflow STABLEEXPRESSION {
 
         MERGE_DATA ( DATA_CLEANSING.out.cleaned_counts )
         MERGE_DATA.out.all_counts.set { ch_all_counts }
+        MERGE_DATA.out.whole_design.set { ch_whole_design }
 
         // -----------------------------------------------------------------
         // COMPUTE BASE STATISTICS FOR ALL GENES
@@ -111,7 +113,7 @@ workflow STABLEEXPRESSION {
 
         STABILITY_SCORING (
             ch_all_counts,
-            MERGE_DATA.out.whole_design,
+            ch_whole_design,
             BASE_STATISTICS.out.stats
         )
 
@@ -147,6 +149,16 @@ workflow STABLEEXPRESSION {
     MULTIQC_WORKFLOW( ch_multiqc_files )
 
     MULTIQC_WORKFLOW.out.report.toList().set { multiqc_report }
+
+    // -----------------------------------------------------------------
+    // DASH APPLICATION
+    // -----------------------------------------------------------------
+
+    DASH_APP(
+        ch_all_counts,
+        ch_whole_design,
+        ch_all_genes_statistics
+    )
 
 
     emit:
