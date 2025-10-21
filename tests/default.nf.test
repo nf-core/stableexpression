@@ -8,6 +8,8 @@ nextflow_pipeline {
 
         when {
             params {
+                species = 'beta vulgaris'
+                keywords = "leaf"
                 outdir = "$outputDir"
             }
         }
