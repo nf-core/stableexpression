@@ -10,7 +10,8 @@ class DataManager:
     def __init__(self):
         self.all_counts_lf = self.get_all_count_data()
         self.grouped_samples = self.get_samples_grouped_by_dataset()
-        self.stat_df = self.get_stat_data()
+        self.candidate_genes_stat_df = self.get_candidate_genes_stat_data()
+        self.all_gene_stats_df = self.get_all_genes_stat_data()
         self.genes = self.get_sorted_genes()
 
     @staticmethod
@@ -25,13 +26,17 @@ class DataManager:
             .names()
         )
 
-    def get_stat_data(self) -> pl.DataFrame:
-        file = f"{config.DATA_FOLDER}/{config.STAT_FILENAME}"
+    def get_candidate_genes_stat_data(self) -> pl.DataFrame:
+        file = f"{config.DATA_FOLDER}/{config.CANDIDATE_GENES_STAT_FILENAME}"
         stat_df = pl.read_csv(file)
         cols_to_select = ["Rank"] + [
             col for col in stat_df.columns if col not in ["Rank", "is_candidate"]
         ]
         return stat_df.select(cols_to_select)
+
+    def get_all_genes_stat_data(self) -> pl.DataFrame:
+        file = f"{config.DATA_FOLDER}/{config.ALL_GENES_STAT_FILENAME}"
+        return pl.read_csv(file)
 
     def get_samples_grouped_by_dataset(self) -> list[dict]:
         samples_in_count_data = self.get_samples_in_count_data()
@@ -56,7 +61,9 @@ class DataManager:
 
     def get_sorted_genes(self) -> list[str]:
         return (
-            self.stat_df.sort(by=config.STABILITY_SCORE_COLNAME, descending=False)
+            self.candidate_genes_stat_df.sort(
+                by=config.STABILITY_SCORE_COLNAME, descending=False
+            )
             .select(config.ENSEMBL_GENE_ID_COLNAME)
             .to_series()
             .to_list()

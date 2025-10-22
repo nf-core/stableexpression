@@ -4,13 +4,21 @@ process DASH_APP {
 
     conda "${moduleDir}/app/spec-file.txt"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f8a5d02e7b31980c887253a9f118da0ef91ead1c7b158caf855199e5c5d5473/data':
-        'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b3/b39ecd56e298b0ba94bed41bb36d67b0a2bc24634bc53baff9773dcc3d422c01/data':
+        'community.wave.seqera.io/library/dash-ag-grid_dash-extensions_dash-iconify_dash-mantine-components_pruned:138d9ff01702db68' }"
+
+    errorStrategy = {
+        if (task.exitStatus == 100) {
+            log.warn("Could not start the Dash application.")
+            return 'finish' // finishes started processes but reports error
+        }
+    }
 
     input:
     path all_counts
     path whole_design
-    path genes_stats
+    path top_stable_genes_summary
+    path all_genes_stats
 
     output:
     path("*"), emit: app
@@ -27,8 +35,12 @@ process DASH_APP {
     script:
     """
     mkdir -p data
-    mv ${all_counts} ${whole_design} ${genes_stats} data/
-    cp ${moduleDir}/app/* .
+    mv ${all_counts} ${whole_design} ${top_stable_genes_summary} ${all_genes_stats} data/
+    cp -r ${moduleDir}/app/* .
+
+    # trying to launch the app
+    # if the resulting exit code is not 124 (exit code of timeout) then there is an error
+    timeout 10 python app.py || exit_code=\$?; [ "\$exit_code" -eq 124 ] && exit 0 || exit 100
     """
 
 }

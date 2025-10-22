@@ -117,13 +117,15 @@ workflow STABLEEXPRESSION {
             BASE_STATISTICS.out.stats
         )
 
+        STABILITY_SCORING.out.summary_statistics.set { ch_candidate_gene_stats_with_scores }
+
         // -----------------------------------------------------------------
         // AGGREGATE ALL RESULTS FOR MULTIQC
         // -----------------------------------------------------------------
 
         AGGREGATE_RESULTS (
             ch_all_counts,
-            STABILITY_SCORING.out.summary_statistics,
+            ch_candidate_gene_stats_with_scores,
             IDMAPPING.out.gene_metadata,
             IDMAPPING.out.gene_id_mapping
         )
@@ -157,6 +159,7 @@ workflow STABLEEXPRESSION {
     DASH_APP(
         ch_all_counts,
         ch_whole_design,
+        ch_candidate_gene_stats_with_scores,
         ch_all_genes_statistics
     )
 

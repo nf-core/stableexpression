@@ -32,7 +32,7 @@ STAT_COLS = [
     config.EXPRESSION_LEVEL_STATUS_COLNAME,
     config.RATIO_NULLS_COLNAME,
     config.RATIO_NULLS_VALID_SAMPLES_COLNAME,
-    config.RATIO_ZEROS_COLNAME
+    config.RATIO_ZEROS_COLNAME,
 ]
 
 # making complete list of columns to export
@@ -42,7 +42,11 @@ for colname in STAT_COLS:
     for platform in ["rnaseq", "microarray"]:
         final_cols.append(f"{platform}_{colname}")
 # adding gene description columns
-final_cols += [config.GENE_NAME_COLNAME, config.GENE_DESCRIPTION_COLNAME, config.ORIGINAL_GENE_IDS_COLNAME]
+final_cols += [
+    config.GENE_NAME_COLNAME,
+    config.GENE_DESCRIPTION_COLNAME,
+    config.ORIGINAL_GENE_IDS_COLNAME,
+]
 
 # nb of top stable genes to select and to display at the end
 NB_TOP_STABLE_GENES = 1000
@@ -51,11 +55,12 @@ NB_QUANTILES = 100
 NB_TOP_GENES_TO_SHOW_IN_LOG_COUNTS = 100
 
 ALL_GENES_STATS_COLS = [
+    config.ENSEMBL_GENE_ID_COLNAME,
     config.MEAN_COLNAME,
     config.STANDARD_DEVIATION_COLNAME,
     config.VARIATION_COEFFICIENT_COLNAME,
     config.MEDIAN_COLNAME,
-    config.MAD_COLNAME
+    config.MAD_COLNAME,
 ]
 
 
@@ -71,18 +76,14 @@ def parse_args():
         description="Get statistics from count data for each gene"
     )
     parser.add_argument(
-        "--counts",
-        type=Path,
-        dest="count_file",
-        required=True,
-        help="Count file"
+        "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
     parser.add_argument(
         "--stats",
         type=Path,
         dest="stat_file",
         required=True,
-        help="File containing statistics for all genes and stability scores by candidate genes"
+        help="File containing statistics for all genes and stability scores by candidate genes",
     )
     parser.add_argument(
         "--metadata",
@@ -92,15 +93,10 @@ def parse_args():
         help="Metadata file",
     )
     parser.add_argument(
-        "--mappings",
-        type=str,
-        dest="mapping_files",
-        required=True,
-        help="Mapping file"
+        "--mappings", type=str, dest="mapping_files", required=True, help="Mapping file"
     )
 
     return parser.parse_args()
-
 
 
 def is_valid_lf(lf: pl.LazyFrame, file: Path) -> bool:
@@ -154,7 +150,9 @@ def get_count_columns(lf: pl.LazyFrame) -> list[str]:
 
     The ENSEMBL_GENE_ID column contains only gene IDs.
     """
-    return lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
+    return (
+        lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
+    )
 
 
 def cast_count_columns_to_float32(lf: pl.LazyFrame) -> pl.LazyFrame:
@@ -164,7 +162,7 @@ def cast_count_columns_to_float32(lf: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
-def join_data_on_gene_id( stat_lf: pl.LazyFrame, *lfs) -> pl.LazyFrame:
+def join_data_on_gene_id(stat_lf: pl.LazyFrame, *lfs) -> pl.LazyFrame:
     """Merge the statistics dataframe with the metadata dataframe and the mapping dataframe."""
     # we need to ensure that the index of stat_lf are strings
     for lf in lfs:
@@ -235,13 +233,10 @@ def add_expression_level_status(lf: pl.LazyFrame) -> pl.LazyFrame:
         quantile_interval: get_status(quantile_interval)
         for quantile_interval in range(NB_QUANTILES)
     }
-    return (
-        lf
-        .with_columns(
-            pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
-            .replace_strict(mapping_dict)
-            .alias(config.EXPRESSION_LEVEL_STATUS_COLNAME)
-        )
+    return lf.with_columns(
+        pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
+        .replace_strict(mapping_dict)
+        .alias(config.EXPRESSION_LEVEL_STATUS_COLNAME)
     )
 
 
@@ -257,12 +252,9 @@ def get_top_stable_gene_summary(
     stat_summary_df = add_expression_level_status(stat_summary_df)
 
     available_columns = stat_summary_df.collect_schema().names()
-    return (
-        stat_summary_df
-        .head(NB_TOP_STABLE_GENES)
-        .select( [column for column in final_cols if column in available_columns] )
+    return stat_summary_df.head(NB_TOP_STABLE_GENES).select(
+        [column for column in final_cols if column in available_columns]
     )
-
 
 
 def get_top_stable_genes_counts(
@@ -270,8 +262,7 @@ def get_top_stable_genes_counts(
 ) -> pl.DataFrame:
     # getting list of top stable genes with their order
     top_genes_with_order = (
-        stat_summary_df
-        .head(NB_TOP_GENES_TO_SHOW_IN_LOG_COUNTS)
+        stat_summary_df.head(NB_TOP_GENES_TO_SHOW_IN_LOG_COUNTS)
         .select(config.ENSEMBL_GENE_ID_COLNAME)
         .with_row_index("sort_order")
     )
@@ -279,11 +270,8 @@ def get_top_stable_genes_counts(
     # join to get only existing genes and maintain order
     sorted_transposed_counts_df = (
         log_count_lf.join(
-            top_genes_with_order,
-            on=config.ENSEMBL_GENE_ID_COLNAME,
-            how="inner"
-        )
-        .sort("sort_order", descending=False)
+            top_genes_with_order, on=config.ENSEMBL_GENE_ID_COLNAME, how="inner"
+        ).sort("sort_order", descending=False)
     ).collect()
 
     # get the actual gene names that were found (in order)
@@ -293,11 +281,9 @@ def get_top_stable_genes_counts(
         .to_list()
     )
 
-    return (
-        sorted_transposed_counts_df
-        .drop(["sort_order", config.ENSEMBL_GENE_ID_COLNAME])
-        .transpose(column_names=actual_gene_names)
-    )
+    return sorted_transposed_counts_df.drop(
+        ["sort_order", config.ENSEMBL_GENE_ID_COLNAME]
+    ).transpose(column_names=actual_gene_names)
 
 
 def export_data(
@@ -350,7 +336,9 @@ def main():
 
     formated_stat_lf = format_all_genes_statistics(stat_summary_df)
 
-    top_stable_stat_summary_df = get_top_stable_gene_summary(stat_summary_df, metadata_lf, mapping_lf)
+    top_stable_stat_summary_df = get_top_stable_gene_summary(
+        stat_summary_df, metadata_lf, mapping_lf
+    )
 
     # reducing dataframe size (it is only used for plotting by MultiQC)
     count_lf = cast_count_columns_to_float32(count_lf)

@@ -1,6 +1,4 @@
-import os
 import dash_mantine_components as dmc
-from dotenv import load_dotenv
 
 from dash_extensions.enrich import (
     DashProxy,
@@ -15,9 +13,8 @@ from src.components import stores, tooltips
 from src.components import top, right_sidebar
 from src.callbacks import common, genes, samples
 
-load_dotenv("./.env")
-debug = True if os.getenv("DEBUG") is not None else False
-
+# DEBUG = True
+DEBUG = False
 
 # -------------------- SETUP LOGGING --------------------
 
@@ -32,7 +29,7 @@ app = DashProxy(
     __name__,
     title=config.APP_TITLE,
     prevent_initial_callbacks="initial_duplicate",
-    suppress_callback_exceptions=(not debug),
+    suppress_callback_exceptions=(not DEBUG),
     update_title=config.UPDATE_TITLE,
     external_stylesheets=[dmc.styles.ALL],
     transforms=[TriggerTransform(), ServersideOutputTransform()],
@@ -73,9 +70,9 @@ if __name__ == "__main__":
     # setting prune_errors to False avoids error message pruning
     # in order to get original tracebacks
     # (very useful for debugging)
-    prune_errors = False if debug else True
+    prune_errors = False if DEBUG else True
     app.run(
-        debug=debug,
+        debug=DEBUG,
         host=config.HOST,
         port=config.PLOTLY_APP_PORT,
         dev_tools_prune_errors=prune_errors,
