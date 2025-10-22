@@ -12,10 +12,6 @@ def format_col_name(col: str):
     return col.replace("_", " ").capitalize()
 
 
-def format_col_width(col):
-    return col.replace("_", " ").capitalize()
-
-
 candidate_gene_stats_table = dag.AgGrid(
     rowData=data_manager.candidate_genes_stat_df.to_dicts(),
     columnDefs=[
@@ -23,11 +19,8 @@ candidate_gene_stats_table = dag.AgGrid(
         for col in data_manager.candidate_genes_stat_df.columns
     ],
     className="ag-theme-alpine",
-    columnSizeOptions=dict(
-        skipHeader=False,
-    ),
-    # columnSizeOptions={'defaultMinWidth': 300},
-    columnSize="autoSize",
+    columnSizeOptions=dict(skipHeader=False, defaultMinWidth=100),
+    columnSize="autoSizetoFit",
     defaultColDef=dict(
         # type='rightAligned',
         filter=True,
@@ -36,11 +29,10 @@ candidate_gene_stats_table = dag.AgGrid(
         sortable=True,
     ),
     dashGridOptions=dict(
-        # domLayout="autoHeight",
         pagination=True,
         paginationAutoPageSize=True,
         enableCellTextSelection=True,
-        enableRangeSelection=True,
+        ensureDomOrder=True,
     ),
     style=style.AG_GRID,
     id="candidate-gene-ranking-table",
@@ -53,11 +45,8 @@ all_gene_stats_table = dag.AgGrid(
         for col in data_manager.all_gene_stats_df.columns
     ],
     className="ag-theme-alpine",
-    columnSizeOptions=dict(
-        skipHeader=False,
-    ),
-    # columnSizeOptions={'defaultMinWidth': 300},
-    columnSize="autoSize",
+    columnSizeOptions=dict(skipHeader=False),
+    columnSize="autoSizetoFit",
     defaultColDef=dict(
         # type='rightAligned',
         filter=True,
@@ -66,11 +55,10 @@ all_gene_stats_table = dag.AgGrid(
         sortable=True,
     ),
     dashGridOptions=dict(
-        # domLayout="autoHeight",
         pagination=True,
         paginationAutoPageSize=True,
         enableCellTextSelection=True,
-        enableRangeSelection=True,
+        ensureDomOrder=True,
     ),
     style=style.AG_GRID,
     id="gene-stats-table",

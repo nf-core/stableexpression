@@ -65,7 +65,7 @@ AG_GRID = {
     "top": HEADER_HEIGHT,
     "paddingTop": "10px",
     "marginRight": "15px",
-    "paddingRight": "15px",
+    "paddingRight": "25px",
     "marginLeft": "5px",
 }
 
