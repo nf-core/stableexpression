@@ -1,5 +1,5 @@
 process GEO_GETACCESSIONS {
-
+    debug true
     label 'process_high_cpus'
 
     conda "${moduleDir}/spec-file.txt"
@@ -12,6 +12,7 @@ process GEO_GETACCESSIONS {
     val keywords
     val platform
     val excluded_accessions_file
+    val accessions
 
     output:
     path "accessions.txt",                                                                                                    emit: accessions
@@ -37,6 +38,9 @@ process GEO_GETACCESSIONS {
     if ( excluded_accessions_file != 'none' ) {
         args += " --exclude-accessions-in $excluded_accessions_file"
     }
+    if ( accessions != 'none' ) {
+        args += " --accessions $accessions"
+    }
     // the folder where nltk will download data needs to be writable (necessary for singularity)
     """
     # the Entrez module from biopython automatically stores temp results in <home dir>/.config
@@ -46,7 +50,9 @@ process GEO_GETACCESSIONS {
 
     export NLTK_DATA=$PWD
 
-    get_geo_dataset_accessions.py $args
+    get_geo_dataset_accessions.py \\
+        $args \\
+        --cpus ${task.cpus}
     """
 
     stub:

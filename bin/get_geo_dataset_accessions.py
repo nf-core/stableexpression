@@ -4,7 +4,7 @@
 
 import argparse
 from tqdm import tqdm
-from parallelbar import progress_map
+from multiprocessing import Pool
 from Bio import Entrez
 from pathlib import Path
 from random import sample
@@ -16,18 +16,17 @@ from urllib.request import urlretrieve
 import tarfile
 from tenacity import (
     retry,
-    retry_if_exception_type,
     stop_after_delay,
     wait_exponential,
     before_sleep_log,
 )
 import yaml
 from functools import partial
-from multiprocessing import cpu_count
 import logging
+from requests.exceptions import HTTPError, ConnectionError
 
 from natural_language_utils import keywords_in_fields
-from gprofiler_utils import convert_ids
+from gprofiler_utils import convert_ids, chunk_list
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -46,15 +45,16 @@ FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME = "selected_datasets.keywords.ya
 
 ENTREZ_QUERY_MAX_RESULTS = 9999
 ENTREZ_EMAIL = "stableexpression@nfcore.com"
+ENTREZ_CHUNKSIZE = 2000
 
-GPROFILER_CHUNKSIZE = 2000
-NB_PROBE_IDS_TO_PARSE = 1000
-NB_PROBE_IDS_TO_SAMPLE = 10
-PLATFORM_DATA_BASE_URL = (
-    "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={platform_accession}"
+NCBI_API_BASE_URL = (
+    "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={accession}"
 )
 
-LAST_LINE_TO_SKIP = "!platform_table_begin"
+STOP_RETRY_AFTER_DELAY = 600
+
+NB_PROBE_IDS_TO_PARSE = 1000
+NB_PROBE_IDS_TO_SAMPLE = 10
 
 ALLOWED_LIBRARY_SOURCES = ["transcriptomic", "RNA"]
 
@@ -113,7 +113,101 @@ def parse_args():
         type=Path,
         help="Exclude accessions contained in this file",
     )
+    parser.add_argument(
+        "--cpus",
+        dest="nb_cpus",
+        type=int,
+        required=True,
+        help="Number of CPUs to use",
+    )
+    parser.add_argument(
+        "--accessions",
+        type=str,
+        help="[For dev purposes / testing: provide directly accessions (separated by commas) and try to get their metadata]",
+    )
     return parser.parse_args()
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# QUERIES TO ENTREZ
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+@retry(
+    stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
+    wait=wait_exponential(multiplier=1, min=1, max=30),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+    retry_error_callback=(lambda _: {}),
+)
+def send_request_to_entrez_esearch(query: str) -> dict:
+    Entrez.email = ENTREZ_EMAIL
+    with Entrez.esearch(
+        db="gds", term=query, retmax=ENTREZ_QUERY_MAX_RESULTS
+    ) as handle:
+        return Entrez.read(handle)
+
+
+@retry(
+    stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
+    wait=wait_exponential(multiplier=1, min=1, max=30),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+    retry_error_callback=(lambda _: []),
+)
+def send_request_to_entrez_esummary(ids: list[str]) -> list[dict]:
+    Entrez.email = ENTREZ_EMAIL
+    ids_str = ",".join(ids)
+    with Entrez.esummary(
+        db="gds", id=ids_str, retmax=ENTREZ_QUERY_MAX_RESULTS
+    ) as handle:
+        return Entrez.read(handle)
+
+
+@retry(
+    stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
+    wait=wait_exponential(multiplier=1, min=1, max=30),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+    retry_error_callback=(lambda _: None),
+)
+def send_request_to_ncbi_api(accession: str) -> requests.Response | None:
+    url = NCBI_API_BASE_URL.format(accession=accession)
+    server_error = False
+    response = None
+
+    try:
+        response = requests.get(url, stream=True)
+    except requests.exceptions.ConnectionError:
+        server_error = True
+    else:
+        try:
+            response.raise_for_status()
+        except (HTTPError, ConnectionError) as err:
+            if str(response.status_code).startswith("5"):  # error 500 -> 509
+                server_error = True
+                raise err
+            else:
+                logger.error(
+                    f"Error {response.status_code} while sending request to NCBI: {err}"
+                )
+                raise err
+
+    # if we get connection issues or 500 -> 509 server errors
+    # we stop immediately for this accession (return None)
+    if server_error:
+        logger.critical(
+            f"Server error while sending request to NCBI for accession {accession}"
+        )
+
+    return response
+
+
+@retry(
+    stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
+    wait=wait_exponential(multiplier=1, min=1, max=30),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+    retry_error_callback=(lambda _: None),
+)
+def download_file_at_url(url: str, output_file: Path):
+    urlretrieve(url, output_file)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,12 +215,6 @@ def parse_args():
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-@retry(
-    retry=retry_if_exception_type(Exception),
-    stop=stop_after_delay(600),
-    wait=wait_exponential(multiplier=1, min=1, max=30),
-    before_sleep=before_sleep_log(logger, logging.WARNING),
-)
 def fetch_geo_datasets_for_species(species: str) -> list[dict]:
     """
     Fetch GEO datasets (GSE series) for a given species
@@ -134,8 +222,6 @@ def fetch_geo_datasets_for_species(species: str) -> list[dict]:
     Args:
         species (str): Scientific name of the species (e.g. "Homo sapiens").
     """
-
-    Entrez.email = ENTREZ_EMAIL
     query = f'"{species}"[Organism] AND "gse"[Entry Type] AND "expression profiling by array"[DataSet Type]'
     logger.info(f"Fetching GEO datasets with query: {query}")
 
@@ -144,10 +230,11 @@ def fetch_geo_datasets_for_species(species: str) -> list[dict]:
     nb_entries = None
     retstart = 0
     while not nb_entries or retstart < nb_entries:
-        with Entrez.esearch(
-            db="gds", term=query, retmax=ENTREZ_QUERY_MAX_RESULTS, retstart=retstart
-        ) as handle:
-            record = Entrez.read(handle)
+        record = send_request_to_entrez_esearch(query)
+
+        if not record:
+            logger.warning(f"Failed to query Entrey Esearch with query: {query}")
+            return []
 
         # getting total nb of entries
         if not nb_entries:
@@ -167,30 +254,28 @@ def fetch_geo_datasets_for_species(species: str) -> list[dict]:
         return []
 
     # fetching summary info
-    with Entrez.esummary(db="gds", id=",".join(ids)) as handle:
-        results = Entrez.read(handle)
+    results = send_request_to_entrez_esummary(ids)
 
     # keeping only series datasets (just a double check here)
     return [r for r in results if "GSE" in r["Accession"]]
 
 
-@retry(
-    retry=retry_if_exception_type(Exception),
-    stop=stop_after_delay(600),
-    wait=wait_exponential(multiplier=1, min=1, max=30),
-    before_sleep=before_sleep_log(logger, logging.WARNING),
-)
-def download_dataset_metadata(ftp_link: str, accession: str) -> Path:
+def download_dataset_metadata(ftp_link: str, accession: str) -> Path | None:
     filename = f"miniml/{accession}_family.xml.tgz"
     ftp_url = ftp_link + filename
     output_file = Path(MINIML_TMPDIR) / f"{accession}.tar.gz"
-    urlretrieve(ftp_url, output_file)
-    return output_file
+    download_file_at_url(ftp_url, output_file)
+    if output_file.exists():
+        return output_file
+    else:
+        logger.error(f"Failed to download dataset metadata for accession: {accession}")
+        return None
 
 
 def parse_dataset_metadata(file: Path, accession: str) -> dict | None:
     with tarfile.open(file, "r:gz") as tar:
         file_to_read = f"{accession}_family.xml"
+
         try:
             f = tar.extractfile(file_to_read)
         except KeyError:
@@ -199,9 +284,17 @@ def parse_dataset_metadata(file: Path, accession: str) -> dict | None:
                 f = tar.extractfile(file_to_read)
             except KeyError:
                 return None
+
         if f is None:
-            raise RuntimeError(f"Failed to get file: {file_to_read}")
-        xml_content = f.read().decode("utf-8")
+            logger.warning(f"Failed to get file: {file_to_read}")
+            return None
+
+        try:
+            xml_content = f.read().decode("utf-8")
+        except UnicodeDecodeError:
+            logger.warning(f"Failed to decode file: {file_to_read}")
+            return None
+
     return xmltodict.parse(xml_content)["MINiML"]
 
 
@@ -210,20 +303,13 @@ def parse_dataset_metadata(file: Path, accession: str) -> dict | None:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-@retry(
-    retry=retry_if_exception_type(Exception),
-    stop=stop_after_delay(600),
-    wait=wait_exponential(multiplier=1, min=1, max=30),
-    before_sleep=before_sleep_log(logger, logging.WARNING),
-)
-def fetch_geo_platform_data(platform_accessions: list[str]) -> list[dict]:
+def fetch_geo_platform_data(platform_accessions: list[str]) -> dict:
     """
     Fetch data for a GEO platform
 
     Args:
         platform_accession (str): accession of the platform
     """
-    Entrez.email = ENTREZ_EMAIL
     formatted_platform_accessions = [
         f'"{platform_accession}"[GEO Accession]'
         for platform_accession in platform_accessions
@@ -231,8 +317,7 @@ def fetch_geo_platform_data(platform_accessions: list[str]) -> list[dict]:
     platform_accessions_str = " OR ".join(formatted_platform_accessions)
     query = f'({platform_accessions_str}) AND "gpl"[Entry Type] '
 
-    with Entrez.esearch(db="gds", term=query, retmax=1) as handle:
-        record = Entrez.read(handle)
+    record = send_request_to_entrez_esearch(query=query)
 
     ids = record.get("IdList", [])
     if not ids:
@@ -240,39 +325,58 @@ def fetch_geo_platform_data(platform_accessions: list[str]) -> list[dict]:
         return []
 
     # fetching summary info
-    with Entrez.esummary(db="gds", id=",".join(ids)) as handle:
-        results = Entrez.read(handle)
-
-    if len(results) > 1:
-        logger.warning(
-            f"Multiple GEO platforms for accession {platform_accessions}. Taking the first one."
-        )
-
+    results = send_request_to_entrez_esummary(ids)
     return results
 
 
-@retry(
-    stop=stop_after_delay(600),
-    wait=wait_exponential(multiplier=1, min=1, max=30),
-    before_sleep=before_sleep_log(logger, logging.WARNING),
-)
-def download_platform_datatable(ftp_link: str, platform_accession: str) -> Path:
+def get_platform_metadata(selected_metadata_chunk_list: list[dict]) -> list[dict]:
+    # unique list of platform accessions
+    platform_accessions = list(
+        set(
+            [
+                platform_accession
+                for metadata in selected_metadata_chunk_list
+                for platform_accession in metadata["platform_accessions"]
+            ]
+        )
+    )
+    # one single request to NCBI for all platform accessions
+    # we extract the platform accessions to allow better parsing afterwards
+    pltf_acc_to_pltf_metadata = {
+        platform_metadata["Accession"]: platform_metadata
+        for platform_metadata in fetch_geo_platform_data(platform_accessions)
+    }
+
+    # adding the platform metadata to the corresponding metadata
+    augmented_metadata_list = []
+    for metadata in selected_metadata_chunk_list:
+        metadata["platform_metadata"] = []
+        for platform_accession in metadata["platform_accessions"]:
+            # augmenting metadata with platform metadata
+            # filtering out cases where the platform metadata is not available
+            if platform_accession in pltf_acc_to_pltf_metadata:
+                metadata["platform_metadata"].append(
+                    pltf_acc_to_pltf_metadata[platform_accession]
+                )
+        augmented_metadata_list.append(metadata)
+
+    return augmented_metadata_list
+
+
+"""
+def download_platform_datatable(ftp_link: str, platform_accession: str) -> Path | None:
     filename = f"soft/{platform_accession}_family.soft.gz"
     ftp_url = ftp_link + filename
     output_file = Path(PLATFORM_SOFT_TMPDIR) / f"{platform_accession}.gz"
-    urlretrieve(ftp_url, output_file)
+    download_file_at_url(ftp_url, output_file)
     return output_file
+"""
 
 
-@retry(
-    stop=stop_after_delay(600),
-    wait=wait_exponential(multiplier=1, min=1, max=30),
-    before_sleep=before_sleep_log(logger, logging.WARNING),
-)
-def get_platform_probe_id_samples(platform_accession: str):
-    url = PLATFORM_DATA_BASE_URL.format(platform_accession=platform_accession)
-    response = requests.get(url, stream=True)
-    response.raise_for_status()
+def get_platform_probe_id_samples(platform_accession: str) -> list[str]:
+    response = send_request_to_ncbi_api(platform_accession)
+    if response is None:
+        return []
 
     header_found = False
     probe_ids = []
@@ -295,14 +399,15 @@ def get_platform_probe_id_samples(platform_accession: str):
                 probe_ids.append(probe_id)
                 counter += 1
 
+    # return a random sample of probe IDs
     nb_samples = min(len(probe_ids), NB_PROBE_IDS_TO_SAMPLE)
     return sample(probe_ids, nb_samples)
 
 
-def probe_ids_can_be_converted(dataset_metadata: dict, species: str) -> bool:
-    platform_dict_list = fetch_geo_platform_data(
-        dataset_metadata["platform_accessions"]
-    )
+def probe_ids_can_be_converted(
+    dataset_metadata: dict, species: str
+) -> tuple[dict, bool]:
+    platform_dict_list = dataset_metadata["platform_metadata"]
     all_probe_ids = []
 
     for platform_dict in platform_dict_list:
@@ -311,15 +416,19 @@ def probe_ids_can_be_converted(dataset_metadata: dict, species: str) -> bool:
             continue
         # getting a sample of the first probe ids
         sampled_probe_ids = get_platform_probe_id_samples(platform_dict["Accession"])
+
         # if we could not get any probe ids for a platform, we won't use this dataset
         if not sampled_probe_ids:
-            return False
+            return dataset_metadata, False
+
         all_probe_ids += sampled_probe_ids
 
     # try to convert ids
     mapping_dict, _ = convert_ids(all_probe_ids, species)
+
     # if at least one ID could be converted
-    return True if mapping_dict else False
+    can_be_converted = True if mapping_dict else False
+    return dataset_metadata, can_be_converted
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -346,7 +455,8 @@ def parse_characteristics(
     if isinstance(characteristics, str):
         stored_characteristics.append(characteristics)
     elif isinstance(characteristics, dict):
-        stored_characteristics.append(characteristics["#text"])
+        if "#text" in characteristics:
+            stored_characteristics.append(characteristics["#text"])
     elif isinstance(characteristics, list):
         for c in characteristics:
             parse_characteristics(c, stored_characteristics)
@@ -355,6 +465,16 @@ def parse_characteristics(
 def parse_interesting_metadata(
     dataset_metadata: dict, additional_metadata: dict
 ) -> dict:
+    """
+    Parses interesting metadata from a dataset metadata dictionary and additional metadata dictionary.
+
+    Args:
+        dataset_metadata (dict): The dataset metadata dictionary.
+        additional_metadata (dict): The additional metadata dictionary.
+
+    Returns:
+        dict: The parsed interesting metadata dictionary.
+    """
     sample_characteristics = []
     sample_library_strategies = []
     sample_library_sources = []
@@ -366,35 +486,41 @@ def parse_interesting_metadata(
         "GPL" + gpl_id for gpl_id in dataset_metadata["GPL"].split(";")
     ]
 
-    for sample in additional_metadata["Sample"]:
-        # storing description if exists
-        if sample_description := sample.get("Description"):
-            sample_descriptions.append(sample_description)
+    # if additional metadata have sample information
+    if "Sample" in additional_metadata:
+        # change to list if it's a single dictionary
+        if isinstance(additional_metadata["Sample"], dict):
+            additional_metadata["Sample"] = [additional_metadata["Sample"]]
 
-        # storing title if exists
-        if sample_title := sample.get("Title"):
-            sample_titles.append(sample_title)
+        for sample in additional_metadata["Sample"]:
+            # storing description if exists
+            if sample_description := sample.get("Description"):
+                sample_descriptions.append(sample_description)
 
-            # storing molecule type if exists
-            if sample_molecule_type := sample.get("Type"):
-                sample_molecule_types.append(sample_molecule_type)
+            # storing title if exists
+            if sample_title := sample.get("Title"):
+                sample_titles.append(sample_title)
 
-        # storing library strategy if exists
-        if sample_library_strategy := sample.get("Library-Strategy"):
-            sample_library_strategies.append(sample_library_strategy)
+                # storing molecule type if exists
+                if sample_molecule_type := sample.get("Type"):
+                    sample_molecule_types.append(sample_molecule_type)
 
-        # storing library source if exists
-        if sample_library_source := sample.get("Library-Source"):
-            sample_library_sources.append(sample_library_source)
+            # storing library strategy if exists
+            if sample_library_strategy := sample.get("Library-Strategy"):
+                sample_library_strategies.append(sample_library_strategy)
 
-        # parsing sample metadata
-        if channels := sample.get("Channel"):
-            if isinstance(channels, dict):
-                channels = [channels]
-            for channel in channels:
-                parse_characteristics(
-                    channel["Characteristics"], sample_characteristics
-                )
+            # storing library source if exists
+            if sample_library_source := sample.get("Library-Source"):
+                sample_library_sources.append(sample_library_source)
+
+            # parsing sample metadata
+            if channels := sample.get("Channel"):
+                if isinstance(channels, dict):
+                    channels = [channels]
+                for channel in channels:
+                    parse_characteristics(
+                        channel["Characteristics"], sample_characteristics
+                    )
 
     return {
         "accession": dataset_metadata["Accession"],
@@ -413,9 +539,22 @@ def parse_interesting_metadata(
 
 
 def parse_metadata(dataset_metadata: dict) -> dict | None:
+    """
+    Parses metadata from a dataset metadata dictionary.
+
+    Args:
+        dataset_metadata (dict): The dataset metadata dictionary.
+
+    Returns:
+        dict | None: The parsed metadata dictionary or None if the metadata is missing.
+    """
     accession = dataset_metadata["Accession"]
     ftp_link = dataset_metadata["FTPLink"].replace("ftp://", "https://")
     downloaded_file = download_dataset_metadata(ftp_link, accession)
+    if downloaded_file is None:
+        logger.warning(f"Skipping {accession} as metadata download failed")
+        return None
+
     additional_metadata = parse_dataset_metadata(downloaded_file, accession)
 
     # if we could not get additional metadata, we lack too much information to conclude
@@ -428,7 +567,7 @@ def parse_metadata(dataset_metadata: dict) -> dict | None:
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# TESTS
+# METADATA TESTS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -466,7 +605,7 @@ def species_is_ok(dataset: dict, species: str) -> bool:
     return False
 
 
-def contains_only_rna(molecules_types: list, accession) -> bool:
+def contains_only_rna(molecules_types: list, accession: str) -> bool:
     # we want only GEO series that contain only RNA molecules
     # for other series, they should be superseries contained other series that are being parsed too
     # so anyway, this would lead in duplicates
@@ -555,8 +694,6 @@ def main():
 
     selected_accessions = []
 
-    ncpus = cpu_count() - 1
-
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # PARSING GEO DATASETS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -566,14 +703,27 @@ def main():
     logger.info(
         f"Found {len(dataset_metadata_list)} datasets for species {args.species}"
     )
-    # dataset_metadata_list=dataset_metadata_list[:3]
-    # dataset_metadata_list = [d for d in dataset_metadata_list if d['Accession'] in ['GSE97045', 'GSE6736', 'GSE9683']]
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # FOR DEV PURPOSES / TESTING: RESTRICT TO SPECIFIC ACCESSIONS
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if args.accessions:
+        logger.info(f"Keeping only accessions {args.accessions}")
+        dev_accessions = args.accessions.split(",")
+        dataset_metadata_list = [
+            d for d in dataset_metadata_list if d["Accession"] in dev_accessions
+        ]
+        logger.info(
+            f"Kept {len(dataset_metadata_list)} datasets for dev / testing purposes"
+        )
+
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # EXCLUDING UNWANTED ACCESSIONS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     if args.excluded_accessions_file:
-        logger.info(f"Excluding unwanted datasets")
+        logger.info("Excluding unwanted datasets")
         dataset_metadata_list = exclude_unwanted_accessions(
             dataset_metadata_list, args.excluded_accessions_file
         )
@@ -585,20 +735,40 @@ def main():
     # EXCLUDING DATASETS WITH THE WRONG SPECIES
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info(f"Excluding wrong species")
-    dataset_metadata_list = [
+    logger.info("Excluding wrong species")
+    tmp_lst = [
         dataset
         for dataset in dataset_metadata_list
         if species_is_ok(dataset, args.species)
     ]
+
+    # checking if all datasets were ok
+    if len(tmp_lst) < len(dataset_metadata_list):
+        logger.warning(
+            f"{len(dataset_metadata_list) - len(tmp_lst)} dataset(s) did not have the correct species!"
+        )
+        selected_metadata_list = []
+    else:
+        logger.info("All datasets had the correct species")
+
+    dataset_metadata_list = tmp_lst
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # PARSING METADATA
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info("Parsing metadata")
-    metadata_list = progress_map(parse_metadata, dataset_metadata_list, n_cpu=ncpus)
-    metadata_list = [metadata for metadata in metadata_list if metadata is not None]
+    metadata_list = []
+    with (
+        Pool(processes=args.nb_cpus) as p,
+        tqdm(total=len(dataset_metadata_list)) as pbar,
+    ):
+        for result in p.imap_unordered(parse_metadata, dataset_metadata_list):
+            pbar.update()
+            pbar.refresh()
+            if result is None:
+                continue
+            metadata_list.append(result)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # CHECKING MOLECULE TYPE / PLATFORM TECHNOLOGIES
@@ -621,25 +791,72 @@ def main():
     if args.keywords:
         logger.info(f"Filtering experiments with keywords {args.keywords}")
         func = partial(filter_metadata_with_keywords, keywords=args.keywords)
-        selected_metadata_list = progress_map(func, filtered_metadata_list, n_cpu=ncpus)
-        selected_metadata_list = [
-            metadata for metadata in selected_metadata_list if metadata is not None
-        ]
+
+        selected_metadata_list = []
+        with (
+            Pool(processes=args.nb_cpus) as p,
+            tqdm(total=len(filtered_metadata_list)) as pbar,
+        ):
+            for result in p.imap_unordered(func, filtered_metadata_list):
+                pbar.update()
+                pbar.refresh()
+                if result is None:
+                    continue
+                selected_metadata_list.append(result)
+
+        logger.info(
+            f"{len(selected_metadata_list)} datasets remaining after filtering with keywords"
+        )
+
     else:
         selected_metadata_list = filtered_metadata_list
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # GETTING METADATA OF SEQUENCING PLATFORMS
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    logger.info("Getting platform metadata")
+    tmp_lst = []
+    for selected_metadata_chunk_list in tqdm(
+        chunk_list(selected_metadata_list, ENTREZ_CHUNKSIZE)
+    ):
+        tmp_lst += get_platform_metadata(selected_metadata_chunk_list)
+
+    # checking if platform metadata was found for all datasets
+    if len(tmp_lst) < len(selected_metadata_list):
+        logger.warning(
+            f"Platform metadata could not be retrieved for {len(selected_metadata_list) - len(tmp_lst)} dataset(s)!"
+        )
+        selected_metadata_list = []
+    else:
+        logger.info("Platform metadata found for all datasets!")
+
+    # augmenting selected_metadata_list with platform metadata
+    selected_metadata_list = tmp_lst
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # FILTERING OUT DATASETS FOR WHICH ID MAPPING DOES NOT WORK
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    # this cannot be done in parallel because it requires HTTP requests
     logger.info("Checking gene ID mapping issues")
-    final_metadata_list = [
-        metadata
-        for metadata in tqdm(selected_metadata_list)
-        if probe_ids_can_be_converted(metadata, args.species)
-    ]
+    func = partial(probe_ids_can_be_converted, species=args.species)
+    final_metadata_list = []
+
+    with (
+        Pool(processes=args.nb_cpus) as p,
+        tqdm(total=len(filtered_metadata_list)) as pbar,
+    ):
+        for metadata, can_be_converted in p.imap_unordered(
+            func, selected_metadata_list
+        ):
+            pbar.update()
+            pbar.refresh()
+            if can_be_converted:
+                final_metadata_list.append(metadata)
+
     logger.info(
-        f"{len(final_metadata_list)} datasets remaining after checking ID mapping issues"
+        f"{len(final_metadata_list)} datasets remaining after checking gene ID mapping issues"
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

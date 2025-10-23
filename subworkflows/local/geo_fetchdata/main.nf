@@ -48,7 +48,8 @@ workflow GEO_FETCHDATA {
             ch_species,
             params.keywords,
             platform,
-            ch_excluded_accessions_file
+            ch_excluded_accessions_file,
+            "none"
         )
 
         GEO_GETACCESSIONS.out.accessions

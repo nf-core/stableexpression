@@ -5,21 +5,16 @@
 import requests
 import pandas as pd
 import logging
-import urllib3
 import sys
 
 from tenacity import (
     retry,
-    retry_if_exception_type,
     stop_after_delay,
     wait_exponential,
     before_sleep_log,
 )
 
-from requests.exceptions import (
-    HTTPError,
-    ConnectionError
-)
+from requests.exceptions import HTTPError, ConnectionError
 
 import config
 
@@ -43,10 +38,10 @@ COLS_TO_KEEP = ["incoming", "converted", "name", "description"]
 DESCRIPTION_PART_TO_REMOVE_REGEX = r"\s*\[Source:.*?\]"
 
 
-
 ##################################################################
 # FUNCTIONS
 ##################################################################
+
 
 def format_species_name(species: str):
     """
@@ -68,7 +63,6 @@ def format_species_name(species: str):
 
 
 @retry(
-    retry=retry_if_exception_type(urllib3.exceptions.ProtocolError),
     stop=stop_after_delay(600),
     wait=wait_exponential(multiplier=1, min=1, max=30),
     before_sleep=before_sleep_log(logger, logging.WARNING),
@@ -89,7 +83,7 @@ def request_conversion(
         The list of gene IDs to convert.
     species : str
         The species to convert the IDs for.
-    url : str, optional
+    url : str, optionalrequest_conversion
         The URL to send the request to, by default GPROFILER_CONVERT_API_ENDPOINT
     attempts : int, optional
         The number of attempts already performed, by default 0
@@ -113,11 +107,7 @@ def request_conversion(
     try:
         response = requests.post(
             url=url,
-            json={
-                "organism": organism,
-                "query": gene_ids,
-                "target": target_database
-            }
+            json={"organism": organism, "query": gene_ids, "target": target_database},
         )
     except requests.exceptions.ConnectionError:
         server_appears_down = True
@@ -125,20 +115,24 @@ def request_conversion(
         try:
             response.raise_for_status()
         except (HTTPError, ConnectionError) as err:
-            if err.response.status_code == 502:
+            if str(response.status_code).startswith("5"):  # error 500 -> 509
                 server_appears_down = True
             else:
-                logger.error(f"Error {err.response.status_code} while converting IDs: {err}")
-                sys.exit(101)
+                logger.error(
+                    f"Error {response.status_code} while converting IDs: {err}"
+                )
+                raise err
 
     if server_appears_down:
         if attempts == 0:
-            logger.warning("g:Profiler main server appears down, trying with the beta server...")
+            logger.warning(
+                "g:Profiler main server appears down, trying with the beta server..."
+            )
             return request_conversion(
                 gene_ids,
                 species,
                 target_database=target_database,
-                url=GPROFILER_CONVERT_BETA_API_ENDPOINT,
+                url=GPROFILER_CONVERT_BETA_API_ENDPOINT,  # backup endpoint
                 attempts=1,
             )
         else:
@@ -151,7 +145,8 @@ def request_conversion(
             )
             sys.exit(102)
 
-    return response.json()["result"]
+    else:
+        return response.json()["result"]
 
 
 def convert_chunk_of_ids(gene_ids: list, species: str) -> tuple[dict, pd.DataFrame]:
@@ -202,7 +197,7 @@ def convert_chunk_of_ids(gene_ids: list, species: str) -> tuple[dict, pd.DataFra
     return mapping_dict, meta_df
 
 
-def chunk_list(lst: list, chunksize: int):
+def chunk_list(lst: list, chunksize: int) -> list:
     """Splits a list into chunks of a given size.
 
     Args:
@@ -216,7 +211,6 @@ def chunk_list(lst: list, chunksize: int):
 
 
 def convert_ids(ids: list[str], species: str) -> tuple[dict, pd.DataFrame]:
-
     mapping_dict = {}
     gene_metadata_dfs = []
 

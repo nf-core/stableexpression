@@ -5,7 +5,7 @@ nextflow_process {
     process "GEO_GETACCESSIONS"
     tag "geo_getaccession"
 
-    test("Beta vulgaris") {
+    test("Beta vulgaris - exclude two accessions") {
 
         when {
             process {
@@ -13,7 +13,48 @@ nextflow_process {
                 input[0] = "beta_vulgaris"
                 input[1] = ""
                 input[2] = "none"
-                input[3] = file( '$projectDir/tests/test_data/geo/get_accessions/exclude_no_accessions.txt', checkIfExists: true )
+                input[3] = file( '$projectDir/tests/test_data/geo/get_accessions/exclude_one_accession.txt', checkIfExists: true )
+                input[4] = "none"
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+    test("Beta vulgaris - leaf / microarray") {
+
+        when {
+            process {
+                """
+                input[0] = "beta_vulgaris"
+                input[1] = "leaf"
+                input[2] = "microarray"
+                input[3] = "none"
+                input[4] = "none"
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+    test("Arabidopsis thaliana - NCBI Bad Gateway") {
+
+        when {
+            process {
+                """
+                input[0] = "arabidopsis_thaliana"
+                input[1] = ""
+                input[2] = "none"
+                input[3] = "none"
+                input[4] = "GSE18808"
                 """
             }
         }
