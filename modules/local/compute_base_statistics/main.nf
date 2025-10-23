@@ -2,7 +2,7 @@ process COMPUTE_BASE_STATISTICS {
 
     label 'process_medium'
 
-    errorStrategy = {
+    errorStrategy {
         if (task.exitStatus == 100) {
             log.error(
                 "No count could be found before merging datasets! "

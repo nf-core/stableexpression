@@ -2,6 +2,7 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
+options(error = traceback)
 suppressPackageStartupMessages(library("ExpressionAtlas"))
 library(ExpressionAtlas)
 library(optparse)
@@ -214,4 +215,3 @@ atlas_data <- download_expression_atlas_data_with_retries(args$accession)
 
 # writing count data in atlas_data to specific CSV files
 process_data(atlas_data, args$accession)
-

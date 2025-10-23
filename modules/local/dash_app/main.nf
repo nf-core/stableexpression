@@ -7,7 +7,7 @@ process DASH_APP {
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b3/b39ecd56e298b0ba94bed41bb36d67b0a2bc24634bc53baff9773dcc3d422c01/data':
         'community.wave.seqera.io/library/dash-ag-grid_dash-extensions_dash-iconify_dash-mantine-components_pruned:138d9ff01702db68' }"
 
-    errorStrategy = {
+    errorStrategy {
         if (task.exitStatus == 100) {
             log.warn("Could not start the Dash application.")
             return 'finish' // finishes started processes but reports error

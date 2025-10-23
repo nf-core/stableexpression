@@ -2,7 +2,7 @@ process CLEAN_COUNT_DATA {
 
     label 'process_single'
 
-    errorStrategy = {
+    errorStrategy {
         if (task.exitStatus == 101) {
             log.error(
                 "No more valid sample after checking p-value of Kolmogorow-Smirnoff test against target distribution! "

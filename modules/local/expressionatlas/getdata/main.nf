@@ -7,7 +7,7 @@ process EXPRESSIONATLAS_GETDATA {
 
     tag "$accession"
 
-    errorStrategy = {
+    errorStrategy {
         if (task.exitStatus == 100) {
             // ignoring accessions that cannot be retrieved from Expression Atlas (the script throws a 100 in this case)
             // sometimes, some datasets are transiently unavailable from Expression Atlas:

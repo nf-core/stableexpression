@@ -7,7 +7,7 @@ process IDMAPPING_GPROFILER {
     // limiting to 8 threads at a time to avoid 429 errors with the G Profiler API server
     maxForks 8
 
-    errorStrategy = {
+    errorStrategy {
         if (task.exitStatus == 100) {
             // ignoring cases when the count dataframe is empty
             log.warn("Count file is empty for dataset ${meta.dataset}.")

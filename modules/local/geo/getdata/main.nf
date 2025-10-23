@@ -7,7 +7,7 @@ process GEO_GETDATA {
 
     tag "$accession"
 
-    errorStrategy = {
+    errorStrategy {
         if (task.exitStatus == 100) {
             // ignoring accessions that cannot be retrieved from GEO
             log.warn("Could not retrieve data for accession ${accession}. This could be a transient network issue or a permission error.")
