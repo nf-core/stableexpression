@@ -22,24 +22,21 @@ STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.csv"
 
 @dataclass
 class StabilityScorer:
-
     N_QUANTILES: ClassVar[int] = 1000
 
     WEIGHT: ClassVar[dict] = {
         config.VARIATION_COEFFICIENT_COLNAME: 0.7,
         config.MAD_COLNAME: 0.1,
         config.NORMFINDER_STABILITY_VALUE_COLNAME: 0.1,
-        config.GENORM_M_MEASURE_COLNAME: 0.1
+        config.GENORM_M_MEASURE_COLNAME: 0.1,
     }
 
     WEIGHT_RATIO_NB_NULLS_TO_SCORING: ClassVar[float] = 1
 
     df: pl.DataFrame
 
-
     def __post_init__(self):
         self.compute_stability_score()
-
 
     @staticmethod
     def quantile_normalise(data: pl.Series, new_name: str) -> pl.Series:
@@ -51,28 +48,38 @@ class StabilityScorer:
         normalised_array = transformer.fit_transform(array)
         return pl.Series(new_name, normalised_array.ravel())
 
-
     def compute_stability_score(self) -> pl.LazyFrame:
         logger.info("Computing stability score for candidate genes")
 
-        candidate_df = self.df.filter(pl.col(config.IS_CANDIDATE_COLNAME) == 1)  # keep only candidate genes
+        candidate_df = self.df.filter(
+            pl.col(config.IS_CANDIDATE_COLNAME) == 1
+        )  # keep only candidate genes
         non_candidate_df = self.df.filter(pl.col(config.IS_CANDIDATE_COLNAME).is_null())
 
         normalised_data = {}
         null_data = {}
-        for col in self.WEIGHT:
+        weight_sum = 0
+        for col, weight in self.WEIGHT.items():
             if col not in self.df.columns:
                 continue
             data = candidate_df.select(col).to_series()
             normalised_col = f"{col}_normalised"
-            normalised_data[col] = self.quantile_normalise(data, new_name=normalised_col)
+            normalised_data[col] = self.quantile_normalise(
+                data, new_name=normalised_col
+            )
             # creating a null column with same name
             null_data[col] = pl.Series(normalised_col, [None] * len(non_candidate_df))
+            # if this column is present, add its weight to the sum
+            weight_sum += weight
 
         # replacing original data with quantile normalised ones
-        candidate_df = candidate_df.with_columns(data for data in normalised_data.values())
+        candidate_df = candidate_df.with_columns(
+            data for data in normalised_data.values()
+        )
         # adding null columns to the non-candidate df to allow concatenation
-        non_candidate_df = non_candidate_df.with_columns(data for data in null_data.values())
+        non_candidate_df = non_candidate_df.with_columns(
+            data for data in null_data.values()
+        )
 
         # concatenating with non candidate genes to have all genes
         self.df = pl.concat([candidate_df, non_candidate_df])
@@ -83,13 +90,14 @@ class StabilityScorer:
         # adding penalty for samples with null values
         # genes with at least one zero value are already excluded at that stage
         stability_scoring_expr = (
-            pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME) * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
+            pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME)
+            * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
         )
         for col, weight in self.WEIGHT.items():
             if col not in self.df.columns:
                 continue
             normalised_col = f"{col}_normalised"
-            stability_scoring_expr += (pl.col(normalised_col) * weight)
+            stability_scoring_expr += pl.col(normalised_col) * weight / weight_sum
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -104,8 +112,9 @@ class StabilityScorer:
 
     def get_statistics_with_stability_scores(self):
         return (
-            self.df
-            .sort(config.STABILITY_SCORE_COLNAME, descending=False, nulls_last=True)
+            self.df.sort(
+                config.STABILITY_SCORE_COLNAME, descending=False, nulls_last=True
+            )
             .with_row_index(name="index")
             .with_columns((pl.col("index") + 1).alias(config.RANK_COLNAME))
             .drop("index")
@@ -128,7 +137,7 @@ def parse_args():
         type=str,
         dest="platform_stat_files",
         required=True,
-        help="Platform stat file"
+        help="Platform stat file",
     )
     parser.add_argument(
         "--stabilities",
