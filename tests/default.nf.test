@@ -134,4 +134,32 @@ nextflow_pipeline {
             )
         }
     }
+
+    test("-profile test_run_normfinder_genorm") {
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                eatlas_accessions = "E-MTAB-7711"
+                skip_fetch_eatlas_accessions = true
+                skip_fetch_geo_accessions = true
+                run_normfinder = true
+                run_genorm = true
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+        }
+    }
 }

@@ -139,7 +139,7 @@ workflow STABLEEXPRESSION {
         )
 
         STABILITY_SCORING.out.summary_statistics.set { ch_candidate_gene_stats_with_scores }
-
+        //ch_candidate_gene_stats_with_scores.splitCsv(header: true).view()
         // -----------------------------------------------------------------
         // AGGREGATE ALL RESULTS FOR MULTIQC
         // -----------------------------------------------------------------

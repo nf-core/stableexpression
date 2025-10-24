@@ -24,9 +24,7 @@ ALL_COUNTS_PARQUET_OUTFILENAME = "all_counts.parquet"
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Merge count datasets"
-    )
+    parser = argparse.ArgumentParser(description="Merge count datasets")
     parser.add_argument(
         "--counts", type=str, dest="count_files", required=True, help="Count files"
     )
@@ -88,7 +86,9 @@ def get_count_columns(lf: pl.LazyFrame) -> list[str]:
 
     The config.ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
     """
-    return lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
+    return (
+        lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
+    )
 
 
 def get_counts(files: list[Path]) -> pl.DataFrame:
@@ -125,7 +125,7 @@ def get_nb_rows(lf: pl.LazyFrame) -> int:
 #####################################################
 
 
-def export_data(count_df: pl.DataFrame ):
+def export_data(count_df: pl.DataFrame):
     """Export gene expression data."""
     logger.info(f"Exporting normalised counts to: {ALL_COUNTS_PARQUET_OUTFILENAME}")
     count_df.write_parquet(ALL_COUNTS_PARQUET_OUTFILENAME)
