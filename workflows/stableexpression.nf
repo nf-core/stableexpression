@@ -67,16 +67,21 @@ workflow STABLEEXPRESSION {
         // IDMAPPING
         // -----------------------------------------------------------------
 
+        ch_gene_id_mapping = params.gene_id_mapping_file ? Channel.fromPath( params.gene_id_mapping_file, checkIfExists: true ) : Channel.value( [] )
+        ch_gene_metadata = params.gene_metadata ? Channel.fromPath( params.gene_metadata, checkIfExists: true ) : Channel.value( [] )
+
         if ( !params.skip_gprofiler ) {
 
             // tries to map gene IDs to Ensembl IDs whenever possible
             GPROFILER_IDMAPPING(
                 ch_counts,
                 ch_species,
-                params.gene_id_mapping_file ? Channel.fromPath( params.gene_id_mapping_file, checkIfExists: true ) : Channel.value( [] ),
-                params.gene_metadata ?        Channel.fromPath( params.gene_metadata, checkIfExists: true ) :        Channel.value( [] )
+                ch_gene_id_mapping,
+                ch_gene_metadata
             )
             GPROFILER_IDMAPPING.out.counts.set { ch_counts }
+            GPROFILER_IDMAPPING.out.mapping.set { ch_gene_id_mapping }
+            GPROFILER_IDMAPPING.out.metadata.set { ch_gene_metadata }
 
         }
 
@@ -104,7 +109,11 @@ workflow STABLEEXPRESSION {
         // MERGE DATA
         // -----------------------------------------------------------------
 
-        MERGE_DATA ( DATA_CLEANSING.out.cleaned_counts )
+        MERGE_DATA (
+            DATA_CLEANSING.out.cleaned_counts ,
+            ch_gene_id_mapping,
+            ch_gene_metadata
+        )
 
         MERGE_DATA.out.all_counts.set { ch_all_counts }
         MERGE_DATA.out.whole_design.set { ch_whole_design }
@@ -138,8 +147,8 @@ workflow STABLEEXPRESSION {
         AGGREGATE_RESULTS (
             ch_all_counts,
             ch_candidate_gene_stats_with_scores,
-            GPROFILER_IDMAPPING.out.metadata,
-            GPROFILER_IDMAPPING.out.mapping
+            MERGE_DATA.out.whole_gene_metadata,
+            MERGE_DATA.out.whole_gene_id_mapping
         )
 
         AGGREGATE_RESULTS.out.top_stable_genes_summary.set { ch_top_stable_genes_summary }

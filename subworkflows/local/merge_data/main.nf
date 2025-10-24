@@ -13,12 +13,15 @@ workflow MERGE_DATA {
 
     take:
     ch_normalised_counts
+    ch_gene_id_mapping
+    ch_gene_metadata
 
     main:
 
     // -----------------------------------------------------------------
     // MERGE COUNTS FOR EACH PLATFORM SEPARATELY
     // -----------------------------------------------------------------
+
     ch_normalised_counts
         .filter { meta, file -> meta.platform == "rnaseq" }
         .map { meta, file -> file }
@@ -43,7 +46,7 @@ workflow MERGE_DATA {
         .mix ( ch_merged_microarray_counts )
         .set { ch_platform_counts }
 
-    MERGE_ALL_COUNTS( ch_platform_counts.collect())
+    MERGE_ALL_COUNTS( ch_platform_counts.collect() )
 
     // -----------------------------------------------------------------
     // MERGE ALL DESIGNS IN A SINGLE TABLE
@@ -73,10 +76,47 @@ workflow MERGE_DATA {
         }
         .set { ch_whole_design }
 
+    // -----------------------------------------------------------------
+    // MERGE ALL GENE ID MAPPINGS
+    // -----------------------------------------------------------------
+
+    ch_gene_id_mapping
+        .splitCsv( header: true )
+        .unique()
+        .collectFile(
+            name: 'whole_gene_id_mapping.csv',
+            seed: "original_gene_id,ensembl_gene_id",
+            newLine: true,
+            sort: true,
+            storeDir: "${params.outdir}/idmapping/"
+        ) {
+            item -> "${item.original_gene_id},${item.ensembl_gene_id}"
+        }
+        .set { ch_whole_gene_id_mapping }
+
+    // -----------------------------------------------------------------
+    // MERGE ALL GENE METADATA
+    // -----------------------------------------------------------------
+
+    ch_gene_metadata
+        .splitCsv( header: true )
+        .unique()
+        .collectFile(
+            name: 'whole_gene_metadata.csv',
+            seed: "ensembl_gene_id,name,description",
+            newLine: true,
+            sort: true,
+            storeDir: "${params.outdir}/idmapping/"
+        ) {
+            item -> "${item.ensembl_gene_id},${item.name},${item.description}"
+        }
+        .set { ch_whole_gene_metadata }
 
     emit:
     all_counts                             = MERGE_ALL_COUNTS.out.counts
     rnaseq_counts                          = ch_merged_rnaseq_counts
     microarray_counts                      = ch_merged_microarray_counts
     whole_design                           = ch_whole_design
+    whole_gene_id_mapping                  = ch_whole_gene_id_mapping
+    whole_gene_metadata                    = ch_whole_gene_metadata
 }
