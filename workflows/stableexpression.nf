@@ -6,7 +6,6 @@
 
 include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/expressionatlas_fetchdata'
 include { GEO_FETCHDATA                          } from '../subworkflows/local/geo_fetchdata'
-include { IDMAPPING                              } from '../subworkflows/local/idmapping'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
 include { DATA_CLEANSING                         } from '../subworkflows/local/data_cleansing'
 include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
@@ -14,6 +13,7 @@ include { BASE_STATISTICS                        } from '../subworkflows/local/b
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { MULTIQC_WORKFLOW                       } from '../subworkflows/local/multiqc'
 
+include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping'
 include { AGGREGATE_RESULTS                      } from '../modules/local/aggregate_results'
 include { DASH_APP                               } from '../modules/local/dash_app'
 
@@ -61,20 +61,31 @@ workflow STABLEEXPRESSION {
         ch_input_datasets
             .concat( EXPRESSIONATLAS_FETCHDATA.out.downloaded_datasets )
             .concat( GEO_FETCHDATA.out.downloaded_datasets )
-            .set { ch_datasets }
+            .set { ch_counts }
 
         // -----------------------------------------------------------------
         // IDMAPPING
         // -----------------------------------------------------------------
 
-        IDMAPPING ( ch_datasets, ch_species )
+        if ( !params.skip_gprofiler ) {
+
+            // tries to map gene IDs to Ensembl IDs whenever possible
+            GPROFILER_IDMAPPING(
+                ch_counts,
+                ch_species,
+                params.gene_id_mapping_file ? Channel.fromPath( params.gene_id_mapping_file, checkIfExists: true ) : Channel.value( [] ),
+                params.gene_metadata ?        Channel.fromPath( params.gene_metadata, checkIfExists: true ) :        Channel.value( [] )
+            )
+            GPROFILER_IDMAPPING.out.counts.set { ch_counts }
+
+        }
 
         // -----------------------------------------------------------------
         // NORMALISATION OF RAW COUNT DATASETS (INCLUDING RNA-SEQ DATASETS)
         // -----------------------------------------------------------------
 
         EXPRESSION_NORMALISATION(
-            IDMAPPING.out.datasets,
+            ch_counts,
             params.normalisation_method,
             params.quantile_normalisation_target_distribution
         )
@@ -94,6 +105,7 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         MERGE_DATA ( DATA_CLEANSING.out.cleaned_counts )
+
         MERGE_DATA.out.all_counts.set { ch_all_counts }
         MERGE_DATA.out.whole_design.set { ch_whole_design }
 
@@ -122,12 +134,14 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
         // AGGREGATE ALL RESULTS FOR MULTIQC
         // -----------------------------------------------------------------
+        ch_candidate_gene_stats_with_scores.view { v -> "ch_candidate_gene_stats_with_scores " + v}
+        ch_all_counts.view { v -> "ch_all_counts " + v}
 
         AGGREGATE_RESULTS (
             ch_all_counts,
             ch_candidate_gene_stats_with_scores,
-            IDMAPPING.out.gene_metadata,
-            IDMAPPING.out.gene_id_mapping
+            GPROFILER_IDMAPPING.out.metadata,
+            GPROFILER_IDMAPPING.out.mapping
         )
 
         AGGREGATE_RESULTS.out.top_stable_genes_summary.set { ch_top_stable_genes_summary }

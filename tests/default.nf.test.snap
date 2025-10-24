@@ -64,7 +64,7 @@
                     "polars": "1.17.1",
                     "python": "3.12.8"
                 },
-                "IDMAPPING_GPROFILER": {
+                "GPROFILER_IDMAPPING": {
                     "requests": "2.32.4",
                     "python": "3.13.5",
                     "pandas": "2.3.1"
