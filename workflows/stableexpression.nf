@@ -134,8 +134,6 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
         // AGGREGATE ALL RESULTS FOR MULTIQC
         // -----------------------------------------------------------------
-        ch_candidate_gene_stats_with_scores.view { v -> "ch_candidate_gene_stats_with_scores " + v}
-        ch_all_counts.view { v -> "ch_all_counts " + v}
 
         AGGREGATE_RESULTS (
             ch_all_counts,

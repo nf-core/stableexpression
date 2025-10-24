@@ -182,6 +182,10 @@ def validateInputParameters(params) {
         }
     }
 
+    if ( params.keywords && params.skip_fetch_eatlas_accessions && params.skip_fetch_geo_accessions ) {
+        log.warn "Ignoring keywords as accessions will not be fetched from Expression Atlas or GEO"
+    }
+
 }
 
 //

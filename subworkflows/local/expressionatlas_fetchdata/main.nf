@@ -30,7 +30,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
         .set { ch_input_accessions }
 
     // fetching Expression Atlas accessions if applicable
-    if ( !params.skip_fetch_eatlas_accessions || params.keywords ) {
+    if ( !params.skip_fetch_eatlas_accessions ) {
 
         // getting Expression Atlas accessions given a species name and keywords
         // keywords can be an empty string

@@ -30,7 +30,7 @@ workflow GEO_FETCHDATA {
         .set { ch_input_accessions }
 
     // fetching GEO accessions if applicable
-    if ( !params.skip_fetch_geo_accessions || params.keywords ) {
+    if ( !params.skip_fetch_geo_accessions ) {
 
         ch_excluded_accessions
             .collectFile(
