@@ -54,9 +54,7 @@ workflow MERGE_DATA {
             meta, _ -> // extracts design file and adds batch column whenever missing (for custom datasets)
                 def design_content = meta.design.splitCsv( header: true )
                 // if there is no batch, it is custom data
-                // prepending dataset id to sample name and adding it as batch identifier
                 def updated_design_content = design_content.collect { row ->
-                    row.sample = row.batch ?: "custom_${meta.dataset}_${row.sample}"
                     row.batch = row.batch ?: "custom_${meta.dataset}"
                     return row
                 }
