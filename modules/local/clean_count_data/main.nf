@@ -4,12 +4,14 @@ process CLEAN_COUNT_DATA {
 
     errorStrategy {
         if (task.exitStatus == 101) {
-            log.error(
+            /*
+            log.warning(
                 "No more valid sample after checking p-value of Kolmogorow-Smirnoff test against target distribution! "
                 + "You can try a more flexible approach by setting again the value of the ks_pvalue_threshold parameter. "
                 + "Provide a negative value to disable this filter."
             )
-            return 'terminate'
+            */
+            return 'ignore'
         }
     }
 
