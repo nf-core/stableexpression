@@ -1,3 +1,4 @@
+import socket
 import dash_mantine_components as dmc
 
 from dash_extensions.enrich import (
@@ -64,6 +65,17 @@ common.register_callbacks()
 genes.register_callbacks()
 samples.register_callbacks()
 
+# -------------------- LAUNCH SERVER --------------------
+
+
+def find_port(port: int) -> int:
+    """Find a port not in use starting at given port"""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        if s.connect_ex(("localhost", port)) == 0:
+            return find_port(port=port + 1)
+        else:
+            return port
+
 
 if __name__ == "__main__":
     logger.info("Running server")
@@ -74,6 +86,6 @@ if __name__ == "__main__":
     app.run(
         debug=DEBUG,
         host=config.HOST,
-        port=config.PLOTLY_APP_PORT,
+        port=find_port(port=config.PLOTLY_APP_PORT),
         dev_tools_prune_errors=prune_errors,
     )
