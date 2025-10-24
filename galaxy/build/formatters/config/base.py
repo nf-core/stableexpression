@@ -1,7 +1,7 @@
 from pathlib import Path
 import requests
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import ClassVar
 from packaging.version import parse as vparse
 import logging
@@ -19,23 +19,16 @@ class BaseConfigFormatter:
         "openjdk": "conda-forge",
     }
 
-    pipeline_version: str = field(init=False)
-    package_version: dict = field(init=False, default_factory=dict)
-    executable: str = field(init=False)
-
-    def __post_init__(self):
-        # CONDA PACKAGE VERSIONS
-        for package, repo in self.PACKAGES_REPOS.items():
-            self.package_version[package] = self.get_package_version(package, repo)
-
-        # PARSING CONFIG
-        with open(self.CONFIG_FILE, "r") as f:
-            pipeline_config = f.read()
-
-        self.pipeline_version = self.get_pipeline_version(pipeline_config)
-
     @classmethod
-    def get_package_version(cls, package: str, repo: str) -> str:
+    def get_package_versions(cls) -> dict:
+        # CONDA PACKAGE VERSIONS
+        package_version = {}
+        for package, repo in cls.PACKAGES_REPOS.items():
+            package_version[package] = cls.get_package_version(package, repo)
+        return package_version
+
+    @staticmethod
+    def get_package_version(package: str, repo: str) -> str:
         """
         Get latest pip version of package
         """
@@ -52,26 +45,38 @@ class BaseConfigFormatter:
         except requests.RequestException as e:
             raise RuntimeError(f"Error fetching version info: {e}")
 
-    @staticmethod
-    def get_pipeline_version(pipeline_config: str):
+    @classmethod
+    def get_pipeline_metadata(cls) -> dict:
+        #  PARSING CONFIG
+        with open(cls.CONFIG_FILE, "r") as f:
+            pipeline_config = f.read()
+
         # regular expression to find the manifest block and extract the version
         manifest_pattern = re.compile(r"manifest\s*{\s*(.*?)\s*}", re.DOTALL)
         manifest_match = manifest_pattern.search(pipeline_config)
         version = None
+        name = None
 
         if manifest_match:
             manifest_content = manifest_match.group(1)
+
+            # regular expression to find the version field
+            name_pattern = re.compile(r'name\s*=\s*[\'"](.*?)[\'"]')
+            name_match = name_pattern.search(manifest_content)
+            if name_match:
+                name = name_match.group(1)
+            else:
+                raise ValueError("No name found in pipeline config")
+
             # regular expression to find the version field
             version_pattern = re.compile(r'version\s*=\s*[\'"](.*?)[\'"]')
             version_match = version_pattern.search(manifest_content)
-
             if version_match:
                 version = version_match.group(1)
+            else:
+                raise ValueError("No version found in pipeline config")
 
-        if version is None:
-            raise ValueError("No version found in pipeline config")
-
-        return version
+        return dict(name=name, version=version)
 
 
 @dataclass

@@ -1,0 +1,49 @@
+<tool id="nf_core_stableexpression" name="nf-core/stableexpression" version="PIPELINE_VERSION">
+    <description>DESCRIPTION</description>
+    <requirements>
+        <requirement type="package" version="NEXTFLOW_VERSION">nextflow</requirement>
+        <requirement type="package" version="APPTAINER_VERSION">apptainer</requirement>
+        <requirement type="package" version="OPENJDK_VERSION">openjdk</requirement>
+    </requirements>
+    <version_command><![CDATA[
+VERSION="PIPELINE_VERSION"; echo "$VERSION"
+    ]]></version_command>
+    <command detect_errors="exit_code"><![CDATA[
+
+        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ## Running pipeline
+        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        nextflow drop -f nf-core/stableexpression
+        && nextflow run nf-core/stableexpression
+            -r dev -latest
+            -profile apptainer
+            -ansi-log false
+            --outdir ./results
+PARAMETERS
+
+        && zip -r results.zip results
+
+    ]]>
+    </command>
+    <inputs>
+INPUTS
+    </inputs>
+    <help><![CDATA[
+
+See https://nf-co.re/stableexpression/ for detailed documentation
+
+     ]]></help>
+    <citations>
+        <citation type="bibtex">
+            @misc{nf-core/stableexpression,
+              author = {},
+              year = {},
+              title = {nf-core/stableexpression},
+              publisher = {GitHub},
+              journal = {GitHub repository},
+              url = {https://github.com/nf-core/stableexpression},
+            }
+        </citation>
+    </citations>
+</tool>
