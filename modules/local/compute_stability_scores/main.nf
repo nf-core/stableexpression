@@ -9,7 +9,9 @@ process COMPUTE_STABILITY_SCORES {
 
     input:
     path stat_file
-    path stability_files, stageAs: "?/*"
+    val stability_score_weights
+    path normfinder_stability_file
+    val genorm_stability_file
 
     output:
     path 'stats_with_scores.csv',                                                                                     emit: stats_with_stability_scores
@@ -17,10 +19,13 @@ process COMPUTE_STABILITY_SCORES {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
+    def genorm_stability_file_arg = genorm_stability_file ? "--genorm-stability $genorm_stability_file" : ""
     """
     compute_stability_scores.py \\
         --stats $stat_file \\
-        --stabilities "$stability_files"
+        --weights "$stability_score_weights" \\
+        --normfinder-stability $normfinder_stability_file \\
+        $genorm_stability_file_arg
     """
 
 }

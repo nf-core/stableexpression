@@ -248,11 +248,19 @@
                     "default": "std",
                     "help_text": "Candidate genes are chosen based on a certain statistical descriptor. Set this parameter to modify the descriptor used."
                 },
-                "skip_genorm": {
+                "run_genorm": {
                     "type": "boolean",
-                    "description": "Skip the Genorm step",
+                    "description": "Run Genorm",
                     "fa_icon": "fas fa-ban",
-                    "help": "Genorm is run by default and provides additional information about gene stability. Set this parameter to skip this step."
+                    "help": "Genorm is NOT run by default. To run and get additional information about gene stability, set this parameter."
+                },
+                "stability_score_weights": {
+                    "type": "string",
+                    "description": "Weights for stability score calculation",
+                    "fa_icon": "fas fa-chart-simple",
+                    "default": "0.7,0.1,0.1,0.1",
+                    "help_text": "Weights for Standard deviation / Median absolute deviation / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.7,0.1,0.1,0.1",
+                    "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$"
                 },
                 "nb_top_gene_candidates": {
                     "type": "integer",
