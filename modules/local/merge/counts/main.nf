@@ -1,6 +1,6 @@
 process MERGE_COUNTS {
 
-    memory { def calc = (dataset_size / 5000).toInteger()
+    memory { def calc = (dataset_size / 10000).toInteger()
         def result = Math.max(1, calc)  // Ensure at least 1 MB
         def multiplicator = 1 + 0.2 * task.attempt // increase memory usage with each attempt by 20%
         return 1.MB * result * multiplicator

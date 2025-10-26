@@ -3,6 +3,7 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
+from tqdm import tqdm
 import polars as pl
 from pathlib import Path
 import logging
@@ -36,23 +37,22 @@ def parse_args():
 #####################################################
 
 
-def parse_count_file(count_file: Path) -> pl.LazyFrame:
-    lf = pl.scan_parquet(count_file)
+def parse_count_file(count_file: Path) -> pl.DataFrame:
+    df = pl.read_parquet(count_file)
     # in some cases, the first column may have an empty name or be different than config.ENSEMBL_GENE_ID_COLNAME
     # in any case, this column must have the config.ENSEMBL_GENE_ID_COLNAME name
-    first_column_name = lf.collect_schema().names()[0]
+    first_column_name = df.columns[0]
     if first_column_name != config.ENSEMBL_GENE_ID_COLNAME:
-        lf = lf.rename({first_column_name: config.ENSEMBL_GENE_ID_COLNAME})
-    return lf
+        df = df.rename({first_column_name: config.ENSEMBL_GENE_ID_COLNAME})
+    return df
 
 
-def is_valid_df(lf: pl.LazyFrame, file: Path) -> bool:
-    """Check if a LazyFrame is valid.
-
-    A LazyFrame is considered valid if it contains at least one row.
+def is_valid_df(df: pl.DataFrame, file: Path) -> bool:
+    """Check if a DataFrame is valid.
+    A DataFrame is considered valid if it contains at least one row.
     """
     try:
-        return not lf.limit(1).collect().is_empty()
+        return not df.limit(1).is_empty()
     except FileNotFoundError:
         # strangely enough we get this error for some files existing but empty
         logger.error(f"Could not find file {str(file)}")
@@ -62,33 +62,30 @@ def is_valid_df(lf: pl.LazyFrame, file: Path) -> bool:
         return False
 
 
-def get_valid_lazy_dfs(files: list[Path]) -> list[pl.LazyFrame]:
-    """Get a list of valid LazyFrames from a list of files.
-
-    A LazyFrame is considered valid if it contains at least one row.
+def get_valid_lazy_dfs(files: list[Path]) -> list[pl.DataFrame]:
+    """Get a list of valid DataFrames from a list of files.
+    A DataFrame is considered valid if it contains at least one row.
     """
-    lf_dict = {file: parse_count_file(file) for file in files}
-    return [lf for file, lf in lf_dict.items() if is_valid_df(lf, file)]
+    df_dict = {file: parse_count_file(file) for file in tqdm(files)}
+    return [df for file, df in df_dict.items()]
 
 
-def join_count_dfs(lf1: pl.LazyFrame, lf2: pl.LazyFrame) -> pl.LazyFrame:
-    """Join two LazyFrames on the config.ENSEMBL_GENE_ID_COLNAME column.
+def join_count_dfs(df1: pl.DataFrame, df2: pl.DataFrame) -> pl.DataFrame:
+    """Join two DataFrames on the config.ENSEMBL_GENE_ID_COLNAME column.
 
     The how parameter is set to "full" to include all rows from both dfs.
     The coalesce parameter is set to True to fill NaN values in the
     resulting dataframe with values from the other dataframe.
     """
-    return lf1.join(lf2, on=config.ENSEMBL_GENE_ID_COLNAME, how="full", coalesce=True)
+    return df1.join(df2, on=config.ENSEMBL_GENE_ID_COLNAME, how="full", coalesce=True)
 
 
-def get_count_columns(lf: pl.LazyFrame) -> list[str]:
+def get_count_columns(df: pl.DataFrame) -> list[str]:
     """Get all column names except the config.ENSEMBL_GENE_ID_COLNAME column.
 
     The config.ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
     """
-    return (
-        lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
-    )
+    return df.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).columns
 
 
 def get_counts(files: list[Path]) -> pl.DataFrame:
@@ -97,27 +94,24 @@ def get_counts(files: list[Path]) -> pl.DataFrame:
     The files are merged into a single dataframe. The config.ENSEMBL_GENE_ID_COLNAME column is cast
     to String, and all other columns are cast to Float64.
     """
-    # lazy loading
-    lfs = get_valid_lazy_dfs(files)
+    logger.info("Parsing counts")
+    dfs = get_valid_lazy_dfs(files)
+
     # joining all count files
-    merged_lf = reduce(join_count_dfs, lfs)
-
-    count_columns = get_count_columns(merged_lf)
-    # casting count columns to Float64
-    # casting gene id column to String
-    # casting nans to nulls
-    return (
-        merged_lf.select(
-            [pl.col(config.ENSEMBL_GENE_ID_COLNAME).cast(pl.String)]
-            + [pl.col(column).cast(pl.Float64) for column in count_columns]
-        )
-        .fill_nan(None)
-        .collect()
+    logger.info(
+        f"Joining count files recursively on the {config.ENSEMBL_GENE_ID_COLNAME} column"
     )
+    merged_df = reduce(join_count_dfs, tqdm(dfs))
 
-
-def get_nb_rows(lf: pl.LazyFrame) -> int:
-    return lf.select(pl.len()).collect().item()
+    count_columns = get_count_columns(merged_df)
+    # casting count columns to Float64
+    # casting gene id column to Stringcount_files
+    # casting nans to nulls
+    logger.info("Cleaning mergeed dataframe")
+    return merged_df.select(
+        [pl.col(config.ENSEMBL_GENE_ID_COLNAME).cast(pl.String)]
+        + [pl.col(column).cast(pl.Float64) for column in count_columns]
+    ).fill_nan(None)
 
 
 #####################################################
@@ -141,6 +135,7 @@ def export_data(count_df: pl.DataFrame):
 def main():
     args = parse_args()
     count_files = [Path(file) for file in args.count_files.split(" ")]
+    logger.info(f"Merging {len(count_files)} count files")
 
     # putting all counts into a single dataframe
     count_df = get_counts(count_files)
