@@ -62,7 +62,7 @@ def is_valid_df(df: pl.DataFrame, file: Path) -> bool:
         return False
 
 
-def get_valid_lazy_dfs(files: list[Path]) -> list[pl.DataFrame]:
+def get_valid_dfs(files: list[Path]) -> list[pl.DataFrame]:
     """Get a list of valid DataFrames from a list of files.
     A DataFrame is considered valid if it contains at least one row.
     """
@@ -95,7 +95,7 @@ def get_counts(files: list[Path]) -> pl.DataFrame:
     to String, and all other columns are cast to Float64.
     """
     logger.info("Parsing counts")
-    dfs = get_valid_lazy_dfs(files)
+    dfs = get_valid_dfs(files)
 
     # joining all count files
     logger.info(

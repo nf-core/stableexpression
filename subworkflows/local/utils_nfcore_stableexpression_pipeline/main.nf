@@ -385,11 +385,11 @@ def augmentToMetadata( ch_files ) {
 def storeDatasetSize( ch_counts, nb_genes_key, nb_samples_key ) {
     // adding nb genes and nb samples in the meta map under keys provided as parameters
     return ch_counts
-            .map { meta, file ->
-                def content = file.splitCsv( header: true )
+            .map { meta, count_file ->
+                def content = count_file.splitCsv( header: true )
                 meta[nb_genes_key] = content.size()
                 meta[nb_samples_key] = content[0].findAll {it.key != 'ensembl_gene_id'}.size()
-                [ meta, file ]
+                [ meta, count_file ]
             }
 }
 
