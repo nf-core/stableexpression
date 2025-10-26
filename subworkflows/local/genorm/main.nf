@@ -62,21 +62,19 @@ workflow GENORM {
 //
 def getUniqueFilePairs( ch_count_chunks ) {
 
-    ch_count_chunks_with_indexes = ch_count_chunks
-        .map { file -> [file.name.tokenize('.')[1], file] } // extract file index
+    def ch_count_chunks_with_indexes = ch_count_chunks
+                                        .map { file -> [file.name.tokenize('.')[1], file] } // extract file index
 
     return ch_count_chunks_with_indexes
-        .combine( ch_count_chunks_with_indexes ) // full cartesian product with itself
-        .map { // steps not mandatory but helps to make the filter clearer
-            index_1, file_1, index_2, file_2 ->
-                [index_1: index_1, index_2: index_2, file_1: file_1, file_2: file_2]
-        }
-        .filter { it -> it.index_1 <= it.index_2 } // keeps only pairs where i <= j
-        .map {
-            it ->
-                def meta = [index_1: it.index_1, index_2: it.index_2] // puts indexes in a meta tuple
-                [ meta, it.file_1, it.file_2 ]
-        }
+            .combine( ch_count_chunks_with_indexes ) // full cartesian product with itself
+            .map { // steps not mandatory but helps to make the filter clearer
+                index_1, file_1, index_2, file_2 ->
+                    [index_1: index_1, index_2: index_2, file_1: file_1, file_2: file_2]
+            }
+            .filter { it -> it.index_1 <= it.index_2 } // keeps only pairs where i <= j
+            .map {
+                it ->
+                    def meta = [index_1: it.index_1, index_2: it.index_2] // puts indexes in a meta tuple
+                    [ meta, it.file_1, it.file_2 ]
+            }
 }
-
-

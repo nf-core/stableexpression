@@ -26,7 +26,7 @@ process GEO_GETDATA {
             return 'ignore'
         } else if (task.exitStatus == 137) { // override default behaviour to sleep some time before retry
             // in case of OOM errors, we wait a bit and try again (2 retries)
-            if ( task.attempt in <= 2) {
+            if ( task.attempt <= 2) {
                 sleep(Math.pow(2, task.attempt) * 2000 as long)
                 return 'retry'
             } else {

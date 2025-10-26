@@ -26,7 +26,7 @@ workflow GEO_FETCHDATA {
     Channel.fromList( params.geo_accessions.tokenize(',') )
         .mix( ch_geo_accessions_file.splitText() )
         .unique()
-        .map { it -> it.trim() }
+        .map { acc -> acc.trim() }
         .set { ch_input_accessions }
 
     // fetching GEO accessions if applicable
@@ -64,7 +64,7 @@ workflow GEO_FETCHDATA {
     Channel.fromList( params.exclude_geo_accessions.tokenize(',') )
         .mix( ch_exclude_geo_accessions_file.splitText() )
         .unique()
-        .map { it -> it.trim() }
+        .map { acc -> acc.trim() }
         .toList()
         .map { lst -> [lst] } // list of lists : mandatory when combining in the next step
         .set { ch_excluded_accessions }
@@ -75,8 +75,8 @@ workflow GEO_FETCHDATA {
     ch_input_accessions
         .mix( ch_fetched_accessions )
         .unique()
-        .map { it -> it.trim() }
-        .filter { it.startsWith('GSE') }
+        .map { acc -> acc.trim() }
+        .filter { acc -> acc.startsWith('GSE') }
         .combine ( ch_excluded_accessions )
         .filter { accession, excluded_accessions -> !(accession in excluded_accessions) }
         .map { accession, excluded_accessions -> accession }

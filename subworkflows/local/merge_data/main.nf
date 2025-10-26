@@ -74,7 +74,7 @@ workflow MERGE_DATA {
 
     ch_normalised_counts
         .map {
-            meta, _ -> // extracts design file and adds batch column whenever missing (for custom datasets)
+            meta, file -> // extracts design file and adds batch column whenever missing (for custom datasets)
                 def design_content = meta.design.splitCsv( header: true )
                 // if there is no batch, it is custom data
                 def updated_design_content = design_content.collect { row ->

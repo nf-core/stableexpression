@@ -2,8 +2,6 @@
 // Subworkflow with functionality specific to the nf-core/stableexpression pipeline
 //
 
-import org.yaml.snakeyaml.Yaml
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS
@@ -175,7 +173,7 @@ def validateInputParameters(params) {
 
     // if expression atlas accessions are provided, checking that they are well formated
     if ( params.eatlas_accessions ) {
-        for ( accession in params.eatlas_accessions.tokenize(',') ) {
+        params.eatlas_accessions.tokenize(',').each { accession ->
             if ( !accession.startsWith('E-') ) {
                 error('Expression Atlas accession ' + accession + ' is not well formated. All accessions should start with "E-".')
             }
@@ -196,7 +194,7 @@ def parseInputDatasets(samplesheet) {
             .map {
                 item ->
                     def (meta, count_file) = item
-                    new_meta = meta + [dataset: count_file.getBaseName()]
+                    def new_meta = meta + [dataset: count_file.getBaseName()]
                     [new_meta, count_file]
             }
 }
@@ -293,8 +291,8 @@ def methodsDescriptionText(mqc_methods_yaml) {
 // temporary replacements of the native processVersionsFromYAML
 //
 def customProcessVersionsFromYAML(yaml_file) {
-    Yaml yaml = new Yaml()
-    versions = yaml.load(yaml_file)
+    def yaml = new org.yaml.snakeyaml.Yaml()
+    def versions = yaml.load(yaml_file)
     return yaml.dumpAsMap(versions).trim()
 }
 
@@ -388,7 +386,7 @@ def storeDatasetSize( ch_counts, nb_genes_key, nb_samples_key ) {
     // adding nb genes and nb samples in the meta map under keys provided as parameters
     return ch_counts
             .map { meta, file ->
-            def content = file.splitCsv( header: true )
+                def content = file.splitCsv( header: true )
                 meta[nb_genes_key] = content.size()
                 meta[nb_samples_key] = content[0].findAll {it.key != 'ensembl_gene_id'}.size()
                 [ meta, file ]

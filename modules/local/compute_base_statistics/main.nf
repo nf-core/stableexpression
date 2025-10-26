@@ -4,10 +4,7 @@ process COMPUTE_BASE_STATISTICS {
 
     errorStrategy {
         if (task.exitStatus == 100) {
-            log.error(
-                "No count could be found before merging datasets! "
-                + "Please check the provided accessions and datasets and run again"
-                )
+            log.error("No count could be found before merging datasets! Please check the provided accessions and datasets and run again")
             return 'terminate'
         }
     }

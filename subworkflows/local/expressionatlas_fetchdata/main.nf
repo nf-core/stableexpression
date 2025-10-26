@@ -27,7 +27,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
     Channel.fromList( params.eatlas_accessions.tokenize(',') )
         .mix( ch_eatlas_accessions_file.splitText() )
         .unique()
-        .map { it -> it.trim() }
+        .map { acc -> acc.trim() }
         .set { ch_input_accessions }
 
     // fetching Expression Atlas accessions if applicable
@@ -54,7 +54,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
     Channel.fromList( params.exclude_eatlas_accessions.tokenize(',') )
         .mix( ch_exclude_eatlas_accessions_file.splitText() )
         .unique()
-        .map { it -> it.trim() }
+        .map { acc -> acc.trim() }
         .toList()
         .map { lst -> [lst] } // list of lists : mandatory when combining in the next step
         .set { ch_excluded_accessions }
@@ -66,8 +66,8 @@ workflow EXPRESSIONATLAS_FETCHDATA {
     ch_input_accessions
         .mix( ch_fetched_accessions )
         .unique()
-        .map { it -> it.trim() }
-        .filter { it.startsWith('E-') && !it.startsWith('E-PROT-') }
+        .map { acc -> acc.trim() }
+        .filter { acc -> acc.startsWith('E-') && !acc.startsWith('E-PROT-') }
         .combine ( ch_excluded_accessions )
         .filter { accession, excluded_accessions -> !(accession in excluded_accessions) }
         .map { accession, excluded_accessions -> accession }
