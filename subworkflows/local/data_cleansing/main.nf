@@ -39,7 +39,3 @@ workflow DATA_CLEANSING {
     cleaned_counts                   = CLEAN_COUNT_DATA.out.counts
 
 }
-
-
-
-

@@ -35,7 +35,7 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     }
     // the folder where nltk will download data needs to be writable (necessary for singularity)
     """
-    NLTK_DATA=${task.workDir} get_eatlas_accessions.py $args
+    NLTK_DATA=\${PWD} get_eatlas_accessions.py $args
     """
 
     stub:

@@ -112,14 +112,12 @@ workflow STABLEEXPRESSION {
             params.ks_pvalue_threshold
         )
 
-        ch_counts = storeDatasetSize( DATA_CLEANSING.out.cleaned_counts, "nb_genes_final", "nb_samples_final" )
-
         // -----------------------------------------------------------------
         // MERGE DATA
         // -----------------------------------------------------------------
 
         MERGE_DATA (
-            ch_counts,
+            DATA_CLEANSING.out.cleaned_counts,
             ch_gene_id_mapping,
             ch_gene_metadata
         )

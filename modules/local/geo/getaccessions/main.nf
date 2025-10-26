@@ -48,7 +48,7 @@ process GEO_GETACCESSIONS {
     export HOME=/tmp/biopython
     mkdir -p /tmp/biopython
 
-    export NLTK_DATA=${task.workDir}
+    export NLTK_DATA=\${PWD}
 
     get_geo_dataset_accessions.py \\
         $args \\
