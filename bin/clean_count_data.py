@@ -99,7 +99,9 @@ def get_count_columns(lf: pl.LazyFrame) -> list[str]:
 
     The config.ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
     """
-    return lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
+    return (
+        lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
+    )
 
 
 def get_counts(
@@ -112,8 +114,9 @@ def get_counts(
 def remove_samples_with_low_ks_pvalue(
     count_lf: pl.LazyFrame, ks_stats_file: Path, ks_pvalue_threshold: str
 ) -> pl.LazyFrame:
-
-    ks_stats_df = pl.read_csv(ks_stats_file, has_header=True).select([config.SAMPLE_COLNAME, config.KS_TEST_COLNAME])
+    ks_stats_df = pl.read_csv(ks_stats_file, has_header=True).select(
+        [config.SAMPLE_COLNAME, config.KS_TEST_COLNAME]
+    )
 
     # parsing threshold
     try:
@@ -148,7 +151,7 @@ def remove_samples_with_low_ks_pvalue(
     return count_lf.select([config.ENSEMBL_GENE_ID_COLNAME] + valid_samples)
 
 
-def export_data( all_counts_lf: pl.LazyFrame):
+def export_data(all_counts_lf: pl.LazyFrame):
     all_counts_lf.collect().write_parquet(ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME)
     logger.info("Done")
 
@@ -167,7 +170,9 @@ def main():
     count_lf = get_counts(args.count_file)
 
     # removing aberrant samples (ks p-value under the threshold)
-    count_lf = remove_samples_with_low_ks_pvalue(count_lf, args.ks_stats_file, args.ks_pvalue_threshold)
+    count_lf = remove_samples_with_low_ks_pvalue(
+        count_lf, args.ks_stats_file, args.ks_pvalue_threshold
+    )
 
     # exporting computed data
     export_data(count_lf)

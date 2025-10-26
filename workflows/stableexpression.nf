@@ -88,9 +88,9 @@ workflow STABLEEXPRESSION {
             GPROFILER_IDMAPPING.out.mapping.set { ch_gene_id_mapping }
             GPROFILER_IDMAPPING.out.metadata.set { ch_gene_metadata }
 
-            ch_counts = storeDatasetSize( ch_counts, "nb_genes_after_idmapping", "nb_samples_after_idmapping" )
-
         }
+
+        ch_counts = storeDatasetSize( ch_counts, "nb_genes_after_idmapping", "nb_samples_after_idmapping" )
 
         // -----------------------------------------------------------------
         // NORMALISATION OF RAW COUNT DATASETS (INCLUDING RNA-SEQ DATASETS)
@@ -112,14 +112,14 @@ workflow STABLEEXPRESSION {
             params.ks_pvalue_threshold
         )
 
-        ch_counts = storeDatasetSize( ch_counts, "nb_genes_final", "nb_samples_final" )
+        ch_counts = storeDatasetSize( DATA_CLEANSING.out.cleaned_counts, "nb_genes_final", "nb_samples_final" )
 
         // -----------------------------------------------------------------
         // MERGE DATA
         // -----------------------------------------------------------------
 
         MERGE_DATA (
-            DATA_CLEANSING.out.cleaned_counts ,
+            ch_counts,
             ch_gene_id_mapping,
             ch_gene_metadata
         )
@@ -148,7 +148,7 @@ workflow STABLEEXPRESSION {
         )
 
         STABILITY_SCORING.out.summary_statistics.set { ch_candidate_gene_stats_with_scores }
-        //ch_candidate_gene_stats_with_scores.splitCsv(header: true).view()
+
         // -----------------------------------------------------------------
         // AGGREGATE ALL RESULTS FOR MULTIQC
         // -----------------------------------------------------------------
