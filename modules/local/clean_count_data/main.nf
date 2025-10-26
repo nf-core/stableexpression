@@ -16,7 +16,7 @@ process CLEAN_COUNT_DATA {
     }
 
     conda "${moduleDir}/spec-file.txt"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f8a5d02e7b31980c887253a9f118da0ef91ead1c7b158caf855199e5c5d5473/data':
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 

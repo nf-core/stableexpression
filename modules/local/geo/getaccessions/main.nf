@@ -3,7 +3,7 @@ process GEO_GETACCESSIONS {
     label 'process_high_cpus'
 
     conda "${moduleDir}/spec-file.txt"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ca/caae35ec5dc72367102a616a47b6f1a7b3de9ff272422f2c08895b8bb5f0566c/data':
         'community.wave.seqera.io/library/biopython_nltk_pandas_parallelbar_pruned:5fc501b07f8e0428' }"
 

@@ -5,7 +5,7 @@ process DATASET_STATISTICS {
     tag "${meta.dataset}"
 
     conda "${moduleDir}/spec-file.txt"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5f/5fe497e7a739fa611fedd6f72ab9a3cf925873a5ded3188161fc85fd376b2c1c/data':
         'community.wave.seqera.io/library/pandas_pyarrow_python_scipy:7cad0d297a717147' }"
 

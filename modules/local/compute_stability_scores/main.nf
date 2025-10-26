@@ -3,7 +3,7 @@ process COMPUTE_STABILITY_SCORES {
     label 'process_single'
 
     conda "${moduleDir}/spec-file.txt"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/01/0118e0577564644b18f94fa6525fe3a2aec845721081b55d82a18e803a50ab17/data':
         'community.wave.seqera.io/library/polars_scikit-learn:036e189d7c1f9704' }"
 

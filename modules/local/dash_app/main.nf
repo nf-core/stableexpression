@@ -3,7 +3,7 @@ process DASH_APP {
     label 'process_single'
 
     conda "${moduleDir}/app/spec-file.txt"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b3/b39ecd56e298b0ba94bed41bb36d67b0a2bc24634bc53baff9773dcc3d422c01/data':
         'community.wave.seqera.io/library/dash-ag-grid_dash-extensions_dash-iconify_dash-mantine-components_pruned:138d9ff01702db68' }"
 
