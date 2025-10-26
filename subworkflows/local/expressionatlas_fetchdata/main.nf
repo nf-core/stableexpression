@@ -1,8 +1,9 @@
 include { EXPRESSIONATLAS_GETACCESSIONS          } from '../../../modules/local/expressionatlas/getaccessions'
 include { EXPRESSIONATLAS_GETDATA                } from '../../../modules/local/expressionatlas/getdata'
-include { addDatasetIdToMetadata     } from '../utils_nfcore_stableexpression_pipeline'
-include { groupFilesByDatasetId      } from '../utils_nfcore_stableexpression_pipeline'
-include { augmentToMetadata          } from '../utils_nfcore_stableexpression_pipeline'
+
+include { addDatasetIdToMetadata                 } from '../utils_nfcore_stableexpression_pipeline'
+include { groupFilesByDatasetId                  } from '../utils_nfcore_stableexpression_pipeline'
+include { augmentToMetadata                      } from '../utils_nfcore_stableexpression_pipeline'
 
 /*
 ========================================================================================

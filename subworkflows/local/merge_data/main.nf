@@ -2,6 +2,8 @@ include { MERGE_COUNTS as MERGE_ALL_COUNTS              } from '../../../modules
 include { MERGE_COUNTS as MERGE_RNASEQ_COUNTS           } from '../../../modules/local/merge/counts'
 include { MERGE_COUNTS as MERGE_MICROARRAY_COUNTS       } from '../../../modules/local/merge/counts'
 
+include { getWholeDatasetSize                           } from '../../../subworkflows/local/utils_nfcore_stableexpression_pipeline'
+
 
 /*
 ========================================================================================
@@ -22,20 +24,30 @@ workflow MERGE_DATA {
     // MERGE COUNTS FOR EACH PLATFORM SEPARATELY
     // -----------------------------------------------------------------
 
+    // RNASEQ
     ch_normalised_counts
         .filter { meta, file -> meta.platform == "rnaseq" }
-        .map { meta, file -> file }
         .set { ch_normalised_rnaseq_counts }
 
-    MERGE_RNASEQ_COUNTS ( ch_normalised_rnaseq_counts.collect() )
+    ch_whole_rnaseq_size = getWholeDatasetSize ( ch_normalised_rnaseq_counts )
+
+    MERGE_RNASEQ_COUNTS (
+        ch_normalised_rnaseq_counts.map { meta, file -> file }.collect(),
+        ch_whole_rnaseq_size
+    )
     MERGE_RNASEQ_COUNTS.out.counts.set { ch_merged_rnaseq_counts }
 
-     ch_normalised_counts
+    // MICROARRAY
+    ch_normalised_counts
         .filter { meta, file -> meta.platform == "microarray" }
-        .map { meta, file -> file }
         .set { ch_normalised_microarray_counts }
 
-    MERGE_MICROARRAY_COUNTS ( ch_normalised_microarray_counts.collect() )
+    ch_whole_microarray_size = getWholeDatasetSize ( ch_normalised_microarray_counts )
+
+    MERGE_MICROARRAY_COUNTS (
+        ch_normalised_microarray_counts.map { meta, file -> file }.collect(),
+        ch_whole_microarray_size
+    )
     MERGE_MICROARRAY_COUNTS.out.counts.set { ch_merged_microarray_counts }
 
     // -----------------------------------------------------------------
@@ -46,7 +58,15 @@ workflow MERGE_DATA {
         .mix ( ch_merged_microarray_counts )
         .set { ch_platform_counts }
 
-    MERGE_ALL_COUNTS( ch_platform_counts.collect() )
+    ch_whole_rnaseq_size
+        .mix(ch_whole_microarray_size)
+        .reduce { rnaseq_size, microarray_size -> rnaseq_size + microarray_size }
+        .set { ch_whole_size }
+
+    MERGE_ALL_COUNTS(
+        ch_platform_counts.collect(),
+        ch_whole_size
+    )
 
     // -----------------------------------------------------------------
     // MERGE ALL DESIGNS IN A SINGLE TABLE

@@ -17,26 +17,7 @@ include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofi
 include { AGGREGATE_RESULTS                      } from '../modules/local/aggregate_results'
 include { DASH_APP                               } from '../modules/local/dash_app'
 
-
-/*
-========================================================================================
-    FUNCTIONS
-========================================================================================
-*/
-//
-// Check and validate pipeline parameters
-//
-
-def storeDatasetSize( ch_counts, nb_genes_key, nb_samples_key ) {
-    // adding nb genes and nb samples in the meta map
-    return ch_counts
-               .map { meta, file ->
-                def content = file.splitCsv( header: true )
-                    meta[nb_genes_key] = content.size()
-                    meta[nb_samples_key] = content[0].findAll {it.key != 'ensembl_gene_id'}.size()
-                    [ meta, file ]
-               }
-}
+include { storeDatasetSize                       } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
 
 /*
@@ -131,8 +112,8 @@ workflow STABLEEXPRESSION {
             params.ks_pvalue_threshold
         )
 
-        ch_counts = storeDatasetSize( ch_counts, "nb_genes_after_cleaning", "nb_samples_after_cleaning" )
-        ch_counts.view()
+        ch_counts = storeDatasetSize( ch_counts, "nb_genes_final", "nb_samples_final" )
+
         // -----------------------------------------------------------------
         // MERGE DATA
         // -----------------------------------------------------------------
@@ -147,7 +128,7 @@ workflow STABLEEXPRESSION {
         MERGE_DATA.out.whole_design.set { ch_whole_design }
 
         // -----------------------------------------------------------------
-        // COMPUTE BASE STATISTICS FOR ALL GENES
+        // COMPUTE BASE STATISTICS FOR ALL addDatasetIdToMetadataGENES
         // -----------------------------------------------------------------
 
         BASE_STATISTICS (

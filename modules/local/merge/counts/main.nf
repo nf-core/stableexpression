@@ -1,6 +1,10 @@
 process MERGE_COUNTS {
 
-    label 'process_high'
+    memory { def calc = (dataset_size / 5000).toInteger()
+        def result = Math.max(1, calc)  // Ensure at least 1 MB
+        def multiplicator = 1 + 0.2 * task.attempt // increase memory usage with each attempt by 20%
+        return 1.MB * result * multiplicator
+    }
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -9,6 +13,7 @@ process MERGE_COUNTS {
 
     input:
     path count_files, stageAs: "?/*"
+    val dataset_size
 
     output:
     path 'all_counts.parquet',                                                                                        emit: counts
@@ -16,6 +21,7 @@ process MERGE_COUNTS {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
+    println task.memory
     """
     merge_counts.py \\
         --counts "$count_files"
