@@ -37,7 +37,7 @@ workflow BASE_STATISTICS {
 
     COMPUTE_BASE_STATISTICS (
         ch_all_counts,
-        "none"
+        []
     )
 
     emit:

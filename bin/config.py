@@ -1,7 +1,6 @@
-
 # general column names
 ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
-RANK_COLNAME = "Rank"
+RANK_COLNAME = "rank"
 
 # base statistics
 VARIATION_COEFFICIENT_COLNAME = "variation_coefficient"
@@ -40,7 +39,5 @@ SCORING_BASE_TO_STABILITY_SCORE_COLUMN = {
     "genorm": GENORM_M_MEASURE_COLNAME,
     "std": STANDARD_DEVIATION_COLNAME,
     "cv": VARIATION_COEFFICIENT_COLNAME,
-    "mad": MAD_COLNAME
+    "mad": MAD_COLNAME,
 }
-
-

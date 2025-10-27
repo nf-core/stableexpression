@@ -10,8 +10,10 @@ process AGGREGATE_RESULTS {
     input:
     path count_file
     path stat_file
-    path metadata_files, stageAs: "?/*"
-    path mapping_files, stageAs: "?/*"
+    path rnaseq_dataset_stat_file, stageAs: "*/*"
+    path microarray_dataset_stat_file, stageAs: "*/*"
+    path metadata_files, stageAs: "*/*"
+    path mapping_files, stageAs: "*/*"
 
     output:
     path 'top_stable_genes_summary.csv',                                                                              emit: top_stable_genes_summary
@@ -22,12 +24,16 @@ process AGGREGATE_RESULTS {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
+    def rnaseq_dataset_stat_file_arg = rnaseq_dataset_stat_file ? "--rnaseq $rnaseq_dataset_stat_file" : ""
+    def microarray_dataset_stat_file_arg = microarray_dataset_stat_file ? "--microarray $microarray_dataset_stat_file" : ""
     """
     aggregate_results.py \\
         --counts $count_file \\
         --stats $stat_file \\
         --metadata "$metadata_files" \\
-        --mappings "$mapping_files"
+        --mappings "$mapping_files" \\
+        $rnaseq_dataset_stat_file_arg \\
+        $microarray_dataset_stat_file_arg \\
     """
 
 }

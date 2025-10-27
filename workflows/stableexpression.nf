@@ -135,6 +135,8 @@ workflow STABLEEXPRESSION {
             MERGE_DATA.out.microarray_counts
         )
 
+        BASE_STATISTICS.out.stats.set { ch_all_datasets_stats }
+
         // -----------------------------------------------------------------
         // GET CANDIDATES AS REFERENCE GENE AND COMPUTES VARIOUS STABILITY VALUES
         // -----------------------------------------------------------------
@@ -142,10 +144,10 @@ workflow STABLEEXPRESSION {
         STABILITY_SCORING (
             ch_all_counts,
             ch_whole_design,
-            BASE_STATISTICS.out.stats
+            ch_all_datasets_stats
         )
 
-        STABILITY_SCORING.out.summary_statistics.set { ch_candidate_gene_stats_with_scores }
+        STABILITY_SCORING.out.summary_statistics.set { ch_stats_all_genes_with_scores }
 
         // -----------------------------------------------------------------
         // AGGREGATE ALL RESULTS FOR MULTIQC
@@ -153,7 +155,9 @@ workflow STABLEEXPRESSION {
 
         AGGREGATE_RESULTS (
             ch_all_counts,
-            ch_candidate_gene_stats_with_scores,
+            ch_stats_all_genes_with_scores,
+            BASE_STATISTICS.out.rnaseq_stats.ifEmpty( [] ),
+            BASE_STATISTICS.out.microarray_stats.ifEmpty( [] ),
             MERGE_DATA.out.whole_gene_metadata,
             MERGE_DATA.out.whole_gene_id_mapping
         )
@@ -187,7 +191,7 @@ workflow STABLEEXPRESSION {
     DASH_APP(
         ch_all_counts,
         ch_whole_design,
-        ch_candidate_gene_stats_with_scores,
+        ch_stats_all_genes_with_scores,
         ch_all_genes_statistics
     )
 

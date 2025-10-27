@@ -21,6 +21,10 @@ disable_version_detection: true
 max_table_rows: 5000
 
 table_cond_formatting_colours:
+  - first: "#ffd700"
+  - second: "#C0C0C0"
+  - third: "#CD7F32"
+  - between_fourth_and_tenth: "#468F8F"
   - very_low: "#337ab7"
   - low: "#5bc0de"
   - medium: "#5cb85c"
@@ -32,47 +36,69 @@ custom_data:
     section_name: "Top stable genes - ranked by stability"
     file_format: "csv"
     no_violin: true
-    sort_rows: false
+    #sort_rows: false
     description: |
       Expression descriptive statistics of all genes, ranked by stability.
       Expression was first normalised dataset per dataset, then log2(cpm + 1) transformed (cpm :counts per million) and finally fitted to [0, 1] using quantile normalisation.
       Genes are sorted by stability score - from the most stable to the least stable.
     plot_type: "table"
     pconfig:
-      col1_header: "Rank"
+      col1_header: "Ensembl Gene ID"
+      sort_rows: false
     headers:
-      rank:
-        rid: "Rank"
-        hidden: true
       ensembl_gene_id:
         title: "Ensembl Gene ID"
         description: |
           Gene IDs as shown in Ensembl
+      rank:
+        title: "Rank"
+        description: |
+          Rank of the gene based on stability score
+        cond_formatting_rules:
+          between_fourth_and_tenth:
+            - eq: 4
+            - eq: 5
+            - eq: 6
+            - eq: 7
+            - eq: 8
+            - eq: 9
+            - eq: 10
+          third:
+            - eq: 3
+          second:
+            - eq: 2
+          first:
+            - eq: 1
       stability_score:
         title: "Stability score"
         description: |
           Final stability score : the lower, the better
         format: "{:,.6f}"
+        scale: "RdYlGn-rev"
       variation_coefficient_normalised:
         title: "Normalised coefficient of variation"
         description: |
           Quantile normalised (among candidate genes) coefficient of variation ( std(expression) / mean(expression) ) across all samples.
         format: "{:,.6f}"
+        scale: "PRGn-rev"
       normfinder_stability_value_normalised:
         title: "Normalised Normfinder stability value "
         description: |
           Quantile normalised (among candidate genes) stability value as computed by Normfinder
         format: "{:,.6f}"
+        scale: "PRGn-rev"
       genorm_m_measure_normalised:
         title: "Normalised Genorm M-measure"
         description: |
           Quantile normalised (among candidate genes) M-measure as computed by Genorm
         format: "{:,.6f}"
+        scale: "PRGn-rev"
       median_absolute_deviation_normalised:
         title: "Normalised median absolute deviation"
         description: |
           Quantile normalised (among candidate genes) median absolute deviation of the expression across all samples.
         format: "{:,.4f}"
+        scale: "PRGn-rev"
       standard_deviation:
         title: "Standard deviation"
         description: |

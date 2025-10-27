@@ -19,17 +19,19 @@ process COMPUTE_BASE_STATISTICS {
     val platform
 
     output:
-    path 'stats_all_genes.csv',                                                                                     emit: stats
+    path '*stats_all_genes.csv',                                                                                      emit: stats
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
-    if ( platform != 'none' ) {
+    def args = task.ext.args ?: ''
+    if ( platform != [] ) {
         args += " --platform $platform"
     }
     """
     compute_base_statistics.py \\
-        --counts $count_file
+        --counts $count_file \\
+        $args
     """
 
 }
