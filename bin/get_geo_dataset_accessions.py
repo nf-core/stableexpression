@@ -20,7 +20,6 @@ from tenacity import (
     wait_exponential,
     before_sleep_log,
 )
-import yaml
 from functools import partial
 import logging
 from requests.exceptions import HTTPError, ConnectionError
@@ -37,15 +36,22 @@ logger = logging.getLogger(__name__)
 
 ACCESSION_OUTFILE_NAME = "accessions.txt"
 SPECIES_DATASETS_OUTFILE_NAME = "species_datasets.metadata.tsv"
-FILTERED_DATASETS_METADATA_OUTFILE_NAME = "filtered_datasets.metadata.tsv"
-REJECTED_DATASETS_METADATA_OUTFILE_NAME = "rejected_datasets.metadata.tsv"
-SELECTED_DATASETS_METADATA_OUTFILE_NAME = "selected_datasets.metadata.tsv"
+WRONG_SPECIES_DATASETS_METADATA_OUTFILE_NAME = "wrong_species_datasets.metadata.tsv"
+WRONG_SPECS_DATASETS_METADATA_OUTFILE_NAME = (
+    "wrong_platform_moltype_datasets.metadata.tsv"
+)
+WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME = "wrong_keywords_datasets.metadata.tsv"
+PLATFORM_NOT_AVAILABLE_DATASETS_METADATA_OUTFILE_NAME = (
+    "platform_not_available_datasets.metadata.tsv"
+)
+GENE_ID_MAPPING_ISSUES_DATASETS_METADATA_OUTFILE_NAME = (
+    "gene_id_mapping_issues_datasets.metadata.tsv"
+)
 FINAL_DATASETS_METADATA_OUTFILE_NAME = "final_datasets.metadata.tsv"
-FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME = "selected_datasets.keywords.yaml"
 
 ENTREZ_QUERY_MAX_RESULTS = 9999
 ENTREZ_EMAIL = "stableexpression@nfcore.com"
-ENTREZ_CHUNKSIZE = 2000
+PLATFORM_METADATA_CHUNKSIZE = 2000
 
 NCBI_API_BASE_URL = (
     "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={accession}"
@@ -682,6 +688,36 @@ def filter_metadata_with_keywords(metadata: dict, keywords: list[str]) -> dict |
         return None
 
 
+def export_filtered_out_datasets_if_any(
+    original_dataset_metadata_list: list[dict],
+    filtered_dataset_metadata_list: list[dict],
+    filtered_out_outfile_name: str,
+    filtered_feature: str,
+):
+    # checking if all datasets were ok
+    filtered_out_dataset_metadata_list = [
+        dataset
+        for dataset in original_dataset_metadata_list
+        if dataset not in filtered_dataset_metadata_list
+    ]
+    if filtered_out_dataset_metadata_list:
+        logger.warning(
+            f"{len(filtered_out_dataset_metadata_list)} dataset(s) did not have the correct {filtered_feature}!"
+        )
+        logger.info(
+            f"Writing metadata of datasets corresponding to the wrong {filtered_feature} to {filtered_out_outfile_name}"
+        )
+        df = pd.DataFrame.from_dict(filtered_out_dataset_metadata_list)
+        df.to_csv(
+            filtered_out_outfile_name,
+            sep="\t",
+            index=False,
+            header=True,
+        )
+    else:
+        logger.info(f"All datasets had the correct {filtered_feature}")
+
+
 ##################################################################
 ##################################################################
 # MAIN
@@ -703,6 +739,13 @@ def main():
     logger.info(
         f"Found {len(dataset_metadata_list)} datasets for species {args.species}"
     )
+
+    if dataset_metadata_list:
+        logger.info(
+            f"Writing metadata of all experiments for species {args.species} to {SPECIES_DATASETS_OUTFILE_NAME}"
+        )
+        df = pd.DataFrame.from_dict(dataset_metadata_list)
+        df.to_csv(SPECIES_DATASETS_OUTFILE_NAME, sep="\t", index=False, header=True)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # FOR DEV PURPOSES / TESTING: RESTRICT TO SPECIFIC ACCESSIONS
@@ -736,52 +779,54 @@ def main():
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info("Excluding wrong species")
-    tmp_lst = [
+    good_species_dataset_metadata_list = [
         dataset
         for dataset in dataset_metadata_list
         if species_is_ok(dataset, args.species)
     ]
 
-    # checking if all datasets were ok
-    if len(tmp_lst) < len(dataset_metadata_list):
-        logger.warning(
-            f"{len(dataset_metadata_list) - len(tmp_lst)} dataset(s) did not have the correct species!"
-        )
-        selected_metadata_list = []
-    else:
-        logger.info("All datasets had the correct species")
-
-    dataset_metadata_list = tmp_lst
+    export_filtered_out_datasets_if_any(
+        original_dataset_metadata_list=dataset_metadata_list,
+        filtered_dataset_metadata_list=good_species_dataset_metadata_list,
+        filtered_out_outfile_name=WRONG_SPECIES_DATASETS_METADATA_OUTFILE_NAME,
+        filtered_feature="species",
+    )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # PARSING METADATA
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info("Parsing metadata")
-    metadata_list = []
+    augmented_dataset_metadata_list = []
     with (
         Pool(processes=args.nb_cpus) as p,
         tqdm(total=len(dataset_metadata_list)) as pbar,
     ):
-        for result in p.imap_unordered(parse_metadata, dataset_metadata_list):
+        for result in p.imap_unordered(
+            parse_metadata, good_species_dataset_metadata_list
+        ):
             pbar.update()
             pbar.refresh()
             if result is None:
                 continue
-            metadata_list.append(result)
+            augmented_dataset_metadata_list.append(result)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # CHECKING MOLECULE TYPE / PLATFORM TECHNOLOGIES
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info("Validating datasets")
-    filtered_metadata_list = [
+    specs_filtered_metadata_list = [
         metadata
-        for metadata in metadata_list
+        for metadata in augmented_dataset_metadata_list
         if dataset_is_valid(metadata, args.platform)
     ]
-    logger.info(
-        f"{len(filtered_metadata_list)} datasets remaining after checking technology platform and molecule type"
+
+    export_filtered_out_datasets_if_any(
+        original_dataset_metadata_list=augmented_dataset_metadata_list,
+        filtered_dataset_metadata_list=specs_filtered_metadata_list,
+        filtered_out_outfile_name=WRONG_SPECS_DATASETS_METADATA_OUTFILE_NAME,
+        filtered_feature="molecule type / platform technology",
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -792,47 +837,47 @@ def main():
         logger.info(f"Filtering experiments with keywords {args.keywords}")
         func = partial(filter_metadata_with_keywords, keywords=args.keywords)
 
-        selected_metadata_list = []
+        keywords_filtered_metadata_list = []
         with (
             Pool(processes=args.nb_cpus) as p,
-            tqdm(total=len(filtered_metadata_list)) as pbar,
+            tqdm(total=len(specs_filtered_metadata_list)) as pbar,
         ):
-            for result in p.imap_unordered(func, filtered_metadata_list):
+            for result in p.imap_unordered(func, specs_filtered_metadata_list):
                 pbar.update()
                 pbar.refresh()
                 if result is None:
                     continue
-                selected_metadata_list.append(result)
+                keywords_filtered_metadata_list.append(result)
 
-        logger.info(
-            f"{len(selected_metadata_list)} datasets remaining after filtering with keywords"
+        export_filtered_out_datasets_if_any(
+            original_dataset_metadata_list=specs_filtered_metadata_list,
+            filtered_dataset_metadata_list=keywords_filtered_metadata_list,
+            filtered_out_outfile_name=WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME,
+            filtered_feature="keywords",
         )
 
     else:
-        selected_metadata_list = filtered_metadata_list
+        keywords_filtered_metadata_list = specs_filtered_metadata_list
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # GETTING METADATA OF SEQUENCING PLATFORMS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info("Getting platform metadata")
-    tmp_lst = []
+    platform_augmented_dataset_metadata_list = []
     for selected_metadata_chunk_list in tqdm(
-        chunk_list(selected_metadata_list, ENTREZ_CHUNKSIZE)
+        chunk_list(keywords_filtered_metadata_list, PLATFORM_METADATA_CHUNKSIZE)
     ):
-        tmp_lst += get_platform_metadata(selected_metadata_chunk_list)
-
-    # checking if platform metadata was found for all datasets
-    if len(tmp_lst) < len(selected_metadata_list):
-        logger.warning(
-            f"Platform metadata could not be retrieved for {len(selected_metadata_list) - len(tmp_lst)} dataset(s)!"
+        platform_augmented_dataset_metadata_list += get_platform_metadata(
+            selected_metadata_chunk_list
         )
-        selected_metadata_list = []
-    else:
-        logger.info("Platform metadata found for all datasets!")
 
-    # augmenting selected_metadata_list with platform metadata
-    selected_metadata_list = tmp_lst
+    export_filtered_out_datasets_if_any(
+        original_dataset_metadata_list=keywords_filtered_metadata_list,
+        filtered_dataset_metadata_list=platform_augmented_dataset_metadata_list,
+        filtered_out_outfile_name=PLATFORM_NOT_AVAILABLE_DATASETS_METADATA_OUTFILE_NAME,
+        filtered_feature="platform metadata",
+    )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # FILTERING OUT DATASETS FOR WHICH ID MAPPING DOES NOT WORK
@@ -845,98 +890,35 @@ def main():
 
     with (
         Pool(processes=args.nb_cpus) as p,
-        tqdm(total=len(filtered_metadata_list)) as pbar,
+        tqdm(total=len(platform_augmented_dataset_metadata_list)) as pbar,
     ):
         for metadata, can_be_converted in p.imap_unordered(
-            func, selected_metadata_list
+            func, platform_augmented_dataset_metadata_list
         ):
             pbar.update()
             pbar.refresh()
             if can_be_converted:
                 final_metadata_list.append(metadata)
 
-    logger.info(
-        f"{len(final_metadata_list)} datasets remaining after checking gene ID mapping issues"
+    export_filtered_out_datasets_if_any(
+        original_dataset_metadata_list=platform_augmented_dataset_metadata_list,
+        filtered_dataset_metadata_list=final_metadata_list,
+        filtered_out_outfile_name=GENE_ID_MAPPING_ISSUES_DATASETS_METADATA_OUTFILE_NAME,
+        filtered_feature="gene id mapping",
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # GETTING ACCESSIONS TO DOWNLOAD
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    if final_metadata_list:
-        logger.info(f"Kept {len(final_metadata_list)} datasets")
-        # getting accessions of selected experiments
-        selected_accessions = [
-            metadata["accession"] for metadata in final_metadata_list
-        ]
-
-    else:
-        msg = f"Could not find experiments for species {args.species}"
-        if args.keywords:
-            msg += f" and keywords {args.keywords}"
-        logger.warning(msg)
-
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # EXPORTING DATA
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    logger.info(f"Kept {len(final_metadata_list)} datasets")
+    # getting accessions of selected experiments
+    selected_accessions = [metadata["accession"] for metadata in final_metadata_list]
 
     # exporting list of accessions
     logger.info(f"Writing accessions to {ACCESSION_OUTFILE_NAME}")
     with open(ACCESSION_OUTFILE_NAME, "w") as fout:
         fout.writelines([f"{acc}\n" for acc in selected_accessions])
-
-    # exporting metadata
-    logger.info(
-        f"Writing metadata of all experiments for species {args.species} to {SPECIES_DATASETS_OUTFILE_NAME}"
-    )
-    df = pd.DataFrame.from_dict(dataset_metadata_list)
-    df.to_csv(SPECIES_DATASETS_OUTFILE_NAME, sep="\t", index=False, header=True)
-
-    if filtered_metadata_list:
-        logger.info(
-            f"Writing metadata of filtered datasets to {FILTERED_DATASETS_METADATA_OUTFILE_NAME}"
-        )
-        df = pd.DataFrame.from_dict(filtered_metadata_list)
-        df.to_csv(
-            FILTERED_DATASETS_METADATA_OUTFILE_NAME,
-            sep="\t",
-            index=False,
-            header=True,
-        )
-
-        # exporting in YAML format too
-        logger.info(
-            f"Writing filtered experiments with keywords to {FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME}"
-        )
-        with open(FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME, "w") as fout:
-            yaml.dump(selected_metadata_list, fout)
-
-    rejected_metadata_list = [
-        metadata for metadata in metadata_list if metadata not in filtered_metadata_list
-    ]
-    if rejected_metadata_list:
-        logger.info(
-            f"Writing metadata of rejected datasets to {REJECTED_DATASETS_METADATA_OUTFILE_NAME}"
-        )
-        df = pd.DataFrame.from_dict(rejected_metadata_list)
-        df.to_csv(
-            REJECTED_DATASETS_METADATA_OUTFILE_NAME,
-            sep="\t",
-            index=False,
-            header=True,
-        )
-
-    if selected_metadata_list:
-        logger.info(
-            f"Writing metadata of selected datasets to {SELECTED_DATASETS_METADATA_OUTFILE_NAME}"
-        )
-        df = pd.DataFrame.from_dict(selected_metadata_list)
-        df.to_csv(
-            SELECTED_DATASETS_METADATA_OUTFILE_NAME,
-            sep="\t",
-            index=False,
-            header=True,
-        )
 
     if final_metadata_list:
         logger.info(
@@ -949,6 +931,11 @@ def main():
             index=False,
             header=True,
         )
+    else:
+        msg = f"Could not find experiments for species {args.species}"
+        if args.keywords:
+            msg += f" and keywords {args.keywords}"
+        logger.warning(msg)
 
 
 if __name__ == "__main__":
