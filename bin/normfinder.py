@@ -19,7 +19,7 @@ import config
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-STABILITY_OUTFILENAME = "stability_values.csv"
+STABILITY_OUTFILENAME = "stability_values.normfinder.csv"
 
 
 ############################################################################

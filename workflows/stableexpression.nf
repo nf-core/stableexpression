@@ -126,7 +126,7 @@ workflow STABLEEXPRESSION {
         MERGE_DATA.out.whole_design.set { ch_whole_design }
 
         // -----------------------------------------------------------------
-        // COMPUTE BASE STATISTICS FOR ALL addDatasetIdToMetadataGENES
+        // COMPUTE BASE STATISTICS FOR ALL GENES
         // -----------------------------------------------------------------
 
         BASE_STATISTICS (

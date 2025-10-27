@@ -34,21 +34,21 @@ def parse_args():
         type=Path,
         dest="count_file",
         required=True,
-        help="File containing counts for all genes"
+        help="File containing counts for all genes",
     )
     parser.add_argument(
         "--stats",
         type=Path,
         dest="stat_file",
         required=True,
-        help="File containing statistics of expression over all datasets"
+        help="File containing statistics of expression over all datasets",
     )
     parser.add_argument(
         "--candidate_selection_descriptor",
         type=str,
         dest="candidate_selection_descriptor",
         required=True,
-        help="Statistical descriptor for gene candidate selection."
+        help="Statistical descriptor for gene candidate selection.",
     )
     parser.add_argument(
         "--nb-top-stable-genes",
@@ -61,9 +61,8 @@ def parse_args():
 
 
 def get_counts_for_candidates(file: Path, best_candidates: list[str]) -> pl.LazyFrame:
-    return (
-        pl.scan_parquet(file)
-        .filter(pl.col(config.ENSEMBL_GENE_ID_COLNAME).is_in(best_candidates))
+    return pl.scan_parquet(file).filter(
+        pl.col(config.ENSEMBL_GENE_ID_COLNAME).is_in(best_candidates)
     )
 
 
@@ -71,11 +70,14 @@ def get_stats(file: Path) -> pl.LazyFrame:
     return pl.scan_csv(file)
 
 
-def get_best_candidates(stat_lf: pl.LazyFrame, candidate_selection_descriptor: str, nb_top_stable_genes: int) -> list[str]:
-    column_for_sorting = config.SCORING_BASE_TO_STABILITY_SCORE_COLUMN[candidate_selection_descriptor]
+def get_best_candidates(
+    stat_lf: pl.LazyFrame, candidate_selection_descriptor: str, nb_top_stable_genes: int
+) -> list[str]:
+    column_for_sorting = config.SCORING_BASE_TO_STABILITY_SCORE_COLUMN[
+        candidate_selection_descriptor
+    ]
     return (
-        stat_lf
-        .sort(column_for_sorting, descending=False, nulls_last=True)
+        stat_lf.sort(column_for_sorting, descending=False, nulls_last=True)
         .head(nb_top_stable_genes)
         .select(config.ENSEMBL_GENE_ID_COLNAME)
         .collect()
@@ -83,35 +85,33 @@ def get_best_candidates(stat_lf: pl.LazyFrame, candidate_selection_descriptor: s
         .to_list()
     )
 
+
 def filter_out_genes_with_zero_counts(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
     # keep only genes that show no zero count (ie. count > 0 for all samples)
-    return (
-        stat_lf
-        .filter(pl.col(config.RATIO_ZEROS_COLNAME) == 0)
-    )
+    return stat_lf.filter(pl.col(config.RATIO_ZEROS_COLNAME) == 0)
 
 
 def filter_out_low_expression_genes(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
     max_quantile = (
-        stat_lf
-        .select(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
+        stat_lf.select(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
         .max()
         .collect()
         .item()
     )
-    return (
-        stat_lf
-        .filter(
-            pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME) >= max_quantile * FRACTION_LOWER_QUANTILES_TO_EXCLUDE
-        )
+    return stat_lf.filter(
+        pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
+        >= max_quantile * FRACTION_LOWER_QUANTILES_TO_EXCLUDE
     )
 
 
 def export_data(filtered_count_lf: pl.LazyFrame):
     """Export gene expression data to CSV files."""
-    logger.info(f"Exporting counts for candidate genes to: {CANDIDATE_COUNTS_OUTFILENAME}")
+    logger.info(
+        f"Exporting counts for candidate genes to: {CANDIDATE_COUNTS_OUTFILENAME}"
+    )
     filtered_count_lf.collect().write_parquet(CANDIDATE_COUNTS_OUTFILENAME)
     logger.info("Done")
+
 
 #####################################################
 #####################################################
@@ -125,10 +125,19 @@ def main():
 
     stat_lf = get_stats(args.stat_file)
 
+    # first basic filters
     stat_lf = filter_out_low_expression_genes(stat_lf)
-    best_candidates = get_best_candidates(stat_lf, args.candidate_selection_descriptor, args.nb_top_stable_genes)
+    stat_lf = filter_out_genes_with_zero_counts(stat_lf)
 
-    candidate_gene_count_lf = get_counts_for_candidates(args.count_file, best_candidates)
+    # get base candidate genes based on the chosen statistical descriptor (std, mad, ...)
+    best_candidates = get_best_candidates(
+        stat_lf, args.candidate_selection_descriptor, args.nb_top_stable_genes
+    )
+
+    # get counts for candidate genes
+    candidate_gene_count_lf = get_counts_for_candidates(
+        args.count_file, best_candidates
+    )
 
     export_data(candidate_gene_count_lf)
 

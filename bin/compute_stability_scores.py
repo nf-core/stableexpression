@@ -37,14 +37,14 @@ class StabilityScorer:
     weights: dict[str, float] = field(default_factory=dict)
 
     def __post_init__(self):
-        self.compute_stability_score()
         self.parse_stability_score_weights()
+        self.compute_stability_score()
 
     def parse_stability_score_weights(self):
-        for field, weight in zip(
+        for weight_field, weight in zip(
             self.WEIGHT_FIELDS, self.stability_score_weights_str.split(",")
         ):
-            self.weights[field] = float(weight)
+            self.weights[weight_field] = float(weight)
 
     @staticmethod
     def quantile_normalise(data: pl.Series, new_name: str) -> pl.Series:
@@ -101,8 +101,11 @@ class StabilityScorer:
             pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME)
             * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
         )
+        print(self.weights)
         for col, weight in self.weights.items():
+            print(col, weight)
             if col not in self.df.columns:
+                logger.warning(f"Column {col} not found in dataframe")
                 continue
             normalised_col = f"{col}_normalised"
             stability_scoring_expr += pl.col(normalised_col) * weight / weight_sum
@@ -118,7 +121,7 @@ class StabilityScorer:
         self.df = self.df.with_columns(expr.alias(config.STABILITY_SCORE_COLNAME))
         print(self.df)
 
-    def get_statistics_with_stability_scores(self):
+    def get_statistics_with_stability_scores(self) -> pl.DataFrame:
         return (
             self.df.sort(
                 config.STABILITY_SCORE_COLNAME, descending=False, nulls_last=True
@@ -190,10 +193,10 @@ def get_statistics(stat_files: list[Path]) -> pl.LazyFrame:
     return lf
 
 
-def export_data(scored_lf: pl.LazyFrame):
+def export_data(scored_df: pl.DataFrame):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
-    scored_lf.write_csv(STATISTICS_WITH_SCORES_OUTFILENAME)
+    scored_df.write_csv(STATISTICS_WITH_SCORES_OUTFILENAME)
     logger.info("Done")
 
 
@@ -223,10 +226,14 @@ def main():
 
     # sort genes according to the metrics present in the dataframe
     stability_scorer = StabilityScorer(lf.collect(), args.stability_score_weights)
-    scored_lf = stability_scorer.get_statistics_with_stability_scores()
-
+    scored_df = stability_scorer.get_statistics_with_stability_scores()
+    print(
+        scored_df.filter(pl.col(config.STABILITY_SCORE_COLNAME) == 0).select(
+            [config.VARIATION_COEFFICIENT_COLNAME]
+        )
+    )
     # exporting computed data
-    export_data(scored_lf)
+    export_data(scored_df)
 
 
 if __name__ == "__main__":
