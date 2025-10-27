@@ -399,7 +399,7 @@ def getWholeDatasetSize( ch_counts ) {
                 meta.nb_genes_after_idmapping > 0 && meta.nb_samples_after_idmapping > 0
             }
             .map { meta, file ->
-                [ meta.nb_genes_after_idmapping * meta.nb_samples_after_idmapping ]
+                meta.nb_genes_after_idmapping * meta.nb_samples_after_idmapping
             }
             .reduce { size_1, size_2 -> size_1 + size_2 }
             .flatten()
