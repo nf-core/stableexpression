@@ -14,8 +14,8 @@ from src.components import stores, tooltips
 from src.components import top, right_sidebar
 from src.callbacks import common, genes, samples
 
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 # -------------------- SETUP LOGGING --------------------
 

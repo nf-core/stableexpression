@@ -9,12 +9,10 @@ from src.utils import config
 class DataManager:
     def __init__(self):
         self.all_counts_lf: pl.LazyFrame = self.get_all_count_data()
-        self.grouped_samples: list[dict] = self.get_samples_grouped_by_dataset()
         self.candidate_genes_stat_df: pl.DataFrame = (
             self.get_candidate_genes_stat_data()
         )
         self.all_gene_stats_df: pl.DataFrame = self.get_all_genes_stat_data()
-        self.genes: list[str] = self.get_sorted_genes()
 
     @staticmethod
     def get_all_count_data() -> pl.LazyFrame:
@@ -40,6 +38,12 @@ class DataManager:
         file = f"{config.DATA_FOLDER}/{config.ALL_GENES_STAT_FILENAME}"
         return pl.read_csv(file)
 
+    def get_sorted_samples(self):
+        design_file = f"{config.DATA_FOLDER}/{config.ALL_DESIGNS_FILENAME}"
+        design_df = pd.read_csv(design_file)
+        return design_df["sample"].sort_values().tolist()
+
+    """
     def get_samples_grouped_by_dataset(self) -> list[dict]:
         samples_in_count_data = self.get_samples_in_count_data()
         samples_grouped_by_dataset = []
@@ -60,6 +64,7 @@ class DataManager:
             samples_grouped_by_dataset.append(batch_condition_samples_dict)
 
         return samples_grouped_by_dataset
+    """
 
     def get_sorted_genes(self) -> list[str]:
         return (
@@ -72,6 +77,7 @@ class DataManager:
         )
 
     def get_gene_counts(self, gene: str) -> pd.Series:
+        print(f"getting gene counts for {gene}")
         return (
             self.all_counts_lf.filter(pl.col(config.ENSEMBL_GENE_ID_COLNAME) == gene)
             .collect()
@@ -80,6 +86,7 @@ class DataManager:
         )
 
     def get_sample_counts(self, sample: str) -> pd.Series:
+        print(f"getting sample counts for {sample}")
         return (
             self.all_counts_lf.select(sample)
             .drop_nulls()

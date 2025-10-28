@@ -20,7 +20,7 @@ candidate_gene_stats_table = dag.AgGrid(
     ],
     className="ag-theme-alpine",
     columnSizeOptions=dict(skipHeader=False, defaultMinWidth=100),
-    columnSize="autoSizetoFit",
+    # columnSize="autoSizetoFit",
     defaultColDef=dict(
         # type='rightAligned',
         filter=True,
@@ -46,7 +46,7 @@ all_gene_stats_table = dag.AgGrid(
     ],
     className="ag-theme-alpine",
     columnSizeOptions=dict(skipHeader=False),
-    columnSize="autoSizetoFit",
+    # columnSize="autoSizetoFit",
     defaultColDef=dict(
         # type='rightAligned',
         filter=True,
