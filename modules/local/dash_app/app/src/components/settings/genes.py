@@ -13,7 +13,7 @@ gene_selection_stack = dmc.Stack(
             placeholder="Select genes of interest",
             nothingFoundMessage="No gene found",
             data=data_manager.get_sorted_genes(),
-            value=[],
+            value=None,
             w=400,
             clearable=True,
             searchable=True,
@@ -23,17 +23,17 @@ gene_selection_stack = dmc.Stack(
             checkIconPosition="right",
             hidePickedOptions=True,
             disabled=False,
-            persistence=False,
+            persistence=True,
             persisted_props=["value"],
             persistence_type="session",
-            style=style.DROPDOWN,
+            # style=style.DROPDOWN,
             comboboxProps={
                 "shadow": "md",
-                # "transitionProps": {"transition": "pop", "duration": 200},
+                "transitionProps": {"transition": "pop", "duration": 200},
             },
         )
     ],
-    align="left",
+    align="stretch",
     gap="xl",
 )
 
@@ -54,7 +54,7 @@ gene_graph_stats_display_stack = dmc.Stack(
             mb=10,
         ),
     ],
-    align="left",
+    align="center",
     gap="xl",
 )
 
@@ -103,7 +103,7 @@ gene_graph_points_display_stack = dmc.Stack(
             mb=35,
         ),
     ],
-    align="left",
+    align="center",
     gap="xl",
 )
 

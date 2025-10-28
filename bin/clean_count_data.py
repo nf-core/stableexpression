@@ -48,52 +48,6 @@ def parse_args():
     return parser.parse_args()
 
 
-def is_valid_lf(lf: pl.LazyFrame, file: Path) -> bool:
-    """Check if a LazyFrame is valid.
-
-    A LazyFrame is considered valid if it contains at least one row.
-    """
-    try:
-        return not lf.limit(1).collect().is_empty()
-    except FileNotFoundError:
-        # strangely enough we get this error for some files existing but empty
-        logger.error(f"Could not find file {str(file)}")
-        return False
-    except pl.exceptions.NoDataError as err:
-        logger.error(f"File {str(file)} is empty: {err}")
-        return False
-
-
-def get_valid_lazy_lfs(files: list[Path]) -> list[pl.LazyFrame]:
-    """Get a list of valid LazyFrames from a list of files.
-
-    A LazyFrame is considered valid if it contains at least one row.
-    """
-    lf_dict = {file: pl.scan_csv(file) for file in files}
-    return [lf for file, lf in lf_dict.items() if is_valid_lf(lf, file)]
-
-
-def cast_cols_to_string(lf: pl.LazyFrame) -> pl.LazyFrame:
-    return lf.select(
-        [pl.col(column).cast(pl.String) for column in lf.collect_schema().names()]
-    )
-
-
-def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame:
-    """Concatenate LazyFrames, cast all columns to String, and drop duplicates.
-
-    The first step is to concatenate the LazyFrames. Then, the dataframe is cast
-    to String to ensure that all columns have the same data type. Finally, duplicate
-    rows are dropped.
-    """
-    lfs = get_valid_lazy_lfs(files)
-    lfs = [cast_cols_to_string(lf) for lf in lfs]
-    concat_lf = pl.concat(lfs)
-    # dropping duplicates
-    # casting all columns to String
-    return concat_lf.unique()
-
-
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
     """Get all column names except the config.ENSEMBL_GENE_ID_COLNAME column.
 
@@ -144,7 +98,7 @@ def remove_samples_with_low_ks_pvalue(
     )[config.SAMPLE_COLNAME].to_list()
 
     if not valid_samples:
-        logger.error("No more valid sample to process...")
+        logger.warning("No more valid sample to process...")
         sys.exit(101)
 
     # filtering the count dataframe to keep only the valid samples

@@ -13,7 +13,7 @@ sample_selection_stack = dmc.Stack(
             placeholder="Select samples",
             nothingFoundMessage="No samples found",
             data=data_manager.get_sorted_samples(),
-            value=[],
+            value=None,
             w=400,
             clearable=True,
             searchable=True,
@@ -26,7 +26,7 @@ sample_selection_stack = dmc.Stack(
             persistence=True,
             persisted_props=["value"],
             persistence_type="session",
-            style=style.DROPDOWN,
+            # style=style.DROPDOWN,
             comboboxProps={
                 "shadow": "md",
                 "transitionProps": {"transition": "pop", "duration": 200},

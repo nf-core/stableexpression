@@ -19,8 +19,8 @@ class DataManager:
         file = f"{config.DATA_FOLDER}/{config.ALL_COUNT_FILENAME}"
         return pl.scan_parquet(file)
 
-    def get_samples_in_count_data(self) -> list[str]:
-        return (
+    def get_sorted_samples(self) -> list[str]:
+        return sorted(
             self.all_counts_lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME))
             .collect_schema()
             .names()
@@ -38,14 +38,9 @@ class DataManager:
         file = f"{config.DATA_FOLDER}/{config.ALL_GENES_STAT_FILENAME}"
         return pl.read_csv(file)
 
-    def get_sorted_samples(self):
-        design_file = f"{config.DATA_FOLDER}/{config.ALL_DESIGNS_FILENAME}"
-        design_df = pd.read_csv(design_file)
-        return design_df["sample"].sort_values().tolist()
-
     """
     def get_samples_grouped_by_dataset(self) -> list[dict]:
-        samples_in_count_data = self.get_samples_in_count_data()
+
         samples_grouped_by_dataset = []
 
         design_file = f"{config.DATA_FOLDER}/{config.ALL_DESIGNS_FILENAME}"
