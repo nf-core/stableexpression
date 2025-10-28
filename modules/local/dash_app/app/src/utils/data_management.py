@@ -8,11 +8,13 @@ from src.utils import config
 @lru_cache(maxsize=None)
 class DataManager:
     def __init__(self):
-        self.all_counts_lf = self.get_all_count_data()
-        self.grouped_samples = self.get_samples_grouped_by_dataset()
-        self.candidate_genes_stat_df = self.get_candidate_genes_stat_data()
-        self.all_gene_stats_df = self.get_all_genes_stat_data()
-        self.genes = self.get_sorted_genes()
+        self.all_counts_lf: pl.LazyFrame = self.get_all_count_data()
+        self.grouped_samples: list[dict] = self.get_samples_grouped_by_dataset()
+        self.candidate_genes_stat_df: pl.DataFrame = (
+            self.get_candidate_genes_stat_data()
+        )
+        self.all_gene_stats_df: pl.DataFrame = self.get_all_genes_stat_data()
+        self.genes: list[str] = self.get_sorted_genes()
 
     @staticmethod
     def get_all_count_data() -> pl.LazyFrame:
@@ -29,8 +31,8 @@ class DataManager:
     def get_candidate_genes_stat_data(self) -> pl.DataFrame:
         file = f"{config.DATA_FOLDER}/{config.CANDIDATE_GENES_STAT_FILENAME}"
         stat_df = pl.read_csv(file)
-        cols_to_select = ["Rank"] + [
-            col for col in stat_df.columns if col not in ["Rank", "is_candidate"]
+        cols_to_select = ["rank"] + [
+            col for col in stat_df.columns if col not in ["rank", "is_candidate"]
         ]
         return stat_df.select(cols_to_select)
 
