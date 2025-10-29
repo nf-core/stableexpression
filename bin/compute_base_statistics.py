@@ -238,9 +238,13 @@ def get_counts(file: Path) -> pl.LazyFrame:
     return pl.scan_parquet(file).sort(config.ENSEMBL_GENE_ID_COLNAME, descending=False)
 
 
-def export_data(stat_lf: pl.LazyFrame, platform: str):
+def export_data(stat_lf: pl.LazyFrame, platform: str | None):
     """Export gene expression data to CSV files."""
-    outfile = f"{platform}.{ALL_GENES_RESULT_OUTFILE_SUFFIX}"
+    outfile = (
+        f"{platform}.{ALL_GENES_RESULT_OUTFILE_SUFFIX}"
+        if platform
+        else ALL_GENES_RESULT_OUTFILE_SUFFIX
+    )
     logger.info(f"Exporting statistics for all genes to: {outfile}")
     stat_lf.collect().write_csv(outfile)
     logger.info("Done")
