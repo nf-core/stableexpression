@@ -34,6 +34,7 @@ workflow STABLEEXPRESSION {
 
     main:
 
+    ch_versions = Channel.empty()
 
     ch_top_stable_genes_summary = Channel.empty()
     ch_all_genes_statistics = Channel.empty()
@@ -169,6 +170,18 @@ workflow STABLEEXPRESSION {
     }
 
     // -----------------------------------------------------------------
+    // DASH APPLICATION
+    // -----------------------------------------------------------------
+
+    DASH_APP(
+        ch_all_counts,
+        ch_whole_design,
+        ch_stats_all_genes_with_scores,
+        ch_all_genes_statistics
+    )
+    ch_versions = ch_versions.mix ( DASH_APP.out.versions )
+
+    // -----------------------------------------------------------------
     // MULTIQC
     // -----------------------------------------------------------------
 
@@ -180,20 +193,12 @@ workflow STABLEEXPRESSION {
         .mix( Channel.topic('filtered_eatlas_experiment_metadata').collect() )
         .set { ch_multiqc_files }
 
-    MULTIQC_WORKFLOW( ch_multiqc_files )
+    MULTIQC_WORKFLOW(
+        ch_multiqc_files,
+        ch_versions
+    )
 
     MULTIQC_WORKFLOW.out.report.toList().set { multiqc_report }
-
-    // -----------------------------------------------------------------
-    // DASH APPLICATION
-    // -----------------------------------------------------------------
-
-    DASH_APP(
-        ch_all_counts,
-        ch_whole_design,
-        ch_stats_all_genes_with_scores,
-        ch_all_genes_statistics
-    )
 
 
     emit:
