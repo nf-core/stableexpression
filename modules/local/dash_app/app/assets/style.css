@@ -4,6 +4,6 @@
   transform: translateX(-50%);
 }
 
-.ag-header-background-color {
-  color: green !important;
+.mantine-Drawer-root {
+  width: 0.1em !important;
 }

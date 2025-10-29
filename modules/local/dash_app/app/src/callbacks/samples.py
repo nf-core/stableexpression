@@ -1,7 +1,7 @@
 import plotly.graph_objects as go
 import numpy as np
 from scipy.stats import gaussian_kde
-from dash_extensions.enrich import Input, Output, State, callback
+from dash_extensions.enrich import Input, Output, State, callback, Serverside
 
 from src.utils.data_management import DataManager
 
@@ -20,7 +20,7 @@ def register_callbacks():
         Output("sample-counts", "data"),
         Input("sample-dropdown", "value"),
         State("sample-counts", "data"),
-        prevent_initial_call=True,
+        # prevent_initial_call=True,
     )
     def update_stored_data(
         sample_dropdown_values: list[str], stored_sample_counts: dict
@@ -43,13 +43,14 @@ def register_callbacks():
                     "genes": sample_data.index.to_list(),
                 }
 
-        return updated_stored_sample_counts
+        return Serverside(updated_stored_sample_counts)
 
     @callback(
         Output("sample-graph", "figure"),
         Output("sample-graph", "style"),
         Output("sample_stats_display_accordion_control", "disabled"),
         Output("sample_points_display_accordion_control", "disabled"),
+        Output("sample_plot_customisation_accordion_control", "disabled"),
         Input("sample-counts", "data"),
         Input("curve-type", "value"),
         Input("sample-graph-jitter", "value"),
@@ -57,7 +58,7 @@ def register_callbacks():
         Input("sample-graph-boxmean", "value"),
         Input("sample-graph-display-points", "value"),
         State("sample-graph", "style"),
-        prevent_initial_call=True,
+        # prevent_initial_call=True,
     )
     def update_sample_histogram(
         sample_counts: dict,
@@ -70,7 +71,7 @@ def register_callbacks():
     ):
         if not sample_counts:
             graph_style["display"] = "none"
-            return {}, graph_style
+            return {}, graph_style, True, True, True
 
         graph_style["display"] = "block"
 
@@ -78,6 +79,7 @@ def register_callbacks():
 
         sample_stats_display_ac_disabled = True
         sample_points_display_ac_disabled = True
+        sample_plot_customisation_ac_disabled = True
 
         # we need to use the reversed order, otherwise the last traced added is at the top of the graph
         for sample, sample_data in reversed(sample_counts.items()):
@@ -111,12 +113,14 @@ def register_callbacks():
 
                 sample_stats_display_ac_disabled = False
                 sample_points_display_ac_disabled = False
+                sample_plot_customisation_ac_disabled = False
 
-        fig.update_xaxes(range=[0, 1])
+        fig.update_layout(xaxis=dict(range=[0, 1]), yaxis=dict(ticklabelstandoff=10))
 
         return (
             fig,
             graph_style,
             sample_stats_display_ac_disabled,
             sample_points_display_ac_disabled,
+            sample_plot_customisation_ac_disabled,
         )

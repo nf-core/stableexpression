@@ -7,22 +7,25 @@ from src.utils.data_management import DataManager
 
 data_manager = DataManager()
 
+NB_GENES_SELECTED_DEFAULT = 10
 
-def format_col_name(col: str):
-    return col.replace("_", " ").capitalize()
+row_data = data_manager.all_genes_stat_df.to_dicts()
+default_selected_rows = data_manager.all_genes_stat_df.head(
+    NB_GENES_SELECTED_DEFAULT
+).to_dicts()
+column_defs = [
+    {"field": col, "headerName": col.replace("_", " ").capitalize()}
+    for col in data_manager.all_genes_stat_df.columns
+]
 
 
 all_genes_stats_table = dag.AgGrid(
-    rowData=data_manager.all_genes_stat_df.to_dicts(),
-    columnDefs=[
-        {"field": col, "headerName": format_col_name(col)}
-        for col in data_manager.all_genes_stat_df.columns
-    ],
+    rowData=row_data,
+    columnDefs=column_defs,
     className="ag-theme-alpine",
-    columnSizeOptions=dict(skipHeader=False),
+    # columnSizeOptions=dict(skipHeader=False),
     # columnSize="autoSizetoFit",
     defaultColDef=dict(
-        # type='rightAligned',
         filter=True,
         resizable=True,
         editable=False,
@@ -33,7 +36,15 @@ all_genes_stats_table = dag.AgGrid(
         paginationAutoPageSize=True,
         enableCellTextSelection=True,
         ensureDomOrder=True,
+        animateRows=False,
+        rowSelection=dict(mode="multiRow"),
+        headerCheckboxSelection=False,
+        getRowId="params.data.ensembl_gene_id",
     ),
+    selectedRows=default_selected_rows,
     style=style.AG_GRID,
+    persistence=True,
+    persistence_type="session",
+    persisted_props=["selectedRows"],
     id="gene-stats-table",
 )

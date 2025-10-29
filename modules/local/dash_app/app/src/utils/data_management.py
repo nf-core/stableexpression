@@ -65,16 +65,15 @@ class DataManager:
         )
 
     def get_gene_counts(self, gene: str) -> pd.Series:
-        print(f"getting gene counts for {gene}")
         return (
             self.all_counts_lf.filter(pl.col(config.ENSEMBL_GENE_ID_COLNAME) == gene)
+            .select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME))
             .collect()
             .to_pandas()
             .iloc[0]
         )
 
     def get_sample_counts(self, sample: str) -> pd.Series:
-        print(f"getting sample counts for {sample}")
         return (
             self.all_counts_lf.select(sample)
             .drop_nulls()

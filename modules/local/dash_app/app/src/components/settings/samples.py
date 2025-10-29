@@ -13,7 +13,7 @@ sample_selection_stack = dmc.Stack(
             placeholder="Select samples",
             nothingFoundMessage="No samples found",
             data=data_manager.get_sorted_samples(),
-            value=None,
+            value=[],
             w=400,
             clearable=True,
             searchable=True,
@@ -141,7 +141,10 @@ sidebar_stack = dmc.Accordion(
         ),
         dmc.AccordionItem(
             [
-                dmc.AccordionControl("Plot customisation"),
+                dmc.AccordionControl(
+                    "Plot customisation",
+                    id="sample_plot_customisation_accordion_control",
+                ),
                 dmc.AccordionPanel(sample_graph_plot_type_stack),
             ],
             value="sample_plot_customisation",

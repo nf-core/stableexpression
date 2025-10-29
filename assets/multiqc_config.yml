@@ -52,6 +52,7 @@ custom_data:
         title: "Rank"
         description: |
           Rank of the gene based on stability score
+        scale: "RdYlGn-rev"
         cond_formatting_rules:
           between_fourth_and_tenth:
             - eq: 4
@@ -67,6 +68,18 @@ custom_data:
             - eq: 2
           first:
             - eq: 1
+      name:
+        title: "Ensembl name"
+        description: |
+          Gene name as shown in Ensembl (g:Profiler)
+      description:
+        title: "Ensembl description"
+        description: |
+          Gene description as shown in Ensembl (g:Profiler)
+      original_gene_ids:
+        title: "Original gene IDs"
+        description: |
+          Original gene IDs as stated in the input (provided or downloaded) datasets
       stability_score:
         title: "Stability score"
         description: |
@@ -152,18 +165,6 @@ custom_data:
             - s_eq: "Low expression"
           very_low:
             - s_eq: "Very low expression"
-      name:
-        title: "Ensembl name"
-        description: |
-          Gene name as shown in Ensembl (g:Profiler)
-      description:
-        title: "Ensembl description"
-        description: |
-          Gene description as shown in Ensembl (g:Profiler)
-      original_gene_ids:
-        title: "Original gene IDs"
-        description: |
-          Original gene IDs as stated in the input (provided or downloaded) datasets
       rnaseq_standard_deviation:
         title: "Std [RNA-seq only]"
         description: |
@@ -310,8 +311,165 @@ custom_data:
     description: |
       Distribution of descriptive statistics for all genes.
     plot_type: "violin"
-    pconfig:
-      col1_header: "Ensembl Gene ID"
+    headers:
+      stability_score:
+        title: "Stability score"
+        description: |
+          Final stability score : the lower, the better
+        format: "{:,.6f}"
+        color: "rgb(186,43,32)"
+      variation_coefficient_normalised:
+        title: "Normalised coefficient of variation"
+        description: |
+          Quantile normalised (among candidate genes) coefficient of variation ( std(expression) / mean(expression) ) across all samples.
+        format: "{:,.6f}"
+        color: "rgb(64, 122, 22)"
+      normfinder_stability_value_normalised:
+        title: "Normalised Normfinder stability value "
+        description: |
+          Quantile normalised (among candidate genes) stability value as computed by Normfinder
+        format: "{:,.6f}"
+        color: "rgb(64, 122, 22)"
+      genorm_m_measure_normalised:
+        title: "Normalised Genorm M-measure"
+        description: |
+          Quantile normalised (among candidate genes) M-measure as computed by Genorm
+        format: "{:,.6f}"
+        color: "rgb(64, 122, 22)"
+      median_absolute_deviation_normalised:
+        title: "Normalised median absolute deviation"
+        description: |
+          Quantile normalised (among candidate genes) median absolute deviation of the expression across all samples.
+        format: "{:,.4f}"
+        color: "rgb(64, 122, 22)"
+      standard_deviation:
+        title: "Standard deviation"
+        description: |
+          Standard deviation of the expression across all samples.
+        format: "{:,.6f}"
+        color: "rgb(227, 210, 36)"
+      variation_coefficient:
+        title: "Coefficient of variation"
+        description: |
+          Variation coefficient ( std(expression) / mean(expression) ) across all samples.
+        format: "{:,.6f}"
+        color: "rgb(227, 210, 36)"
+      normfinder_stability_value:
+        title: "Normfinder stability value "
+        description: |
+          Stability value as computed by Normfinder
+        format: "{:,.6f}"
+        color: "rgb(227, 210, 36)"
+      genorm_m_measure:
+        title: "Genorm M-measure"
+        description: |
+          M-measure as computed by Genorm
+        format: "{:,.6f}"
+        color: "rgb(227, 210, 36)"
+      mean:
+        title: "Average"
+        description: |
+          Average expression across all samples.
+        format: "{:,.4f}"
+        color: "rgb(85, 23, 166)"
+      median:
+        title: "Median"
+        description: |
+          Median expression across all samples.
+        format: "{:,.4f}"
+        color: "rgb(85, 23, 166)"
+      median_absolute_deviation:
+        title: "Median absolute deviation"
+        description: |
+          Median absolute deviation of the expression across all samples.
+        format: "{:,.4f}"
+        color: "rgb(85, 23, 166)"
+      rnaseq_standard_deviation:
+        title: "Std [RNA-seq only]"
+        description: |
+          Standard deviation of the expression across RNA-Seq samples.
+        format: "{:,.4f}"
+      rnaseq_variation_coefficient:
+        title: "Var coeff [RNA-seq only]"
+        description: |
+          Variation coefficient ( std(expression) / mean(expression) ) across RNA-Seq samples.
+        format: "{:,.4f}"
+      rnaseq_mean:
+        title: "Average [RNA-seq only]"
+        description: |
+          Average expression across samples.
+        format: "{:,.4f}"
+      rnaseq_median:
+        title: "Median [RNA-seq only]"
+        description: |
+          Median expression across RNA-Seq samples.
+        format: "{:,.4f}"
+      rnaseq_median_absolute_deviation:
+        title: "Mad [RNA-seq only]"
+        description: |
+          Median absolute deviation of the expression across RNA-Seq samples.
+        format: "{:,.4f}"
+      microarray_standard_deviation:
+        title: "Std [Microarray only]"
+        description: |
+          Standard deviation of the expression across Microarray samples.
+        format: "{:,.4f}"
+      microarray_variation_coefficient:
+        title: "Var coeff [Microarray only]"
+        description: |
+          Variation coefficient ( std(expression) / mean(expression) ) across Microarray samples.
+        format: "{:,.4f}"
+      microarray_mean:
+        title: "Average [Microarray only]"
+        description: |
+          Average expression across Microarray samples.
+        format: "{:,.4f}"
+      microarray_median:
+        title: "Median [Microarray only]"
+        description: |
+          Median expression across Microarray samples.
+        format: "{:,.4f}"
+      microarray_median_absolute_deviation:
+        title: "Mad [Microarray only]"
+        description: |
+          Median absolute deviation of the expression across Microarray samples.
+        format: "{:,.4f}"
+      ratio_nulls_in_all_samples:
+        title: "Ratio null values (all samples)"
+        description: |
+          Ratio of samples in which the gene is not represented.
+      ratio_nulls_in_valid_samples:
+        title: "Ratio null values (valid samples)"
+        description: |
+          Ratio of samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+      ratio_zeros:
+        title: "Ratio zero values"
+        description: |
+          Ratio of samples in which the gene has a zero value.
+      rnaseq_ratio_nulls_in_all_samples:
+        title: "Ratio null values (all samples) [RNA-seq only]"
+        description: |
+          Ratio of RNA-Seq samples in which the gene is not represented.
+      rnaseq_ratio_nulls_in_valid_samples:
+        title: "Ratio null values (valid samples) [RNA-seq only]"
+        description: |
+          Ratio of RNA-Seq samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+      rnaseq_ratio_zeros:
+        title: "Ratio zero values [RNA-seq only]"
+        description: |
+          Ratio of RNA-Seq samples in which the gene has a zero value.
+      microarray_ratio_nulls_in_all_samples:
+        title: "Ratio null values (all samples) [Microarray only]"
+        description: |
+          Ratio of Microarray samples in which the gene is not represented.
+      microarray_ratio_nulls_in_valid_samples:
+        title: "Ratio null values (valid samples) [Microarray only]"
+        description: |
+          Ratio of Microarray samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+      microarray_ratio_zeros:
+        title: "Ratio zero values [Microarray only]"
+        description: |
+          Ratio of Microarray samples in which the gene has a zero value.
 
   gene_counts:
     section_name: "Gene counts"
