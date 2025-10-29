@@ -1,9 +1,9 @@
 <tool id="nf_core_stableexpression" name="nf-core/stableexpression" version="1.0dev">
     <description>This pipeline is dedicated to finding the most stable genes across count datasets</description>
     <requirements>
-        <requirement type="package" version="25.10.0">nextflow</requirement>
-        <requirement type="package" version="1.4.2">apptainer</requirement>
-        <requirement type="package" version="24.0.2">openjdk</requirement>
+        <requirement type="package" version="25.04.8">nextflow</requirement>
+        <requirement type="package" version="1.4.0">apptainer</requirement>
+        <requirement type="package" version="17.0.10">openjdk</requirement>
     </requirements>
     <version_command><![CDATA[
 VERSION="1.0dev"; echo "$VERSION"
@@ -11,11 +11,40 @@ VERSION="1.0dev"; echo "$VERSION"
     <command detect_errors="exit_code"><![CDATA[
 
         ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ## Building new samplesheet with renamed files
+        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        #if $input_output_options.datasets.provide_datasets == "true":
+
+            #set $count_filenames = ''
+            #for $count_dataset in $input_output_options.datasets.count_datasets
+                #set $count_filenames += ' ' + str($count_dataset.name)
+            #end for
+
+            #set $design_filenames = ''
+            #for $experimental_design in $input_output_options.datasets.experimental_designs
+                #set $design_filenames += ' ' + str($experimental_design.name)
+            #end for
+
+            python '${__tool_directory__}/rebuild_samplesheet.py'
+                --in $input_output_options.datasets.samplesheet
+                --out renamed_samplesheet.csv
+                --count-files $input_output_options.datasets.count_datasets
+                --count-filenames $count_filenames
+                --design-files $input_output_options.datasets.experimental_designs
+                --design-filenames $design_filenames
+
+        #else:
+            echo "No user dataset provided"
+
+        #end if
+
+        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         ## Running pipeline
         ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        nextflow drop -f nf-core/stableexpression
-        && nextflow run nf-core/stableexpression
+        && nextflow drop -f OlivierCoen/stableexpression
+        && nextflow run OlivierCoen/stableexpression
             -r dev -latest
             -profile apptainer
             -ansi-log false
@@ -81,11 +110,17 @@ VERSION="1.0dev"; echo "$VERSION"
 			  --quantile_normalisation_target_distribution "$statistical_options.quantile_normalisation_target_distribution"
 			#end if
 			--ks_pvalue_threshold $statistical_options.ks_pvalue_threshold
+			#if $statistical_options.min_expr_threshold
+			  --min_expr_threshold $statistical_options.min_expr_threshold
+			#end if
 			#if $stability_scoring_options.candidate_selection_descriptor
 			  --candidate_selection_descriptor "$stability_scoring_options.candidate_selection_descriptor"
 			#end if
-			#if $stability_scoring_options.skip_genorm
-			  --skip_genorm $stability_scoring_options.skip_genorm
+			#if $stability_scoring_options.run_genorm
+			  --run_genorm $stability_scoring_options.run_genorm
+			#end if
+			#if $stability_scoring_options.stability_score_weights
+			  --stability_score_weights "$stability_scoring_options.stability_score_weights"
 			#end if
 			--nb_top_gene_candidates $stability_scoring_options.nb_top_gene_candidates
 
@@ -155,6 +190,7 @@ VERSION="1.0dev"; echo "$VERSION"
 				<option value="uniform" selected="true">Uniform</option>
 			</param>
 			<param name="ks_pvalue_threshold" type="float" label="Threshold for KS p-value for considering samples counts as a uniform distribution" value="0" max="1" help="P-value threshold for the Kolmogorov-Smirnov test of samples counts against a uniform distribution. Samples showing a p-value equal or below this threshold are considered not uniform and will therefore not be considered for computation of the stability score. Examples: `0`, `'0.05'`, `'1E-27'`. Provide a negative value to disable this filter. By default, all samples showing a pvalue of 0 will be discarded." optional="false" />
+			<param name="min_expr_threshold" type="float" label="Minimum percentage of quantile expression level" value="0.2" max="1" help="To avoid genes with low expression levels from being considered for stability scoring, a threshold is set up. For example, a value of 0.2 means that the pipeline will reject genes showing an average expression level in the bottom 20% of all genes." optional="true" />
 		</section>
 		<section name="stability_scoring_options" title="Stability scoring options" help="Options relative to assessment of stability for each gene." expanded="false">
 			<param name="candidate_selection_descriptor" type="select" label="Statistic descriptor for prior gene candidate selection" help="Candidate genes are chosen based on a certain statistical descriptor. Set this parameter to modify the descriptor used." optional="true">
@@ -162,10 +198,72 @@ VERSION="1.0dev"; echo "$VERSION"
 				<option value="cv">Cv</option>
 				<option value="mad">Mad</option>
 			</param>
-			<param name="skip_genorm" type="boolean" label="Skip the Genorm step" truevalue="--skip_genorm" falsevalue="" optional="true" />
+			<param name="run_genorm" type="boolean" label="Run Genorm" truevalue="--run_genorm" falsevalue="" optional="true" />
+			<param name="stability_score_weights" type="text" label="Weights for stability score calculation" value="0.7,0.1,0.1,0.1" help="Weights for Standard deviation / Median absolute deviation / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.7,0.1,0.1,0.1" optional="true">
+				<validator type="regex" message="must match regular expression ^\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?$">^\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?$</validator>
+			</param>
 			<param name="nb_top_gene_candidates" type="integer" label="Number of candidate genes to keep for stability scoring" value="5000" min="1" help="Number of candidate genes to keep in the final list. These candidates genes are chosen as the ones showing the least standard variation. Default is 1000." optional="false" />
 		</section>
     </inputs>
+    <outputs>
+        <data name="multiqc_report" label="MultiQC report" from_work_dir="results/multiqc/multiqc_report.html" format="html" />
+        <data name="top_stable_genes_summary" label="Most stable genes" from_work_dir="results/gene_statistics/top_stable_genes_summary.csv" format="csv" />
+        <data name="pipeline_results" label="All outputs" from_work_dir="results.zip" format="zip" />
+    </outputs>
+    <tests>
+        <test>
+            <param name="species" value="solanum_tuberosum"/>
+            <param name="skip_fetch_eatlas_accessions" value="true"/>
+            <param name="provide_datasets" value="true"/>
+            <param name="samplesheet" value="input.csv"/>
+            <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
+            <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+            <output name="top_stable_genes_summary">
+                <assert_contents>
+                    <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />
+                </assert_contents>
+            </output>
+            <output name="multiqc_report">
+                <assert_contents>
+                    <has_text text="MultiQC: A modular tool" />
+                    <has_text text="Data was processed using nf-core/stableexpression" />
+                </assert_contents>
+            </output>
+        </test>
+        <test>
+            <param name="species" value="beta vulgaris"/>
+            <param name="keywords" value="leaf"/>
+            <output name="top_stable_genes_summary">
+                <assert_contents>
+                    <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />
+                </assert_contents>
+            </output>
+            <output name="multiqc_report">
+                <assert_contents>
+                    <has_text text="MultiQC: A modular tool" />
+                    <has_text text="Data was processed using nf-core/stableexpression" />
+                </assert_contents>
+            </output>
+        </test>
+        <test>
+            <param name="species" value="beta vulgaris"/>
+            <param name="provide_datasets" value="true"/>
+            <param name="samplesheet" value="input.csv"/>
+            <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
+            <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+            <output name="top_stable_genes_summary">
+                <assert_contents>
+                    <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />
+                </assert_contents>
+            </output>
+            <output name="multiqc_report">
+                <assert_contents>
+                    <has_text text="MultiQC: A modular tool" />
+                    <has_text text="Data was processed using nf-core/stableexpression" />
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
     <help><![CDATA[
 
 See https://nf-co.re/stableexpression/ for detailed documentation
@@ -174,12 +272,12 @@ See https://nf-co.re/stableexpression/ for detailed documentation
     <citations>
         <citation type="bibtex">
             @misc{nf-core/stableexpression,
-              author = {},
-              year = {},
+              author = {Coen, Olivier},
+              year = {2025},
               title = {nf-core/stableexpression},
               publisher = {GitHub},
               journal = {GitHub repository},
-              url = {https://github.com/nf-core/stableexpression},
+              url = {https://github.com/OlivierCoen/stableexpression},
             }
         </citation>
     </citations>

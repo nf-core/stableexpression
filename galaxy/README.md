@@ -84,11 +84,11 @@ You can test the behaviour of your tool by providing different inputs and check 
 To lint your tool:
 
 ```
-tool/lint.sh
+test/lint.sh
 ```
 
 To test your tool:
 
 ```
-tool/test.sh
+test/test.sh
 ```
