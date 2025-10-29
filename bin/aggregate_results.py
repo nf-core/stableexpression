@@ -13,8 +13,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # outfile names
+ALL_GENE_SUMMARY_OUTFILENAME = "all_genes_summary.csv"
 TOP_STABLE_GENE_SUMMARY_OUTFILENAME = "top_stable_genes_summary.csv"
-ALL_GENES_RESULT_OUTFILENAME = "stats_all_genes.csv"
 ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME = "all_counts_filtered.parquet"
 TOP_STABLE_GENES_COUNTS_OUTFILENAME = "top_stable_genes_transposed_counts_filtered.csv"
 
@@ -23,16 +23,6 @@ NB_TOP_STABLE_GENES = 1000
 # quantile intervals
 NB_QUANTILES = 100
 NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS = 100
-
-ALL_GENES_STATS_COLS = [
-    config.ENSEMBL_GENE_ID_COLNAME,
-    config.MEAN_COLNAME,
-    config.STANDARD_DEVIATION_COLNAME,
-    config.VARIATION_COEFFICIENT_COLNAME,
-    config.MEDIAN_COLNAME,
-    config.MAD_COLNAME,
-]
-
 
 #####################################################
 #####################################################
@@ -178,19 +168,6 @@ def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
     )
 
 
-def format_all_genes_statistics(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
-    """
-    Format the dataframe containing statistics for all genes by selecting the right columns
-    """
-    return stat_lf.select(
-        [
-            column
-            for column in ALL_GENES_STATS_COLS
-            if column in stat_lf.collect_schema().names()
-        ]
-    )
-
-
 def get_status(quantile_interval: int) -> str:
     """Return the expression level status of the gene given its quantile interval."""
     if NB_QUANTILES - 5 <= quantile_interval:
@@ -227,7 +204,7 @@ def get_all_genes_summary(
     # add gene name, description and original gene IDs to statistics summary
     stat_summary_lf = join_data_on_gene_id(stat_summary_lf, *lfs)
     stat_summary_lf = add_expression_level_status(stat_summary_lf)
-    return stat_summary_lf.head(NB_TOP_STABLE_GENES)
+    return stat_summary_lf
 
 
 def get_top_stable_genes_counts(
@@ -260,21 +237,19 @@ def get_top_stable_genes_counts(
 
 
 def export_data(
+    all_genes_summary_lf: pl.LazyFrame,
     top_stable_genes_summary_lf: pl.LazyFrame,
-    formated_stat_lf: pl.LazyFrame,
     all_counts_lf: pl.LazyFrame,
     top_stable_genes_counts_df: pl.DataFrame,
 ):
     """Export gene expression data to CSV files."""
+    logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
+    all_genes_summary_lf.collect().write_csv(ALL_GENE_SUMMARY_OUTFILENAME)
+
     logger.info(
         f"Exporting statistics of the top stable genes to: {TOP_STABLE_GENE_SUMMARY_OUTFILENAME}"
     )
     top_stable_genes_summary_lf.collect().write_csv(TOP_STABLE_GENE_SUMMARY_OUTFILENAME)
-
-    logger.info(
-        f"Exporting statistics for all genes to: {ALL_GENES_RESULT_OUTFILENAME}"
-    )
-    formated_stat_lf.collect().write_csv(ALL_GENES_RESULT_OUTFILENAME)
 
     logger.info(f"Exporting all counts to: {ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME}")
     all_counts_lf.collect().write_parquet(ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME)
@@ -313,23 +288,22 @@ def main():
     metadata_lf = get_metadata(metadata_files)
     mapping_lf = get_mappings(mapping_files)
 
-    formated_stat_lf = format_all_genes_statistics(all_genes_stat_summary_lf)
-
     additional_data_lfs = [metadata_lf, mapping_lf] + platform_datasets_stat_lfs
-    top_stable_stat_summary_lf = get_all_genes_summary(
+    all_genes_summary_lf = get_all_genes_summary(
         all_genes_stat_summary_lf, *additional_data_lfs
     )
 
+    top_stable_stat_summary_lf = all_genes_summary_lf.head(NB_TOP_STABLE_GENES)
+
     # reducing dataframe size (it is only used for plotting by MultiQC)
     count_lf = cast_count_columns_to_float32(count_lf)
-
     top_stable_genes_counts_df = get_top_stable_genes_counts(
         count_lf, top_stable_stat_summary_lf
     )
     # exporting computed data
     export_data(
+        all_genes_summary_lf,
         top_stable_stat_summary_lf,
-        formated_stat_lf,
         count_lf,
         top_stable_genes_counts_df,
     )

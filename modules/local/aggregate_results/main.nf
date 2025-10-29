@@ -16,8 +16,8 @@ process AGGREGATE_RESULTS {
     path mapping_files, stageAs: "*/*"
 
     output:
+    path 'all_genes_summary.csv',                                                                                     emit: all_genes_summary
     path 'top_stable_genes_summary.csv',                                                                              emit: top_stable_genes_summary
-    path 'stats_all_genes.csv',                                                                                       emit: stats_all_genes
     path 'all_counts_filtered.parquet',                                                                               emit: all_counts_filtered
     path 'top_stable_genes_transposed_counts_filtered.csv',                                                           emit: top_stable_genes_transposed_counts_filtered
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions

@@ -163,8 +163,8 @@ workflow STABLEEXPRESSION {
             MERGE_DATA.out.whole_gene_id_mapping
         )
 
+        AGGREGATE_RESULTS.out.all_genes_summary.set { ch_all_genes_summary }
         AGGREGATE_RESULTS.out.top_stable_genes_summary.set { ch_top_stable_genes_summary }
-        AGGREGATE_RESULTS.out.stats_all_genes.set { ch_all_genes_statistics }
         AGGREGATE_RESULTS.out.top_stable_genes_transposed_counts_filtered.set { ch_top_stable_genes_transposed_counts }
 
     }
@@ -176,8 +176,7 @@ workflow STABLEEXPRESSION {
     DASH_APP(
         ch_all_counts,
         ch_whole_design,
-        ch_stats_all_genes_with_scores,
-        ch_all_genes_statistics
+        ch_all_genes_summary
     )
     ch_versions = ch_versions.mix ( DASH_APP.out.versions )
 
@@ -187,7 +186,7 @@ workflow STABLEEXPRESSION {
 
     Channel.empty()
         .mix( ch_top_stable_genes_summary.collect() )
-        .mix( ch_all_genes_statistics.collect() )
+        .mix( ch_all_genes_summary.collect() )
         .mix( ch_top_stable_genes_transposed_counts.collect() )
         .mix( Channel.topic('all_eatlas_experiment_metadata').collect() )
         .mix( Channel.topic('filtered_eatlas_experiment_metadata').collect() )

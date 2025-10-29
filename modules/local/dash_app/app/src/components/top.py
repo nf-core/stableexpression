@@ -30,13 +30,6 @@ tabs = dmc.Tabs(
                     style=style.HEADER_TABLIST_ITEM,
                 ),
                 dmc.TabsTab(
-                    dmc.Text("Reference gene ranking", fw=500),
-                    leftSection=sample_icon,
-                    value="ranking",
-                    color="blue",
-                    style=style.HEADER_TABLIST_ITEM,
-                ),
-                dmc.TabsTab(
                     dmc.Text("Statistics - all genes", fw=500),
                     leftSection=sample_icon,
                     value="gene_stats",
@@ -61,12 +54,7 @@ tabs = dmc.Tabs(
             value="samples",
         ),
         dmc.TabsPanel(
-            children=[tables.candidate_gene_stats_table],
-            style=style.TABS_PANEL,
-            value="ranking",
-        ),
-        dmc.TabsPanel(
-            children=[tables.all_gene_stats_table],
+            children=[tables.all_genes_stats_table],
             style=style.TABS_PANEL,
             value="gene_stats",
         ),

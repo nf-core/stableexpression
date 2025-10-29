@@ -36,10 +36,8 @@ custom_data:
     section_name: "Top stable genes - ranked by stability"
     file_format: "csv"
     no_violin: true
-    #sort_rows: false
     description: |
       Expression descriptive statistics of all genes, ranked by stability.
-      Expression was first normalised dataset per dataset, then log2(cpm + 1) transformed (cpm :counts per million) and finally fitted to [0, 1] using quantile normalisation.
       Genes are sorted by stability score - from the most stable to the least stable.
     plot_type: "table"
     pconfig:
@@ -311,38 +309,9 @@ custom_data:
     file_format: "csv"
     description: |
       Distribution of descriptive statistics for all genes.
-      Expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
     plot_type: "violin"
     pconfig:
       col1_header: "Ensembl Gene ID"
-    headers:
-      # colors from https://colorbrewer2.org/#type=diverging&scheme=BrBG&n=8
-      standard_deviation:
-        title: "Standard deviation"
-        description: |
-          Standard deviation of the expression across samples
-        color: "#bf812d"
-      variation_coefficient:
-        title: "Coefficient of variation"
-        description: |
-          Coefficient of variation (ratio of standard deviation to mean)
-        color: "#f6e8c3"
-      mean:
-        title: "Average"
-        description: |
-          Average expression across samples.
-          Expression was first computed as log2(cpm + 1), then fitted to [0, 1] using scikit-learn's QuantileTransformer.
-        color: "#01665e"
-      normfinder_stability_value:
-        title: "Normfinder stability value "
-        description: |
-          Stability value as computed by Normfinder
-        color: "#01665e"
-      genorm_m_measure:
-        title: "Genorm M-measure"
-        description: |
-          M-measure as computed by Genorm
-        color: "#01665e"
 
   gene_counts:
     section_name: "Gene counts"
@@ -425,7 +394,7 @@ sp:
     fn: "*top_stable_genes_transposed_counts*.csv"
     max_filesize: 50000000 # 50MB
   gene_statistics:
-    fn: "*stats_all_genes.csv"
+    fn: "*all_genes_summary.csv"
     max_filesize: 50000000 # 50MB
   gene_counts:
     fn: "*gene_count_statistics.csv"

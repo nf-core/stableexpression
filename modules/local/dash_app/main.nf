@@ -13,15 +13,14 @@ process DASH_APP {
             return 'ignore' // only report errors but ignores it
         } else {
             log.warn("Could not start the Dash application due to unhandled error.")
-            return 'terminate' // ignore anyway
+            return 'ignore' // ignore anyway
         }
     }
 
     input:
     path all_counts
     path whole_design
-    path top_stable_genes_summary
-    path all_genes_stats
+    path all_genes_summary
 
     output:
     path("*"),           emit: app
@@ -30,7 +29,7 @@ process DASH_APP {
     script:
     """
     mkdir -p data
-    mv ${all_counts} ${whole_design} ${top_stable_genes_summary} ${all_genes_stats} data/
+    mv ${all_counts} ${whole_design} ${all_genes_summary} data/
     cp -r ${moduleDir}/app/* .
 
     # as of Nextflow version 25.04.8, having these versions sent to the versions topic channel

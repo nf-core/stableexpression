@@ -9,10 +9,7 @@ from src.utils import config
 class DataManager:
     def __init__(self):
         self.all_counts_lf: pl.LazyFrame = self.get_all_count_data()
-        self.candidate_genes_stat_df: pl.DataFrame = (
-            self.get_candidate_genes_stat_data()
-        )
-        self.all_gene_stats_df: pl.DataFrame = self.get_all_genes_stat_data()
+        self.all_genes_stat_df: pl.DataFrame = self.get_all_genes_stat_data()
 
     @staticmethod
     def get_all_count_data() -> pl.LazyFrame:
@@ -26,17 +23,13 @@ class DataManager:
             .names()
         )
 
-    def get_candidate_genes_stat_data(self) -> pl.DataFrame:
-        file = f"{config.DATA_FOLDER}/{config.CANDIDATE_GENES_STAT_FILENAME}"
+    def get_all_genes_stat_data(self) -> pl.DataFrame:
+        file = f"{config.DATA_FOLDER}/{config.ALL_GENES_STAT_FILENAME}"
         stat_df = pl.read_csv(file)
         cols_to_select = ["rank"] + [
             col for col in stat_df.columns if col not in ["rank", "is_candidate"]
         ]
         return stat_df.select(cols_to_select)
-
-    def get_all_genes_stat_data(self) -> pl.DataFrame:
-        file = f"{config.DATA_FOLDER}/{config.ALL_GENES_STAT_FILENAME}"
-        return pl.read_csv(file)
 
     """
     def get_samples_grouped_by_dataset(self) -> list[dict]:
@@ -63,7 +56,7 @@ class DataManager:
 
     def get_sorted_genes(self) -> list[str]:
         return (
-            self.candidate_genes_stat_df.sort(
+            self.all_genes_stat_df.sort(
                 by=config.STABILITY_SCORE_COLNAME, descending=False
             )
             .select(config.ENSEMBL_GENE_ID_COLNAME)

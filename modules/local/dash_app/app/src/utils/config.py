@@ -12,8 +12,7 @@ UPDATE_TITLE = "Updating ..."
 DATA_FOLDER = "data"
 
 ALL_COUNT_FILENAME = "all_counts.parquet"
-CANDIDATE_GENES_STAT_FILENAME = "stats_with_scores.csv"
-ALL_GENES_STAT_FILENAME = "stats_all_genes.csv"
+ALL_GENES_STAT_FILENAME = "all_genes_summary.csv"
 ALL_DESIGNS_FILENAME = "whole_design.csv"
 
 ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
