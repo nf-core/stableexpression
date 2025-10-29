@@ -26,7 +26,8 @@ workflow STABILITY_SCORING {
         ch_counts,
         ch_stats,
         params.candidate_selection_descriptor,
-        params.nb_top_gene_candidates
+        params.nb_top_gene_candidates,
+        params.min_expr_threshold
     )
     GET_CANDIDATE_GENES.out.counts.set { ch_candidate_gene_counts }
 

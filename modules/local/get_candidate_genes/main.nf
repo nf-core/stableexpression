@@ -12,6 +12,7 @@ process GET_CANDIDATE_GENES {
     path stat_file
     val candidate_selection_descriptor
     val nb_top_stable_genes
+    val min_pct_quantile_expr_level
 
     output:
     path 'candidate_counts.parquet',                                                                                  emit: counts
@@ -24,7 +25,8 @@ process GET_CANDIDATE_GENES {
         --counts $count_file \\
         --stats $stat_file \\
         --candidate_selection_descriptor $candidate_selection_descriptor \\
-        --nb-top-stable-genes $nb_top_stable_genes
+        --nb-top-stable-genes $nb_top_stable_genes \\
+        --min-pct-quantile-expr-level $min_pct_quantile_expr_level
     """
 
 }

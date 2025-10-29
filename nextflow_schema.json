@@ -231,6 +231,15 @@
                     "maximum": 1,
                     "default": 0,
                     "help_text": "P-value threshold for the Kolmogorov-Smirnov test of samples counts against a uniform distribution. Samples showing a p-value equal or below this threshold are considered not uniform and will therefore not be considered for computation of the stability score. Examples: `0`, `'0.05'`, `'1E-27'`. Provide a negative value to disable this filter. By default, all samples showing a pvalue of 0 will be discarded."
+                },
+                "min_expr_threshold": {
+                    "type": "number",
+                    "description": "Minimum percentage of quantile expression level",
+                    "fa_icon": "fas fa-chart-bar",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.2,
+                    "help_text": "To avoid genes with low expression levels from being considered for stability scoring, a threshold is set up. For example, a value of 0.2 means that the pipeline will reject genes showing an average expression level in the bottom 20% of all genes."
                 }
             }
         },

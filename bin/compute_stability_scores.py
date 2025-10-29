@@ -119,7 +119,6 @@ class StabilityScorer:
         )
         # add stability score column
         self.df = self.df.with_columns(expr.alias(config.STABILITY_SCORE_COLNAME))
-        print(self.df)
 
     def get_statistics_with_stability_scores(self) -> pl.DataFrame:
         return (
@@ -227,11 +226,7 @@ def main():
     # sort genes according to the metrics present in the dataframe
     stability_scorer = StabilityScorer(lf.collect(), args.stability_score_weights)
     scored_df = stability_scorer.get_statistics_with_stability_scores()
-    print(
-        scored_df.filter(pl.col(config.STABILITY_SCORE_COLNAME) == 0).select(
-            [config.VARIATION_COEFFICIENT_COLNAME]
-        )
-    )
+
     # exporting computed data
     export_data(scored_df)
 

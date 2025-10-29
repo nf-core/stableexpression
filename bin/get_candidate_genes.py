@@ -57,6 +57,13 @@ def parse_args():
         required=True,
         help="Number of top stable genes to show",
     )
+    parser.add_argument(
+        "--min-pct-quantile-expr-level",
+        type=float,
+        dest="min_pct_quantile_expr_level",
+        required=True,
+        help="Minimum percentage of quantile expression level",
+    )
     return parser.parse_args()
 
 
@@ -86,12 +93,16 @@ def get_best_candidates(
     )
 
 
+"""
 def filter_out_genes_with_zero_counts(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
     # keep only genes that show no zero count (ie. count > 0 for all samples)
     return stat_lf.filter(pl.col(config.RATIO_ZEROS_COLNAME) == 0)
+"""
 
 
-def filter_out_low_expression_genes(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
+def filter_out_low_expression_genes(
+    stat_lf: pl.LazyFrame, min_pct_quantile_expr_level: float
+) -> pl.LazyFrame:
     max_quantile = (
         stat_lf.select(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
         .max()
@@ -100,7 +111,7 @@ def filter_out_low_expression_genes(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
     )
     return stat_lf.filter(
         pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
-        >= max_quantile * FRACTION_LOWER_QUANTILES_TO_EXCLUDE
+        >= max_quantile * min_pct_quantile_expr_level
     )
 
 
@@ -126,8 +137,8 @@ def main():
     stat_lf = get_stats(args.stat_file)
 
     # first basic filters
-    stat_lf = filter_out_low_expression_genes(stat_lf)
-    stat_lf = filter_out_genes_with_zero_counts(stat_lf)
+    stat_lf = filter_out_low_expression_genes(stat_lf, args.min_pct_quantile_expr_level)
+    # stat_lf = filter_out_genes_with_zero_counts(stat_lf)
 
     # get base candidate genes based on the chosen statistical descriptor (std, mad, ...)
     best_candidates = get_best_candidates(
