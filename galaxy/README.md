@@ -2,18 +2,13 @@
 
 ## Setup build / testing environment
 
-NB: You need micromamba installed:
-
-```
-"${SHELL}" <(curl -L micro.mamba.pm/install.sh)
-```
+NB: You need conda installed (micromamba does not work, since the Galaxy installer looks for a venv / conda environment)
 
 Create a new environment with python and planemo installed:
 
 ```
-micromamba create -n galaxy -c conda-forge python=3.12 -y
-micromamba activate galaxy
-pip install planemo
+conda env create -f environment.yml -y
+conda activate planemo
 ```
 
 ## Build tool XML file

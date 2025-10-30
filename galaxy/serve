@@ -4,4 +4,5 @@ galaxy_dir="$(dirname $(readlink -f "$0"))"
 tool_dir="${galaxy_dir}/tool"
 
 planemo serve \
+    --no_cleanup \
     $tool_dir

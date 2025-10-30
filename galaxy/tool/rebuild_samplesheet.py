@@ -54,12 +54,12 @@ if __name__ == "__main__":
         reader = csv.DictReader(fin)
         header = reader.fieldnames
         for row in reader:
+            # getting original names (file names as written in the samplesheet)
             original_count_filename = Path(row["counts"]).name
+            original_design_filename = Path(row["design"]).name
+            # turning original names into new names (Galaxy file names)
             row["counts"] = count_names_to_files[original_count_filename]
-            if "design" in row:
-                original_design_filename = Path(row["design"]).name
-                # the design is optional
-                row["design"] = design_names_to_files.get(original_design_filename, "")
+            row["design"] = design_names_to_files[original_design_filename]
             renamed_rows.append(row)
 
     with open(args.outfile, "w", newline="") as fout:
