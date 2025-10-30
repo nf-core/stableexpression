@@ -23,7 +23,7 @@ STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.csv"
 class StabilityScorer:
     N_QUANTILES: ClassVar[int] = 1000
 
-    WEIGHT_FIELDS: ClassVar[list] = [
+    WEIGHT_FIELDS: ClassVar[list[str]] = [
         config.VARIATION_COEFFICIENT_COLNAME,
         config.MAD_COLNAME,
         config.NORMFINDER_STABILITY_VALUE_COLNAME,
@@ -56,7 +56,7 @@ class StabilityScorer:
         normalised_array = transformer.fit_transform(array)
         return pl.Series(new_name, normalised_array.ravel())
 
-    def compute_stability_score(self) -> pl.LazyFrame:
+    def compute_stability_score(self):
         logger.info("Computing stability score for candidate genes")
 
         candidate_df = self.df.filter(
@@ -67,17 +67,22 @@ class StabilityScorer:
         normalised_data = {}
         null_data = {}
         weight_sum = 0
+        # iterate over columns that can participate in stability score calculation
         for col, weight in self.weights.items():
+            # if a column is absent, skip it
             if col not in self.df.columns:
                 continue
             data = candidate_df.select(col).to_series()
+            # for each column present, we quantile normalise the data to have values between 0 and 1
+            # and put these normalised data in another column suffixed with "_normalised"
             normalised_col = f"{col}_normalised"
             normalised_data[col] = self.quantile_normalise(
                 data, new_name=normalised_col
             )
             # creating a null column with same name
             null_data[col] = pl.Series(normalised_col, [None] * len(non_candidate_df))
-            # if this column is present, add its weight to the sum
+            # counting the sum of weights corresponding to the columns present
+            # so that we can normalise the weights afterwards
             weight_sum += weight
 
         # replacing original data with quantile normalised ones
@@ -101,9 +106,8 @@ class StabilityScorer:
             pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME)
             * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
         )
-        print(self.weights)
+
         for col, weight in self.weights.items():
-            print(col, weight)
             if col not in self.df.columns:
                 logger.warning(f"Column {col} not found in dataframe")
                 continue
