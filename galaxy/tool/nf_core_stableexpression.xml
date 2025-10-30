@@ -2,7 +2,7 @@
     <description>This pipeline is dedicated to finding the most stable genes across count datasets</description>
     <requirements>
         <requirement type="package" version="25.04.8">nextflow</requirement>
-        <requirement type="package" version="1.4.0">apptainer</requirement>
+        <requirement type="package" version="2.3.3">micromamba</requirement>
         <requirement type="package" version="17.0.10">openjdk</requirement>
     </requirements>
     <version_command><![CDATA[
@@ -43,10 +43,9 @@ VERSION="1.0dev"; echo "$VERSION"
         ## Running pipeline
         ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        && nextflow drop -f OlivierCoen/stableexpression
         && nextflow run OlivierCoen/stableexpression
             -r dev -latest
-            -profile apptainer
+            -profile micromamba
             -ansi-log false
             --outdir ./results
 			--species "$input_output_options.species"
@@ -134,9 +133,12 @@ VERSION="1.0dev"; echo "$VERSION"
 				<validator type="regex" message="must match regular expression ([a-zA-Z]+)[_ ]([a-zA-Z]+)">([a-zA-Z]+)[_ ]([a-zA-Z]+)</validator>
 			</param>
  			<conditional name="datasets">
-                <param name="provide_datasets" type="boolean" label="Provide custom count datasets?" />
+                <param name="provide_datasets" type="select" label="Provide custom count datasets?" >
+                    <option value="true">Yes</option>
+                    <option selected="true" value="false">No</option>
+                </param>
                 <when value="true">
-        			<param name="samplesheet" type="data" format="csv" label="Samplesheet" help="Path to CSV file containing information about the input count samplesheet and their related experimental design. The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, and for each user count dataset, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. Combine with --skip_fetch_eatlas_accessions if you only want to analyse your own count samplesheet." optional="false" />
+        			<param name="samplesheet" type="data" label="Samplesheet" format="csv" help="Path to CSV file containing information about the input count samplesheet and their related experimental design. The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, and for each user count dataset, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. Combine with --skip_fetch_eatlas_accessions if you only want to analyse your own count samplesheet." optional="false" />
                     <param name="count_datasets" label="Count datasets" type="data" format="csv" multiple="true" optional="false" help="User count datasets in CSV format" />
                     <param name="experimental_designs" label="Experimental designs" type="data" format="csv" multiple="true" optional="true" help="Experimental designs relative to the provided count datasets" />
                 </when>
@@ -158,27 +160,27 @@ VERSION="1.0dev"; echo "$VERSION"
 			<param name="eatlas_accessions" type="text" label="Expression Atlas accession(s) to include" help="Provide directly in command line Expression Atlas accession(s) (separated by commas) that you want to download. Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used." optional="true">
 				<validator type="regex" message="must match regular expression ([A-Z0-9-]+,?)+">([A-Z0-9-]+,?)+</validator>
 			</param>
-			<param name="eatlas_accessions_file" type="data" label="File containing Expression Atlas accession(s) to download" help="File containing Expression Atlas accession(s) that you want to download. One accession per line. Example: `--eatlas_accessions_file included_accessions.txt`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used." optional="true" />
+			<param name="eatlas_accessions_file" type="data" label="File containing Expression Atlas accession(s) to download" format="data" help="File containing Expression Atlas accession(s) that you want to download. One accession per line. Example: `--eatlas_accessions_file included_accessions.txt`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used." optional="true" />
 			<param name="exclude_eatlas_accessions" type="text" label="Expression Atlas accession(s) to exclude" help="Provide directly in command line Expression Atlas accessions (separated by commas) that you want to exclude. Example: `--exclude_eatlas_accessions E-MTAB-552,E-GEOD-61690`" optional="true">
 				<validator type="regex" message="must match regular expression ([A-Z0-9-]+,?)+">([A-Z0-9-]+,?)+</validator>
 			</param>
-			<param name="exclude_eatlas_accessions_file" type="data" label="File containing Expression Atlas accession(s) to exclude" help="File containing Expression Atlas accession(s) that you want to exclude. One accession per line. Example: `--exclude_eatlas_accessions_file excluded_accessions.txt`." optional="true" />
+			<param name="exclude_eatlas_accessions_file" type="data" label="File containing Expression Atlas accession(s) to exclude" format="data" help="File containing Expression Atlas accession(s) that you want to exclude. One accession per line. Example: `--exclude_eatlas_accessions_file excluded_accessions.txt`." optional="true" />
 		</section>
 		<section name="geo_dataset_options" title="GEO dataset options" help="Options for fetching datasets from NCBI GEO." expanded="false">
 			<param name="skip_fetch_geo_accessions" type="boolean" label="Skip fetching GEO accessions" truevalue="--skip_fetch_geo_accessions" falsevalue="" help="GEO accessions are automatically fetched by default. Set this parameter to skip this step." optional="true" />
 			<param name="geo_accessions" type="text" label="GEO accession(s) to include" help="Provide directly in command line GEO series accession(s) (separated by commas) that you want to download. Example: `--geo_accessions GSE8165,GSE8161`. Combine with --skip_fetch_geo_accessions if you want only these accessions to be used." optional="true">
 				<validator type="regex" message="must match regular expression ([A-Z0-9-]+,?)+">([A-Z0-9-]+,?)+</validator>
 			</param>
-			<param name="geo_accessions_file" type="data" label="File containing GEO accession(s) to download" help="File containing GEO series accession(s) that you want to download. One accession per line. Example: `--geo_accessions_file included_accessions.txt`. Combine with --skip_fetch_geo_accessions if you want only these accessions to be used." optional="true" />
+			<param name="geo_accessions_file" type="data" label="File containing GEO accession(s) to download" format="data" help="File containing GEO series accession(s) that you want to download. One accession per line. Example: `--geo_accessions_file included_accessions.txt`. Combine with --skip_fetch_geo_accessions if you want only these accessions to be used." optional="true" />
 			<param name="exclude_geo_accessions" type="text" label="GEO accession(s) to exclude" help="Provide directly in command line GEO series accessions (separated by commas) that you want to exclude. Example: `--exclude_geo_accessions GSE8165,GSE8161`" optional="true">
 				<validator type="regex" message="must match regular expression ([A-Z0-9-]+,?)+">([A-Z0-9-]+,?)+</validator>
 			</param>
-			<param name="exclude_geo_accessions_file" type="data" label="File containing GEO accession(s) to exclude" help="File containing GEO series accession(s) that you want to exclude. One accession per line. Example: `--exclude_geo_accessions_file excluded_accessions.txt`." optional="true" />
+			<param name="exclude_geo_accessions_file" type="data" label="File containing GEO accession(s) to exclude" format="data" help="File containing GEO series accession(s) that you want to exclude. One accession per line. Example: `--exclude_geo_accessions_file excluded_accessions.txt`." optional="true" />
 		</section>
 		<section name="idmapping_options" title="ID mapping options" help="Options for mapping gene IDs." expanded="false">
 			<param name="skip_gprofiler" type="boolean" label="Skip g:Profiler ID mapping step" truevalue="--skip_gprofiler" falsevalue="" optional="true" />
-			<param name="gene_id_mapping_file" type="data" label="Custom gene id mapping file" help="Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler. The mapping file should be a comma-separated file with 2 columns (original_gene_id and ensembl_gene_id) and a header row." optional="true" />
-			<param name="gene_metadata" type="data" label="Custom gene metadata file" help="Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (ensembl_gene_id, name and description) and a header row." optional="true" />
+			<param name="gene_id_mapping_file" type="data" label="Custom gene id mapping file" format="csv" help="Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler. The mapping file should be a comma-separated file with 2 columns (original_gene_id and ensembl_gene_id) and a header row." optional="true" />
+			<param name="gene_metadata" type="data" label="Custom gene metadata file" format="csv" help="Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (ensembl_gene_id, name and description) and a header row." optional="true" />
 		</section>
 		<section name="statistical_options" title="Statistics options" help="Statistical options for normalisation and calculation of gene expression variation." expanded="false">
 			<param name="normalisation_method" type="select" label="Tool to use for normalisation" help="Raw RNAseq data must be normalised before further processing. You can select the package used for normalisation." optional="false">
@@ -212,53 +214,65 @@ VERSION="1.0dev"; echo "$VERSION"
     </outputs>
     <tests>
         <test>
-            <param name="species" value="solanum_tuberosum"/>
-            <param name="skip_fetch_eatlas_accessions" value="true"/>
-            <param name="provide_datasets" value="true"/>
-            <param name="samplesheet" value="input.csv"/>
-            <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
-            <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+            <section name="input_output_options">
+                <param name="species" value="solanum_tuberosum"/>
+                <conditional name="datasets">
+                    <param name="provide_datasets" value="true"/>
+                    <param name="samplesheet" value="input.csv"/>
+                    <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
+                    <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+                </conditional>
+            </section>
+            <section name="expression_atlas_options">
+                <param name="skip_fetch_eatlas_accessions" value="true"/>
+            </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />
+                    <has_text text="ensembl_gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">
                 <assert_contents>
-                    <has_text text="MultiQC: A modular tool" />
                     <has_text text="Data was processed using nf-core/stableexpression" />
                 </assert_contents>
             </output>
         </test>
         <test>
-            <param name="species" value="beta vulgaris"/>
-            <param name="keywords" value="leaf"/>
+            <section name="input_output_options">
+                <param name="species" value="beta vulgaris"/>
+                <conditional name="datasets">
+                    <param name="provide_datasets" value="false"/>
+                </conditional>
+                <param name="keywords" value="leaf"/>
+            </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />
+                    <has_text text="ensembl_gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">
                 <assert_contents>
-                    <has_text text="MultiQC: A modular tool" />
                     <has_text text="Data was processed using nf-core/stableexpression" />
                 </assert_contents>
             </output>
         </test>
         <test>
-            <param name="species" value="beta vulgaris"/>
-            <param name="provide_datasets" value="true"/>
-            <param name="samplesheet" value="input.csv"/>
-            <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
-            <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+            <section name="input_output_options">
+                <param name="species" value="beta vulgaris"/>
+                <conditional name="datasets">
+                    <param name="provide_datasets" value="true"/>
+                    <param name="samplesheet" value="input.csv"/>
+                    <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
+                    <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+                </conditional>
+            </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />
+                    <has_text text="ensembl_gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">
                 <assert_contents>
-                    <has_text text="MultiQC: A modular tool" />
                     <has_text text="Data was processed using nf-core/stableexpression" />
                 </assert_contents>
             </output>

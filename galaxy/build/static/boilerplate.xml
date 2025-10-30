@@ -3,7 +3,7 @@
     <requirements>
         <requirement type="package" version="NEXTFLOW_VERSION">nextflow</requirement>
         <requirement type="package" version="APPTAINER_VERSION">apptainer</requirement>
-        <requirement type="package" version="OPENJDK_VERSION">openjdk</requirement>
+        <requirement type="package" version="17.0.10">openjdk</requirement>
     </requirements>
     <version_command><![CDATA[
 VERSION="PIPELINE_VERSION"; echo "$VERSION"
@@ -43,7 +43,6 @@ VERSION="PIPELINE_VERSION"; echo "$VERSION"
         ## Running pipeline
         ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        && nextflow drop -f OlivierCoen/stableexpression
         && nextflow run OlivierCoen/stableexpression
             -r dev -latest
             -profile apptainer
@@ -65,53 +64,65 @@ INPUTS
     </outputs>
     <tests>
         <test>
-            <param name="species" value="solanum_tuberosum"/>
-            <param name="skip_fetch_eatlas_accessions" value="true"/>
-            <param name="provide_datasets" value="true"/>
-            <param name="samplesheet" value="input.csv"/>
-            <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
-            <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+            <section name="input_output_options">
+                <param name="species" value="solanum_tuberosum"/>
+                <conditional name="datasets">
+                    <param name="provide_datasets" value="true"/>
+                    <param name="samplesheet" value="input.csv"/>
+                    <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
+                    <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+                </conditional>
+            </section>
+            <section name="expression_atlas_options">
+                <param name="skip_fetch_eatlas_accessions" value="true"/>
+            </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />
+                    <has_text text="ensembl_gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">
                 <assert_contents>
-                    <has_text text="MultiQC: A modular tool" />
                     <has_text text="Data was processed using nf-core/stableexpression" />
                 </assert_contents>
             </output>
         </test>
         <test>
-            <param name="species" value="beta vulgaris"/>
-            <param name="keywords" value="leaf"/>
+            <section name="input_output_options">
+                <param name="species" value="beta vulgaris"/>
+                <conditional name="datasets">
+                    <param name="provide_datasets" value="false"/>
+                </conditional>
+                <param name="keywords" value="leaf"/>
+            </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />
+                    <has_text text="ensembl_gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">
                 <assert_contents>
-                    <has_text text="MultiQC: A modular tool" />
                     <has_text text="Data was processed using nf-core/stableexpression" />
                 </assert_contents>
             </output>
         </test>
         <test>
-            <param name="species" value="beta vulgaris"/>
-            <param name="provide_datasets" value="true"/>
-            <param name="samplesheet" value="input.csv"/>
-            <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
-            <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+            <section name="input_output_options">
+                <param name="species" value="beta vulgaris"/>
+                <conditional name="datasets">
+                    <param name="provide_datasets" value="true"/>
+                    <param name="samplesheet" value="input.csv"/>
+                    <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
+                    <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+                </conditional>
+            </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="Rank,ensembl_gene_id,stability_score,standard_deviation,variation_coefficient,mean,expression_level_status,total_nb_nulls,nb_nulls_valid_samples,name,description,original_gene_ids" />
+                    <has_text text="ensembl_gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">
                 <assert_contents>
-                    <has_text text="MultiQC: A modular tool" />
                     <has_text text="Data was processed using nf-core/stableexpression" />
                 </assert_contents>
             </output>

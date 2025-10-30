@@ -16,7 +16,7 @@ class BaseConfigFormatter:
     PACKAGES_REPOS: ClassVar[dict] = {
         "nextflow": "bioconda",
         "apptainer": "conda-forge",
-        "openjdk": "conda-forge",
+        # "openjdk": "conda-forge",
     }
 
     @classmethod

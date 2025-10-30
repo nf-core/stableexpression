@@ -17,12 +17,15 @@ class DatasetsParameterFormatter(BaseParameterFormatter):
         ).replace(self.param, "samplesheet")
         # changing label
         input_param_str = re.sub(
-            r'label="[\s\w]*"', 'format="csv" label="Samplesheet"', input_param_str
+            r'label="[\s\w]*"', 'label="Samplesheet"', input_param_str
         )
 
         # adding conditional statement
         return f""" \t\t\t<conditional name="datasets">
-                <param name="provide_datasets" type="boolean" label="Provide custom count datasets?" />
+                <param name="provide_datasets" type="select" label="Provide custom count datasets?" >
+                    <option value="true">Yes</option>
+                    <option selected="true" value="false">No</option>
+                </param>
                 <when value="true">
         {input_param_str}
                     <param name="count_datasets" label="Count datasets" type="data" format="csv" multiple="true" optional="false" help="User count datasets in CSV format" />

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import logging
 from pathlib import Path
 
@@ -12,7 +14,7 @@ tool_file = Path(__file__).parents[1] / "tool/nf_core_{}.xml"
 
 def main():
     logger.info("Formatting config")
-    package_versions = ConfigFormatter.get_package_versions()
+    # package_versions = ConfigFormatter.get_package_versions()
     pipeline_metadata = ConfigFormatter.get_pipeline_metadata()
 
     logger.info("Formatting schema")
@@ -25,11 +27,19 @@ def main():
     with open(tool_boilerplate_file, "r") as fin:
         static_string = fin.read()
 
+    # checking if package versions were filled by the user
+    for package_version in ["OPENJDK_VERSION"]:
+        if package_version in static_string:
+            raise ValueError(
+                f"You must fill the package version in place of {package_version} before building"
+            )
+
     logger.info("Building tool XML file")
     tool_string = (
-        static_string.replace("NEXTFLOW_VERSION", package_versions["nextflow"])
-        .replace("APPTAINER_VERSION", package_versions["apptainer"])
-        .replace("OPENJDK_VERSION", package_versions["openjdk"])
+        static_string
+        # .replace("NEXTFLOW_VERSION", package_versions["nextflow"])
+        # .replace("APPTAINER_VERSION", package_versions["apptainer"])
+        # .replace("OPENJDK_VERSION", package_versions["openjdk"])
         .replace("PIPELINE_VERSION", pipeline_metadata["version"])
         .replace("DESCRIPTION", schema_formatter.pipeline_description)
         .replace("PARAMETERS", schema_formatter.params_cli)

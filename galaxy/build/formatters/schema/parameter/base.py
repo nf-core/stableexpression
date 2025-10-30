@@ -82,12 +82,21 @@ class BaseParameterFormatter:
         if param_type == "string" and self.param_dict.get("format") == "file-path":
             input_type = "data"
             # removing extension check as files are renamed in <hash>.dat files by Galaxy
-            """
-            if pattern := self.param_dict.get("pattern"):
-                # TODO: handle multiple extensions
-                extension = pattern.split(".")[-1].strip("$")
-                param_format = f' format="{extension}"'
-            """
+            if pattern := self.param_dict.get(
+                "pattern"
+            ):  # going from something like "^\\S+\\.(csv|yaml)$" to "csv,ya
+                # getting the extensions part
+                extension_str = pattern.split(".")[-1]
+                # removes recursively all leading and traling "(", ")" and "$"
+                extension_str = extension_str.strip("$()")
+                # getting list of extensions; removing dat because this extension is specifically made to handle Galaxy filename
+                extensions = [ext for ext in extension_str.split("|") if ext != "dat"]
+                formated_extensions_str = ",".join(extensions)
+                param_format = f' format="{formated_extensions_str}"'
+            else:
+                # there is no specific pattern provided in the schema, this means that the format does not matter much
+                # however, the planemo linter needs a format, so we specify format="data"
+                param_format = ' format="data"'
 
         else:
             input_type = self.NF_TYPES_TO_GALAXY[param_type]
