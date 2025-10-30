@@ -15,8 +15,6 @@ logger = logging.getLogger(__name__)
 # outfile names
 CANDIDATE_COUNTS_OUTFILENAME = "candidate_counts.parquet"
 
-FRACTION_LOWER_QUANTILES_TO_EXCLUDE = 0.2
-
 
 #####################################################
 #####################################################
@@ -67,19 +65,10 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_counts_for_candidates(file: Path, best_candidates: list[str]) -> pl.LazyFrame:
-    return pl.scan_parquet(file).filter(
-        pl.col(config.ENSEMBL_GENE_ID_COLNAME).is_in(best_candidates)
-    )
-
-
-def get_stats(file: Path) -> pl.LazyFrame:
-    return pl.scan_csv(file)
-
-
 def get_best_candidates(
     stat_lf: pl.LazyFrame, candidate_selection_descriptor: str, nb_top_stable_genes: int
 ) -> list[str]:
+    logger.info("Getting best candidates")
     column_for_sorting = config.SCORING_BASE_TO_STABILITY_SCORE_COLUMN[
         candidate_selection_descriptor
     ]
@@ -103,6 +92,7 @@ def filter_out_genes_with_zero_counts(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
 def filter_out_low_expression_genes(
     stat_lf: pl.LazyFrame, min_pct_quantile_expr_level: float
 ) -> pl.LazyFrame:
+    logger.info("Filtering out low expression genes")
     max_quantile = (
         stat_lf.select(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
         .max()
@@ -115,12 +105,19 @@ def filter_out_low_expression_genes(
     )
 
 
-def export_data(filtered_count_lf: pl.LazyFrame):
+def get_counts_for_candidates(file: Path, best_candidates: list[str]) -> pl.DataFrame:
+    logger.info("Getting counts for candidate genes")
+    return pl.read_parquet(file).filter(
+        pl.col(config.ENSEMBL_GENE_ID_COLNAME).is_in(best_candidates)
+    )
+
+
+def export_data(filtered_count_df: pl.DataFrame):
     """Export gene expression data to CSV files."""
     logger.info(
         f"Exporting counts for candidate genes to: {CANDIDATE_COUNTS_OUTFILENAME}"
     )
-    filtered_count_lf.collect().write_parquet(CANDIDATE_COUNTS_OUTFILENAME)
+    filtered_count_df.write_parquet(CANDIDATE_COUNTS_OUTFILENAME)
     logger.info("Done")
 
 
@@ -134,7 +131,7 @@ def export_data(filtered_count_lf: pl.LazyFrame):
 def main():
     args = parse_args()
 
-    stat_lf = get_stats(args.stat_file)
+    stat_lf = pl.scan_csv(args.stat_file)
 
     # first basic filters
     stat_lf = filter_out_low_expression_genes(stat_lf, args.min_pct_quantile_expr_level)
