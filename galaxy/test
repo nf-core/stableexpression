@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 galaxy_dir="$(dirname $(readlink -f "$0"))"
-tool_file="${galaxy_dir}/tool/nf_core_stableexpression.xml"
+tool_file="${galaxy_dir}/tool_shed/tool/nf_core_stableexpression.xml"
 
-TEST_OUTDIR="test_ouptut"
+TEST_OUTDIR="tests/output"
 
 
 ARGS="$@"

@@ -1,8 +1,8 @@
 <tool id="nf_core_stableexpression" name="nf-core/stableexpression" version="PIPELINE_VERSION">
     <description>DESCRIPTION</description>
     <requirements>
-        <requirement type="package" version="NEXTFLOW_VERSION">nextflow</requirement>
-        <requirement type="package" version="APPTAINER_VERSION">apptainer</requirement>
+        <requirement type="package" version="25.04.8">nextflow</requirement>
+        <requirement type="package" version="2.3.3">micromamba</requirement>
         <requirement type="package" version="17.0.10">openjdk</requirement>
     </requirements>
     <version_command><![CDATA[
@@ -45,7 +45,7 @@ VERSION="PIPELINE_VERSION"; echo "$VERSION"
 
         && nextflow run OlivierCoen/stableexpression
             -r dev -latest
-            -profile apptainer
+            -profile micromamba
             -ansi-log false
             --outdir ./results
 PARAMETERS
@@ -68,9 +68,9 @@ INPUTS
                 <param name="species" value="solanum_tuberosum"/>
                 <conditional name="datasets">
                     <param name="provide_datasets" value="true"/>
-                    <param name="samplesheet" value="input.csv"/>
-                    <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
-                    <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+                    <param name="samplesheet" value="test_data/input.csv"/>
+                    <param name="count_datasets" value="test_data/microarray.normalised.csv,test_data/rnaseq.raw.csv"/>
+                    <param name="experimental_designs" value="test_data/microarray.normalised.design.csv,test_data/rnaseq.raw.design.csv"/>
                 </conditional>
             </section>
             <section name="expression_atlas_options">
@@ -111,9 +111,9 @@ INPUTS
                 <param name="species" value="beta vulgaris"/>
                 <conditional name="datasets">
                     <param name="provide_datasets" value="true"/>
-                    <param name="samplesheet" value="input.csv"/>
-                    <param name="count_datasets" value="microarray.normalised.csv,rnaseq.raw.csv"/>
-                    <param name="experimental_designs" value="microarray.normalised.design.csv,rnaseq.raw.design.csv"/>
+                    <param name="samplesheet" value="test_data/input.csv"/>
+                    <param name="count_datasets" value="test_data/microarray.normalised.csv,test_data/rnaseq.raw.csv"/>
+                    <param name="experimental_designs" value="test_data/microarray.normalised.design.csv,test_data/rnaseq.raw.design.csv"/>
                 </conditional>
             </section>
             <output name="top_stable_genes_summary">
