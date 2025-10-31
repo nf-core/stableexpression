@@ -56,6 +56,10 @@ class StabilityScorer:
         normalised_array = transformer.fit_transform(array)
         return pl.Series(new_name, normalised_array.ravel())
 
+    @staticmethod
+    def get_normalsed_col(col: str) -> str:
+        return f"{col}_normalised"
+
     def compute_stability_score(self):
         logger.info("Computing stability score for candidate genes")
 
@@ -75,7 +79,7 @@ class StabilityScorer:
             data = candidate_df.select(col).to_series()
             # for each column present, we quantile normalise the data to have values between 0 and 1
             # and put these normalised data in another column suffixed with "_normalised"
-            normalised_col = f"{col}_normalised"
+            normalised_col = self.get_normalsed_col(col)
             normalised_data[col] = self.quantile_normalise(
                 data, new_name=normalised_col
             )
@@ -111,8 +115,17 @@ class StabilityScorer:
             if col not in self.df.columns:
                 logger.warning(f"Column {col} not found in dataframe")
                 continue
-            normalised_col = f"{col}_normalised"
-            stability_scoring_expr += pl.col(normalised_col) * weight / weight_sum
+            normalised_col = self.get_normalsed_col(col)
+            # we do not want to include null / nan values in the stability score calculation
+            # because this would result in a total null / nan value for the stability score
+            stability_scoring_expr += (
+                pl.when(
+                    pl.col(normalised_col).is_not_null()
+                    & pl.col(normalised_col).is_not_nan()
+                )
+                .then(pl.col(normalised_col))
+                .otherwise(pl.lit(0))
+            )
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

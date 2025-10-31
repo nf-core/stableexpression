@@ -8,7 +8,6 @@ import argparse
 from pathlib import Path
 from tqdm import tqdm
 from dataclasses import dataclass, field
-from typing import ClassVar
 from statistics import mean
 import numpy as np
 from numba import njit, prange
@@ -102,7 +101,7 @@ class NormFinder:
 
     genes: list[str] = field(init=False)
 
-    group_to_samples_dict: dict[str, list] = field(init=False)
+    group_to_samples_dict: dict[str, list[str]] = field(init=False)
 
     n_groups: int = field(init=False)
     n_genes: int = field(init=False)
@@ -326,7 +325,9 @@ class NormFinder:
             mean(group_overall_means),
         )
 
-    def adjust_for_nb_of_samples_in_groups(self, unbiased_intragroup_variance_df):
+    def adjust_for_nb_of_samples_in_groups(
+        self, unbiased_intragroup_variance_df: pl.DataFrame
+    ):
         n_samples_list = [
             len(samples) for samples in self.group_to_samples_dict.values()
         ]
@@ -335,7 +336,7 @@ class NormFinder:
         ).select([(pl.col(c) / pl.col("n_samples")).alias(c) for c in self.genes])
 
     def get_unbiased_intergroup_variance(
-        self, gene_means_in_groups_df, dataset_overall_mean
+        self, gene_means_in_groups_df: pl.DataFrame, dataset_overall_mean: float
     ):
         mean_over_genes = (
             gene_means_in_groups_df.mean()
@@ -371,7 +372,7 @@ class NormFinder:
             )  # square to get variance
         )
 
-    def compute_gamma_factor(self, diff_df, vardiff_df):
+    def compute_gamma_factor(self, diff_df: pl.DataFrame, vardiff_df: pl.DataFrame):
         logger.info("Computing gamma factor")
         first_term = (
             diff_df.with_columns(
@@ -400,15 +401,19 @@ class NormFinder:
             .item()
         )
 
-        return max(first_term - second_term, 0)
+        return max(first_term - second_term, 0)  # set to 0 if negative
 
     @staticmethod
-    def apply_gamma_factor(gamma, diff_df, vardiff_df):
+    def apply_gamma_factor(
+        gamma: float, diff_df: pl.DataFrame, vardiff_df: pl.DataFrame
+    ):
         difnew = diff_df * gamma / (gamma + vardiff_df)
         varnew = vardiff_df + gamma * vardiff_df / (gamma + vardiff_df)
         return difnew, varnew
 
-    def apply_shrinkage(self, intergroup_variance_df, group_mean_variance_df):
+    def apply_shrinkage(
+        self, intergroup_variance_df: pl.DataFrame, group_mean_variance_df: pl.DataFrame
+    ):
         gamma = self.compute_gamma_factor(
             intergroup_variance_df, group_mean_variance_df
         )
