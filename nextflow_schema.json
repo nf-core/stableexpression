@@ -14,10 +14,10 @@
             "properties": {
                 "species": {
                     "type": "string",
-                    "description": "Species name",
+                    "description": "Scientifc species name (genus and species)",
                     "fa_icon": "fas fa-hippo",
                     "pattern": "([a-zA-Z]+)[_ ]([a-zA-Z]+)",
-                    "help_text": "Genus and species may be separated by ` ` or `_`. Example: `--species 'Arabidopsis thaliana'` or `--species 'homo_sapiens'`"
+                    "help_text": "Genus and species may be separated by ` ` or `_`. Example: `--species 'Arabidopsis thaliana'` or `--species 'homo_sapiens'`. Character case is not important."
                 },
                 "outdir": {
                     "type": "string",
@@ -31,36 +31,35 @@
                     "format": "file-path",
                     "exists": true,
                     "schema": "assets/schema_datasets.json",
-                    "pattern": "^\\S+\\.(csv|dat)$",
-                    "description": "User count datasets",
-                    "help_text": "Path to CSV file containing information about the input count datasets and their related experimental design. The dataset file should be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. Before running the pipeline, and for each user count dataset, you will need to create a design file with information about the samples in your experiment. Use this parameter to specify its location. Combine with --skip_fetch_eatlas_accessions if you only want to analyse your own count datasets.",
+                    "pattern": "^\\S+\\.(csv|yaml|yml|dat)$",
+                    "description": "Custom datasets (counts + designs)",
+                    "help_text": "Path to CSV / YAML file listing your own count datasets and their related experimental design. This file should be a comma-separated file with 4 columns (`counts`, `design`, `platform` and `normalised`). It must have a header row. Before running the pipeline, and for each count dataset provided by you, a design file with information about the samples in your experiment is required. Combine with both --skip_fetch_eatlas_accessions and --skip_fetch_geo_accessions if you only want to analyse your own count datasets. Otherwise, accessions from Expression Atlas and GEO will be fetched automatically. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. ",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "keywords": {
                     "type": "string",
                     "description": "Keywords used for selecting specific Expression Atlas / GEO accessions",
-                    "default": "",
-                    "fa_icon": "fas fa-highlighter",
-                    "pattern": "([a-zA-Z,]+)",
+                    "fa_icon": "fas fa-font",
+                    "pattern": "(([a-zA-Z,]+))?",
                     "help_text": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas and / or GEO datasets. The pipeline will select all Expression Atlas experiments / GEO datasets that contain the provided keywords in their description of in one of the condition names. Example: `--keywords 'stress,flowering'`. This parameter is unused if both --skip_fetch_eatlas_accessions and --skip_fetch_geo_accessions are set."
                 },
                 "platform": {
                     "type": "string",
                     "enum": ["rnaseq", "microarray"],
                     "description": "Only download from this platform",
-                    "fa_icon": "fas fa-id-card",
-                    "help_text": "By default, data from all platform are downloaded. If this parameter is specified, a filter is applied to get data from only one specific type of platform. This filter is only used while fetching appropriate Expression atlas / GEO accessions. It will not filter accessions provided directly by the user."
+                    "fa_icon": "fas fa-arrows-alt-h",
+                    "help_text": "By default, data from both RNA-seq and Microarray platforms are downloaded. Setting this parameter applies a filter to get data from only one of the two platforms. This filter is only used while fetching appropriate Expression atlas / GEO accessions. It will not filter accessions provided directly by the user."
                 },
                 "accessions_only": {
                     "type": "boolean",
                     "description": "Only get accessions from Expression Atlas / GEO and exit.",
-                    "fa_icon": "fas fa-id-card",
+                    "fa_icon": "far fa-stop-circle",
                     "help_text": "Use this option if you only want to get Expression Atlas accessions and skip the rest of the pipeline."
                 },
                 "download_only": {
                     "type": "boolean",
                     "description": "Only get accessions from Expression Atlas / GEO and download the selected datasets.",
-                    "fa_icon": "fas fa-id-card",
+                    "fa_icon": "far fa-stop-circle",
                     "help_text": "Use this option if you only want to get Expression Atlas / GEO accessions, download the selected data, and skip the rest of the pipeline."
                 },
                 "email": {
@@ -94,15 +93,15 @@
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
                     "description": "Expression Atlas accession(s) to include",
-                    "fa_icon": "fas fa-id-card",
-                    "help_text": "Provide directly in command line Expression Atlas accession(s) (separated by commas) that you want to download. Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
+                    "fa_icon": "fas fa-address-card",
+                    "help_text": "Provide Expression Atlas accession(s) that you want to download. The accessions should be comma-separated. Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
                 },
                 "eatlas_accessions_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
                     "description": "File containing Expression Atlas accession(s) to download",
-                    "fa_icon": "fas fa-id-card",
+                    "fa_icon": "fas fa-file",
                     "help_text": "File containing Expression Atlas accession(s) that you want to download. One accession per line. Example: `--eatlas_accessions_file included_accessions.txt`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
                 },
                 "exclude_eatlas_accessions": {
@@ -110,14 +109,14 @@
                     "pattern": "([A-Z0-9-]+,?)+",
                     "description": "Expression Atlas accession(s) to exclude",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "Provide directly in command line Expression Atlas accessions (separated by commas) that you want to exclude. Example: `--exclude_eatlas_accessions E-MTAB-552,E-GEOD-61690`"
+                    "help_text": "Provide Expression Atlas accession(s) that you want to exclude. The accessions should be comma-separated. Example: `--exclude_eatlas_accessions E-MTAB-552,E-GEOD-61690`"
                 },
                 "exclude_eatlas_accessions_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
                     "description": "File containing Expression Atlas accession(s) to exclude",
-                    "fa_icon": "fas fa-id-card",
+                    "fa_icon": "fas fa-file",
                     "help_text": "File containing Expression Atlas accession(s) that you want to exclude. One accession per line. Example: `--exclude_eatlas_accessions_file excluded_accessions.txt`."
                 }
             }
@@ -139,14 +138,14 @@
                     "pattern": "([A-Z0-9-]+,?)+",
                     "description": "GEO accession(s) to include",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "Provide directly in command line GEO series accession(s) (separated by commas) that you want to download. Example: `--geo_accessions GSE8165,GSE8161`. Combine with --skip_fetch_geo_accessions if you want only these accessions to be used."
+                    "help_text": "Provide GEO accessions that you want to download. The accessions should be comma-separated. Example: `--geo_accessions GSE8165,GSE8161`. Combine with --skip_fetch_geo_accessions if you want only these accessions to be used."
                 },
                 "geo_accessions_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
                     "description": "File containing GEO accession(s) to download",
-                    "fa_icon": "fas fa-id-card",
+                    "fa_icon": "fas fa-file",
                     "help_text": "File containing GEO series accession(s) that you want to download. One accession per line. Example: `--geo_accessions_file included_accessions.txt`. Combine with --skip_fetch_geo_accessions if you want only these accessions to be used."
                 },
                 "exclude_geo_accessions": {
@@ -154,14 +153,14 @@
                     "pattern": "([A-Z0-9-]+,?)+",
                     "description": "GEO accession(s) to exclude",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "Provide directly in command line GEO series accessions (separated by commas) that you want to exclude. Example: `--exclude_geo_accessions GSE8165,GSE8161`"
+                    "help_text": "Provide GEO accessions that you want to exclude. The accessions should be comma-separated. Example: `--exclude_geo_accessions GSE8165,GSE8161`"
                 },
                 "exclude_geo_accessions_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
                     "description": "File containing GEO accession(s) to exclude",
-                    "fa_icon": "fas fa-id-card",
+                    "fa_icon": "fas fa-file",
                     "help_text": "File containing GEO series accession(s) that you want to exclude. One accession per line. Example: `--exclude_geo_accessions_file excluded_accessions.txt`."
                 }
             }
@@ -187,7 +186,7 @@
                     "pattern": "^\\S+\\.(csv|dat)$",
                     "description": "Custom gene id mapping file",
                     "help_text": "Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler. The mapping file should be a comma-separated file with 2 columns (original_gene_id and ensembl_gene_id) and a header row.",
-                    "fa_icon": "fas fa-file-csv"
+                    "fa_icon": "fas fa-file"
                 },
                 "gene_metadata": {
                     "type": "string",
@@ -198,7 +197,7 @@
                     "pattern": "^\\S+\\.(csv|dat)$",
                     "description": "Custom gene metadata file",
                     "help_text": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (ensembl_gene_id, name and description) and a header row.",
-                    "fa_icon": "fas fa-file-csv"
+                    "fa_icon": "fas fa-file"
                 }
             }
         },
@@ -210,24 +209,24 @@
             "properties": {
                 "normalisation_method": {
                     "type": "string",
-                    "description": "Tool to use for normalisation",
-                    "fa_icon": "fas fa-chart-simple",
+                    "description": "Count normalisation method",
+                    "fa_icon": "fas fa-divide",
                     "enum": ["deseq2", "edger"],
                     "default": "deseq2",
-                    "help_text": "Raw RNAseq data must be normalised before further processing. You can select the package used for normalisation."
+                    "help_text": "Raw RNAseq data must be normalised before further processing. You can select the R package used for normalisation."
                 },
                 "quantile_normalisation_target_distribution": {
                     "type": "string",
-                    "description": "Target distribution to map to during quantile normalisation",
-                    "fa_icon": "fas fa-chart-simple",
-                    "enum": ["normal", "uniform"],
+                    "description": "Target distribution for quantile normalisation",
+                    "fa_icon": "fas fa-chart-bar",
+                    "enum": ["uniform", "normal"],
                     "default": "uniform",
-                    "help_text": "All sample counts get quantile normalised and mapped to a specific distribution so that subsequent can compare them. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
+                    "help_text": "In order to compare counts between samples and different datasets, all normalised counts are quantile normalised and mapped to a specific distribution. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
                 },
                 "ks_pvalue_threshold": {
                     "type": "number",
                     "description": "Threshold for KS p-value for considering samples counts as a uniform distribution",
-                    "fa_icon": "fas fa-chart-simple",
+                    "fa_icon": "fas fa-battery-three-quarters",
                     "maximum": 1,
                     "default": 0,
                     "help_text": "P-value threshold for the Kolmogorov-Smirnov test of samples counts against a uniform distribution. Samples showing a p-value equal or below this threshold are considered not uniform and will therefore not be considered for computation of the stability score. Examples: `0`, `'0.05'`, `'1E-27'`. Provide a negative value to disable this filter. By default, all samples showing a pvalue of 0 will be discarded."
@@ -235,7 +234,7 @@
                 "min_expr_threshold": {
                     "type": "number",
                     "description": "Minimum percentage of quantile expression level",
-                    "fa_icon": "fas fa-chart-bar",
+                    "fa_icon": "fas fa-battery-three-quarters",
                     "minimum": 0,
                     "maximum": 1,
                     "default": 0.2,
@@ -251,33 +250,33 @@
             "properties": {
                 "candidate_selection_descriptor": {
                     "type": "string",
-                    "description": "Statistic descriptor for prior gene candidate selection",
-                    "fa_icon": "fas fa-chart-simple",
+                    "description": "Statistic descriptor for prior gene candidate selection. Either standard deviation (std), coefficient of variation (cv), or median absolute deviation (mad).",
+                    "fa_icon": "far fa-chart-bar",
                     "enum": ["std", "cv", "mad"],
                     "default": "std",
                     "help_text": "Candidate genes are chosen based on a certain statistical descriptor. Set this parameter to modify the descriptor used."
                 },
+                "nb_top_gene_candidates": {
+                    "type": "integer",
+                    "description": "Number of candidate genes to keep for stability scoring",
+                    "fa_icon": "fas fa-sort-numeric-up-alt",
+                    "minimum": 1,
+                    "default": 5000,
+                    "help_text": "Number of candidate genes to keep in the final list. These candidates genes are chosen as the ones showing the least standard variation."
+                },
                 "run_genorm": {
                     "type": "boolean",
                     "description": "Run Genorm",
-                    "fa_icon": "fas fa-ban",
-                    "help": "Genorm is NOT run by default. To run and get additional information about gene stability, set this parameter."
+                    "fa_icon": "fas fa-check",
+                    "help": "Genorm is NOT run by default. To run and get additional information about gene stability, set this parameter to true."
                 },
                 "stability_score_weights": {
                     "type": "string",
                     "description": "Weights for stability score calculation",
-                    "fa_icon": "fas fa-chart-simple",
+                    "fa_icon": "fas fa-balance-scale",
                     "default": "0.7,0.1,0.1,0.1",
                     "help_text": "Weights for Standard deviation / Median absolute deviation / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.7,0.1,0.1,0.1",
                     "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$"
-                },
-                "nb_top_gene_candidates": {
-                    "type": "integer",
-                    "description": "Number of candidate genes to keep for stability scoring",
-                    "fa_icon": "fas fa-chart-simple",
-                    "minimum": 1,
-                    "default": 5000,
-                    "help_text": "Number of candidate genes to keep in the final list. These candidates genes are chosen as the ones showing the least standard variation. Default is 1000."
                 }
             }
         },
@@ -444,6 +443,9 @@
         },
         {
             "$ref": "#/$defs/expression_atlas_options"
+        },
+        {
+            "$ref": "#/$defs/geo_dataset_options"
         },
         {
             "$ref": "#/$defs/idmapping_options"
