@@ -1,6 +1,6 @@
-include { MERGE_COUNTS as MERGE_ALL_COUNTS              } from '../../../modules/local/merge/counts'
-include { MERGE_COUNTS as MERGE_RNASEQ_COUNTS           } from '../../../modules/local/merge/counts'
-include { MERGE_COUNTS as MERGE_MICROARRAY_COUNTS       } from '../../../modules/local/merge/counts'
+include { MERGE_COUNTS as MERGE_ALL_COUNTS              } from '../../../modules/local/merge_counts'
+include { MERGE_COUNTS as MERGE_RNASEQ_COUNTS           } from '../../../modules/local/merge_counts'
+include { MERGE_COUNTS as MERGE_MICROARRAY_COUNTS       } from '../../../modules/local/merge_counts'
 
 include { getWholeDatasetSize                           } from '../../../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 

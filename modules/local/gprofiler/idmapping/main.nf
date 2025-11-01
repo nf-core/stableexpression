@@ -20,8 +20,17 @@ process GPROFILER_IDMAPPING {
             // if the server appears to be down, we stop immediately
             log.error("gProfiler server appears to be down, stopping pipeline")
             return 'terminate'
+        } else if ( task.exitStatus in ((130..145) + 104 + 175) ) { // override default behaviour to sleep some time before retry
+            // in case of OOM errors, we wait a bit and try again (2 retries)
+            if ( task.attempt <= 2) {
+                sleep(Math.pow(2, task.attempt) * 2000 as long)
+                return 'retry'
+            } else {
+                log.error("${accession} caused Out of Memory error multiple times. Ignoring this accession.")
+                return 'ignore'
+            }
         } else {
-            return 'terminate'
+            return 'finish'
         }
     }
 

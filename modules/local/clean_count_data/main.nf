@@ -2,18 +2,7 @@ process CLEAN_COUNT_DATA {
 
     label 'process_single'
 
-    errorStrategy {
-        if (task.exitStatus == 101) {
-            /*
-            log.warning(
-                "No more valid sample after checking p-value of Kolmogorow-Smirnoff test against target distribution! "
-                + "You can try a more flexible approach by setting again the value of the ks_pvalue_threshold parameter. "
-                + "Provide a negative value to disable this filter."
-            )
-            */
-            return 'ignore'
-        }
-    }
+    tag "${meta.dataset}"
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?

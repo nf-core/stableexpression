@@ -4,10 +4,6 @@ process NORMALISATION_DESEQ2 {
 
     tag "${meta.dataset}"
 
-    // ignoring cases when the count dataframe gets empty after filtering (the script throws a 100 in this case)
-    // the subsequent steps will not be run for this dataset
-    errorStrategy { task.exitStatus == 100 ? 'ignore' : 'terminate' }
-
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ce/cef7164b168e74e5db11dcd9acf6172d47ed6753e4814c68f39835d0c6c22f6d/data':

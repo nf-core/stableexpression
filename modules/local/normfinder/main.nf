@@ -2,13 +2,6 @@ process NORMFINDER   {
 
     label 'process_high'
 
-    errorStrategy {
-        if (task.exitStatus == 100) {
-            log.warn("Too few genes to run NormFinder.")
-            return 'ignore'
-        }
-    }
-
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0e/0e0445114887dd260f1632afe116b1e81e02e1acc74a86adca55099469b490d9/data':
