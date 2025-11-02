@@ -1,5 +1,5 @@
 process GEO_GETACCESSIONS {
-    debug true
+
     label 'process_high_cpus'
 
     conda "${moduleDir}/spec-file.txt"

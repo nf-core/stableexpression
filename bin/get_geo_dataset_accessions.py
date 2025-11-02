@@ -416,11 +416,6 @@ def probe_ids_can_be_converted(
     platform_dict_list = dataset_metadata["platform_metadata"]
     all_probe_ids = []
 
-    acc = dataset_metadata["accession"]
-    tmp_file = f"tmp/{acc}.txt"
-    Path("tmp").mkdir(exist_ok=True)
-    Path(tmp_file).touch()
-
     for platform_dict in platform_dict_list:
         # looping until we find data for our species
         if format_species(platform_dict["taxon"]) != format_species(species):
@@ -439,8 +434,6 @@ def probe_ids_can_be_converted(
 
     # if at least one ID could be converted
     can_be_converted = True if mapping_dict else False
-
-    Path(tmp_file).unlink()
     return dataset_metadata, can_be_converted
 
 
