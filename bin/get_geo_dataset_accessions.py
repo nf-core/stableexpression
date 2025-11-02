@@ -416,6 +416,11 @@ def probe_ids_can_be_converted(
     platform_dict_list = dataset_metadata["platform_metadata"]
     all_probe_ids = []
 
+    acc = dataset_metadata["accession"]
+    tmp_file = f"tmp/{acc}.txt"
+    Path("tmp").mkdir(exist_ok=True)
+    Path(tmp_file).touch()
+
     for platform_dict in platform_dict_list:
         # looping until we find data for our species
         if format_species(platform_dict["taxon"]) != format_species(species):
@@ -434,6 +439,8 @@ def probe_ids_can_be_converted(
 
     # if at least one ID could be converted
     can_be_converted = True if mapping_dict else False
+
+    Path(tmp_file).unlink()
     return dataset_metadata, can_be_converted
 
 
@@ -624,6 +631,9 @@ def contains_only_rna(molecules_types: list, accession: str) -> bool:
 def contains_proper_experiment_type(
     experiment_types: list, accession: str, platform: str
 ) -> bool:
+    experiment_types = (
+        experiment_types if isinstance(experiment_types, list) else [experiment_types]
+    )
     for experiment_type in experiment_types:
         # if at least one experiment type is ok, we keep this dataset
         if GEO_EXPERIMENT_TYPE_TO_PLATFORM.get(experiment_type) == platform:
@@ -778,7 +788,7 @@ def main():
     # EXCLUDING DATASETS WITH THE WRONG SPECIES
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info("Excluding wrong species")
+    logger.info(f"Excluding wrong species for {len(dataset_metadata_list)} datasets")
     good_species_dataset_metadata_list = [
         dataset
         for dataset in dataset_metadata_list
@@ -786,21 +796,21 @@ def main():
     ]
 
     export_filtered_out_datasets_if_any(
-        original_dataset_metadata_list=dataset_metadata_list,
-        filtered_dataset_metadata_list=good_species_dataset_metadata_list,
-        filtered_out_outfile_name=WRONG_SPECIES_DATASETS_METADATA_OUTFILE_NAME,
-        filtered_feature="species",
+        dataset_metadata_list,
+        good_species_dataset_metadata_list,
+        WRONG_SPECIES_DATASETS_METADATA_OUTFILE_NAME,
+        "species",
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # PARSING METADATA
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info("Parsing metadata")
+    logger.info(f"Parsing metadata for {len(dataset_metadata_list)} datasets")
     augmented_dataset_metadata_list = []
     with (
         Pool(processes=args.nb_cpus) as p,
-        tqdm(total=len(dataset_metadata_list)) as pbar,
+        tqdm(total=len(good_species_dataset_metadata_list)) as pbar,
     ):
         for result in p.imap_unordered(
             parse_metadata, good_species_dataset_metadata_list
@@ -815,7 +825,7 @@ def main():
     # CHECKING MOLECULE TYPE / PLATFORM TECHNOLOGIES
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info("Validating datasets")
+    logger.info(f"Validating {len(augmented_dataset_metadata_list)} datasets")
     specs_filtered_metadata_list = [
         metadata
         for metadata in augmented_dataset_metadata_list
@@ -823,10 +833,10 @@ def main():
     ]
 
     export_filtered_out_datasets_if_any(
-        original_dataset_metadata_list=augmented_dataset_metadata_list,
-        filtered_dataset_metadata_list=specs_filtered_metadata_list,
-        filtered_out_outfile_name=WRONG_SPECS_DATASETS_METADATA_OUTFILE_NAME,
-        filtered_feature="molecule type / platform technology",
+        augmented_dataset_metadata_list,
+        specs_filtered_metadata_list,
+        WRONG_SPECS_DATASETS_METADATA_OUTFILE_NAME,
+        "molecule type / platform technology",
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -834,7 +844,9 @@ def main():
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     if args.keywords:
-        logger.info(f"Filtering experiments with keywords {args.keywords}")
+        logger.info(
+            f"Filtering experiments with keywords {args.keywords} for {len(specs_filtered_metadata_list)} datasets"
+        )
         func = partial(filter_metadata_with_keywords, keywords=args.keywords)
 
         keywords_filtered_metadata_list = []
@@ -850,10 +862,10 @@ def main():
                 keywords_filtered_metadata_list.append(result)
 
         export_filtered_out_datasets_if_any(
-            original_dataset_metadata_list=specs_filtered_metadata_list,
-            filtered_dataset_metadata_list=keywords_filtered_metadata_list,
-            filtered_out_outfile_name=WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME,
-            filtered_feature="keywords",
+            specs_filtered_metadata_list,
+            keywords_filtered_metadata_list,
+            WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME,
+            "keywords",
         )
 
     else:
@@ -863,7 +875,9 @@ def main():
     # GETTING METADATA OF SEQUENCING PLATFORMS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info("Getting platform metadata")
+    logger.info(
+        f"Getting platform metadata for {len(keywords_filtered_metadata_list)} datasets"
+    )
     platform_augmented_dataset_metadata_list = []
     for selected_metadata_chunk_list in tqdm(
         chunk_list(keywords_filtered_metadata_list, PLATFORM_METADATA_CHUNKSIZE)
@@ -873,10 +887,10 @@ def main():
         )
 
     export_filtered_out_datasets_if_any(
-        original_dataset_metadata_list=keywords_filtered_metadata_list,
-        filtered_dataset_metadata_list=platform_augmented_dataset_metadata_list,
-        filtered_out_outfile_name=PLATFORM_NOT_AVAILABLE_DATASETS_METADATA_OUTFILE_NAME,
-        filtered_feature="platform metadata",
+        keywords_filtered_metadata_list,
+        platform_augmented_dataset_metadata_list,
+        PLATFORM_NOT_AVAILABLE_DATASETS_METADATA_OUTFILE_NAME,
+        "platform metadata",
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -884,7 +898,9 @@ def main():
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # this cannot be done in parallel because it requires HTTP requests
-    logger.info("Checking gene ID mapping issues")
+    logger.info(
+        f"Checking gene ID mapping issues for {len(platform_augmented_dataset_metadata_list)} datasets"
+    )
     func = partial(probe_ids_can_be_converted, species=args.species)
     final_metadata_list = []
 
@@ -901,10 +917,10 @@ def main():
                 final_metadata_list.append(metadata)
 
     export_filtered_out_datasets_if_any(
-        original_dataset_metadata_list=platform_augmented_dataset_metadata_list,
-        filtered_dataset_metadata_list=final_metadata_list,
-        filtered_out_outfile_name=GENE_ID_MAPPING_ISSUES_DATASETS_METADATA_OUTFILE_NAME,
-        filtered_feature="gene id mapping",
+        platform_augmented_dataset_metadata_list,
+        final_metadata_list,
+        GENE_ID_MAPPING_ISSUES_DATASETS_METADATA_OUTFILE_NAME,
+        "gene id mapping",
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
