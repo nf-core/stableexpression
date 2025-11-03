@@ -20,7 +20,7 @@ process NORMALISATION_EDGER {
                 return 'ignore'
             }
         } else {
-            return 'ignore'
+            return 'finish'
         }
     }
 

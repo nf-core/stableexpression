@@ -20,7 +20,7 @@ process NORMALISATION_DESEQ2 {
                 return 'ignore'
             }
         } else {
-            return 'ignore'
+            return 'finish'
         }
     }
 
