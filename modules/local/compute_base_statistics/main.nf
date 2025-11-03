@@ -16,7 +16,7 @@ process COMPUTE_BASE_STATISTICS {
                 return 'ignore'
             }
         } else {
-            return 'ignore'
+            return 'terminate'
         }
     }
 

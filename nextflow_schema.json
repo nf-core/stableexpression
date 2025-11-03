@@ -250,10 +250,10 @@
             "properties": {
                 "candidate_selection_descriptor": {
                     "type": "string",
-                    "description": "Statistic descriptor for prior gene candidate selection. Either standard deviation (std), coefficient of variation (cv), or median absolute deviation (mad).",
+                    "description": "Statistic descriptor for prior gene candidate selection. Either coefficient of variation (cv), or robust median absolute deviation (rcvm).",
                     "fa_icon": "far fa-chart-bar",
-                    "enum": ["std", "cv", "mad"],
-                    "default": "std",
+                    "enum": ["cv", "rcvm"],
+                    "default": "cv",
                     "help_text": "Candidate genes are chosen based on a certain statistical descriptor. Set this parameter to modify the descriptor used."
                 },
                 "nb_top_gene_candidates": {
@@ -275,7 +275,7 @@
                     "description": "Weights for stability score calculation",
                     "fa_icon": "fas fa-balance-scale",
                     "default": "0.7,0.1,0.1,0.1",
-                    "help_text": "Weights for Standard deviation / Median absolute deviation / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.7,0.1,0.1,0.1",
+                    "help_text": "Weights for Coefficient of Variation / Robust Coefficient of Variation on Median / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.7,0.1,0.1,0.1",
                     "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$"
                 }
             }

@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 # outfile names
 ALL_GENES_RESULT_OUTFILE_SUFFIX = "stats_all_genes.csv"
 
+RCV_MULTIFILER = 1.4826  # see https://pmc.ncbi.nlm.nih.gov/articles/PMC9196089/
+
 
 ############################################################################
 # POLARS EXTENSIONS
@@ -136,6 +138,9 @@ class GeneStatistician:
             pl.col("mad").alias(self.get_colname(config.MAD_COLNAME)),
             (pl.col("std") / pl.col("mean")).alias(
                 self.get_colname(config.VARIATION_COEFFICIENT_COLNAME)
+            ),
+            (pl.col("mad") / pl.col("median") * RCV_MULTIFILER).alias(
+                self.get_colname(config.ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME)
             ),
         )
 

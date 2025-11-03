@@ -25,7 +25,7 @@ class StabilityScorer:
 
     WEIGHT_FIELDS: ClassVar[list[str]] = [
         config.VARIATION_COEFFICIENT_COLNAME,
-        config.MAD_COLNAME,
+        config.ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME,
         config.NORMFINDER_STABILITY_VALUE_COLNAME,
         config.GENORM_M_MEASURE_COLNAME,
     ]
@@ -184,7 +184,7 @@ def parse_args():
         dest="stability_score_weights",
         type=str,
         required=True,
-        help="Weights for Standard deviation / Median absolute deviation / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.7,0.1,0.1,0.1",
+        help="Weights for Coefficient of Variation / Robust Coefficient of Variation on Median / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.7,0.1,0.1,0.1",
     )
     return parser.parse_args()
 

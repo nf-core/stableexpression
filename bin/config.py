@@ -3,7 +3,10 @@ ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
 RANK_COLNAME = "rank"
 
 # base statistics
-VARIATION_COEFFICIENT_COLNAME = "variation_coefficient"
+VARIATION_COEFFICIENT_COLNAME = "coefficient_of_variation"
+ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME = (
+    "robust_coefficient_of_variation_median"
+)
 STANDARD_DEVIATION_COLNAME = "standard_deviation"
 STABILITY_SCORE_COLNAME = "stability_score"
 MEAN_COLNAME = "mean"
@@ -35,9 +38,6 @@ GENORM_M_MEASURE_COLNAME = "genorm_m_measure"
 RATIOS_STD_COLNAME = "ratios_stds"
 
 SCORING_BASE_TO_STABILITY_SCORE_COLUMN = {
-    "normfinder": NORMFINDER_STABILITY_VALUE_COLNAME,
-    "genorm": GENORM_M_MEASURE_COLNAME,
-    "std": STANDARD_DEVIATION_COLNAME,
     "cv": VARIATION_COEFFICIENT_COLNAME,
-    "mad": MAD_COLNAME,
+    "rcvm": ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME,
 }

@@ -137,7 +137,7 @@ def main():
     stat_lf = filter_out_low_expression_genes(stat_lf, args.min_pct_quantile_expr_level)
     # stat_lf = filter_out_genes_with_zero_counts(stat_lf)
 
-    # get base candidate genes based on the chosen statistical descriptor (std, mad, ...)
+    # get base candidate genes based on the chosen statistical descriptor (cv, rcvm)
     best_candidates = get_best_candidates(
         stat_lf, args.candidate_selection_descriptor, args.nb_top_stable_genes
     )
