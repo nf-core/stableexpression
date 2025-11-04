@@ -7,9 +7,10 @@ from tqdm import tqdm
 from multiprocessing import Pool
 from Bio import Entrez
 from pathlib import Path
-from random import sample
-import re
-import requests
+
+# from random import sample
+# import re
+# import requests
 import pandas as pd
 import xmltodict
 from urllib.request import urlretrieve
@@ -25,7 +26,7 @@ import logging
 from requests.exceptions import HTTPError, ConnectionError
 
 from natural_language_utils import keywords_in_fields
-from gprofiler_utils import convert_ids, chunk_list
+# from gprofiler_utils import convert_ids, chunk_list
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,27 +36,24 @@ logger = logging.getLogger(__name__)
 # Entrez.Parser.Parser.directory("/tmp/biopython")
 
 ACCESSION_OUTFILE_NAME = "accessions.txt"
-SPECIES_DATASETS_OUTFILE_NAME = "species_datasets.metadata.tsv"
-WRONG_SPECIES_DATASETS_METADATA_OUTFILE_NAME = "wrong_species_datasets.metadata.tsv"
+SPECIES_DATASETS_OUTFILE_NAME = "geo_all_datasets.metadata.tsv"
+WRONG_SPECIES_DATASETS_METADATA_OUTFILE_NAME = "geo_wrong_species_datasets.metadata.tsv"
 WRONG_SPECS_DATASETS_METADATA_OUTFILE_NAME = (
-    "wrong_platform_moltype_datasets.metadata.tsv"
+    "geo_wrong_platform_moltype_datasets.metadata.tsv"
 )
-WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME = "wrong_keywords_datasets.metadata.tsv"
-PLATFORM_NOT_AVAILABLE_DATASETS_METADATA_OUTFILE_NAME = (
-    "platform_not_available_datasets.metadata.tsv"
+WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME = (
+    "geo_wrong_keywords_datasets.metadata.tsv"
 )
-GENE_ID_MAPPING_ISSUES_DATASETS_METADATA_OUTFILE_NAME = (
-    "gene_id_mapping_issues_datasets.metadata.tsv"
-)
-FINAL_DATASETS_METADATA_OUTFILE_NAME = "final_datasets.metadata.tsv"
+# PLATFORM_NOT_AVAILABLE_DATASETS_METADATA_OUTFILE_NAME = "platform_not_available_datasets.metadata.tsv"
+# GENE_ID_MAPPING_ISSUES_DATASETS_METADATA_OUTFILE_NAME = "gene_id_mapping_issues_datasets.metadata.tsv"
+FINAL_DATASETS_METADATA_OUTFILE_NAME = "geo_selected_datasets.metadata.tsv"
 
 ENTREZ_QUERY_MAX_RESULTS = 9999
 ENTREZ_EMAIL = "stableexpression@nfcore.com"
-PLATFORM_METADATA_CHUNKSIZE = 2000
+# PLATFORM_METADATA_CHUNKSIZE = 2000
 
-NCBI_API_BASE_URL = (
-    "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={accession}"
-)
+# NCBI_API_BASE_URL = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={accession}"
+
 
 STOP_RETRY_AFTER_DELAY = 600
 
@@ -168,6 +166,7 @@ def send_request_to_entrez_esummary(ids: list[str]) -> list[dict]:
         return Entrez.read(handle)
 
 
+"""
 @retry(
     stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
     wait=wait_exponential(multiplier=1, min=1, max=30),
@@ -204,6 +203,7 @@ def send_request_to_ncbi_api(accession: str) -> requests.Response | None:
         )
 
     return response
+"""
 
 
 @retry(
@@ -378,7 +378,7 @@ def download_platform_datatable(ftp_link: str, platform_accession: str) -> Path 
     return output_file
 """
 
-
+"""
 def get_platform_probe_id_samples(platform_accession: str) -> list[str]:
     response = send_request_to_ncbi_api(platform_accession)
     if response is None:
@@ -435,7 +435,7 @@ def probe_ids_can_be_converted(
     # if at least one ID could be converted
     can_be_converted = True if mapping_dict else False
     return dataset_metadata, can_be_converted
-
+"""
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # FORMATTING
@@ -650,13 +650,14 @@ def contains_transcriptomic_source(library_sources: list, accession: str) -> boo
     return False
 
 
-def dataset_is_valid(metadata: dict, platform: str) -> bool:
+def dataset_is_valid(metadata: dict, platform: str | None) -> bool:
     accession = metadata["accession"]
     # checking platform
-    if not contains_proper_experiment_type(
-        metadata["experiment_types"], accession, platform
-    ):
-        return False
+    if platform is not None:
+        if not contains_proper_experiment_type(
+            metadata["experiment_types"], accession, platform
+        ):
+            return False
 
     # checking that library sources fit
     if not contains_transcriptomic_source(
@@ -842,7 +843,7 @@ def main():
         )
         func = partial(filter_metadata_with_keywords, keywords=args.keywords)
 
-        keywords_filtered_metadata_list = []
+        final_metadata_list = []
         with (
             Pool(processes=args.nb_cpus) as p,
             tqdm(total=len(specs_filtered_metadata_list)) as pbar,
@@ -852,18 +853,19 @@ def main():
                 pbar.refresh()
                 if result is None:
                     continue
-                keywords_filtered_metadata_list.append(result)
+                final_metadata_list.append(result)
 
         export_filtered_out_datasets_if_any(
             specs_filtered_metadata_list,
-            keywords_filtered_metadata_list,
+            final_metadata_list,
             WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME,
             "keywords",
         )
 
     else:
-        keywords_filtered_metadata_list = specs_filtered_metadata_list
+        final_metadata_list = specs_filtered_metadata_list
 
+    """
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # GETTING METADATA OF SEQUENCING PLATFORMS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -885,6 +887,7 @@ def main():
         PLATFORM_NOT_AVAILABLE_DATASETS_METADATA_OUTFILE_NAME,
         "platform metadata",
     )
+
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # FILTERING OUT DATASETS FOR WHICH ID MAPPING DOES NOT WORK
@@ -915,6 +918,7 @@ def main():
         GENE_ID_MAPPING_ISSUES_DATASETS_METADATA_OUTFILE_NAME,
         "gene id mapping",
     )
+    """
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # GETTING ACCESSIONS TO DOWNLOAD
@@ -929,22 +933,16 @@ def main():
     with open(ACCESSION_OUTFILE_NAME, "w") as fout:
         fout.writelines([f"{acc}\n" for acc in selected_accessions])
 
-    if final_metadata_list:
-        logger.info(
-            f"Writing metadata of selected datasets to {FINAL_DATASETS_METADATA_OUTFILE_NAME}"
-        )
-        df = pd.DataFrame.from_dict(final_metadata_list)
-        df.to_csv(
-            FINAL_DATASETS_METADATA_OUTFILE_NAME,
-            sep="\t",
-            index=False,
-            header=True,
-        )
-    else:
-        msg = f"Could not find experiments for species {args.species}"
-        if args.keywords:
-            msg += f" and keywords {args.keywords}"
-        logger.warning(msg)
+    logger.info(
+        f"Writing metadata of selected datasets to {FINAL_DATASETS_METADATA_OUTFILE_NAME}"
+    )
+    df = pd.DataFrame.from_dict(final_metadata_list)
+    df.to_csv(
+        FINAL_DATASETS_METADATA_OUTFILE_NAME,
+        sep="\t",
+        index=False,
+        header=True,
+    )
 
 
 if __name__ == "__main__":

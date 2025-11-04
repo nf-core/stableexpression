@@ -106,8 +106,8 @@ VERSION="1.0dev"; echo "$VERSION"
 			  --gene_metadata "$idmapping_options.gene_metadata"
 			#end if
 			--normalisation_method "$statistical_options.normalisation_method"
-			#if $statistical_options.quantile_normalisation_target_distribution
-			  --quantile_normalisation_target_distribution "$statistical_options.quantile_normalisation_target_distribution"
+			#if $statistical_options.quantile_norm_target_distrib
+			  --quantile_norm_target_distrib "$statistical_options.quantile_norm_target_distrib"
 			#end if
 			--ks_pvalue_threshold $statistical_options.ks_pvalue_threshold
 			#if $statistical_options.min_expr_threshold
@@ -188,7 +188,7 @@ VERSION="1.0dev"; echo "$VERSION"
 				<option value="deseq2" selected="true">Deseq2</option>
 				<option value="edger">Edger</option>
 			</param>
-			<param name="quantile_normalisation_target_distribution" type="select" label="Target distribution to map to during quantile normalisation" help="All sample counts get quantile normalised and mapped to a specific distribution so that subsequent can compare them. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to." optional="true">
+			<param name="quantile_norm_target_distrib" type="select" label="Target distribution to map to during quantile normalisation" help="All sample counts get quantile normalised and mapped to a specific distribution so that subsequent can compare them. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to." optional="true">
 				<option value="normal">Normal</option>
 				<option value="uniform" selected="true">Uniform</option>
 			</param>

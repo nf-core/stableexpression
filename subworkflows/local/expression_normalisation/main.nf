@@ -13,7 +13,7 @@ workflow EXPRESSION_NORMALISATION {
     take:
     ch_datasets
     normalisation_method
-    quantile_normalisation_target_distribution
+    quantile_norm_target_distrib
 
     main:
 
@@ -50,7 +50,7 @@ workflow EXPRESSION_NORMALISATION {
 
     QUANTILE_NORMALISATION (
         quant_norm_input,
-        quantile_normalisation_target_distribution
+        quantile_norm_target_distrib
     )
 
 
@@ -58,7 +58,3 @@ workflow EXPRESSION_NORMALISATION {
     normalised_counts                   = QUANTILE_NORMALISATION.out.counts
 
 }
-
-
-
-

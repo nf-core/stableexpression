@@ -11,7 +11,7 @@ workflow DATA_CLEANSING {
 
     take:
     ch_quantile_normalised_datasets
-    quantile_normalisation_target_distribution
+    quantile_norm_target_distrib
     ks_pvalue_threshold
 
     main:
@@ -22,7 +22,7 @@ workflow DATA_CLEANSING {
 
     DATASET_STATISTICS(
         ch_quantile_normalised_datasets,
-        quantile_normalisation_target_distribution
+        quantile_norm_target_distrib
     )
 
     //

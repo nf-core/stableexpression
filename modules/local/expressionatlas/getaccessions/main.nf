@@ -14,10 +14,10 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     output:
     path "accessions.txt",                                                                                            emit: accessions
-    path "all_experiments.metadata.tsv",                                                                              emit: all_eatlas_experiment_metadata
-    path "species_experiments.metadata.tsv",                                                                          topic: species_eatlas_experiment_metadata
-    path "filtered_experiments.metadata.tsv", optional: true,                                                         topic: filtered_eatlas_experiment_metadata
-    path "filtered_experiments.keywords.yaml", optional: true,                                                        topic: filtered_eatlas_experiment_keywords
+    path "selected_experiments.metadata.tsv",                                                                         topic: eatlas_selected_datasets
+    path "species_experiments.metadata.tsv",                                                                          topic: eatlas_all_datasets
+    //path "filtered_experiments.metadata.tsv", optional: true,                                                         topic: filtered_eatlas_experiment_metadata
+    //path "filtered_experiments.keywords.yaml", optional: true,                                                        topic: filtered_eatlas_experiment_keywords
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('requests'), eval('python3 -c "import requests; print(requests.__version__)"'), topic: versions
     tuple val("${task.process}"), val('nltk'),     eval('python3 -c "import nltk; print(nltk.__version__)"'),         topic: versions

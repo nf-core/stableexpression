@@ -33,7 +33,7 @@ table_cond_formatting_colours:
 
 custom_data:
   ranked_top_stable_genes_summary:
-    section_name: "Top stable genes - ranked by stability"
+    section_name: "Stable genes ranking"
     file_format: "csv"
     no_violin: true
     description: |
@@ -308,17 +308,18 @@ custom_data:
           Ratio of Microarray samples in which the gene has a zero value.
 
   expression_distributions_top_stable_genes:
-    section_name: "Expression distribution of the top stable genes (ranked by stability)"
+    section_name: "Distribution of the normalised expression of the most stable genes (ranked by stability score)"
     file_format: "csv"
     pconfig:
       sort_samples: false
+      #xmin: 0
+      #xmax: 1
+      xlab: Expression
+      ylab: Gene
     description: |
-      Distribution of gene expression across samples for the most stable genes.
-
-      Genes are ranked from the most stable to the least stable.
+      Distribution of normalised gene expression (between 0 and 1) across samples for the most stable genes.
+      Only the 100 most stable genes are shown and genes are ranked from the most stable to the least stable.
     plot_type: "boxplot"
-    #xlab: Expression
-    #ylab: Gene
 
   gene_statistics:
     section_name: "Descriptive statistics - All genes"
@@ -330,119 +331,105 @@ custom_data:
       stability_score:
         title: "Stability score"
         color: "rgb(186,43,32)"
-      variation_coefficient_normalised:
-        title: "Normalised coefficient of variation"
+      coefficient_of_variation_normalised:
+        title: "Normalised CV"
+        color: "rgb(64, 122, 22)"
+      robust_coefficient_of_variation_median_normalised:
+        title: "Normalised RCVm"
         color: "rgb(64, 122, 22)"
       normfinder_stability_value_normalised:
-        title: "Normalised Normfinder stability value "
+        title: "Normalised Normfinder score"
         color: "rgb(64, 122, 22)"
       genorm_m_measure_normalised:
-        title: "Normalised Genorm M-measure"
+        title: "Normalised Genorm score"
         color: "rgb(64, 122, 22)"
-      median_absolute_deviation_normalised:
-        title: "Normalised median absolute deviation"
-        color: "rgb(64, 122, 22)"
-      standard_deviation:
-        title: "Standard deviation"
-        color: "rgb(227, 210, 36)"
-      variation_coefficient:
-        title: "Coefficient of variation"
-        color: "rgb(227, 210, 36)"
+      coefficient_of_variation:
+        title: "CV"
+        color: "rgb(26, 167, 178)"
+      robust_coefficient_of_variation_median:
+        title: "RCVm"
+        color: "rgb(26, 167, 178)"
       normfinder_stability_value:
         title: "Normfinder stability value "
-        color: "rgb(227, 210, 36)"
+        color: "rgb(26, 167, 178)"
       genorm_m_measure:
         title: "Genorm M-measure"
-        color: "rgb(227, 210, 36)"
+        color: "rgb(26, 167, 178)"
       mean:
         title: "Average"
-        color: "rgb(85, 23, 166)"
+        color: "rgb(26, 167, 178)"
+      standard_deviation:
+        title: "Standard deviation"
+        color: "rgb(26, 167, 178)"
       median:
         title: "Median"
-        color: "rgb(85, 23, 166)"
+        color: "rgb(26, 167, 178)"
       median_absolute_deviation:
-        title: "Median absolute deviation"
-        color: "rgb(85, 23, 166)"
-      rnaseq_standard_deviation:
-        title: "Std [RNA-seq only]"
-      rnaseq_variation_coefficient:
+        title: "MAD"
+        color: "rgb(26, 167, 178)"
+      rnaseq_coefficient_of_variation:
         title: "Var coeff [RNA-seq only]"
+        color: "rgb(140, 50, 76)"
+      rnaseq_robust_coefficient_of_variation_median:
+        title: "RCVm [RNA-seq only]"
+        color: "rgb(140, 50, 76)"
       rnaseq_mean:
         title: "Average [RNA-seq only]"
-        description: |
-          Average expression across samples.
-        format: "{:,.4f}"
+        color: "rgb(140, 50, 76)"
+      rnaseq_standard_deviation:
+        title: "Std [RNA-seq only]"
+        color: "rgb(140, 50, 76)"
       rnaseq_median:
         title: "Median [RNA-seq only]"
-        description: |
-          Median expression across RNA-Seq samples.
-        format: "{:,.4f}"
+        color: "rgb(140, 50, 76)"
       rnaseq_median_absolute_deviation:
-        title: "Mad [RNA-seq only]"
-        description: |
-          Median absolute deviation of the expression across RNA-Seq samples.
-        format: "{:,.4f}"
-      microarray_standard_deviation:
-        title: "Std [Microarray only]"
-        description: |
-          Standard deviation of the expression across Microarray samples.
-        format: "{:,.4f}"
-      microarray_variation_coefficient:
+        title: "MAD [RNA-seq only]"
+        color: "rgb(140, 50, 76)"
+      microarray_coefficient_of_variation:
         title: "Var coeff [Microarray only]"
-        description: |
-          Variation coefficient ( std(expression) / mean(expression) ) across Microarray samples.
-        format: "{:,.4f}"
+        color: "rgb(27, 83, 73)"
+      microarray_robust_coefficient_of_variation_median:
+        title: "RCVm [Microarray only]"
+        color: "rgb(27, 83, 73)"
       microarray_mean:
         title: "Average [Microarray only]"
-        description: |
-          Average expression across Microarray samples.
-        format: "{:,.4f}"
+        color: "rgb(27, 83, 73)"
+      microarray_standard_deviation:
+        title: "Std [Microarray only]"
+        color: "rgb(27, 83, 73)"
       microarray_median:
         title: "Median [Microarray only]"
-        description: |
-          Median expression across Microarray samples.
-        format: "{:,.4f}"
+        color: "rgb(27, 83, 73)"
       microarray_median_absolute_deviation:
-        title: "Mad [Microarray only]"
-        description: |
-          Median absolute deviation of the expression across Microarray samples.
-        format: "{:,.4f}"
+        title: "MAD [Microarray only]"
+        color: "rgb(27, 83, 73)"
       ratio_nulls_in_all_samples:
         title: "Ratio null values (all samples)"
-        description: |
-          Ratio of samples in which the gene is not represented.
+        color: "rgb(106, 78, 193)"
       ratio_nulls_in_valid_samples:
         title: "Ratio null values (valid samples)"
-        description: |
-          Ratio of samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+        color: "rgb(106, 78, 193)"
       ratio_zeros:
         title: "Ratio zero values"
-        description: |
-          Ratio of samples in which the gene has a zero value.
+        color: "rgb(106, 78, 193)"
       rnaseq_ratio_nulls_in_all_samples:
         title: "Ratio null values (all samples) [RNA-seq only]"
-        description: |
-          Ratio of RNA-Seq samples in which the gene is not represented.
+        color: "rgb(106, 78, 193)"
       rnaseq_ratio_nulls_in_valid_samples:
         title: "Ratio null values (valid samples) [RNA-seq only]"
-        description: |
-          Ratio of RNA-Seq samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+        color: "rgb(106, 78, 193)"
       rnaseq_ratio_zeros:
         title: "Ratio zero values [RNA-seq only]"
-        description: |
-          Ratio of RNA-Seq samples in which the gene has a zero value.
+        color: "rgb(106, 78, 193)"
       microarray_ratio_nulls_in_all_samples:
         title: "Ratio null values (all samples) [Microarray only]"
-        description: |
-          Ratio of Microarray samples in which the gene is not represented.
+        color: "rgb(106, 78, 193)"
       microarray_ratio_nulls_in_valid_samples:
         title: "Ratio null values (valid samples) [Microarray only]"
-        description: |
-          Ratio of Microarray samples in which the gene is not represented, excluding samples with particularly low overall gene count.
+        color: "rgb(106, 78, 193)"
       microarray_ratio_zeros:
         title: "Ratio zero values [Microarray only]"
-        description: |
-          Ratio of Microarray samples in which the gene has a zero value.
+        color: "rgb(106, 78, 193)"
 
   gene_counts:
     section_name: "Gene counts"
@@ -495,22 +482,52 @@ custom_data:
           Pvalue of Kolmogorov-Smirnov test to normal / uniform distribution.
         color: "#bf812d"
 
-  eatlas_filtered_experiments_metadata:
-    section_name: "Expression Atlas metadata - filtered"
+  eatlas_selected_experiments_metadata:
+    section_name: "Selected"
+    parent_id: eatlas
+    parent_name: "Expression Atlas dataset metadata"
+    parent_description: "Information about the Expression Atlas datasets processed in the analysis"
     file_format: "tsv"
     no_violin: true
     sort_rows: false
     description: |
-      Metadata of Expression Atlas accessions filtered relatively to the provided species (and optionally the provided keywords)
+      Metadata of selected Expression Atlas datasets corresponding to the provided species (and optionally the provided keywords)
     plot_type: "table"
 
   eatlas_all_experiments_metadata:
-    section_name: "Expression Atlas metadata - all"
+    section_name: "All datasets"
+    parent_id: eatlas
+    parent_name: "Expression Atlas dataset metadata"
+    parent_description: "Information about the Expression Atlas datasets processed in the analysis"
     file_format: "tsv"
     no_violin: true
     sort_rows: false
     description: |
-      Metadata of Expression Atlas accessions filtered relatively to the provided species (and optionally the provided keywords)
+      Metadata of all Expression Atlas datasets corresponding to the provided species
+    plot_type: "table"
+
+  geo_selected_experiments_metadata:
+    section_name: "Selected"
+    parent_id: geo
+    parent_name: "GEO dataset metadata"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    sort_rows: false
+    description: |
+      Metadata of selected GEO datasets corresponding to the provided species (and optionally the provided keywords)
+    plot_type: "table"
+
+  geo_all_experiments_metadata:
+    section_name: "All datasets"
+    parent_id: geo
+    parent_name: "GEO dataset metadata"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    sort_rows: false
+    description: |
+      Metadata of all GEO datasets corresponding to the provided species
     plot_type: "table"
 
 #violin_downsample_after: 10000
@@ -533,7 +550,11 @@ sp:
     fn: "*skewness_statistics.csv"
   uniform_distribution_probabilities:
     fn: "*ks_test_statistics.csv"
-  eatlas_filtered_experiments_metadata:
-    fn: "*filtered_experiments.metadata.tsv"
+  eatlas_selected_experiments_metadata:
+    fn: "*selected_experiments.metadata.tsv"
   eatlas_all_experiments_metadata:
-    fn: "*all_experiments.metadata.tsv"
+    fn: "*species_experiments.metadata.tsv"
+  geo_selected_experiments_metadata:
+    fn: "*geo_selected_datasets.metadata.tsv"
+  geo_all_experiments_metadata:
+    fn: "*geo_all_datasets.metadata.tsv"

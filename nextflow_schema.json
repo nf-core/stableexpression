@@ -215,7 +215,7 @@
                     "default": "deseq2",
                     "help_text": "Raw RNAseq data must be normalised before further processing. You can select the R package used for normalisation."
                 },
-                "quantile_normalisation_target_distribution": {
+                "quantile_norm_target_distrib": {
                     "type": "string",
                     "description": "Target distribution for quantile normalisation",
                     "fa_icon": "fas fa-chart-bar",
@@ -268,14 +268,13 @@
                     "type": "boolean",
                     "description": "Run Genorm",
                     "fa_icon": "fas fa-check",
-                    "help": "Genorm is NOT run by default. To run and get additional information about gene stability, set this parameter to true."
+                    "help": "Genorm is not run by default. To run and get additional information about gene stability, set this parameter to true. Moreover, you can integrate the Genorm M-measure in the stability score by modifying the score weights with --stability_score_weights."
                 },
                 "stability_score_weights": {
                     "type": "string",
                     "description": "Weights for stability score calculation",
                     "fa_icon": "fas fa-balance-scale",
-                    "default": "0.7,0.1,0.1,0.1",
-                    "help_text": "Weights for Coefficient of Variation / Robust Coefficient of Variation on Median / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.7,0.1,0.1,0.1",
+                    "help_text": "Weights for Coefficient of Variation / Robust Coefficient of Variation on Median / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.8,0.1,0.1,0",
                     "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$"
                 }
             }

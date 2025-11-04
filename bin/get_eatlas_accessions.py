@@ -24,9 +24,9 @@ logger = logging.getLogger(__name__)
 
 ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
 ACCESSION_OUTFILE_NAME = "accessions.txt"
-ALL_EXPERIMENTS_METADATA_OUTFILE_NAME = "all_experiments.metadata.tsv"
+# ALL_EXPERIMENTS_METADATA_OUTFILE_NAME = "all_experiments.metadata.tsv"
 SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME = "species_experiments.metadata.tsv"
-FILTERED_EXPERIMENTS_METADATA_OUTFILE_NAME = "filtered_experiments.metadata.tsv"
+SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME = "selected_experiments.metadata.tsv"
 FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME = "filtered_experiments.keywords.yaml"
 
 
@@ -54,7 +54,7 @@ def parse_args():
         "--species",
         type=str,
         required=True,
-        help="Search Expression Atlas for this specific species"
+        help="Search Expression Atlas for this specific species",
     )
     parser.add_argument(
         "--keywords",
@@ -62,13 +62,8 @@ def parse_args():
         nargs="*",
         help="Keywords to search for in experiment description",
     )
-    parser.add_argument(
-        "--platform",
-        type=str,
-        help="Platform type"
-    )
+    parser.add_argument("--platform", type=str, help="Platform type")
     return parser.parse_args()
-
 
 
 @retry(
@@ -231,8 +226,14 @@ def get_platform_specific_experiments(experiments: list[dict], platform: str):
     platform_experiments = []
     for exp_dict in experiments:
         if technology_type := exp_dict.get("technologyType"):
-            parsed_technology_type = technology_type[0] if isinstance(technology_type, list) else technology_type
-            parsed_platform = parsed_technology_type.lower().split(" ")[0].replace("-", "")
+            parsed_technology_type = (
+                technology_type[0]
+                if isinstance(technology_type, list)
+                else technology_type
+            )
+            parsed_platform = (
+                parsed_technology_type.lower().split(" ")[0].replace("-", "")
+            )
             if platform == parsed_platform:
                 platform_experiments.append(exp_dict)
     return platform_experiments
@@ -293,8 +294,6 @@ def parse_experiment(exp_dict: dict):
     }
 
 
-
-
 def filter_experiment_with_keywords(exp_dict: dict, keywords: list[str]) -> dict | None:
     all_searchable_fields = [exp_dict["description"]] + exp_dict["properties"]
     found_keywords = keywords_in_fields(all_searchable_fields, keywords)
@@ -348,7 +347,9 @@ def main():
 
     if args.platform:
         logger.info(f"Getting experiments corresponding to platform {args.platform}")
-        all_experiments = get_platform_specific_experiments(all_experiments, args.platform)
+        all_experiments = get_platform_specific_experiments(
+            all_experiments, args.platform
+        )
 
     species_experiments = get_species_experiments(all_experiments, species_name)
     logger.info(
@@ -388,12 +389,14 @@ def main():
     with open(ACCESSION_OUTFILE_NAME, "w") as fout:
         fout.writelines([f"{acc}\n" for acc in selected_accessions])
 
+    """
     # exporting metadata
     logger.info(
         f"Writing metadata of all experiments to {ALL_EXPERIMENTS_METADATA_OUTFILE_NAME}"
     )
     df = pd.DataFrame.from_dict(all_experiments)
     df.to_csv(ALL_EXPERIMENTS_METADATA_OUTFILE_NAME, sep="\t", index=False, header=True)
+    """
 
     # exporting metadata
     logger.info(
@@ -406,11 +409,11 @@ def main():
 
     if selected_experiments:
         logger.info(
-            f"Writing metadata of filtered experiments to {FILTERED_EXPERIMENTS_METADATA_OUTFILE_NAME}"
+            f"Writing metadata of filtered experiments to {SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME}"
         )
         df = pd.DataFrame.from_dict(selected_experiments)
         df.to_csv(
-            FILTERED_EXPERIMENTS_METADATA_OUTFILE_NAME,
+            SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME,
             sep="\t",
             index=False,
             header=True,

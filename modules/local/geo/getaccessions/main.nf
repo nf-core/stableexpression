@@ -16,13 +16,14 @@ process GEO_GETACCESSIONS {
 
     output:
     path "accessions.txt",                                                                                                    emit: accessions
-    path "final_datasets.metadata.tsv",                                                                       optional: true, emit: final_datasets_metadata
-    path "wrong_species_datasets.metadata.tsv",                                                               optional: true, emit: wrong_species_datasets_metadata
-    path "wrong_platform_moltype_datasets.metadata.tsv",                                                      optional: true, emit: wrong_platform_moltype_datasets_metadata
-    path "wrong_keywords_datasets.metadata.tsv",                                                              optional: true, emit: wrong_keywords_datasets_metadata
-    path "platform_not_available_datasets.metadata.tsv",                                                      optional: true, emit: platform_not_available_datasets_metadata
-    path "gene_id_mapping_issues_datasets.metadata.tsv",                                                      optional: true, emit: gene_id_mapping_issues_datasets_metadata
-    path "species_datasets.metadata.tsv",                                                                     optional: true, emit: all_datasets_species_metadata
+    path "geo_selected_datasets.metadata.tsv",                                                                                topic: geo_selected_datasets
+    path "geo_all_datasets.metadata.tsv",                                                                                     topic: geo_all_datasets
+    path "geo_wrong_species_datasets.metadata.tsv",                                                           optional: true, topic: geo_wrong_species_datasets
+    path "geo_wrong_platform_moltype_datasets.metadata.tsv",                                                  optional: true, topic: geo_wrong_platform_moltype_datasets
+    path "geo_wrong_keywords_datasets.metadata.tsv",                                                          optional: true, topic: geo_wrong_keywords_datasets
+    //path "platform_not_available_datasets.metadata.tsv",                                                      optional: true, emit: platform_not_available_datasets_metadata
+    //path "gene_id_mapping_issues_datasets.metadata.tsv",                                                      optional: true, emit: gene_id_mapping_issues_datasets_metadata
+
 
     tuple val("${task.process}"), val('python'),      eval("python3 --version | sed 's/Python //'"),                          topic: versions
     tuple val("${task.process}"), val('requests'),    eval('python3 -c "import requests; print(requests.__version__)"'),      topic: versions

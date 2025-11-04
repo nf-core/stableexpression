@@ -100,7 +100,7 @@ workflow STABLEEXPRESSION {
         EXPRESSION_NORMALISATION(
             ch_counts,
             params.normalisation_method,
-            params.quantile_normalisation_target_distribution
+            params.quantile_norm_target_distrib
         )
 
         // -----------------------------------------------------------------
@@ -109,7 +109,7 @@ workflow STABLEEXPRESSION {
 
         DATA_CLEANSING(
             EXPRESSION_NORMALISATION.out.normalised_counts,
-            params.quantile_normalisation_target_distribution,
+            params.quantile_norm_target_distrib,
             params.ks_pvalue_threshold
         )
 
@@ -188,8 +188,10 @@ workflow STABLEEXPRESSION {
         .mix( ch_top_stable_genes_summary.collect() )
         .mix( ch_all_genes_summary.collect() )
         .mix( ch_top_stable_genes_transposed_counts.collect() )
-        .mix( Channel.topic('all_eatlas_experiment_metadata').collect() )
-        .mix( Channel.topic('filtered_eatlas_experiment_metadata').collect() )
+        .mix( Channel.topic('eatlas_all_datasets').collect() )
+        .mix( Channel.topic('eatlas_selected_datasets').collect() )
+        .mix( Channel.topic('geo_all_datasets').collect() )
+        .mix( Channel.topic('geo_selected_datasets').collect() )
         .set { ch_multiqc_files }
 
     MULTIQC_WORKFLOW(
