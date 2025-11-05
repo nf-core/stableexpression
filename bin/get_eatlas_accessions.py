@@ -389,15 +389,6 @@ def main():
     with open(ACCESSION_OUTFILE_NAME, "w") as fout:
         fout.writelines([f"{acc}\n" for acc in selected_accessions])
 
-    """
-    # exporting metadata
-    logger.info(
-        f"Writing metadata of all experiments to {ALL_EXPERIMENTS_METADATA_OUTFILE_NAME}"
-    )
-    df = pd.DataFrame.from_dict(all_experiments)
-    df.to_csv(ALL_EXPERIMENTS_METADATA_OUTFILE_NAME, sep="\t", index=False, header=True)
-    """
-
     # exporting metadata
     logger.info(
         f"Writing metadata of all experiments for species {species_name} to {SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME}"
