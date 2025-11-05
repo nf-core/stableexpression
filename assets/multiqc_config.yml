@@ -581,6 +581,17 @@ custom_data:
       Warnings during download of GEO datasets
     plot_type: "table"
 
+  id_mapping_failure_reasons:
+    section_name: "Failure reasons"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "tsv"
+    no_violin: true
+    description: |
+      Reasons of failure during ID mapping
+    plot_type: "table"
+
 #violin_downsample_after: 10000
 
 log_filesize_limit: 10000000000 # 10GB
@@ -619,3 +630,5 @@ sp:
     fn: "*geo_failure_reasons.csv"
   geo_warning_reasons:
     fn: "*geo_warning_reasons.csv"
+  id_mapping_failure_reasons:
+    fn: "*id_mapping_failure_reasons.tsv"

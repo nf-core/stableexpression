@@ -19,9 +19,10 @@ process GPROFILER_IDMAPPING {
     val gene_metadata_file
 
     output:
-    tuple val(meta), path('*.renamed.csv'), optional: true,                                                           emit: counts
-    path('*.metadata.csv'),                 optional: true,                                                           emit: metadata
-    path('*.mapping.csv'),                  optional: true,                                                           emit: mapping
+    tuple val(meta), path('*.renamed.csv'),              optional: true,                                              emit: counts
+    path('*.metadata.csv'),                              optional: true,                                              emit: metadata
+    path('*.mapping.csv'),                               optional: true,                                              emit: mapping
+    tuple val(meta.dataset), path("failure_reason.txt"), optional: true,                                              topic: id_mapping_failure_reason
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),     topic: versions
     tuple val("${task.process}"), val('requests'), eval('python3 -c "import requests; print(requests.__version__)"'), topic: versions

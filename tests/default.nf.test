@@ -277,7 +277,6 @@ nextflow_pipeline {
         when {
             params {
                 species = 'solanum_tuberosum'
-                run_genorm = true
                 outdir = "$outputDir"
             }
         }

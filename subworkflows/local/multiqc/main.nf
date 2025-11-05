@@ -72,6 +72,18 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_geo_warning_reasons }
 
+    Channel.topic('id_mapping_failure_reason')
+        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .collectFile(
+            name: 'id_mapping_failure_reasons.tsv',
+            seed: "Dataset\tReason",
+            newLine: true,
+            storeDir: "${params.outdir}/warnings/"
+        ) {
+            item -> "${item[0]}\t${item[1]}"
+        }
+        .set { ch_id_mapping_failure_reasons }
+
 
 
     // ------------------------------------------------------------------------------------
@@ -88,6 +100,7 @@ workflow MULTIQC_WORKFLOW {
         .mix( Channel.topic('geo_rejected_datasets').collect() )
         .mix( ch_geo_failure_reasons )
         .mix( ch_geo_warning_reasons )
+        .mix( ch_id_mapping_failure_reasons )
         .set { ch_multiqc_files }
 
     // ------------------------------------------------------------------------------------

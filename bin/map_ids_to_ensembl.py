@@ -23,6 +23,8 @@ RENAMED_FILE_SUFFIX = ".renamed.csv"
 METADATA_FILE_SUFFIX = ".metadata.csv"
 MAPPING_FILE_SUFFIX = ".mapping.csv"
 
+FAILURE_REASON_FILE = "failure_reason.txt"
+
 ##################################################################
 # FUNCTIONS
 ##################################################################
@@ -67,12 +69,16 @@ def main():
         f"Converting IDs for species {args.species} and count file {count_file.name}..."
     )
 
-    #############################################################"
+    #############################################################
     # PARSING FILES
     #############################################################
     df = pd.read_csv(count_file, header=0, index_col=0)
+
     if df.empty:
-        logger.warning("Count file is empty! Aborting ID mapping...")
+        msg = "COUNT FILE IS EMPTY"
+        logger.warning(msg)
+        with open(FAILURE_REASON_FILE, "w") as f:
+            f.write(msg)
         sys.exit(0)
 
     df.index = df.index.astype(str)
@@ -106,15 +112,13 @@ def main():
 
     # if mapping dict is empty
     if not mapping_dict:
-        logger.warning(
-            f"No mapping found for gene names in count file {count_file.name} "
-            f"and for species {args.species}! "
-            f"Example of gene names found in the provided dataframe: {df.index[:5].tolist()}"
-            f"Count file is empty! Aborting ID mapping..."
-        )
+        msg = f"NO MAPPING FOR GENE IDS: {', '.join(df.index[:5].tolist())}, ..."
+        logger.warning(msg)
+        with open(FAILURE_REASON_FILE, "w") as f:
+            f.write(msg)
         sys.exit(0)
 
-    #############################################################"
+    #############################################################
     # MAPPING GENE IDS IN DATAFRAME
     #############################################################
 
@@ -132,7 +136,7 @@ def main():
     # for now, we just get the mean of values, but this is not ideal
     df = df.groupby(config.ENSEMBL_GENE_ID_COLNAME, as_index=False).mean()
 
-    #############################################################"
+    #############################################################
     # WRITING OUTFILES
     #############################################################
     # writing to output file
