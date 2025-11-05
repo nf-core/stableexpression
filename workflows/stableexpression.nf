@@ -192,6 +192,9 @@ workflow STABLEEXPRESSION {
         .mix( Channel.topic('eatlas_selected_datasets').collect() )
         .mix( Channel.topic('geo_all_datasets').collect() )
         .mix( Channel.topic('geo_selected_datasets').collect() )
+        .mix( Channel.topic('geo_wrong_species_datasets').collect() )
+        .mix( Channel.topic('geo_wrong_platform_moltype_datasets').collect() )
+        .mix( Channel.topic('geo_wrong_keywords_datasets').collect() )
         .set { ch_multiqc_files }
 
     MULTIQC_WORKFLOW(

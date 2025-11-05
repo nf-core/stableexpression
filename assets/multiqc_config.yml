@@ -530,6 +530,42 @@ custom_data:
       Metadata of all GEO datasets corresponding to the provided species
     plot_type: "table"
 
+  geo_wrong_species_experiments_metadata:
+    section_name: "Datasets rejected due to species mismatch"
+    parent_id: geo
+    parent_name: "GEO dataset metadata"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    sort_rows: false
+    description: |
+      Metadata of all GEO datasets which were rejected due to species mismatch
+    plot_type: "table"
+
+  geo_wrong_platform_moltype_experiments_metadata:
+    section_name: "Datasets rejected due to platform / molecule type mismatch"
+    parent_id: geo
+    parent_name: "GEO dataset metadata"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    sort_rows: false
+    description: |
+      Metadata of all GEO datasets which were rejected due to platform / molecule type mismatch
+    plot_type: "table"
+
+  geo_wrong_keywords_experiments_metadata:
+    section_name: "Datasets rejected due to keywords mismatch"
+    parent_id: geo
+    parent_name: "GEO dataset metadata"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    sort_rows: false
+    description: |
+      Metadata of all GEO datasets which were rejected due to keywords mismatch
+    plot_type: "table"
+
 #violin_downsample_after: 10000
 
 log_filesize_limit: 10000000000 # 10GB
@@ -558,3 +594,9 @@ sp:
     fn: "*geo_selected_datasets.metadata.tsv"
   geo_all_experiments_metadata:
     fn: "*geo_all_datasets.metadata.tsv"
+  geo_wrong_species_experiments_metadata:
+    fn: "*geo_wrong_species_datasets.metadata.tsv"
+  geo_wrong_platform_moltype_experiments_metadata:
+    fn: "*geo_wrong_platform_moltype_datasets.metadata.tsv"
+  geo_wrong_keywords_experiments_metadata:
+    fn: "*geo_wrong_keywords_datasets.metadata.tsv"

@@ -748,7 +748,11 @@ def main():
         logger.info(
             f"Writing metadata of all experiments for species {args.species} to {SPECIES_DATASETS_OUTFILE_NAME}"
         )
-        df = pd.DataFrame.from_dict(dataset_metadata_list)
+        formated_dataset_metadata_list = [
+            {k: v for k, v in r.items() if k not in ["Item", "Id"]}
+            for r in dataset_metadata_list
+        ]
+        df = pd.DataFrame.from_dict(formated_dataset_metadata_list)
         df.to_csv(SPECIES_DATASETS_OUTFILE_NAME, sep="\t", index=False, header=True)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
