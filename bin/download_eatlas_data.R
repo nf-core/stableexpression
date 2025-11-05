@@ -8,6 +8,7 @@ library(ExpressionAtlas)
 library(optparse)
 
 FAILURE_REASON_FILE <- "failure_reason.txt"
+WARNING_REASON_FILE <- "warning_reason.txt"
 
 
 #####################################################
@@ -171,12 +172,12 @@ process_data <- function(atlas_data, accession) {
             } else if ( startsWith(data_type, 'A-') ) { # typically: A-AFFY- or A-GEOD-
                 result <- get_one_colour_microarray_data(data)
             } else {
-                write(cat("UNKNOWN DATA TYPE: ", data_type), file = FAILURE_REASON_FILE)
+                write(paste("UNKNOWN DATA TYPE:", data_type), file = FAILURE_REASON_FILE)
             }
 
         }, error = function(e) {
-            print(paste("Caught an error: ", e$message))
-            print(paste('ERROR: Could not get assay data for experiment ID', accession, 'and data type', data_type))
+            warning(paste("Caught an error: ", e$message))
+            write(paste('ERROR: COULD NOT GET ASSAY DATA FOR EXPERIMENT ID', accession, 'AND DATA TYPE', data_type), file = WARNING_REASON_FILE)
             skip_iteration <<- TRUE
         })
 

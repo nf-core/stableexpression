@@ -72,8 +72,8 @@ def main():
     #############################################################
     df = pd.read_csv(count_file, header=0, index_col=0)
     if df.empty:
-        logger.error("Count file is empty! Aborting ID mapping...")
-        sys.exit(100)
+        logger.warning("Count file is empty! Aborting ID mapping...")
+        sys.exit(0)
 
     df.index = df.index.astype(str)
     gene_ids = df.index.tolist()
@@ -106,13 +106,13 @@ def main():
 
     # if mapping dict is empty
     if not mapping_dict:
-        logger.error(
+        logger.warning(
             f"No mapping found for gene names in count file {count_file.name} "
             f"and for species {args.species}! "
             f"Example of gene names found in the provided dataframe: {df.index[:5].tolist()}"
             f"Count file is empty! Aborting ID mapping..."
         )
-        sys.exit(101)
+        sys.exit(0)
 
     #############################################################"
     # MAPPING GENE IDS IN DATAFRAME

@@ -21,6 +21,76 @@ workflow MULTIQC_WORKFLOW {
     main:
 
     // ------------------------------------------------------------------------------------
+    // FAILURE / WARNING REPORTS
+    // ------------------------------------------------------------------------------------
+
+    Channel.topic('eatlas_failure_reason')
+        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .collectFile(
+            name: 'eatlas_failure_reasons.csv',
+            seed: "Accession,Reason",
+            newLine: true,
+            storeDir: "${params.outdir}/errors/"
+        ) {
+            item -> "${item[0]},${item[1]}"
+        }
+        .set { ch_eatlas_failure_reasons }
+
+    Channel.topic('eatlas_warning_reason')
+        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .collectFile(
+            name: 'eatlas_warning_reasons.csv',
+            seed: "Accession,Reason",
+            newLine: true,
+            storeDir: "${params.outdir}/warnings/"
+        ) {
+            item -> "${item[0]},${item[1]}"
+        }
+        .set { ch_eatlas_warning_reasons }
+
+    Channel.topic('geo_failure_reason')
+        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .collectFile(
+            name: 'geo_failure_reasons.csv',
+            seed: "Accession,Reason",
+            newLine: true,
+            storeDir: "${params.outdir}/errors/"
+        ) {
+            item -> "${item[0]},${item[1]}"
+        }
+        .set { ch_geo_failure_reasons }
+
+    Channel.topic('geo_warning_reason')
+        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .collectFile(
+            name: 'geo_warning_reasons.csv',
+            seed: "Accession,Reason",
+            newLine: true,
+            storeDir: "${params.outdir}/warnings/"
+        ) {
+            item -> "${item[0]},${item[1]}"
+        }
+        .set { ch_geo_warning_reasons }
+
+
+
+    // ------------------------------------------------------------------------------------
+    // MULTIQC FILES
+    // ------------------------------------------------------------------------------------
+
+    ch_multiqc_files
+        .mix( Channel.topic('eatlas_all_datasets').collect() )
+        .mix( Channel.topic('eatlas_selected_datasets').collect() )
+        .mix( ch_eatlas_failure_reasons )
+        .mix( ch_eatlas_warning_reasons )
+        .mix( Channel.topic('geo_all_datasets').collect() )
+        .mix( Channel.topic('geo_selected_datasets').collect() )
+        .mix( Channel.topic('geo_rejected_datasets').collect() )
+        .mix( ch_geo_failure_reasons )
+        .mix( ch_geo_warning_reasons )
+        .set { ch_multiqc_files }
+
+    // ------------------------------------------------------------------------------------
     // VERSIONS
     // ------------------------------------------------------------------------------------
 

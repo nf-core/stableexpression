@@ -37,24 +37,18 @@ logger = logging.getLogger(__name__)
 
 ACCESSION_OUTFILE_NAME = "accessions.txt"
 SPECIES_DATASETS_OUTFILE_NAME = "geo_all_datasets.metadata.tsv"
-WRONG_SPECIES_DATASETS_METADATA_OUTFILE_NAME = "geo_wrong_species_datasets.metadata.tsv"
-WRONG_SPECS_DATASETS_METADATA_OUTFILE_NAME = (
-    "geo_wrong_platform_moltype_datasets.metadata.tsv"
-)
-WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME = (
-    "geo_wrong_keywords_datasets.metadata.tsv"
-)
+REJECTED_DATASETS_OUTFILE_NAME = "geo_rejected_datasets.metadata.tsv"
+# WRONG_SPECS_DATASETS_METADATA_OUTFILE_NAME = "geo_wrong_platform_moltype_datasets.metadata.tsv"
+# WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME = "geo_wrong_keywords_datasets.metadata.tsv"
 # PLATFORM_NOT_AVAILABLE_DATASETS_METADATA_OUTFILE_NAME = "platform_not_available_datasets.metadata.tsv"
 # GENE_ID_MAPPING_ISSUES_DATASETS_METADATA_OUTFILE_NAME = "gene_id_mapping_issues_datasets.metadata.tsv"
-FINAL_DATASETS_METADATA_OUTFILE_NAME = "geo_selected_datasets.metadata.tsv"
+SELECTED_DATASETS_OUTFILE_NAME = "geo_selected_datasets.metadata.tsv"
 
 ENTREZ_QUERY_MAX_RESULTS = 9999
 ENTREZ_EMAIL = "stableexpression@nfcore.com"
 # PLATFORM_METADATA_CHUNKSIZE = 2000
 
 # NCBI_API_BASE_URL = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={accession}"
-
-
 STOP_RETRY_AFTER_DELAY = 600
 
 NB_PROBE_IDS_TO_PARSE = 1000
@@ -530,6 +524,7 @@ def parse_interesting_metadata(
 
     return {
         "accession": dataset_metadata["Accession"],
+        "taxon": dataset_metadata["taxon"],
         "platform_accessions": platform_accessions,
         "summary": dataset_metadata["summary"],
         "title": dataset_metadata["title"],
@@ -590,136 +585,116 @@ def exclude_unwanted_accessions(
     return datasets_to_keep
 
 
-def species_is_ok(dataset: dict, species: str) -> bool:
-    accession = dataset["Accession"]
-    # we want datasets only specific to the species we are interested in
-    parsed_species_list = dataset["taxon"].split("; ")
-    if not parsed_species_list:
-        logger.warning(f"Accession {accession} rejected: Could not detect species.")
-        return False
+def check_species_issues(parsed_species_list: list, species: str) -> dict:
     # trying to find our species in the list of species parsed
     for parsed_species in parsed_species_list:
         if format_species(parsed_species) == format_species(species):
-            if len(parsed_species_list) > 1:
-                logger.info(
-                    f"Accession {accession}: multiple species detected = {parsed_species_list}"
-                )
-            return True
-    logger.warning(
-        f"Accession {accession} rejected: Found wrong species = {parsed_species_list}"
-    )
-    return False
+            return {}
+    return {"parsed_species": parsed_species_list}
 
 
-def contains_only_rna(molecules_types: list, accession: str) -> bool:
+def check_molecule_type_issues(molecules_types: list) -> dict:
     # we want only GEO series that contain only RNA molecules
     # for other series, they should be superseries contained other series that are being parsed too
     # so anyway, this would lead in duplicates
     if all(["rna" in molecule_type.lower() for molecule_type in molecules_types]):
-        return True
-    logger.info(f"Accession {accession} rejected: Molecule type(s) = {molecules_types}")
-    return False
+        return {}
+    return {"molecule_types": molecules_types}
 
 
-def contains_proper_experiment_type(
-    experiment_types: list, accession: str, platform: str
-) -> bool:
+def check_experiment_type_issues(experiment_types: list | str, platform: str) -> dict:
     experiment_types = (
         experiment_types if isinstance(experiment_types, list) else [experiment_types]
     )
     for experiment_type in experiment_types:
         # if at least one experiment type is ok, we keep this dataset
         if GEO_EXPERIMENT_TYPE_TO_PLATFORM.get(experiment_type) == platform:
-            return True
-    logger.info(
-        f"Accession {accession} rejected: Experiment type(s) = {experiment_types}"
-    )
-    return False
+            return {}
+    return {"experiment_types": experiment_types}
 
 
-def contains_transcriptomic_source(library_sources: list, accession: str) -> bool:
+def check_source_issues(library_sources: list) -> dict:
     # if we have no data about library sources, we just cannot infer
     if not library_sources:
-        return True
+        return {}
+    if len(library_sources) == 1 and library_sources[0] in ALLOWED_LIBRARY_SOURCES:
+        return {}
     # TODO: see how to process series with multiple library sources
-    if len(library_sources) > 1:
-        return False
-    if library_sources[0] in ALLOWED_LIBRARY_SOURCES:
-        return True
-    logger.warning(f"Accession {accession} rejected: Source(s) = {library_sources}")
-    return False
+    return {"library_sources": library_sources}
 
 
-def dataset_is_valid(metadata: dict, platform: str | None) -> bool:
-    accession = metadata["accession"]
-    # checking platform
-    if platform is not None:
-        if not contains_proper_experiment_type(
-            metadata["experiment_types"], accession, platform
-        ):
-            return False
-
-    # checking that library sources fit
-    if not contains_transcriptomic_source(
-        metadata["sample_library_sources"], accession
-    ):
-        return False
-
-    # checking that all molecule types are RNA
-    molecules_types = metadata["sample_molecule_types"]
-    if not contains_only_rna(molecules_types, accession):
-        return False
-
-    return True
-
-
-def filter_metadata_with_keywords(metadata: dict, keywords: list[str]) -> dict | None:
+def search_keywords(dataset: dict, keywords: list[str]) -> tuple[list, dict]:
+    accession = dataset["accession"]
     all_searchable_fields = (
-        [metadata["summary"], metadata["title"]]
-        + metadata["sample_characteristics"]
-        + metadata["sample_descriptions"]
-        + metadata["sample_titles"]
+        [dataset["summary"], dataset["title"]]
+        + dataset["sample_characteristics"]
+        + dataset["sample_descriptions"]
+        + dataset["sample_titles"]
     )
     found_keywords = keywords_in_fields(all_searchable_fields, keywords)
     # only returning experiments if found keywords
     if found_keywords:
-        metadata["found_keywords"] = list(set(found_keywords))
-        logger.info(
-            f"Found keywords: {found_keywords} in accession {metadata['accession']}"
-        )
-        return metadata
+        dataset["found_keywords"] = list(set(found_keywords))
+        logger.info(f"Found keywords: {found_keywords} in accession {accession}")
+        return found_keywords, {}
     else:
-        return None
+        return [], {"accession": accession, "keywords_found": False}
 
 
-def export_filtered_out_datasets_if_any(
-    original_dataset_metadata_list: list[dict],
-    filtered_dataset_metadata_list: list[dict],
-    filtered_out_outfile_name: str,
-    filtered_feature: str,
+def check_dataset(
+    dataset: dict, species: str, platform: str | None, keywords: list[str] | None
+) -> tuple[list, dict]:
+    accession = dataset["accession"]
+    parsed_species_list = dataset["taxon"].split("; ")
+    experiment_types = dataset["experiment_types"]
+    library_sources = dataset["sample_library_sources"]
+    molecules_types = dataset["sample_molecule_types"]
+
+    # checking species
+    issue_dict = check_species_issues(parsed_species_list, species)
+
+    # checking platform
+    if platform is not None:
+        platform_issue_dict = check_experiment_type_issues(experiment_types, platform)
+        issue_dict |= platform_issue_dict
+
+    # checking that library sources fit
+    transcriptomic_issue_dict = check_source_issues(library_sources)
+    issue_dict |= transcriptomic_issue_dict
+
+    # checking that all molecule types are RNA
+    moltype_issue_dict = check_molecule_type_issues(molecules_types)
+    issue_dict |= moltype_issue_dict
+
+    found_keywords = []
+    if keywords:
+        found_keywords, keyword_issue_dict = search_keywords(dataset, keywords)
+        issue_dict |= keyword_issue_dict
+
+    if issue_dict:
+        rejection_dict = {"accession": accession, "reasons": issue_dict}
+    else:
+        rejection_dict = {}
+
+    return found_keywords, rejection_dict
+
+
+def export_dataset_metadatas(
+    datasets: list[dict], output_file: str, clean_columns: bool = True
 ):
-    # checking if all datasets were ok
-    filtered_out_dataset_metadata_list = [
-        dataset
-        for dataset in original_dataset_metadata_list
-        if dataset not in filtered_dataset_metadata_list
-    ]
-    if filtered_out_dataset_metadata_list:
-        logger.warning(
-            f"{len(filtered_out_dataset_metadata_list)} dataset(s) did not have the correct {filtered_feature}!"
-        )
-        logger.info(
-            f"Writing metadata of datasets corresponding to the wrong {filtered_feature} to {filtered_out_outfile_name}"
-        )
-        df = pd.DataFrame.from_dict(filtered_out_dataset_metadata_list)
+    if datasets:
+        df = pd.DataFrame.from_dict(datasets)
+        # cleaning columns so that MultiQC can parse them
+        if clean_columns:
+            for col in df.columns:
+                df[col] = df[col].astype(str).str.replace("\n", "")
+                df[col] = df[col].astype(str).str.replace("\t", "")
         df.to_csv(
-            filtered_out_outfile_name,
+            output_file,
             sep="\t",
             index=False,
             header=True,
         )
-    else:
-        logger.info(f"All datasets had the correct {filtered_feature}")
 
 
 ##################################################################
@@ -732,28 +707,13 @@ def export_filtered_out_datasets_if_any(
 def main():
     args = parse_args()
 
-    selected_accessions = []
-
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # PARSING GEO DATASETS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info(f"Getting datasets corresponding to species {args.species}")
-    dataset_metadata_list = fetch_geo_datasets_for_species(args.species)
-    logger.info(
-        f"Found {len(dataset_metadata_list)} datasets for species {args.species}"
-    )
-
-    if dataset_metadata_list:
-        logger.info(
-            f"Writing metadata of all experiments for species {args.species} to {SPECIES_DATASETS_OUTFILE_NAME}"
-        )
-        formated_dataset_metadata_list = [
-            {k: v for k, v in r.items() if k not in ["Item", "Id"]}
-            for r in dataset_metadata_list
-        ]
-        df = pd.DataFrame.from_dict(formated_dataset_metadata_list)
-        df.to_csv(SPECIES_DATASETS_OUTFILE_NAME, sep="\t", index=False, header=True)
+    datasets = fetch_geo_datasets_for_species(args.species)
+    logger.info(f"Found {len(datasets)} datasets for species {args.species}")
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # FOR DEV PURPOSES / TESTING: RESTRICT TO SPECIFIC ACCESSIONS
@@ -762,12 +722,8 @@ def main():
     if args.accessions:
         logger.info(f"Keeping only accessions {args.accessions}")
         dev_accessions = args.accessions.split(",")
-        dataset_metadata_list = [
-            d for d in dataset_metadata_list if d["Accession"] in dev_accessions
-        ]
-        logger.info(
-            f"Kept {len(dataset_metadata_list)} datasets for dev / testing purposes"
-        )
+        datasets = [d for d in datasets if d["Accession"] in dev_accessions]
+        logger.info(f"Kept {len(datasets)} datasets for dev / testing purposes")
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # EXCLUDING UNWANTED ACCESSIONS
@@ -775,99 +731,45 @@ def main():
 
     if args.excluded_accessions_file:
         logger.info("Excluding unwanted datasets")
-        dataset_metadata_list = exclude_unwanted_accessions(
-            dataset_metadata_list, args.excluded_accessions_file
-        )
+        datasets = exclude_unwanted_accessions(datasets, args.excluded_accessions_file)
         logger.info(
-            f"{len(dataset_metadata_list)} datasets remaining after excluding unwanted accessions"
+            f"{len(datasets)} datasets remaining after excluding unwanted accessions"
         )
-
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # EXCLUDING DATASETS WITH THE WRONG SPECIES
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    logger.info(f"Excluding wrong species for {len(dataset_metadata_list)} datasets")
-    good_species_dataset_metadata_list = [
-        dataset
-        for dataset in dataset_metadata_list
-        if species_is_ok(dataset, args.species)
-    ]
-
-    export_filtered_out_datasets_if_any(
-        dataset_metadata_list,
-        good_species_dataset_metadata_list,
-        WRONG_SPECIES_DATASETS_METADATA_OUTFILE_NAME,
-        "species",
-    )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # PARSING METADATA
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info(f"Parsing metadata for {len(dataset_metadata_list)} datasets")
-    augmented_dataset_metadata_list = []
+    logger.info(f"Parsing metadata for {len(datasets)} datasets")
+    augmented_datasets = []
     with (
         Pool(processes=args.nb_cpus) as p,
-        tqdm(total=len(good_species_dataset_metadata_list)) as pbar,
+        tqdm(total=len(datasets)) as pbar,
     ):
-        for result in p.imap_unordered(
-            parse_metadata, good_species_dataset_metadata_list
-        ):
+        for result in p.imap_unordered(parse_metadata, datasets):
             pbar.update()
             pbar.refresh()
             if result is None:
                 continue
-            augmented_dataset_metadata_list.append(result)
+            augmented_datasets.append(result)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # CHECKING MOLECULE TYPE / PLATFORM TECHNOLOGIES
+    # CHECKING DATASET METADATA
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info(f"Validating {len(augmented_dataset_metadata_list)} datasets")
-    specs_filtered_metadata_list = [
-        metadata
-        for metadata in augmented_dataset_metadata_list
-        if dataset_is_valid(metadata, args.platform)
-    ]
-
-    export_filtered_out_datasets_if_any(
-        augmented_dataset_metadata_list,
-        specs_filtered_metadata_list,
-        WRONG_SPECS_DATASETS_METADATA_OUTFILE_NAME,
-        "molecule type / platform technology",
-    )
-
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # FILTERING WITH KEYWORDS
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    if args.keywords:
-        logger.info(
-            f"Filtering experiments with keywords {args.keywords} for {len(specs_filtered_metadata_list)} datasets"
+    logger.info(f"Validating {len(augmented_datasets)} datasets")
+    selected_datasets = []
+    rejected_datasets = []
+    for dataset in tqdm(augmented_datasets):
+        found_keywords, rejection_dict = check_dataset(
+            dataset, args.species, args.platform, args.keywords
         )
-        func = partial(filter_metadata_with_keywords, keywords=args.keywords)
-
-        final_metadata_list = []
-        with (
-            Pool(processes=args.nb_cpus) as p,
-            tqdm(total=len(specs_filtered_metadata_list)) as pbar,
-        ):
-            for result in p.imap_unordered(func, specs_filtered_metadata_list):
-                pbar.update()
-                pbar.refresh()
-                if result is None:
-                    continue
-                final_metadata_list.append(result)
-
-        export_filtered_out_datasets_if_any(
-            specs_filtered_metadata_list,
-            final_metadata_list,
-            WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME,
-            "keywords",
-        )
-
-    else:
-        final_metadata_list = specs_filtered_metadata_list
+        if rejection_dict:
+            rejected_datasets.append(rejection_dict)
+        else:
+            if found_keywords:
+                dataset["found_keywords"] = found_keywords
+            selected_datasets.append(dataset)
 
     """
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -925,27 +827,25 @@ def main():
     """
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # GETTING ACCESSIONS TO DOWNLOAD
+    # EXPORTING ACCESSIONS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info(f"Kept {len(final_metadata_list)} datasets")
+    logger.info(f"Kept {len(selected_datasets)} datasets")
     # getting accessions of selected experiments
-    selected_accessions = [metadata["accession"] for metadata in final_metadata_list]
-
+    selected_accessions = [metadata["accession"] for metadata in selected_datasets]
     # exporting list of accessions
     logger.info(f"Writing accessions to {ACCESSION_OUTFILE_NAME}")
     with open(ACCESSION_OUTFILE_NAME, "w") as fout:
         fout.writelines([f"{acc}\n" for acc in selected_accessions])
 
-    logger.info(
-        f"Writing metadata of selected datasets to {FINAL_DATASETS_METADATA_OUTFILE_NAME}"
-    )
-    df = pd.DataFrame.from_dict(final_metadata_list)
-    df.to_csv(
-        FINAL_DATASETS_METADATA_OUTFILE_NAME,
-        sep="\t",
-        index=False,
-        header=True,
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # EXPORTING DATASETS
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    export_dataset_metadatas(augmented_datasets, SPECIES_DATASETS_OUTFILE_NAME)
+    export_dataset_metadatas(selected_datasets, SELECTED_DATASETS_OUTFILE_NAME)
+    export_dataset_metadatas(
+        rejected_datasets, REJECTED_DATASETS_OUTFILE_NAME, clean_columns=False
     )
 
 

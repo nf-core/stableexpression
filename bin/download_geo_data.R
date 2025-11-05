@@ -10,6 +10,9 @@ library(dplyr)
 
 options(error = traceback)
 
+FAILURE_REASON_FILE <- "failure_reason.txt"
+WARNING_REASON_FILE <- "warning_reason.txt"
+
 #####################################################
 #####################################################
 # FUNCTIONS
@@ -116,7 +119,7 @@ download_geo_data_with_retries <- function(accession, species, max_retries = 3, 
 
             } else {
                 warning("Unhandled error: ", e$message)
-                quit(save = "no", status = 100) # quit & stop workflow
+                write("EXPERIMENT NOT FOUND", file = FAILURE_REASON_FILE)
             }
         })
 
@@ -139,13 +142,13 @@ check_microarray_normalisation <- function(df) {
     message("Normalized, log2 scale (e.g. RMA, quantile)")
   } else if (all_integers) {
     message("Raw probe intensities (unnormalized CEL-like data)")
-    #quit(save = "no", status = 110)
+    write("RAW PROBE INTENSITIES FOUND", file = WARNING_REASON_FILE)
   } else if (value_range[2] > 1000) {
     message("Normalized but not log-transformed (e.g. MAS5, raw intensities)")
-    #quit(save = "no", status = 111)
+    write("PARSED INTENSITIES: NORMALIZED BUT NOT LOG-TRANSFORMED", file = WARNING_REASON_FILE)
   } else {
     message("Unclear data origin, check GEO metadata")
-    #quit(save = "no", status = 112)
+    write("UNCLEAR DATA ORIGIN: CHECK GEO METADATA", file = WARNING_REASON_FILE)
   }
 }
 
@@ -175,7 +178,7 @@ process_data <- function(atlas_data, accession, species) {
 
     if ( length(names(geo_data)) > 1 ) {
         warning("Multiple data files were found")
-        quit(save = "no", status = 101) # quit & ignore process
+        write("EXPERIMENT CONTAINS MULTIPLE FILES", file = FAILURE_REASON_FILE)
     }
 
     file <- names(geo_data)[[ 1 ]]
@@ -244,6 +247,3 @@ species <- format_species_name(args$species)
 geo_data <- download_geo_data_with_retries(args$accession, species)
 
 process_data(geo_data, args$accession, args$species)
-
-
-
