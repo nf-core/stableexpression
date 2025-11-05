@@ -35,6 +35,7 @@ workflow STABLEEXPRESSION {
     main:
 
     ch_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
 
     ch_top_stable_genes_summary = Channel.empty()
     ch_all_genes_statistics = Channel.empty()
@@ -167,35 +168,28 @@ workflow STABLEEXPRESSION {
         AGGREGATE_RESULTS.out.top_stable_genes_summary.set { ch_top_stable_genes_summary }
         AGGREGATE_RESULTS.out.top_stable_genes_transposed_counts_filtered.set { ch_top_stable_genes_transposed_counts }
 
+        // -----------------------------------------------------------------
+        // DASH APPLICATION
+        // -----------------------------------------------------------------
+
+        DASH_APP(
+            ch_all_counts,
+            ch_whole_design,
+            ch_all_genes_summary
+        )
+        ch_versions = ch_versions.mix ( DASH_APP.out.versions )
+
+        ch_multiqc_files
+            .mix( ch_top_stable_genes_summary.collect() )
+            .mix( ch_all_genes_summary.collect() )
+            .mix( ch_top_stable_genes_transposed_counts.collect() )
+            .set { ch_multiqc_files }
+
     }
-
-    // -----------------------------------------------------------------
-    // DASH APPLICATION
-    // -----------------------------------------------------------------
-
-    DASH_APP(
-        ch_all_counts,
-        ch_whole_design,
-        ch_all_genes_summary
-    )
-    ch_versions = ch_versions.mix ( DASH_APP.out.versions )
 
     // -----------------------------------------------------------------
     // MULTIQC
     // -----------------------------------------------------------------
-
-    Channel.empty()
-        .mix( ch_top_stable_genes_summary.collect() )
-        .mix( ch_all_genes_summary.collect() )
-        .mix( ch_top_stable_genes_transposed_counts.collect() )
-        .mix( Channel.topic('eatlas_all_datasets').collect() )
-        .mix( Channel.topic('eatlas_selected_datasets').collect() )
-        .mix( Channel.topic('geo_all_datasets').collect() )
-        .mix( Channel.topic('geo_selected_datasets').collect() )
-        .mix( Channel.topic('geo_wrong_species_datasets').collect() )
-        .mix( Channel.topic('geo_wrong_platform_moltype_datasets').collect() )
-        .mix( Channel.topic('geo_wrong_keywords_datasets').collect() )
-        .set { ch_multiqc_files }
 
     MULTIQC_WORKFLOW(
         ch_multiqc_files,
