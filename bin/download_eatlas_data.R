@@ -7,6 +7,8 @@ suppressPackageStartupMessages(library("ExpressionAtlas"))
 library(ExpressionAtlas)
 library(optparse)
 
+FAILURE_REASON_FILE <- "failure_reason.txt"
+
 
 #####################################################
 #####################################################
@@ -42,7 +44,7 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
             # if the accession os not valid, we stop immediately (useless to keep going)
             if (grepl("does not look like an ArrayExpress/BioStudies experiment accession.", w$message)) {
                 warning(w$message)
-                quit(save = "no", status = 100) # quit & ignore process
+                write("EXPERIMENT NOT FOUND", file = FAILURE_REASON_FILE)
             }
 
             # else, retrying
@@ -56,13 +58,13 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
 
                 if (grepl("550 Requested action not taken; file unavailable", w$message)) {
                     warning(w$message)
-                    quit(save = "no", status = 101) # quit & ignore process
+                    write("EXPERIMENT SUMMARY NOT FOUND", file = FAILURE_REASON_FILE)
                 } else if (grepl("Failure when receiving data from the peer", w$message)) {
                     warning(w$message)
-                    quit(save = "no", status = 100) # quit & ignore process
+                    write("EXPERIMENT NOT FOUND", file = FAILURE_REASON_FILE)
                 } else {
                     warning("Unhandled warning: ", w$message)
-                    quit(save = "no", status = 102) # quit & stop workflow
+                    write("UNKNOWN ERROR", file = FAILURE_REASON_FILE)
                 }
             }
 
@@ -78,10 +80,10 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
 
                 if (grepl("Download appeared successful but no experiment summary object was found", e$message)) {
                     warning(e$message)
-                    quit(save = "no", status = 101) # quit & ignore process
+                    write("EXPERIMENT SUMMARY NOT FOUND", file = FAILURE_REASON_FILE)
                 } else {
                     warning("Unhandled error: ", e$message)
-                    quit(save = "no", status = 102) # quit & stop workflow
+                    write("UNKNOWN ERROR", file = FAILURE_REASON_FILE)
                 }
 
             }
@@ -169,7 +171,7 @@ process_data <- function(atlas_data, accession) {
             } else if ( startsWith(data_type, 'A-') ) { # typically: A-AFFY- or A-GEOD-
                 result <- get_one_colour_microarray_data(data)
             } else {
-                stop(paste('ERROR: Unknown data type:', data_type))
+                write(cat("UNKNOWN DATA TYPE: ", data_type), file = FAILURE_REASON_FILE)
             }
 
         }, error = function(e) {
@@ -207,7 +209,7 @@ cat(paste("Getting data for accession", args$accession, "\n"))
 accession <- trimws(args$accession)
 if (startsWith(accession, "E-PROT")) {
     warning("Ignoring the ", accession, " experiment.")
-    quit(save = "no", status = 100) # quit & ignore process
+    write("PROTEOME ACCESSIONS NOT HANDLED", file = FAILURE_REASON_FILE)
 }
 
 # searching and downloading expression atlas data
