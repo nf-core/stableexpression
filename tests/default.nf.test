@@ -143,7 +143,6 @@ nextflow_pipeline {
                 eatlas_accessions = "E-MTAB-7711"
                 skip_fetch_eatlas_accessions = true
                 skip_fetch_geo_accessions = true
-                run_normfinder = true
                 run_genorm = true
                 outdir = "$outputDir"
             }
@@ -182,6 +181,62 @@ nextflow_pipeline {
                 { assert snapshot(
                     removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
                     stable_name,
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+
+    test("-profile test_dataset_custom_mapping") {
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                datasets = "${projectDir}/tests/test_data/input_datasets/input.csv"
+                skip_gprofiler = true
+                gene_id_mapping = "${projectDir}/tests/test_data/input_datasets/mapping.csv"
+                gene_metadata = "${projectDir}/tests/test_data/input_datasets/metadata.csv"
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+
+    test("-profile test_full") {
+
+        when {
+            params {
+                species = 'solanum_tuberosum'
+                run_genorm = true
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            // stable_name: All files + folders in ${params.outdir}/ with a stable name
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_path: All files in ${params.outdir}/ with stable content
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    // pipeline versions.yml file for multiqc from which Nextflow version is removed because we test pipelines on multiple Nextflow versions
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    // All stable path name, with a relative path
+                    stable_name,
+                    // All files with stable contents
                     stable_path
                 ).match() }
             )
