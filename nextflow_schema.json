@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/nextflow_schema.json",
+    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/main/nextflow_schema.json",
     "title": "nf-core/stableexpression pipeline parameters",
-    "description": "\nPipeline dedicated to finding the most stable genes across count datasets\n",
+    "description": "This pipeline is dedicated to finding the most stable genes across count datasets",
     "type": "object",
     "$defs": {
         "input_output_options": {
@@ -71,8 +71,7 @@
                 },
                 "multiqc_title": {
                     "type": "string",
-                    "description": "MultiQC report title",
-                    "help_text": "Printed as page header, used for filename if not otherwise specified.",
+                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
                 }
             }
@@ -367,6 +366,7 @@
                     "type": "string",
                     "description": "File size limit when attaching MultiQC reports to summary emails.",
                     "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
+                    "default": "25.MB",
                     "fa_icon": "fas fa-file-upload",
                     "hidden": true
                 },
