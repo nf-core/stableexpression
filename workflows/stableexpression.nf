@@ -6,6 +6,7 @@
 
 include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/expressionatlas_fetchdata'
 include { GEO_FETCHDATA                          } from '../subworkflows/local/geo_fetchdata'
+include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
 include { DATA_CLEANSING                         } from '../subworkflows/local/data_cleansing'
 include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
@@ -13,7 +14,6 @@ include { BASE_STATISTICS                        } from '../subworkflows/local/b
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { MULTIQC_WORKFLOW                       } from '../subworkflows/local/multiqc'
 
-include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping'
 include { AGGREGATE_RESULTS                      } from '../modules/local/aggregate_results'
 include { DASH_APP                               } from '../modules/local/dash_app'
 
@@ -58,15 +58,15 @@ workflow STABLEEXPRESSION {
         EXPRESSIONATLAS_FETCHDATA.out.accessions
     )
 
+    // putting all datasets together (local datasets + Expression Atlas datasets)
+    ch_input_datasets
+        .concat( EXPRESSIONATLAS_FETCHDATA.out.downloaded_datasets )
+        .concat( GEO_FETCHDATA.out.downloaded_datasets )
+        .set { ch_counts }
+
+    ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
+
     if ( !params.accessions_only && !params.download_only ) {
-
-        // putting all datasets together (local datasets + Expression Atlas datasets)
-        ch_input_datasets
-            .concat( EXPRESSIONATLAS_FETCHDATA.out.downloaded_datasets )
-            .concat( GEO_FETCHDATA.out.downloaded_datasets )
-            .set { ch_counts }
-
-        ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
 
         // -----------------------------------------------------------------
         // IDMAPPING
@@ -78,15 +78,15 @@ workflow STABLEEXPRESSION {
         if ( !params.skip_gprofiler ) {
 
             // tries to map gene IDs to Ensembl IDs whenever possible
-            GPROFILER_IDMAPPING(
+            ID_MAPPING(
                 ch_counts,
                 species,
                 ch_gene_id_mapping,
                 ch_gene_metadata
             )
-            GPROFILER_IDMAPPING.out.counts.set { ch_counts }
-            GPROFILER_IDMAPPING.out.mapping.set { ch_gene_id_mapping }
-            GPROFILER_IDMAPPING.out.metadata.set { ch_gene_metadata }
+            ID_MAPPING.out.counts.set { ch_counts }
+            ID_MAPPING.out.mapping.set { ch_gene_id_mapping }
+            ID_MAPPING.out.metadata.set { ch_gene_metadata }
 
         }
 

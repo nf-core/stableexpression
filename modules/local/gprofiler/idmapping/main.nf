@@ -2,7 +2,7 @@ process GPROFILER_IDMAPPING {
 
     label 'process_single'
 
-    tag "${meta.dataset}"
+    tag "${meta.dataset} on ${meta.platform_taxon}"
 
     // limiting to 8 threads at a time to avoid 429 errors with the G Profiler API server
     maxForks 8

@@ -25,6 +25,7 @@ process GEO_GETDATA {
     tuple val("${task.process}"), val('dplyr'),           eval('Rscript -e "cat(as.character(packageVersion(\'dplyr\')))"'),            topic: versions
 
     script:
+    meta = meta + [accession: accession]
     """
     download_geo_data.R \\
         --accession $accession \\

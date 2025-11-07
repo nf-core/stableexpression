@@ -319,9 +319,9 @@ def formatVersionsToYAML( ch_versions ) {
 def addDatasetIdToMetadata( ch_files ) {
     return ch_files
             .map {
-                file ->
-                    def meta = [dataset: file.getSimpleName()]
-                    [meta, file]
+                meta, file ->
+                    def new_meta = meta + [ dataset: file.getSimpleName() ]
+                    [new_meta, file]
             }
 }
 

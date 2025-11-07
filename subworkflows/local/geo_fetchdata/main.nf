@@ -111,8 +111,8 @@ workflow GEO_FETCHDATA {
         )
 
         // adding dataset id (accession + data_type) in the file meta
-        ch_design = addDatasetIdToMetadata( GEO_GETDATA.out.design.flatten() )
-        ch_counts = addDatasetIdToMetadata( GEO_GETDATA.out.counts.flatten() )
+        ch_design = addDatasetIdToMetadata( GEO_GETDATA.out.design )
+        ch_counts = addDatasetIdToMetadata( GEO_GETDATA.out.counts )
 
         // adding design files to the meta of their respective count files
         ch_datasets = groupFilesByDatasetId( ch_design, ch_counts )
