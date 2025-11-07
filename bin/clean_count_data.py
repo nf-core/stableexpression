@@ -3,18 +3,20 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
-import sys
-import polars as pl
-from pathlib import Path
 import logging
+import sys
+from pathlib import Path
 
 import config
+import polars as pl
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # outfile names
 ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME = "cleaned_counts_filtered.parquet"
+
+FAILURE_REASON_FILE = "failure_reason.txt"
 
 
 #####################################################
@@ -99,7 +101,11 @@ def remove_samples_with_low_ks_pvalue(
 
     if not valid_samples:
         logger.warning("No more valid sample to process...")
-        sys.exit(101)
+        msg = "COUNT FILE IS EMPTY"
+        logger.warning(msg)
+        with open(FAILURE_REASON_FILE, "w") as f:
+            f.write(msg)
+        sys.exit(0)
 
     # filtering the count dataframe to keep only the valid samples
     return count_lf.select([config.ENSEMBL_GENE_ID_COLNAME] + valid_samples)

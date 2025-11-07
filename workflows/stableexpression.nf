@@ -144,7 +144,12 @@ workflow STABLEEXPRESSION {
         STABILITY_SCORING (
             ch_all_counts,
             ch_whole_design,
-            ch_all_datasets_stats
+            ch_all_datasets_stats,
+            params.candidate_selection_descriptor,
+            params.nb_top_gene_candidates,
+            params.min_expr_threshold,
+            params.run_genorm,
+            params.stability_score_weights
         )
 
         STABILITY_SCORING.out.summary_statistics.set { ch_stats_all_genes_with_scores }

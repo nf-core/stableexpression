@@ -24,7 +24,6 @@ workflow ID_MAPPING {
                 meta.platform_taxon = platform_taxon
                 [ meta, file ]
         }
-        .view()
         .set { ch_counts }
 
     GPROFILER_IDMAPPING(

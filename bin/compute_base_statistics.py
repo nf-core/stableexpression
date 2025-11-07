@@ -3,13 +3,13 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
-import polars as pl
-from pathlib import Path
-from dataclasses import dataclass, field
-from typing import ClassVar
 import logging
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import ClassVar
 
 import config
+import polars as pl
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

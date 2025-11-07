@@ -2,21 +2,19 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
-import requests
-import pandas as pd
 import logging
 import sys
 
+import config
+import pandas as pd
+import requests
+from requests.exceptions import ConnectionError, HTTPError
 from tenacity import (
+    before_sleep_log,
     retry,
     stop_after_delay,
     wait_exponential,
-    before_sleep_log,
 )
-
-from requests.exceptions import HTTPError, ConnectionError
-
-import config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -37,10 +35,21 @@ TARGET_DATABASE = "ENSG"  # Ensembl database
 COLS_TO_KEEP = ["incoming", "converted", "name", "description"]
 DESCRIPTION_PART_TO_REMOVE_REGEX = r"\s*\[Source:.*?\]"
 
+GPROFILER_ERROR_MESSAGE = (
+    "g:Profiler servers (main and beta) seem to be down... Please retry later... "
+    "If you have gene ID mappings and / or gene metadata for these datasets, you can provide them "
+    "directly using the `--gene_id_mapping` and `--gene_metadata` parameters respectively, "
+    "and by skipping the g:Profiler ID mapping step with `--skip_gprofiler`."
+)
+
 
 ##################################################################
 # FUNCTIONS
 ##################################################################
+
+
+class GProfilerConnectionError(Exception):
+    pass
 
 
 def format_species_name(species: str):
@@ -137,13 +146,8 @@ def request_conversion(
             )
         else:
             # both servers appear down, we stop here...
-            logger.error(
-                "g:Profiler servers (main and beta) seem to be down... Please retry later... "
-                "If you have gene ID mappings and / or gene metadata for these datasets, you can provide them "
-                "directly using the `--gene_id_mapping` and `--gene_metadata` parameters respectively, "
-                "and by skipping the g:Profiler ID mapping step with `--skip_gprofiler`."
-            )
-            sys.exit(102)
+            logger.error(GPROFILER_ERROR_MESSAGE)
+            raise GProfilerConnectionError
 
     else:
         return response.json()["result"]

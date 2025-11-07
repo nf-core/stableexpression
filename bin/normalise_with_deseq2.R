@@ -6,6 +6,9 @@ suppressPackageStartupMessages(library("DESeq2"))
 library(DESeq2)
 library(optparse)
 
+FAILURE_REASON_FILE <- "failure_reason.txt"
+WARNING_REASON_FILE <- "warning_reason.txt"
+
 #####################################################
 #####################################################
 # FUNCTIONS
@@ -31,12 +34,16 @@ get_args <- function() {
 check_samples <- function(count_matrix, design_data) {
     # check if the column names of count_matrix match the sample names
     if (!all( colnames(count_matrix) == design_data$sample )) {
-        stop("Sample names in the count matrix do not match the design data.")
+        write("SAMPLE NAMES IN COUNT MATRIX DO NOT MATCH DESIGN DATA", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
     }
     # check for extra samples
     extra_samples <- setdiff( colnames(count_matrix), design_data$sample )
     if (length(extra_samples) > 0) {
-        warning("The following samples are in the count matrix but not in design: ", paste(extra_samples, collapse = ", "))
+        write(
+            "THE FOLLOWING SAMPLES ARE IN THE COUNT MATRIX BUT NOT IN DESIGN: ", paste(extra_samples, collapse = ", "),
+            file = WARNING_REASON_FILE
+        )
     }
 }
 
@@ -123,7 +130,7 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     # if the dataframe is now empty, stop the process
     if (nrow(filtered_count_matrix) == 0) {
         message("No genes left after pre-filtering.")
-        #quit(save = "no", status = 100)
+        write("NO GENES LEFT AFTER PRE-FILTERING", file = FAILURE_REASON_FILE)
         quit(save = "no", status = 0)
     }
 

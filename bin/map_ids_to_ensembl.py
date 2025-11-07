@@ -2,14 +2,14 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
-import pandas as pd
-from pathlib import Path
 import argparse
 import logging
 import sys
+from pathlib import Path
 
-from gprofiler_utils import convert_ids
 import config
+import pandas as pd
+from gprofiler_utils import GProfilerConnectionError, convert_ids
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -101,11 +101,17 @@ def main():
     #############################################################
     # QUERYING g:PROFILER SERVER
     #############################################################
-
-    if gene_ids_left_to_map:
-        gprofiler_mapping_dict, gene_metadata_dfs = convert_ids(
-            gene_ids_left_to_map, args.species
-        )
+    try:
+        if gene_ids_left_to_map:
+            gprofiler_mapping_dict, gene_metadata_dfs = convert_ids(
+                gene_ids_left_to_map, args.species
+            )
+    except GProfilerConnectionError:
+        msg = "COULD NOT CONNECT TO GPROFILER SERVER"
+        logger.warning(msg)
+        with open(FAILURE_REASON_FILE, "w") as f:
+            f.write(msg)
+        sys.exit(0)
 
     # overall mappings is the custom_mappings_dict complemented with gprofiler_mapping_dict
     mapping_dict = custom_mappings_dict | gprofiler_mapping_dict

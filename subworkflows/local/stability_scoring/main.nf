@@ -15,6 +15,11 @@ workflow STABILITY_SCORING {
     ch_counts
     ch_design
     ch_stats
+    candidate_selection_descriptor
+    nb_top_gene_candidates
+    min_expr_threshold
+    run_genorm
+    stability_score_weights
 
     main:
 
@@ -25,9 +30,9 @@ workflow STABILITY_SCORING {
     GET_CANDIDATE_GENES(
         ch_counts,
         ch_stats,
-        params.candidate_selection_descriptor,
-        params.nb_top_gene_candidates,
-        params.min_expr_threshold
+        candidate_selection_descriptor,
+        nb_top_gene_candidates,
+        min_expr_threshold
     )
     GET_CANDIDATE_GENES.out.counts.set { ch_candidate_gene_counts }
 
@@ -45,7 +50,7 @@ workflow STABILITY_SCORING {
     // GENORM
     // -----------------------------------------------------------------
 
-    if ( params.run_genorm ) {
+    if ( run_genorm ) {
         GENORM ( ch_candidate_gene_counts )
         GENORM.out.m_measures.set { ch_genorm_stability }
     } else {
@@ -58,7 +63,7 @@ workflow STABILITY_SCORING {
 
     COMPUTE_STABILITY_SCORES (
         ch_stats,
-        params.stability_score_weights,
+        stability_score_weights,
         ch_normfinder_stability,
         ch_genorm_stability
     )

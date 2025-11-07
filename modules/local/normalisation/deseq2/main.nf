@@ -14,6 +14,8 @@ process NORMALISATION_DESEQ2 {
 
     output:
     tuple val(meta), path('*.cpm.csv'),                                                                              emit: cpm
+    tuple val(meta.dataset), path("failure_reason.txt"), optional: true,                                             topic: normalisation_failure_reason
+    tuple val(meta.dataset), path("warning_reason.txt"), optional: true,                                             topic: normalisation_warning_reason
     tuple val("${task.process}"), val('R'),      eval('Rscript -e "cat(R.version.string)" | sed "s/R version //"'),  topic: versions
     tuple val("${task.process}"), val('DESeq2'), eval('Rscript -e "cat(as.character(packageVersion(\'DESeq2\')))"'), topic: versions
 
