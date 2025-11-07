@@ -2,24 +2,6 @@ process COMPUTE_BASE_STATISTICS {
 
     label 'process_medium'
 
-    errorStrategy {
-        if (task.exitStatus == 100) {
-            log.error("No count could be found before merging datasets! Please check the provided accessions and datasets and run again")
-            return 'terminate'
-        } else if ( task.exitStatus in ((130..145) + 104 + 175) ) { // override default behaviour to sleep some time before retry
-            // in case of OOM errors, we wait a bit and try again (2 retries)
-            if ( task.attempt <= 2) {
-                sleep(Math.pow(2, task.attempt) * 2000 as long)
-                return 'retry'
-            } else {
-                log.error("${accession} caused Out of Memory error multiple times. Ignoring this accession.")
-                return 'ignore'
-            }
-        } else {
-            return 'terminate'
-        }
-    }
-
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f8a5d02e7b31980c887253a9f118da0ef91ead1c7b158caf855199e5c5d5473/data':

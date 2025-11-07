@@ -4,26 +4,6 @@ process NORMALISATION_DESEQ2 {
 
     tag "${meta.dataset}"
 
-    errorStrategy {
-        if (task.exitStatus == 100) {
-            // ignoring cases when the count dataframe gets empty after filtering (the script throws a 100 in this case)
-            // the subsequent steps will not be run for this dataset
-            log.warn("No genes left after pre-filtering for dataset ${meta.dataset}.")
-            return 'ignore'
-        } else if ( task.exitStatus in ((130..145) + 104 + 175) ) { // override default behaviour to sleep some time before retry
-            // in case of OOM errors, we wait a bit and try again (2 retries)
-            if ( task.attempt <= 2) {
-                sleep(Math.pow(2, task.attempt) * 2000 as long)
-                return 'retry'
-            } else {
-                log.error("${accession} caused Out of Memory error multiple times. Ignoring this accession.")
-                return 'ignore'
-            }
-        } else {
-            return 'finish'
-        }
-    }
-
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ce/cef7164b168e74e5db11dcd9acf6172d47ed6753e4814c68f39835d0c6c22f6d/data':
