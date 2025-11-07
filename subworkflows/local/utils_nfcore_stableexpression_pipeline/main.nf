@@ -355,7 +355,7 @@ def getNthPartFromEnd(String s, int n) {
 //
 // Add normalised: true / false in meta
 //
-def augmentToMetadata( ch_files ) {
+def augmentMetadata( ch_files ) {
     return ch_files
             .map {
                 meta, file ->

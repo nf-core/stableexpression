@@ -3,7 +3,7 @@ include { EXPRESSIONATLAS_GETDATA                } from '../../../modules/local/
 
 include { addDatasetIdToMetadata                 } from '../utils_nfcore_stableexpression_pipeline'
 include { groupFilesByDatasetId                  } from '../utils_nfcore_stableexpression_pipeline'
-include { augmentToMetadata                      } from '../utils_nfcore_stableexpression_pipeline'
+include { augmentMetadata                      } from '../utils_nfcore_stableexpression_pipeline'
 
 /*
 ========================================================================================
@@ -86,7 +86,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
         ch_eatlas_datasets = groupFilesByDatasetId( ch_design, ch_counts )
 
         // adding normalisation state in the meta
-        augmentToMetadata( ch_eatlas_datasets )
+        augmentMetadata( ch_eatlas_datasets )
 
     }
 

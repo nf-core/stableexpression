@@ -9,8 +9,7 @@ from Bio import Entrez
 from pathlib import Path
 
 # from random import sample
-# import re
-# import requests
+import requests
 import pandas as pd
 import xmltodict
 from urllib.request import urlretrieve
@@ -21,12 +20,11 @@ from tenacity import (
     wait_exponential,
     before_sleep_log,
 )
-from functools import partial
 import logging
 from requests.exceptions import HTTPError, ConnectionError
 
 from natural_language_utils import keywords_in_fields
-# from gprofiler_utils import convert_ids, chunk_list
+from gprofiler_utils import chunk_list
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,7 +33,7 @@ logger = logging.getLogger(__name__)
 # mandatory for running the script in an apptainer container
 # Entrez.Parser.Parser.directory("/tmp/biopython")
 
-ACCESSION_OUTFILE_NAME = "accessions.txt"
+ACCESSION_OUTFILE_NAME = "accessions.tsv"
 SPECIES_DATASETS_OUTFILE_NAME = "geo_all_datasets.metadata.tsv"
 REJECTED_DATASETS_OUTFILE_NAME = "geo_rejected_datasets.metadata.tsv"
 # WRONG_SPECS_DATASETS_METADATA_OUTFILE_NAME = "geo_wrong_platform_moltype_datasets.metadata.tsv"
@@ -46,7 +44,7 @@ SELECTED_DATASETS_OUTFILE_NAME = "geo_selected_datasets.metadata.tsv"
 
 ENTREZ_QUERY_MAX_RESULTS = 9999
 ENTREZ_EMAIL = "stableexpression@nfcore.com"
-# PLATFORM_METADATA_CHUNKSIZE = 2000
+PLATFORM_METADATA_CHUNKSIZE = 2000
 
 # NCBI_API_BASE_URL = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={accession}"
 STOP_RETRY_AFTER_DELAY = 600
@@ -160,7 +158,6 @@ def send_request_to_entrez_esummary(ids: list[str]) -> list[dict]:
         return Entrez.read(handle)
 
 
-"""
 @retry(
     stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
     wait=wait_exponential(multiplier=1, min=1, max=30),
@@ -197,7 +194,6 @@ def send_request_to_ncbi_api(accession: str) -> requests.Response | None:
         )
 
     return response
-"""
 
 
 @retry(
@@ -329,38 +325,74 @@ def fetch_geo_platform_data(platform_accessions: list[str]) -> dict:
     return results
 
 
-def get_platform_metadata(selected_metadata_chunk_list: list[dict]) -> list[dict]:
+def augment_with_platform_metadata(
+    datasets: list[dict],
+) -> tuple[list[dict], list[dict]]:
     # unique list of platform accessions
     platform_accessions = list(
         set(
             [
                 platform_accession
-                for metadata in selected_metadata_chunk_list
-                for platform_accession in metadata["platform_accessions"]
+                for dataset in datasets
+                for platform_accession in dataset["platform_accessions"]
             ]
         )
     )
     # one single request to NCBI for all platform accessions
     # we extract the platform accessions to allow better parsing afterwards
-    pltf_acc_to_pltf_metadata = {
+    acc_to_metadata = {
         platform_metadata["Accession"]: platform_metadata
         for platform_metadata in fetch_geo_platform_data(platform_accessions)
     }
 
     # adding the platform metadata to the corresponding metadata
+    issues = []
     augmented_metadata_list = []
-    for metadata in selected_metadata_chunk_list:
-        metadata["platform_metadata"] = []
-        for platform_accession in metadata["platform_accessions"]:
-            # augmenting metadata with platform metadata
-            # filtering out cases where the platform metadata is not available
-            if platform_accession in pltf_acc_to_pltf_metadata:
-                metadata["platform_metadata"].append(
-                    pltf_acc_to_pltf_metadata[platform_accession]
-                )
-        augmented_metadata_list.append(metadata)
+    for dataset in datasets:
+        accession = dataset["accession"]
+        platform_accessions = dataset["platform_accessions"]
+        dataset["platform_metadata"] = []
 
-    return augmented_metadata_list
+        if not platform_accessions:
+            issues.append({"accession": accession, "reason": "NO PLATFORM ACCESSIONS"})
+            continue
+
+        for platform_accession in platform_accessions:
+            # filtering out cases where the platform metadata is not available
+            if platform_accession not in acc_to_metadata:
+                continue
+            # augmenting metadata with platform metadata
+            dataset["platform_metadata"].append(acc_to_metadata[platform_accession])
+
+        # getting list of platform taxon
+        platforms_taxons = [
+            platform_metadata.get("taxon")
+            for platform_metadata in dataset["platform_metadata"]
+            if platform_metadata.get("taxon") is not None
+        ]
+
+        # checking if there is one single platform taxon
+        # otherwise, checking the dataset
+        if not platforms_taxons:
+            logger.warning(f"No taxon found for dataset {accession}")
+            issues.append({"accession": accession, "reason": "NO PLATFORM TAXON"})
+            continue
+        elif len(platforms_taxons) > 1:
+            logger.warning(
+                f"Multiple taxons for dataset {accession}: {platforms_taxons}"
+            )
+            issues.append(
+                {
+                    "accession": accession,
+                    "reason": f"MULTIPLE PLATFORM TAXONS: {platforms_taxons}",
+                }
+            )
+            continue
+
+        dataset["platform_taxon"] = platforms_taxons[0]
+        augmented_metadata_list.append(dataset)
+
+    return augmented_metadata_list, issues
 
 
 """
@@ -771,30 +803,24 @@ def main():
                 dataset["found_keywords"] = found_keywords
             selected_datasets.append(dataset)
 
-    """
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # GETTING METADATA OF SEQUENCING PLATFORMS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info(
-        f"Getting platform metadata for {len(keywords_filtered_metadata_list)} datasets"
+    logger.info(f"Getting platform metadata for {len(selected_datasets)} datasets")
+    selected_datasets_chunks = chunk_list(
+        selected_datasets, PLATFORM_METADATA_CHUNKSIZE
     )
-    platform_augmented_dataset_metadata_list = []
-    for selected_metadata_chunk_list in tqdm(
-        chunk_list(keywords_filtered_metadata_list, PLATFORM_METADATA_CHUNKSIZE)
-    ):
-        platform_augmented_dataset_metadata_list += get_platform_metadata(
-            selected_metadata_chunk_list
+    # resetting selecting datasets
+    selected_datasets = []
+    for selected_datasets_chunk in tqdm(selected_datasets_chunks):
+        augmented_datasets, issues = augment_with_platform_metadata(
+            selected_datasets_chunk
         )
+        selected_datasets += augmented_datasets
+        rejected_datasets += issues
 
-    export_filtered_out_datasets_if_any(
-        keywords_filtered_metadata_list,
-        platform_augmented_dataset_metadata_list,
-        PLATFORM_NOT_AVAILABLE_DATASETS_METADATA_OUTFILE_NAME,
-        "platform metadata",
-    )
-
-
+    """
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # FILTERING OUT DATASETS FOR WHICH ID MAPPING DOES NOT WORK
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -832,11 +858,11 @@ def main():
 
     logger.info(f"Kept {len(selected_datasets)} datasets")
     # getting accessions of selected experiments
-    selected_accessions = [metadata["accession"] for metadata in selected_datasets]
-    # exporting list of accessions
-    logger.info(f"Writing accessions to {ACCESSION_OUTFILE_NAME}")
-    with open(ACCESSION_OUTFILE_NAME, "w") as fout:
-        fout.writelines([f"{acc}\n" for acc in selected_accessions])
+    selected_accessions = [
+        {"accession": dataset["accession"], "platform_taxon": dataset["platform_taxon"]}
+        for dataset in selected_datasets
+    ]
+    export_dataset_metadatas(selected_accessions, ACCESSION_OUTFILE_NAME)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # EXPORTING DATASETS

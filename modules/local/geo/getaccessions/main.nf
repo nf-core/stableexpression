@@ -15,9 +15,9 @@ process GEO_GETACCESSIONS {
     val accessions
 
     output:
-    path "accessions.txt",                                                                                                    emit: accessions
-    path "geo_selected_datasets.metadata.tsv",                                                                                topic: geo_selected_datasets
-    path "geo_all_datasets.metadata.tsv",                                                                                     topic: geo_all_datasets
+    path "accessions.tsv",                                                                                                    emit: accessions
+    path "geo_selected_datasets.metadata.tsv",                                                                optional: true, topic: geo_selected_datasets
+    path "geo_all_datasets.metadata.tsv",                                                                     optional: true, topic: geo_all_datasets
     path "geo_rejected_datasets.metadata.tsv",                                                                optional: true, topic: geo_rejected_datasets
 
     tuple val("${task.process}"), val('python'),      eval("python3 --version | sed 's/Python //'"),                          topic: versions

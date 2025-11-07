@@ -12,12 +12,12 @@ process GEO_GETDATA {
         'community.wave.seqera.io/library/bioconductor-geoquery_r-base_r-dplyr_r-optparse:fcd002470b7d6809' }"
 
     input:
-    val accession
+    tuple val(meta), val(accession)
     val species
 
     output:
-    path "*.design.csv", optional: true,                                                                                                emit: design
-    path "*.counts.csv", optional: true,                                                                                                emit: counts
+    tuple val(meta), path("*.counts.csv"),            optional: true,                                                                   emit: counts
+    tuple val(meta), path("*.design.csv"),            optional: true,                                                                   emit: design
     tuple val(accession), path("failure_reason.txt"), optional: true,                                                                   topic: geo_failure_reason
     tuple val(accession), path("warning_reason.txt"), optional: true,                                                                   topic: geo_warning_reason
     tuple val("${task.process}"), val('R'),               eval('Rscript -e "cat(R.version.string)" | sed "s/R version //"'),            topic: versions

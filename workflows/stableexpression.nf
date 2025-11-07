@@ -41,23 +41,21 @@ workflow STABLEEXPRESSION {
     ch_all_genes_statistics = Channel.empty()
     ch_top_stable_genes_transposed_counts = Channel.empty()
 
-    ch_species = Channel.value( params.species.split(' ').join('_') )
+    def species = params.species.split(' ').join('_')
 
     // -----------------------------------------------------------------
     // FETCH AND DOWNLOAD EXPRESSION ATLAS DATASETS IF NEEDED
     // -----------------------------------------------------------------
 
-    EXPRESSIONATLAS_FETCHDATA( ch_species )
+    EXPRESSIONATLAS_FETCHDATA( species )
 
-    // getting accessions to exclude from GEO
-    EXPRESSIONATLAS_FETCHDATA.out.accessions
-        .filter { accession -> accession.startsWith("E-GEOD-") }
-        .map { accession -> accession.replace("E-GEOD-", "GSE")}
-        .set { ch_excluded_geo_accessions }
+    // -----------------------------------------------------------------
+    // FETCH AND DOWNLOAD GEO DATASETS IF NEEDED
+    // -----------------------------------------------------------------
 
     GEO_FETCHDATA (
-        ch_species,
-        ch_excluded_geo_accessions
+        species,
+        EXPRESSIONATLAS_FETCHDATA.out.accessions
     )
 
     if ( !params.accessions_only && !params.download_only ) {
@@ -82,7 +80,7 @@ workflow STABLEEXPRESSION {
             // tries to map gene IDs to Ensembl IDs whenever possible
             GPROFILER_IDMAPPING(
                 ch_counts,
-                ch_species,
+                species,
                 ch_gene_id_mapping,
                 ch_gene_metadata
             )
