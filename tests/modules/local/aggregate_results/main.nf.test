@@ -1,0 +1,56 @@
+nextflow_process {
+
+    name "Test Process AGGREGATE_RESULTS"
+    script "modules/local/aggregate_results/main.nf"
+    process "AGGREGATE_RESULTS"
+    tag "aggregate_results"
+
+    test("Without microarray") {
+
+        when {
+            process {
+                """
+                input[0] = file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/base_statistics/output/stats_all_genes.csv', checkIfExists: true)
+                input[2] = file( '$projectDir/tests/test_data/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true)
+                input[3] = []
+                input[4] = file( '$projectDir/tests/test_data/aggregate_results/metadata.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/tests/test_data/aggregate_results/mapping.csv', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("With microarray") {
+
+        when {
+            process {
+                """
+                input[0] = file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/base_statistics/output/stats_all_genes.csv', checkIfExists: true)
+                input[2] = file( '$projectDir/tests/test_data/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true)
+                input[3] = file( '$projectDir/tests/test_data/aggregate_results/microarray_stats_all_genes.csv', checkIfExists: true)
+                input[4] = file( '$projectDir/tests/test_data/aggregate_results/metadata.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/tests/test_data/aggregate_results/mapping.csv', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

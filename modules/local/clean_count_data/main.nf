@@ -14,10 +14,10 @@ process CLEAN_COUNT_DATA {
     val ks_pvalue_threshold
 
     output:
-    tuple val(meta),      path('cleaned_counts_filtered.parquet'),                                                    emit: counts
-    tuple val(meta.dataset), path("failure_reason.txt"),               optional: true,                                topic: clean_count_failure_reason
-    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
-    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
+    tuple val(meta), path('cleaned_counts_filtered.parquet'), optional: true,                                     emit: counts
+    tuple val(meta.dataset), path("failure_reason.txt"),      optional: true,                                     topic: clean_count_failure_reason
+    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     """

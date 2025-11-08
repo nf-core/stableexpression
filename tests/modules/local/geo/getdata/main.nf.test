@@ -1,0 +1,56 @@
+nextflow_process {
+
+    name "Test Process GEO_GETDATA"
+    script "modules/local/geo/getdata/main.nf"
+    process "GEO_GETDATA"
+    tag "geo_getdata"
+
+    test("Beta vulgaris - Small RNA of sugar beet in response to drought stress") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE205328"
+                ]
+                input[1] = "beta vulgaris"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Accession does not exist") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ ],
+                    "GSE568945478"
+                ]
+                input[1] = "blabla"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

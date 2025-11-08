@@ -1,0 +1,108 @@
+{
+    "Accession does not exist": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    [
+                        "GSE568945478",
+                        "failure_reason.txt:md5,2631bb8c3ae982a1b869107f8dbfa107"
+                    ]
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.4.3 (2025-02-28)"
+                    ]
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.74.0"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.1.4"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-11-08T13:40:59.903657365"
+    },
+    "Beta vulgaris - Small RNA of sugar beet in response to drought stress": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    [
+                        "GSE205328",
+                        "failure_reason.txt:md5,2631bb8c3ae982a1b869107f8dbfa107"
+                    ]
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.4.3 (2025-02-28)"
+                    ]
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.74.0"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.1.4"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-11-08T13:43:46.551738497"
+    }
+}

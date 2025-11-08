@@ -1,0 +1,56 @@
+nextflow_process {
+
+    name "Test Process CLEAN_COUNT_DATA"
+    script "modules/local/clean_count_data/main.nf"
+    process "CLEAN_COUNT_DATA"
+    tag "clean_count"
+
+    test("Runs ok") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [dataset: 'test'],
+                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/dataset_statistics/output/test.dataset_stats.csv', checkIfExists: true)
+                ]
+                input[1] = 0
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("No sample left") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [dataset: 'test'],
+                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/dataset_statistics/input/output/test.dataset_stats.csv', checkIfExists: true)
+                ]
+                input[1] = 0.1
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}
