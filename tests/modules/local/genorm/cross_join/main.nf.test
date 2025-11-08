@@ -4,7 +4,6 @@ nextflow_process {
     script "modules/local/genorm/cross_join/main.nf"
     process "CROSS_JOIN"
     tag "cross_join"
-    tag "module"
 
     test("Should run without failures") {
 

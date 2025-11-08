@@ -4,8 +4,6 @@ nextflow_process {
     script "modules/local/normalisation/deseq2/main.nf"
     process "NORMALISATION_DESEQ2"
     tag "deseq2"
-    tag "normalise"
-    tag "module"
 
     test("Very small dataset") {
 

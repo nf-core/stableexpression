@@ -4,7 +4,6 @@ nextflow_process {
     script "modules/local/genorm/compute_m_measure/main.nf"
     process "COMPUTE_M_MEASURE"
     tag "m_measure"
-    tag "module"
 
     test("Four initial chunk files") {
 

@@ -4,7 +4,6 @@ nextflow_process {
     script "modules/local/dataset_statistics/main.nf"
     process "DATASET_STATISTICS"
     tag "dataset_statistics"
-    tag "module"
 
     test("Uniform distribution") {
 

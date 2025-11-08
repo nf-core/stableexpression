@@ -4,7 +4,6 @@ nextflow_process {
     script "modules/local/gprofiler/idmapping/main.nf"
     process "GPROFILER_IDMAPPING"
     tag "idmapping"
-    tag "module"
 
     test("Map Ensembl IDs to themselves") {
 

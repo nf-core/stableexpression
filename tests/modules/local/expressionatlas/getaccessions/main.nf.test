@@ -4,7 +4,6 @@ nextflow_process {
     script "modules/local/expressionatlas/getaccessions/main.nf"
     process "EXPRESSIONATLAS_GETACCESSIONS"
     tag "eatlas_getaccessions"
-    tag "module"
 
     test("Solanum tuberosum one keyword") {
 

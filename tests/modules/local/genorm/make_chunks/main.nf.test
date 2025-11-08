@@ -4,7 +4,6 @@ nextflow_process {
     script "modules/local/genorm/make_chunks/main.nf"
     process "MAKE_CHUNKS"
     tag "make_chunks"
-    tag "module"
 
     test("Should run without failures") {
 

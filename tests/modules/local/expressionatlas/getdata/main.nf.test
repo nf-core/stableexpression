@@ -4,7 +4,6 @@ nextflow_process {
     script "modules/local/expressionatlas/getdata/main.nf"
     process "EXPRESSIONATLAS_GETDATA"
     tag "eatlas_getdata"
-    tag "module"
 
     test("Transcriptome Analysis of the potato (rnaseq)") {
 

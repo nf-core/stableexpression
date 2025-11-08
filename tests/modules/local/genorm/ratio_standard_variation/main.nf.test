@@ -4,7 +4,6 @@ nextflow_process {
     script "modules/local/genorm/ratio_standard_variation/main.nf"
     process "RATIO_STANDARD_VARIATION"
     tag "ratio_std"
-    tag "module"
 
     test("Should run without failures") {
 

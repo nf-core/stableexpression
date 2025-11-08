@@ -4,7 +4,6 @@ nextflow_process {
     script "modules/local/genorm/expression_ratio/main.nf"
     process "EXPRESSION_RATIO"
     tag "expression_ratio"
-    tag "module"
 
     test("Should run without failures") {
 
