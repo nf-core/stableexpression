@@ -3,28 +3,28 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
-from tqdm import tqdm
+import logging
+import tarfile
 from multiprocessing import Pool
-from Bio import Entrez
 from pathlib import Path
+from urllib.request import urlretrieve
+
+import pandas as pd
 
 # from random import sample
 import requests
-import pandas as pd
 import xmltodict
-from urllib.request import urlretrieve
-import tarfile
+from Bio import Entrez
+from gprofiler_utils import chunk_list
+from natural_language_utils import keywords_in_fields
+from requests.exceptions import ConnectionError, HTTPError
 from tenacity import (
+    before_sleep_log,
     retry,
     stop_after_delay,
     wait_exponential,
-    before_sleep_log,
 )
-import logging
-from requests.exceptions import HTTPError, ConnectionError
-
-from natural_language_utils import keywords_in_fields
-from gprofiler_utils import chunk_list
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

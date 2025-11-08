@@ -13,7 +13,7 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     val platform
 
     output:
-    path "accessions.txt", optional: true,                                                                            emit: accessions
+    path "accessions.txt",                    optional: true,                                                         emit: accessions
     path "selected_experiments.metadata.tsv", optional: true,                                                         topic: eatlas_selected_datasets
     path "species_experiments.metadata.tsv",  optional: true,                                                         topic: eatlas_all_datasets
     //path "filtered_experiments.metadata.tsv", optional: true,                                                       topic: filtered_eatlas_experiment_metadata
