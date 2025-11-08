@@ -16,7 +16,7 @@
                     "type": "string",
                     "description": "Scientifc species name (genus and species)",
                     "fa_icon": "fas fa-hippo",
-                    "pattern": "([a-zA-Z]+)[_ ]([a-zA-Z]+)",
+                    "pattern": "^([a-zA-Z]+)[_ ]([a-zA-Z]+)$",
                     "help_text": "Genus and species may be separated by ` ` or `_`. Example: `--species 'Arabidopsis thaliana'` or `--species 'homo_sapiens'`. Character case is not important."
                 },
                 "outdir": {
@@ -260,7 +260,6 @@
                     "description": "Number of candidate genes to keep for stability scoring",
                     "fa_icon": "fas fa-sort-numeric-up-alt",
                     "minimum": 1,
-                    "default": 5000,
                     "help_text": "Number of candidate genes to keep in the final list. These candidates genes are chosen as the ones showing the least standard variation."
                 },
                 "run_genorm": {
@@ -420,6 +419,7 @@
                     "fa_icon": "far calendar",
                     "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
                     "hidden": true
+                },
                 "help": {
                     "type": ["boolean", "string"],
                     "description": "Display the help message."

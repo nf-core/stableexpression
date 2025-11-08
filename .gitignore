@@ -9,6 +9,7 @@ testing*
 null/
 .nf-test*
 .idea/
+.vscode/
 taggers/
 tokenizers/
 corpora/

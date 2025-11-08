@@ -40,8 +40,6 @@ workflow PIPELINE_INITIALISATION {
 
     main:
 
-    ch_versions = Channel.empty()
-
     //
     // Print version and exit if required and dump pipeline parameters to JSON file
     //
@@ -72,7 +70,7 @@ workflow PIPELINE_INITIALISATION {
 * Software dependencies
     https://github.com/nf-core/stableexpression/blob/main/CITATIONS.md
 """
-    command = "nextflow run ${workflow.manifest.name} -profile <docker/singularity/.../institute> --input samplesheet.csv --outdir <OUTDIR>"
+    command = "nextflow run ${workflow.manifest.name} -profile <docker/singularity/.../institute> --species <species> --outdir <OUTDIR>"
 
     UTILS_NFSCHEMA_PLUGIN (
         workflow,
@@ -228,8 +226,6 @@ def validateInputSamplesheet(input) {
     }
 }
 
-    return [ metas[0], fastqs ]
-}
 //
 // Generate methods description for MultiQC
 //
@@ -376,6 +372,13 @@ def augmentMetadata( ch_files ) {
                     [meta, file]
             }
 }
+
+
+/*
+========================================================================================
+    FUNCTIONS FOR CALCULATING SIZE OF DATA
+========================================================================================
+*/
 
 def storeDatasetSize( ch_counts, nb_genes_key, nb_samples_key ) {
     // adding nb genes and nb samples in the meta map under keys provided as parameters
