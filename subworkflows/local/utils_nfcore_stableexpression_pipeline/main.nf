@@ -20,9 +20,9 @@ include { UTILS_NEXTFLOW_PIPELINE   } from '../../nf-core/utils_nextflow_pipelin
 include { workflowVersionToYAML     } from '../../nf-core/utils_nfcore_pipeline'
 
 /*
-========================================================================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     SUBWORKFLOW TO INITIALISE PIPELINE
-========================================================================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
 workflow PIPELINE_INITIALISATION {
@@ -32,8 +32,15 @@ workflow PIPELINE_INITIALISATION {
     validate_params   // boolean: Boolean whether to validate parameters against the schema at runtime
     monochrome_logs   // boolean: Do not use coloured log outputs
     nextflow_cli_args //   array: List of positional nextflow CLI args
+    outdir            //  string: The output directory where the results will be saved
+    input             //  string: Path to input samplesheet
+    help              // boolean: Display help message and exit
+    help_full         // boolean: Show the full help message
+    show_hidden       // boolean: Show hidden parameters in the help message
 
     main:
+
+    ch_versions = Channel.empty()
 
     //
     // Print version and exit if required and dump pipeline parameters to JSON file
@@ -41,7 +48,7 @@ workflow PIPELINE_INITIALISATION {
     UTILS_NEXTFLOW_PIPELINE (
         version,
         true,
-        params.outdir,
+        outdir,
         workflow.profile.tokenize(',').intersect(['conda', 'mamba']).size() >= 1
     )
 
@@ -107,9 +114,9 @@ workflow PIPELINE_INITIALISATION {
 }
 
 /*
-========================================================================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     SUBWORKFLOW FOR PIPELINE COMPLETION
-========================================================================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
 workflow PIPELINE_COMPLETION {
@@ -154,11 +161,10 @@ workflow PIPELINE_COMPLETION {
     }
 }
 
-
 /*
-========================================================================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     FUNCTIONS
-========================================================================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 //
 // Check and validate pipeline parameters
@@ -222,8 +228,10 @@ def validateInputSamplesheet(input) {
     }
 }
 
+    return [ metas[0], fastqs ]
+}
 //
-// Get channel of software versions used in pipeline in YAML format
+// Generate methods description for MultiQC
 //
 def toolCitationText() {
     // TODO nf-core: Optionally add in-text citation tools to this list.
