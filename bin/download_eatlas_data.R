@@ -46,6 +46,7 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
             if (grepl("does not look like an ArrayExpress/BioStudies experiment accession.", w$message)) {
                 warning(w$message)
                 write("EXPERIMENT NOT FOUND", file = FAILURE_REASON_FILE)
+                quit(save = "no", status = 0)
             }
 
             # else, retrying
@@ -60,12 +61,15 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
                 if (grepl("550 Requested action not taken; file unavailable", w$message)) {
                     warning(w$message)
                     write("EXPERIMENT SUMMARY NOT FOUND", file = FAILURE_REASON_FILE)
+                    quit(save = "no", status = 0)
                 } else if (grepl("Failure when receiving data from the peer", w$message)) {
                     warning(w$message)
                     write("EXPERIMENT NOT FOUND", file = FAILURE_REASON_FILE)
+                    quit(save = "no", status = 0)
                 } else {
                     warning("Unhandled warning: ", w$message)
                     write("UNKNOWN ERROR", file = FAILURE_REASON_FILE)
+                    quit(save = "no", status = 0)
                 }
             }
 
@@ -82,9 +86,11 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
                 if (grepl("Download appeared successful but no experiment summary object was found", e$message)) {
                     warning(e$message)
                     write("EXPERIMENT SUMMARY NOT FOUND", file = FAILURE_REASON_FILE)
+                    quit(save = "no", status = 0)
                 } else {
                     warning("Unhandled error: ", e$message)
                     write("UNKNOWN ERROR", file = FAILURE_REASON_FILE)
+                    quit(save = "no", status = 0)
                 }
 
             }
@@ -173,6 +179,7 @@ process_data <- function(atlas_data, accession) {
                 result <- get_one_colour_microarray_data(data)
             } else {
                 write(paste("UNKNOWN DATA TYPE:", data_type), file = FAILURE_REASON_FILE)
+                quit(save = "no", status = 0)
             }
 
         }, error = function(e) {
@@ -211,6 +218,7 @@ accession <- trimws(args$accession)
 if (startsWith(accession, "E-PROT")) {
     warning("Ignoring the ", accession, " experiment.")
     write("PROTEOME ACCESSIONS NOT HANDLED", file = FAILURE_REASON_FILE)
+    quit(save = "no", status = 0)
 }
 
 # searching and downloading expression atlas data

@@ -101,6 +101,9 @@ def main():
     #############################################################
     # QUERYING g:PROFILER SERVER
     #############################################################
+
+    gprofiler_mapping_dict = {}
+
     try:
         if gene_ids_left_to_map:
             gprofiler_mapping_dict, gene_metadata_dfs = convert_ids(

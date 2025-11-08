@@ -19,6 +19,7 @@ nextflow_process {
                 )
                 input[1] = "Beta vulgaris"
                 input[2] = Channel.value([])
+                input[3] = Channel.value([])
                 """
             }
         }
@@ -45,6 +46,7 @@ nextflow_process {
                 )
                 input[1] = "Arabidopsis thaliana"
                 input[2] = Channel.value([])
+                input[3] = Channel.value([])
                 """
             }
         }
@@ -72,6 +74,7 @@ nextflow_process {
                 )
                 input[1] = "Arabidopsis thaliana"
                 input[2] = Channel.value([])
+                input[3] = Channel.value([])
                 """
             }
         }
@@ -100,6 +103,7 @@ nextflow_process {
                 )
                 input[1] = "Arabidopsis thaliana"
                 input[2] = Channel.value([])
+                input[3] = Channel.value([])
                 """
             }
         }
@@ -108,9 +112,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.trace.succeeded().size() == 0 },
-                { assert process.trace.failed().size() == 1 },
-                { assert process.out.renamed.size() == 0 },
+                { assert process.out.counts.size() == 0 },
                 { assert process.out.metadata.size() == 0 },
                 { assert process.out.mapping.size() == 0 }
             )
@@ -133,6 +135,7 @@ nextflow_process {
                 )
                 input[1] = "Homo sapiens"
                 input[2] = Channel.value([])
+                input[3] = Channel.value([])
                 """
             }
         }
@@ -141,9 +144,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.trace.succeeded().size() == 0 },
-                { assert process.trace.failed().size() == 1 },
-                { assert process.out.renamed.size() == 0 },
+                { assert process.out.counts.size() == 0 },
                 { assert process.out.metadata.size() == 0 },
                 { assert process.out.mapping.size() == 0 }
             )
@@ -166,6 +167,7 @@ nextflow_process {
                 )
                 input[1] = "Beta vulgaris"
                 input[2] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/custom/mapping.csv", checkIfExists: true)
+                input[3] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/custom/metadata.csv", checkIfExists: true)
                 """
             }
         }

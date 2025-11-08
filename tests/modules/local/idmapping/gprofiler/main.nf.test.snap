@@ -11,42 +11,45 @@
                     ]
                 ],
                 "1": [
-                    
+                    "counts.ensembl_ids.metadata.csv:md5,af7e8d352d9c4591d53d95f660457beb"
                 ],
                 "2": [
                     "counts.ensembl_ids.mapping.csv:md5,6ff8d8f71b9df7a1b08ff0bfda8da755"
                 ],
                 "3": [
+                    
+                ],
+                "4": [
                     [
-                        "IDMAPPING_GPROFILER",
+                        "GPROFILER_IDMAPPING",
                         "python",
                         "3.13.5"
                     ]
                 ],
-                "4": [
+                "5": [
                     [
-                        "IDMAPPING_GPROFILER",
+                        "GPROFILER_IDMAPPING",
                         "pandas",
                         "2.3.1"
                     ]
                 ],
-                "5": [
+                "6": [
                     [
-                        "IDMAPPING_GPROFILER",
+                        "GPROFILER_IDMAPPING",
                         "requests",
                         "2.32.4"
                     ]
                 ],
-                "metadata": [
-                    
-                ],
-                "renamed": [
+                "counts": [
                     [
                         {
                             "dataset": "test"
                         },
                         "counts.ensembl_ids.renamed.csv:md5,b2f45fd17fcb2688ea08b94527f70c1f"
                     ]
+                ],
+                "metadata": [
+                    "counts.ensembl_ids.metadata.csv:md5,af7e8d352d9c4591d53d95f660457beb"
                 ]
             }
         ],
@@ -54,7 +57,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-10-16T08:27:50.328211036"
+        "timestamp": "2025-11-08T13:09:26.858764543"
     },
     "Map Ensembl IDs to themselves": {
         "content": [
@@ -69,18 +72,36 @@
                     
                 ],
                 "3": [
-                    
+                    [
+                        "test",
+                        "failure_reason.txt:md5,7ae1b80b4f94b2bed454756d6487c03f"
+                    ]
                 ],
                 "4": [
-                    
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "python",
+                        "3.13.5"
+                    ]
                 ],
                 "5": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "pandas",
+                        "2.3.1"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "requests",
+                        "2.32.4"
+                    ]
+                ],
+                "counts": [
                     
                 ],
                 "metadata": [
-                    
-                ],
-                "renamed": [
                     
                 ]
             }
@@ -89,7 +110,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-10-16T08:27:11.012622456"
+        "timestamp": "2025-11-08T12:59:22.863610113"
     },
     "Map Uniprot IDs": {
         "content": [
@@ -109,36 +130,39 @@
                     "counts.uniprot_ids.mapping.csv:md5,fe88c79c45d45825d28f325f7a2f383e"
                 ],
                 "3": [
+                    
+                ],
+                "4": [
                     [
-                        "IDMAPPING_GPROFILER",
+                        "GPROFILER_IDMAPPING",
                         "python",
                         "3.13.5"
                     ]
                 ],
-                "4": [
+                "5": [
                     [
-                        "IDMAPPING_GPROFILER",
+                        "GPROFILER_IDMAPPING",
                         "pandas",
                         "2.3.1"
                     ]
                 ],
-                "5": [
+                "6": [
                     [
-                        "IDMAPPING_GPROFILER",
+                        "GPROFILER_IDMAPPING",
                         "requests",
                         "2.32.4"
                     ]
                 ],
-                "metadata": [
-                    "counts.uniprot_ids.metadata.csv:md5,b87d6533848a3ae07b289ec6b0c4a1ff"
-                ],
-                "renamed": [
+                "counts": [
                     [
                         {
                             "dataset": "test"
                         },
                         "counts.uniprot_ids.renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
                     ]
+                ],
+                "metadata": [
+                    "counts.uniprot_ids.metadata.csv:md5,b87d6533848a3ae07b289ec6b0c4a1ff"
                 ]
             }
         ],
@@ -146,7 +170,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-10-16T08:27:28.606917646"
+        "timestamp": "2025-11-08T12:59:34.111655741"
     },
     "Map NCBI IDs": {
         "content": [
@@ -166,36 +190,39 @@
                     "counts.ncbi_ids.mapping.csv:md5,fe4fd9005dce99b7722b84134f51badd"
                 ],
                 "3": [
+                    
+                ],
+                "4": [
                     [
-                        "IDMAPPING_GPROFILER",
+                        "GPROFILER_IDMAPPING",
                         "python",
                         "3.13.5"
                     ]
                 ],
-                "4": [
+                "5": [
                     [
-                        "IDMAPPING_GPROFILER",
+                        "GPROFILER_IDMAPPING",
                         "pandas",
                         "2.3.1"
                     ]
                 ],
-                "5": [
+                "6": [
                     [
-                        "IDMAPPING_GPROFILER",
+                        "GPROFILER_IDMAPPING",
                         "requests",
                         "2.32.4"
                     ]
                 ],
-                "metadata": [
-                    "counts.ncbi_ids.metadata.csv:md5,b87d6533848a3ae07b289ec6b0c4a1ff"
-                ],
-                "renamed": [
+                "counts": [
                     [
                         {
                             "dataset": "test"
                         },
                         "counts.ncbi_ids.renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
                     ]
+                ],
+                "metadata": [
+                    "counts.ncbi_ids.metadata.csv:md5,b87d6533848a3ae07b289ec6b0c4a1ff"
                 ]
             }
         ],
@@ -203,6 +230,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-10-16T08:27:20.052825156"
+        "timestamp": "2025-11-08T12:59:28.504346412"
     }
 }

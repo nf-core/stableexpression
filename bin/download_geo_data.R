@@ -120,6 +120,7 @@ download_geo_data_with_retries <- function(accession, species, max_retries = 3, 
             } else {
                 warning("Unhandled error: ", e$message)
                 write("EXPERIMENT NOT FOUND", file = FAILURE_REASON_FILE)
+                quit(save = "no", status = 0)
             }
         })
 
@@ -179,6 +180,7 @@ process_data <- function(atlas_data, accession, species) {
     if ( length(names(geo_data)) > 1 ) {
         warning("Multiple data files were found")
         write("EXPERIMENT CONTAINS MULTIPLE FILES", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
     }
 
     file <- names(geo_data)[[ 1 ]]
