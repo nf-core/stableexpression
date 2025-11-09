@@ -180,4 +180,33 @@ nextflow_process {
 
     }
 
+    test("Custom mapping - TSV") {
+
+        tag "custom_mapping_tsv"
+
+        when {
+            process {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ dataset: "test" ],
+                        file("$projectDir/tests/test_data/idmapping/tsv/counts.ensembl_ids.tsv", checkIfExists: true)
+                    ]
+                )
+                input[1] = "Beta vulgaris"
+                input[2] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/tsv/mapping.tsv", checkIfExists: true)
+                input[3] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/tsv/metadata.tsv", checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
 }

@@ -40,17 +40,24 @@ def parse_args():
     )
     parser.add_argument(
         "--custom-mappings",
-        type=str,
+        type=Path,
         dest="custom_mappings",
         help="Optional file containing custom mappings",
     )
     parser.add_argument(
         "--custom-metadata",
-        type=str,
+        type=Path,
         dest="custom_metadata",
         help="Optional file containing custom metadata",
     )
     return parser.parse_args()
+
+
+def parse_table(file: Path, **kwargs):
+    if file.suffix == ".csv":
+        return pd.read_csv(file, header=0, **kwargs)
+    else:  # .tsv
+        return pd.read_csv(file, header=0, sep="\t", **kwargs)
 
 
 ##################################################################
@@ -72,7 +79,9 @@ def main():
     #############################################################
     # PARSING FILES
     #############################################################
-    df = pd.read_csv(count_file, header=0, index_col=0)
+
+    df = parse_table(count_file, index_col=0)
+    df.index.rename(config.ENSEMBL_GENE_ID_COLNAME, inplace=True)
 
     if df.empty:
         msg = "COUNT FILE IS EMPTY"
@@ -86,7 +95,7 @@ def main():
 
     custom_mappings_dict = {}
     if custom_mapping_file:
-        custom_mapping_df = pd.read_csv(custom_mapping_file)
+        custom_mapping_df = parse_table(custom_mapping_file)
         custom_mappings_dict = custom_mapping_df.set_index(
             config.ORIGINAL_GENE_ID_COLNAME
         )[config.ENSEMBL_GENE_ID_COLNAME].to_dict()
@@ -96,13 +105,12 @@ def main():
     ]
     logger.info(f"Number of genes left to map: {len(gene_ids_left_to_map)}")
 
-    gene_metadata_dfs = []
-
     #############################################################
     # QUERYING g:PROFILER SERVER
     #############################################################
 
     gprofiler_mapping_dict = {}
+    gene_metadata_dfs = []
 
     try:
         if gene_ids_left_to_map:
@@ -138,7 +146,6 @@ def main():
     # renaming gene names to mapped ids using mapping dict
     df.index = df.index.map(mapping_dict)
     df.reset_index(inplace=True)
-    df.rename(columns={"index": config.ENSEMBL_GENE_ID_COLNAME}, inplace=True)
 
     # TODO: check is there is another way to avoid duplicate gene names
     # sometimes different gene names have the same ensembl ID
@@ -154,7 +161,7 @@ def main():
 
     # if the user provides custom metadata file
     if custom_metadata_file:
-        custom_metadata_df = pd.read_csv(custom_metadata_file)
+        custom_metadata_df = parse_table(custom_metadata_file)
         # prepending custom metadata in gene metadata
         gene_metadata_dfs = [custom_metadata_df] + gene_metadata_dfs
 

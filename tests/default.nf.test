@@ -33,6 +33,33 @@ nextflow_pipeline {
         }
     }
 
+    test("-profile test_dataset_only") {
+
+        when {
+            params {
+                species = 'mus musculus'
+                skip_fetch_eatlas_accessions = true
+                skip_fetch_geo_accessions = true
+                datasets = 'tests/test_data/input_datasets/input_big.yaml'
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+
+
     test("-profile test_accessions_only") {
 
         when {
@@ -91,38 +118,14 @@ nextflow_pipeline {
         }
     }
 
-    test("-profile test_one_rnaseq_one_microarray") {
-
-        when {
-            params {
-                species = 'arabidopsis thaliana'
-                eatlas_accessions = 'E-GEOD-52806,E-GEOD-21945'
-                skip_fetch_eatlas_accessions = true
-                skip_fetch_geo_accessions = true
-                outdir = "$outputDir"
-            }
-        }
-
-        then {
-            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
-            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
-            assertAll(
-                { assert workflow.success},
-                { assert snapshot(
-                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
-                    stable_name,
-                    stable_path
-                ).match() }
-            )
-        }
-    }
-
     test("-profile test_one_accession_low_gene_count") {
 
         when {
             params {
                 species = 'arabidopsis thaliana'
                 eatlas_accessions = "E-GEOD-51720"
+                skip_fetch_eatlas_accessions = true
+                skip_fetch_geo_accessions = true
                 outdir = "results/test_one_accession_low_gene_count"
                 outdir = "$outputDir"
             }
@@ -147,8 +150,9 @@ nextflow_pipeline {
         when {
             params {
                 species = 'solanum tuberosum'
-                keywords = "potato,stress"
-                eatlas_accessions = "E-MTAB-552"
+                skip_fetch_eatlas_accessions = true
+                skip_fetch_geo_accessions = true
+                eatlas_accessions = "E-MTAB-7711"
                 datasets = "${projectDir}/tests/test_data/input_datasets/input.csv"
                 outdir = "$outputDir"
             }
@@ -168,39 +172,11 @@ nextflow_pipeline {
         }
     }
 
-    test("-profile test_ignore_errors") {
+    test("-profile test_run_genorm") {
 
         when {
             params {
                 species = 'beta vulgaris'
-                keywords = "leaf"
-                datasets = "${projectDir}/tests/test_data/input_datasets/input.csv"
-                outdir = "$outputDir"
-            }
-        }
-
-        then {
-            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
-            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
-            assertAll(
-                { assert workflow.success},
-                { assert snapshot(
-                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
-                    stable_name,
-                    stable_path
-                ).match() }
-            )
-        }
-    }
-
-    test("-profile test_run_normfinder_genorm") {
-
-        when {
-            params {
-                species = 'solanum tuberosum'
-                eatlas_accessions = "E-MTAB-7711"
-                skip_fetch_eatlas_accessions = true
-                skip_fetch_geo_accessions = true
                 run_genorm = true
                 outdir = "$outputDir"
             }
@@ -224,8 +200,8 @@ nextflow_pipeline {
 
         when {
             params {
-                species = 'solanum tuberosum'
-                keywords = "potato,stress"
+                species = 'beta vulgaris'
+                keywords = "leaf"
                 skip_fetch_geo_accessions = true
                 outdir = "$outputDir"
             }
@@ -276,7 +252,7 @@ nextflow_pipeline {
 
         when {
             params {
-                species = 'solanum_tuberosum'
+                species = 'arabidopsis_lyrata'
                 outdir = "$outputDir"
             }
         }

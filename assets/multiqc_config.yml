@@ -308,7 +308,7 @@ custom_data:
           Ratio of Microarray samples in which the gene has a zero value.
 
   expression_distributions_top_stable_genes:
-    section_name: "Distribution of the normalised expression of the most stable genes (ranked by stability score)"
+    section_name: "Count distributions"
     file_format: "csv"
     pconfig:
       sort_samples: false

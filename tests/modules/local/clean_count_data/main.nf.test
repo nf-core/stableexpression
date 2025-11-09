@@ -37,7 +37,8 @@ nextflow_process {
                 input[0] = [
                     [dataset: 'test'],
                     file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/dataset_statistics/input/output/test.dataset_stats.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/dataset_statistics/output/test.dataset_stats.csv', checkIfExists: true)
+
                 ]
                 input[1] = 0.1
                 """
