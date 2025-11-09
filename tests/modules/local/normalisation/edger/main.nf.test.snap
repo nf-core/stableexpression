@@ -35,6 +35,24 @@
         },
         "timestamp": "2025-01-29T14:20:58.681438521"
     },
+    "TSV files": {
+        "content": [
+            [
+                [
+                    {
+                        "accession": "accession",
+                        "design": "design.tsv:md5,7e1fd70fcb7cb6d2835748989b8c0401"
+                    },
+                    "counts.cpm.csv:md5,537bffb095e79d9667c955accd81e3a2"
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-11-09T09:22:40.458649972"
+    },
     "Rows with many zeros": {
         "content": [
             [

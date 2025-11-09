@@ -29,6 +29,18 @@ get_args <- function() {
     return(args)
 }
 
+parse_dataframe <- function(file_path, ...) {
+    if (grepl("\\.csv$", file_path)) {
+        data <- read.csv(file_path, ...)
+    } else if (grepl("\\.tsv$", file_path)) {
+        data <- read.table(file_path, sep = "\t", header = TRUE, ...)
+    } else {
+        write("UNSUPPORTED FILE FORMAT", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
+    }
+    return(data)
+}
+
 remove_all_zero_columns <- function(df) {
     # remove columns which contain only zeros
     df <- df[, colSums(df) != 0]
@@ -84,7 +96,7 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
 
     message(paste('Normalizing counts in:', count_file))
 
-    count_data <- read.csv(args$count_file, row.names = 1)
+    count_data <- parse_dataframe(count_file, row.names = 1)
 
     count_matrix <- as.matrix(count_data)
     # in some rare datasets, columns can contain only zeros
@@ -92,7 +104,7 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     count_matrix <- remove_all_zero_columns(count_matrix)
 
     # getting design data
-    design_data <- read.csv(design_file)
+    design_data <- parse_dataframe(design_file)
     # removing extra samples in design table
     design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
 
@@ -128,7 +140,7 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
 }
 
 export_data <- function(cpm_counts, filename) {
-    filename <- sub("\\.csv$", ".cpm.csv", filename)
+    filename <- sub("\\.(csv|tsv)$", ".cpm.csv", filename)
     message(paste('Exporting normalised counts per million to:', filename))
     write.table(cpm_counts, filename, sep = ',', row.names = TRUE, col.names = NA, quote = FALSE)
 }

@@ -31,6 +31,18 @@ get_args <- function() {
     return(args)
 }
 
+parse_dataframe <- function(file_path, ...) {
+    if (grepl("\\.csv$", file_path)) {
+        data <- read.csv(file_path, ...)
+    } else if (grepl("\\.tsv$", file_path)) {
+        data <- read.table(file_path, sep = "\t", header = TRUE, ...)
+    } else {
+        write("UNSUPPORTED FILE FORMAT", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
+    }
+    return(data)
+}
+
 check_samples <- function(count_matrix, design_data) {
     # check if the column names of count_matrix match the sample names
     if (!all( colnames(count_matrix) == design_data$sample )) {
@@ -95,7 +107,7 @@ get_cpm_counts <- function(normalised_counts, filtered_count_matrix) {
 
 get_normalised_cpm_counts <- function(count_file, design_file) {
 
-    count_data <- read.csv(count_file, row.names = 1)
+    count_data <- parse_dataframe(count_file, row.names = 1)
 
     # data should all be integers but sometimes they are integers converted to floats (1234 -> 1234.0)
     # DESeq2 does not accept that so we must convert them into integers
@@ -107,7 +119,7 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     count_matrix <- remove_all_zero_columns(count_matrix)
 
     # getting design data
-    design_data <- read.csv(design_file)
+    design_data <- parse_dataframe(design_file)
     # removing extra samples in design table
     design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
 
@@ -153,7 +165,7 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
 }
 
 export_data <- function(cpm_counts, filename) {
-    filename <- sub("\\.csv$", ".cpm.csv", filename)
+    filename <- sub("\\.(csv|tsv)$", ".cpm.csv", filename)
     message(paste('Exporting normalised counts per million to:', filename))
     write.table(cpm_counts, filename, sep = ',', row.names = TRUE, col.names = NA, quote = FALSE)
 }

@@ -88,4 +88,25 @@ nextflow_process {
 
     }
 
+    test("TSV files") {
+
+        when {
+
+            process {
+                """
+                meta = [accession: "accession", design: file('$projectDir/tests/test_data/normalisation/base/design.tsv')]
+                input[0] = [meta, file('$projectDir/tests/test_data/normalisation/base/counts.tsv')]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out.cpm).match() }
+            )
+        }
+
+    }
+
 }
