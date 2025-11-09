@@ -227,7 +227,7 @@ nextflow_pipeline {
             params {
                 species = 'solanum tuberosum'
                 datasets = "${projectDir}/tests/test_data/input_datasets/input.csv"
-                skip_gprofiler = true
+                skip_id_mapping = true
                 gene_id_mapping = "${projectDir}/tests/test_data/input_datasets/mapping.csv"
                 gene_metadata = "${projectDir}/tests/test_data/input_datasets/metadata.csv"
                 outdir = "$outputDir"

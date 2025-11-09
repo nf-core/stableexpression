@@ -2,128 +2,238 @@
 
 ## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/stableexpression/usage](https://nf-co.re/stableexpression/usage)
 
+> [!WARNING]
+> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
+
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
-## Introduction
 
-You can run this pipeline in multiple ways.
+## 1. Basic run
 
-1. Expression Atlas **automatic mode**: without keywords
-
-This pipeline fetches Expression Atlas accessions for the provided species and downloads the corresponding data.
+This pipeline fetches Expression Atlas and GEO accessions for the provided species and downloads the corresponding data.
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -profile <conda/docker/singularity/.../institute> \
-   --species <SPECIES_NAME> \
-   --fetch_eatlas_accessions \
-   --outdir <OUTDIR>
-```
-
-1. Expression Atlas **automatic mode**: with keywords
-
-The pipeline fetches Expression Atlas accessions for the provided species / keywords and downloads the corresponding data. You do not need to specify the `--fetch_eatlas_accessions` parameter when you specify keywords.
-
-```bash
-nextflow run nf-core/stableexpression \
-   -profile <conda/docker/singularity/.../institute> \
-   --species <SPECIES_NAME> \
-   --keywords <KEYWORDS SEPARATED BY COMMAS>
-   --outdir <OUTDIR>
-```
-
-3. Expression Atlas **manual mode**
-
-The pipeline downloads the count datasets and experimental designs for the provided accessions.
-
-```bash
-nextflow run nf-core/stableexpression \
-   -profile <conda/docker/singularity/.../institute> \
-   --species <SPECIES_NAME> \
-   --eatlas_accessions <ACCESSIONS SEPARATED BY COMMAS>\
-   --outdir <OUTDIR>
-```
-
-4. Using local count datasets
-
-Conversely, you can provide your own counts datasets / experiment designs.
-
-First, prepare a samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
-
-- counts: the path to the count dataset (a CSV file)
-- design: the path to the experimental design associated to this dataset (a CSV file)
-- normalised: a boolean (true / false) representing whether the counts are already normalised or not
-
-It should look as follows:
-
-`datasets.csv`:
-
-```csv
-counts,design,platform,normalised
-path/to/normalised.counts.csv,path/to/normalised.design.csv,rnaseq,true
-path/to/raw.counts.csv,path/to/raw.design.csv,microarray,false
-...
-```
-
-(the `platform` field can be either `rnaseq` or `microarray`).
-
-While the counts and design CSV files should have the following structure:
-
-`counts.csv`:
-
-```csv
-,sample_A,sample_B,sample_C
-gene_1,1,2,3
-gene_2,1,2,3
-...
+   -r dev \
+   -profile <PROFILE (examples: docker / apptainer / conda / micromamba)> \
+   --species <SPECIES (examples: arabidopsis_thaliana / "drosophila melanogaster")> \
+   --outdir <OUTDIR (example: ./results)>
 ```
 
 > [!NOTE]
->
-> - To ensure all RNAseq datasets are processed the same way, it is better to provide them raw.
->   In case you want to provide normalise counts, please provide CPMs (counts per million) in order to stay aligned with the way raw datasets are processed in the pipeline.
-> - Microarray data must be already normalised. To be compliant with Expression Atlas, you can use the `RMA` or `LOESS` methods.
+> See [here](#profiles) for more information about profiles.
+
+## 2. Specific public datasets
+
+You can provide keywords to restrict downloaded datasets to specific conditions.
+
+```bash
+nextflow run nf-core/stableexpression \
+   -r dev \
+   -profile <PROFILE> \
+   --species <SPECIES> \
+   --keywords <KEYWORDS (examples: "leaf" / "flower,stress")>
+   --outdir <OUTDIR>
+```
+
+> [!NOTE]
+> - Multiple keywords must be separated by commas.
+> - Note that the keywords are additive: you will get datasets that fit with __either of the keywords__.
+> - A dataset will be downloaded if a keyword is found in its summary or in the same of a sample.
+
+
+## 3. Provide your own accessions
+
+You may already have an idea of specific Expression Atlas / GEO accessions you want to use in the analysis.
+In this case, you can provide them directly to the pipeline.
+
+```bash
+nextflow run nf-core/stableexpression \
+   -r dev \
+   -profile <PROFILE> \
+   --species <SPECIES> \
+   --skip_fetch_eatlas_accessions \
+   --skip_fetch_geo_accessions \
+   [--eatlas_accessions <ACCESSION(S) (example: "E-MTAB-7711,E-GEOD-51720")>] \
+   [--eatlas_accessions_file <FILE>] \
+   [--geo_accessions <ACCESSION(S) (example: "GSE262492,GSE305365")>] \
+   [--geo_accessions_file <FILE>] \
+   --outdir <OUTDIR>
+```
 
 > [!WARNING]
-> Remember to write a comma before the first sample name. This serves to indicate that the actual first column (gene IDs) is the index
+> If you want to download only the datasets corresponding to the accessions supplied, ou must set the `--skip_fetch_eatlas_accessions` and `--skip_fetch_geo_accessions`.
 
-`design.csv`:
+> [!NOTE]
+> If you provide accessions through `--eatlas_accessions_file` or `--geo_accessions_file`, there must be one accession per line. The extension of the file does not matter.
 
-```csv
+In case you do not know which accessions you want but you would like to control precisely which datasets are included in you analysis, you may run first:
+
+```bash
+nextflow run nf-core/stableexpression \
+   -r dev \
+   -profile <PROFILE> \
+   --species <SPECIES> \
+   --accessions_only \
+   --outdir <OUTDIR>
+```
+
+Fetched accessions with their respective metadata will be available in `<OUTDIR>/expression_atlas/accessions/` and `<OUTDIR>/geo/accessions/`
+
+## 4. Use your own expression datasets
+
+You can of course provide your own counts datasets / experimental designs.
+
+> [!NOTE]
+> - To ensure all RNAseq datasets are processed the same way, it is better to provide them raw.
+> - In case you want to provide normalise counts, please provide CPMs (counts per million) in order to stay aligned with the way raw datasets are processed in the pipeline.
+
+> [!WARNING]
+> Microarray data must be already normalised. To be compliant with Expression Atlas, you should use the `RMA` methods.
+
+First, prepare a samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
+
+| Column              | Description                                                                                                                                                                                                                                          |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `counts`            | Path to the count dataset (a CSV / TSV file)                                                                                                                                                                                                        |
+| `design`           | Path to the experimental design associated to this dataset (a CSV / TSV file)                                                                                                                          |
+| `platform`           | Platform used to generate the counts (`rnaseq` or `microarray`)
+| `normalised`           | Boolean (`true` / `false`) representing whether the counts are already normalised or not.
+
+It should look as follows:
+
+```csv title=datasets.csv
+counts,design,platform,normalised
+path/to/normalised.counts.csv,path/to/normalised.design.csv,rnaseq,true
+path/to/raw.counts.csv,path/to/raw.design.csv,rnaseq,false
+path/to/microarray.counts.csv,path/to/microarray.design.csv,microarray,true
+```
+
+It can also be a YAML file:
+
+```yaml title=datasets.yaml
+- counts: path/to/normalised.counts.csv
+  design: path/to/normalised.design.csv
+  platform: rnaseq
+  normalised: true
+- counts: path/to/raw.counts.csv
+  design: path/to/raw.design.csv
+  platform: rnaseq
+  normalised: false
+- counts: path/to/microarray.counts.csv
+  design: path/to/microarray.design.csv
+  platform: microarray
+  normalised: true
+```
+
+
+The counts should have the following structure:
+
+```csv title=counts.csv
+gene_id,sample_A,sample_B,sample_C
+gene_1,1,2,3
+gene_2,1,2,3
+```
+
+
+While the design should look like:
+
+```csv title=design.csv
 sample,condition
 sample_A,condition_1
 sample_B,condition_2
-...
-...
+sample_C,condition_1
 ```
+
+
+> [!WARNING]
+> - In the count file, the first header column (corresponding to gene IDs) should not be empty. However, its name can be anything.
+> - The count file should not have any column other than the first one (gene IDs) and the sample columns. Extra columns will be ignored.
+
+> [!TIP]
+> Both counts and design files can also be supplied as TSV files.
+
 
 Now run the pipeline with:
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -profile <conda/docker/singularity/.../institute> \
-   --species <SPECIES_NAME> \
-   --datasets <PATH TO CSV FILE> \
+   -r dev \
+   -profile <PROFILE> \
+   --species <SPECIES> \
+   --datasets <CSV / YAML FILE> \
+   --skip_fetch_eatlas_accessions \
+   --skip_fetch_geo_accessions \
    --outdir <OUTDIR>
 ```
 
-## Running the pipeline
+> [!TIP]
+> The `--skip_fetch_eatlas_accessions` and `--skip_fetch_geo_accessions` parameters are supplied here to show how to analyse __only your own dataset__. You may remove these parameters if you want to mix you dataset(s) with public ones.
 
-You can run the pipeline using a mix of the different pathways.
+> [!IMPORTANT]
+> By default, the pipeline tries to map gene IDs to Ensembl gene IDs. __All genes that cannot be mapped are discarded from the analysis__. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think that your gene IDs won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, it is recommended to supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
 
-Example usage:
+> [!TIP]
+> You can check if your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
 
-> ```bash
-> nextflow run nf-core/stableexpression \
->   -profile docker \
->   --species "Arabidopsis thaliana" \
->   --eatlas_accessions "E-MTAB-552,E-GEOD-61690" \
->   --keywords "stress,flowering" \
->   --datasets ./datasets.csv \
->   --outdir ./results
-> ```
+### 5. Custom gene ID mapping and metadata
 
-This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+You can supply your own gene id mapping file and optionally gene metadata with:
+
+```bash
+nextflow run nf-core/stableexpression \
+   -r dev \
+   -profile <PROFILE> \
+   --species <SPECIES> \
+   --datasets <CSV / YAML FILE> \
+   --gene_id_mapping <CSV / TSV FILE> \
+   --gene_metadata <CSV / TSV FILE> \
+   --skip_fetch_eatlas_accessions \
+   --skip_fetch_geo_accessions \
+   --outdir <OUTDIR>
+```
+
+Structure of the gene id mapping file:
+
+| Column              | Description                                                                                                                                                                                                                                          |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `original_gene_id`            | Gene ID used in the provided count dataset(s)                                                                                                                          |
+| `ensembl_gene_id`           | Mapped gene ID              |
+
+It should look as follows:
+
+```csv title=gene_id_mapping.csv
+original_gene_id,ensembl_gene_id
+gene_A,ENSG1234567890
+geneB,OTHERmappedgeneID
+```
+
+> [!NOTE]
+> The gene IDs in the `ensembl_gene_id` column do not have to be real Ensembl gene IDs.
+
+
+Structure of the gene metadata file:
+
+| Column              | Description                                                                                                                                                                                                                                          |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ensembl_gene_id`            | Mapped gene ID                                                                                                                          |
+| `name`           | Gene common name              |
+| `description`           | Gene description              |
+
+It should look as follows:
+
+```csv title=gene_metadata.csv
+ensembl_gene_id,name,description
+ENSG1234567890,Gene A,Description of gene A
+OTHERmappedgeneID,My OTHER Gene,Another description
+```
+
+### 6. More advanced scenarios
+
+For advanced scenarios and if you want the entire list of avalable parameters, you can see the [parameter documentation](https://nf-co.re/stableexpression/parameters).
+
+
+## Pipeline output
 
 Note that the pipeline will create the following files in your working directory:
 
@@ -133,6 +243,10 @@ work                # Directory containing the nextflow working files
 .nextflow_log       # Log file from Nextflow
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
 ```
+
+For a detailed description of the output files, please consult the [nf-core stableexpression output directory structure](https://nf-co.re/stableexpression/output).
+
+## Parameters
 
 If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command, you can specify these in a params file.
 
@@ -144,7 +258,7 @@ Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <
 The above pipeline run specified with a params file in yaml format:
 
 ```bash
-nextflow run nf-core/stableexpression -profile docker -params-file params.yaml
+nextflow run -r dev nf-core/stableexpression -profile docker -params-file params.yaml
 ```
 
 with:
@@ -157,6 +271,7 @@ outdir: './results/'
 ```
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
+
 
 ### Updating the pipeline
 
@@ -184,14 +299,33 @@ To further assist in reproducibility, you can use share and reuse [parameter fil
 > [!NOTE]
 > These options are part of Nextflow and use a _single_ hyphen (pipeline parameters use a double-hyphen)
 
-### `-profile`
+### [`-profile`](#profiles)
 
 Use this parameter to choose a configuration profile. Profiles can give configuration presets for different compute environments.
 
 Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Apptainer, Conda) - see below.
 
 > [!IMPORTANT]
-> We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.
+> We highly recommend the use of Apptainer (Singularity) or Docker containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.
+
+> [!TIP]
+
+> When running the pipeline of multi-user server or on a cluster, the best practice is to use Apptainer (formerly Singularity). You can install Apptainer by following these [instructions](https://apptainer.org/docs/admin/main/installation.html#).
+> In case you encounter the following error when running Apptainer:
+> ```
+> ERROR  : Could not write info to setgroups: Permission denied
+> ERROR  : Error while waiting event for user namespace mappings: no event received
+> ```
+> you may need to install the `apptainer-suid` package instead of `apptainer`:
+> ```
+> # Debian / Ubuntu
+> sudo apt install apptainer-suid
+> # RHEL / CentOS
+> sudo yum install apptainer-suid
+> # Fedora
+> sudo dnf install apptainer-suid
+>```
+
 
 The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to check if your system is supported, please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
 
@@ -203,6 +337,8 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `test`
   - A profile with a complete configuration for automated testing
   - Includes links to test data so needs no other parameters
+- `apptainer`
+  - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
 - `docker`
   - A generic configuration profile to be used with [Docker](https://docker.com/)
 - `singularity`
@@ -213,12 +349,12 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
 - `charliecloud`
   - A generic configuration profile to be used with [Charliecloud](https://charliecloud.io/)
-- `apptainer`
-  - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
 - `wave`
   - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
 - `conda`
   - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
+- `micromamba`
+  - A faster, more lightweight alternative to Conda. As for Conda, use Micromamba as a last resort.
 
 ### `-resume`
 

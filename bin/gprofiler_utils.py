@@ -39,7 +39,7 @@ GPROFILER_ERROR_MESSAGE = (
     "g:Profiler servers (main and beta) seem to be down... Please retry later... "
     "If you have gene ID mappings and / or gene metadata for these datasets, you can provide them "
     "directly using the `--gene_id_mapping` and `--gene_metadata` parameters respectively, "
-    "and by skipping the g:Profiler ID mapping step with `--skip_gprofiler`."
+    "and by skipping the g:Profiler ID mapping step with `--skip_id_mapping`."
 )
 
 

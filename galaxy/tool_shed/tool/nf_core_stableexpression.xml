@@ -96,8 +96,8 @@ VERSION="1.0dev"; echo "$VERSION"
 			#if $geo_dataset_options.exclude_geo_accessions_file
 			  --exclude_geo_accessions_file "$geo_dataset_options.exclude_geo_accessions_file"
 			#end if
-			#if $idmapping_options.skip_gprofiler
-			  --skip_gprofiler $idmapping_options.skip_gprofiler
+			#if $idmapping_options.skip_id_mapping
+			  --skip_id_mapping $idmapping_options.skip_id_mapping
 			#end if
 			#if $idmapping_options.gene_id_mapping_file
 			  --gene_id_mapping_file "$idmapping_options.gene_id_mapping_file"
@@ -179,7 +179,7 @@ VERSION="1.0dev"; echo "$VERSION"
 			<param name="exclude_geo_accessions_file" type="data" label="File containing GEO accession(s) to exclude" format="data" help="File containing GEO series accession(s) that you want to exclude. One accession per line. Example: `--exclude_geo_accessions_file excluded_accessions.txt`." optional="true" />
 		</section>
 		<section name="idmapping_options" title="ID mapping options" help="Options for mapping gene IDs." expanded="false">
-			<param name="skip_gprofiler" type="boolean" label="Skip g:Profiler ID mapping step" truevalue="--skip_gprofiler" falsevalue="" optional="true" />
+			<param name="skip_id_mapping" type="boolean" label="Skip g:Profiler ID mapping step" truevalue="--skip_id_mapping" falsevalue="" optional="true" />
 			<param name="gene_id_mapping_file" type="data" label="Custom gene id mapping file" format="csv" help="Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler. The mapping file should be a comma-separated file with 2 columns (original_gene_id and ensembl_gene_id) and a header row." optional="true" />
 			<param name="gene_metadata" type="data" label="Custom gene metadata file" format="csv" help="Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (ensembl_gene_id, name and description) and a header row." optional="true" />
 		</section>

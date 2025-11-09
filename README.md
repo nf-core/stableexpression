@@ -21,73 +21,31 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / local count datasets. It takes as input a species name (mandatory), keywords for expression atlas search (optional) and / or a CSV input file listing local raw / normalised count datasets (optional). **A typical usage is to find the most suitable qPCR housekeeping genes for a specific species (and optionally specific conditions)**.
+**nf-core/stableexpression** is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / local count datasets. It takes as main inputs a species name (mandatory), keywords for expression atlas search (optional) and / or a CSV input file listing local raw / normalised count datasets (optional). **A typical usage is to find the most suitable qPCR housekeeping genes for a specific species (and optionally specific conditions)**.
 
 <p align="center">
     <img title="Stableexpression Workflow" src="docs/images/nf-core-stableexpression_metro_map.png" width=100%>
 </p>
 
-## Pipeline summary
-
-1. Get Expression Atlas accessions corresponding to the provided species (and optionally keywords) ([Expression Atlas](https://www.ebi.ac.uk/gxa/home); optional)
-2. Download Expression Atlas data ([Expression Atlas](https://www.ebi.ac.uk/gxa/home); optional)
-3. Normalize raw data (using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) or [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html))
-4. Map gene IDS to Ensembl IDS for standardisation among datasets ([g:Profiler](https://biit.cs.ut.ee/gprofiler/gost))
-5. Compute pairwise gene variation
-6. Compute gene variation statistics and get the most stable genes
-7. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
-
-## Usage
+## Basic usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-First, prepare a samplesheet listing the different count datasets:
+To search the most stable genes in a species considering all public datasets, simply run:
 
-`datasets.csv`:
+```bash
+nextflow run nf-core/stableexpression \
+   -r dev \
+   -profile <PROFILE (examples: docker / apptainer / conda / micromamba)> \
+   --species <SPECIES (examples: arabidopsis_thaliana / "drosophila melanogaster")> \
+   --outdir <OUTDIR (example: ./results)>
+ ```
 
-```csv
-counts,design,normalised
-path/to/normalised.counts.csv,path/to/normalised.design.csv,true
-path/to/raw.counts.csv,path/to/raw.design.csv,false
-```
+ For more specific scenarios, __like fetching only specific conditions or using your own expression datasets__, please refer to the [usage documentation](https://nf-co.re/stableexpression/usage).
 
-Make sure to format your datasets properly:
-
-`counts.csv`:
-
-```csv
-,sample_A,sample_B,sample_C
-gene_1,1,2,3
-gene_2,1,2,3
-...
-```
-
-`design.csv`:
-
-```csv
-sample,condition
-sample_A,condition_1
-sample_B,condition_2
-...
-```
-
-Now you can run the pipeline as follows:
-
-> ```bash
-> nextflow run nf-core/stableexpression \
->   -profile docker \
->   --species <SPECIES> \
->   --eatlas_accessions <ACCESSIONS> \
->   --keywords <KEYWORDS> \
->   --datasets ./datasets.csv \
->   --outdir ./results
-> ```
-
-> [!WARNING]
-> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
-
-For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/stableexpression/usage) and the [parameter documentation](https://nf-co.re/stableexpression/parameters).
+> [!NOTE]
+> See [here](https://nf-co.re/stableexpression/usage#profiles) for more information about profiles.
 
 ## Pipeline output
 
