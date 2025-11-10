@@ -16,8 +16,8 @@
                     "type": "string",
                     "description": "Scientifc species name (genus and species)",
                     "fa_icon": "fas fa-hippo",
-                    "pattern": "^([a-zA-Z]+)[_ ]([a-zA-Z]+)$",
-                    "help_text": "Genus and species may be separated by ` ` or `_`. Example: `--species 'Arabidopsis thaliana'` or `--species 'homo_sapiens'`. Character case is not important."
+                    "pattern": "^([a-zA-Z]+)[_ ]([a-zA-Z]+)[_ a-zA-Z]*$",
+                    "help_text": "At least genus and species name should be supplied. Words should be separated by ` ` or `_`. Note that character case is ignored. Examples: `--species 'Arabidopsis thaliana'`, `--species 'homo_sapiens' or `--species MARMOTA_MARMOTA_MARMOTA`."
                 },
                 "outdir": {
                     "type": "string",

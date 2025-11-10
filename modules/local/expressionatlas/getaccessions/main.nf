@@ -2,6 +2,8 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     label 'process_medium'
 
+    tag "${species}"
+
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/f2/f2219a174683388670dc0817da45717014aca444323027480f84aaaf12bfb460/data':

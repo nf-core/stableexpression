@@ -41,7 +41,7 @@ workflow STABLEEXPRESSION {
     ch_all_genes_statistics = Channel.empty()
     ch_top_stable_genes_transposed_counts = Channel.empty()
 
-    def species = params.species.split(' ').join('_')
+    def species = params.species.split(' ').join('_').toLowerCase()
 
     // -----------------------------------------------------------------
     // FETCH AND DOWNLOAD EXPRESSION ATLAS DATASETS IF NEEDED
@@ -65,6 +65,9 @@ workflow STABLEEXPRESSION {
         .set { ch_counts }
 
     ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
+
+    // display a warning if no datasets are found
+    ch_counts.count().map { n -> if( n == 0 ) { log.warn "No datasets found" } }
 
     if ( !params.accessions_only && !params.download_only ) {
 
