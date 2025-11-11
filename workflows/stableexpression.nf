@@ -18,6 +18,9 @@ include { AGGREGATE_RESULTS                      } from '../modules/local/aggreg
 include { DASH_APP                               } from '../modules/local/dash_app'
 
 include { storeDatasetSize                       } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
+include { checkCounts                            } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
+
+
 
 
 /*
@@ -64,10 +67,11 @@ workflow STABLEEXPRESSION {
         .concat( GEO_FETCHDATA.out.downloaded_datasets )
         .set { ch_counts }
 
+    // store nb of genes and nb f samples at this stage in the meta maps
     ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
 
-    // display a warning if no datasets are found
-    ch_counts.count().map { n -> if( n == 0 ) { log.warn "No datasets found" } }
+    // displays a message if no dataset was found
+    checkCounts( ch_counts )
 
     if ( !params.accessions_only && !params.download_only ) {
 

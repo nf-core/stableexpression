@@ -17,7 +17,7 @@ process GEO_GETACCESSIONS {
     val accessions
 
     output:
-    path "accessions.tsv",                     optional: true,          emit: accessions
+    path "accessions.txt",                     optional: true,          emit: accessions
     path "geo_selected_datasets.metadata.tsv", optional: true,          topic: geo_selected_datasets
     path "geo_all_datasets.metadata.tsv",      optional: true,          topic: geo_all_datasets
     path "geo_rejected_datasets.metadata.tsv", optional: true,          topic: geo_rejected_datasets

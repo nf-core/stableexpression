@@ -71,8 +71,7 @@ workflow GEO_FETCHDATA {
         )
 
         GEO_GETACCESSIONS.out.accessions
-            .splitCsv(header: true, sep: '\t')
-            .map { row -> [ [ platform_taxon: row["platform_taxon"] ], row["accession"] ] }
+            .splitText()
             .set { ch_fetched_accessions }
 
     }
@@ -85,17 +84,10 @@ workflow GEO_FETCHDATA {
 
     Channel.fromList( params.geo_accessions.tokenize(',') )
         .mix( ch_geo_accessions_file.splitText() )
+        .mix( ch_fetched_accessions )
         .unique()
         .filter { acc -> acc.startsWith('GSE') }
         .map { acc -> acc.trim() }
-        .set { ch_input_accessions }
-
-    // appending to accessions provided by the user
-    // ensures that no accessions is present twice (provided by the user and fetched from GEO)
-    ch_input_accessions
-        .map { accession -> [ [ platform_taxon: species ], accession ] }
-        .mix( ch_fetched_accessions )
-        .unique()
         .set { ch_accessions }
 
     // ------------------------------------------------------------------------------------

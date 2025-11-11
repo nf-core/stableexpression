@@ -162,7 +162,7 @@ clean_count_data <- function(df) {
 }
 
 
-process_data <- function(atlas_data, accession, species) {
+process_data <- function(geo_data, accession, species) {
 
     eset <- geo_data[[ 1 ]]
     #print(exprs(eset))
@@ -187,11 +187,10 @@ process_data <- function(atlas_data, accession, species) {
 
     data <- geo_data [[ file ]]
 
-    #print(fData(data))
     # get count data for samples corresponding to the species of interest
     count_df <- data.frame(exprs(data)) %>%
         select(all_of(species_samples))
-    print(count_df)
+
     # checking that data are from RMA pipeline and followed proper normalisation
     # raises error otherwise
     check_microarray_normalisation(count_df)

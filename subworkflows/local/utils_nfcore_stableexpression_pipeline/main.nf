@@ -323,9 +323,9 @@ def formatVersionsToYAML( ch_versions ) {
 def addDatasetIdToMetadata( ch_files ) {
     return ch_files
             .map {
-                meta, file ->
-                    def new_meta = meta + [ dataset: file.getSimpleName() ]
-                    [new_meta, file]
+                file ->
+                    def meta = [ dataset: file.getSimpleName() ]
+                    [meta, file]
             }
 }
 
@@ -401,4 +401,25 @@ def getWholeDatasetSize( ch_counts ) {
             }
             .reduce { size_1, size_2 -> size_1 + size_2 }
             .flatten()
+}
+
+
+/*
+========================================================================================
+    FUNCTIONS FOR DISPLAYING INFORMATION ABOUT DATA
+========================================================================================
+*/
+
+def checkCounts(ch_counts) {
+    // display a warning if no datasets are found
+    def msg = (
+        "No dataset found. "
+        + "Please note that for the moment only Microarray count datasets are fetched from NCBI GEO. "
+        + "\nYou can check at https://www.ncbi.nlm.nih.gov/gds if there are raw RNA-seq count datasets for this species. "
+    )
+    ch_counts.count().map { n ->
+        if( n == 0 ) {
+            log.warn(msg)
+        }
+    }
 }

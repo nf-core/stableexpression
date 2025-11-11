@@ -51,12 +51,17 @@ STOP_RETRY_AFTER_DELAY = 600
 NB_PROBE_IDS_TO_PARSE = 1000
 NB_PROBE_IDS_TO_SAMPLE = 10
 
+SUPERSERIES_SUMMARY = "This SuperSeries is composed of the SubSeries listed below."
+
 ALLOWED_LIBRARY_SOURCES = ["transcriptomic", "RNA"]
-ALLOWED_MOLECULE_TYPES = ["RNA", "SRA"]
+ALLOWED_MOLECULE_TYPES = [
+    "RNA",
+    # "SRA"
+]
 
 GEO_EXPERIMENT_TYPE_TO_PLATFORM = {
     "Expression profiling by array": "microarray",
-    "Expression profiling by high throughput sequencing": "rnaseq",
+    # "Expression profiling by high throughput sequencing": "rnaseq",
 }
 
 MINIML_TMPDIR = "geo_miniml"
@@ -258,7 +263,30 @@ def fetch_geo_datasets_for_species(species: str) -> list[dict]:
     results = send_request_to_entrez_esummary(ids)
 
     # keeping only series datasets (just a double check here)
-    return [r for r in results if "GSE" in r["Accession"]]
+    # and removing superseries (they are just containers of series that are also contained here)
+    return [
+        r
+        for r in results
+        if "GSE" in r["Accession"] and r["summary"] != SUPERSERIES_SUMMARY
+    ]
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# FORMATTING
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+def format_species(species: str) -> str:
+    return "_".join(species.lower().split(" "))
+
+
+def format_platform_name(platform_name: str) -> str:
+    return platform_name.replace("_", "").replace("-", "").lower()
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# GET METADATA
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 def download_dataset_metadata(ftp_link: str, accession: str) -> Path | None:
@@ -299,106 +327,6 @@ def parse_dataset_metadata(file: Path, accession: str) -> dict | None:
     return xmltodict.parse(xml_content)["MINiML"]
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# GEO PLATFORMS
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-def fetch_geo_platform_metadata(datasets: list[dict]) -> dict:
-    """
-    Fetch data for a GEO platform
-
-    Args:
-        platform_accession (str): accession of the platform
-    """
-    # unique list of platform accessions
-    platform_accessions = list(
-        set(
-            [
-                platform_accession
-                for dataset in datasets
-                for platform_accession in dataset["platform_accessions"]
-            ]
-        )
-    )
-    # formating query
-    formatted_platform_accessions = [
-        f'"{platform_accession}"[GEO Accession]'
-        for platform_accession in platform_accessions
-    ]
-    platform_accessions_str = " OR ".join(formatted_platform_accessions)
-    query = f'({platform_accessions_str}) AND "gpl"[Entry Type] '
-
-    record = send_request_to_entrez_esearch(query=query)
-
-    ids = record.get("IdList", [])
-    if not ids:
-        logger.warning(f"No GEO platform found for accessions {platform_accessions}.")
-        return {}
-
-    # fetching summary info
-    # one single request to NCBI for all platform accessions
-    platform_metadatas = send_request_to_entrez_esummary(ids)
-    # return dict associating dataset accessions with platform metadata
-    return {
-        platform_metadata["Accession"]: platform_metadata
-        for platform_metadata in platform_metadatas
-    }
-
-
-def check_platform_metadata(
-    dataset: dict, accession_to_platform_metadata: dict, species: str
-) -> dict:
-    accession = dataset["accession"]
-    platform_accessions = dataset["platform_accessions"]
-
-    if not platform_accessions:
-        return {accession: "NO PLATFORM ACCESSIONS"}
-
-    platforms_metadata = [
-        accession_to_platform_metadata[platform_accession]
-        for platform_accession in dataset["platform_accessions"]
-    ]
-
-    # getting list of platform taxon
-    platforms_taxons = []
-    for metadata in platforms_metadata:
-        if metadata.get("taxon") is not None:
-            platforms_taxons += metadata.get("taxon").split("; ")
-    platforms_taxons = list(set(platforms_taxons))
-
-    # checking if there is one single platform taxon
-    # otherwise, checking the dataset
-    if not platforms_taxons:
-        return {accession: "NO PLATFORM TAXON"}
-
-    # checking that at least one platform has the correct taxon
-    if not any(
-        format_species(species) == format_species(taxon) for taxon in platforms_taxons
-    ):
-        return {accession: f"TAXON MISMATCH: {platforms_taxons}"}
-
-    return {}
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# FORMATTING
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-def format_species(species: str) -> str:
-    return "_".join(species.lower().split(" "))
-
-
-def format_platform_name(platform_name: str) -> str:
-    return platform_name.replace("_", "").replace("-", "").lower()
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# METADATA
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
 def parse_characteristics(
     characteristics: str | dict | list, stored_characteristics: list
 ):
@@ -435,6 +363,11 @@ def parse_interesting_metadata(
     platform_accessions = [
         "GPL" + gpl_id for gpl_id in dataset_metadata["GPL"].split(";")
     ]
+
+    experiment_types = dataset_metadata["gdsType"]
+    experiment_types = (
+        experiment_types if isinstance(experiment_types, list) else [experiment_types]
+    )
 
     # if additional metadata have sample information
     if "Sample" in additional_metadata:
@@ -479,7 +412,7 @@ def parse_interesting_metadata(
         "summary": dataset_metadata["summary"],
         "title": dataset_metadata["title"],
         "overall_design": additional_metadata["Series"]["Overall-Design"],
-        "experiment_types": dataset_metadata["gdsType"],
+        "experiment_types": experiment_types,
         "sample_characteristics": list(set(sample_characteristics)),
         "sample_library_strategies": list(set(sample_library_strategies)),
         "sample_library_sources": list(set(sample_library_sources)),
@@ -489,7 +422,7 @@ def parse_interesting_metadata(
     }
 
 
-def parse_metadata(dataset_metadata: dict) -> dict | None:
+def fetch_dataset_metadata(dataset_metadata: dict) -> dict | None:
     """
     Parses metadata from a dataset metadata dictionary.
 
@@ -557,12 +490,7 @@ def check_molecule_type_issues(molecules_types: list) -> str | None:
     return f"MOLECULE TYPES: {molecules_types}"
 
 
-def check_experiment_type_issues(
-    experiment_types: list | str, platform: str
-) -> str | None:
-    experiment_types = (
-        experiment_types if isinstance(experiment_types, list) else [experiment_types]
-    )
+def check_experiment_type_issues(experiment_types: list, platform: str) -> str | None:
     for experiment_type in experiment_types:
         # if at least one experiment type is ok, we keep this dataset
         if GEO_EXPERIMENT_TYPE_TO_PLATFORM.get(experiment_type) == platform:
@@ -641,6 +569,92 @@ def check_dataset(
     return found_keywords, rejection_dict
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# GEO PLATFORMS
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+def fetch_geo_platform_metadata(datasets: list[dict]) -> dict:
+    """
+    Fetch data for a GEO platform
+
+    Args:
+        platform_accession (str): accession of the platform
+    """
+    # unique list of platform accessions
+    platform_accessions = list(
+        set(
+            [
+                platform_accession
+                for dataset in datasets
+                for platform_accession in dataset["platform_accessions"]
+            ]
+        )
+    )
+    # formating query
+    formatted_platform_accessions = [
+        f'"{platform_accession}"[GEO Accession]'
+        for platform_accession in platform_accessions
+    ]
+    platform_accessions_str = " OR ".join(formatted_platform_accessions)
+    query = f'({platform_accessions_str}) AND "gpl"[Entry Type] '
+
+    record = send_request_to_entrez_esearch(query=query)
+
+    ids = record.get("IdList", [])
+    if not ids:
+        logger.warning(f"No GEO platform found for accessions {platform_accessions}.")
+        return {}
+
+    # fetching summary info
+    # one single request to NCBI for all platform accessions
+    platform_metadatas = send_request_to_entrez_esummary(ids)
+    # return dict associating dataset accessions with platform metadata
+    return {
+        platform_metadata["Accession"]: platform_metadata
+        for platform_metadata in platform_metadatas
+    }
+
+
+def check_dataset_platforms(
+    dataset: dict, accession_to_platform_metadata: dict, species: str
+) -> dict:
+    accession = dataset["accession"]
+    platform_accessions = dataset["platform_accessions"]
+
+    if not platform_accessions:
+        return {accession: "NO PLATFORM ACCESSIONS"}
+
+    platforms_metadata = [
+        accession_to_platform_metadata[platform_accession]
+        for platform_accession in dataset["platform_accessions"]
+    ]
+
+    # getting list of platform taxon
+    platforms_taxons = []
+    for metadata in platforms_metadata:
+        if metadata.get("taxon") is not None:
+            platforms_taxons += metadata.get("taxon").split("; ")
+    platforms_taxons = list(set(platforms_taxons))
+
+    if not platforms_taxons:
+        return {accession: "NO PLATFORM TAXON"}
+
+    # checking if at least one of the platform accession is the good one
+    # sample will be further filtered during download (download_geo_data.R)
+    if not any(
+        format_species(species) == format_species(taxon) for taxon in platforms_taxons
+    ):
+        return {accession: f"TAXON MISMATCH: {platforms_taxons}"}
+
+    return {}
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# EXPORT
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 def export_dataset_metadatas(
     datasets: list[dict], output_file: str, clean_columns: bool = True
 ):
@@ -708,7 +722,7 @@ def main():
         Pool(processes=args.nb_cpus) as p,
         tqdm(total=len(datasets)) as pbar,
     ):
-        for result in p.imap_unordered(parse_metadata, datasets):
+        for result in p.imap_unordered(fetch_dataset_metadata, datasets):
             pbar.update()
             pbar.refresh()
             if result is None:
@@ -716,7 +730,7 @@ def main():
             augmented_datasets.append(result)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # CHECKING DATASET METADATA
+    # VALIDATING DATASETS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info(f"Validating {len(augmented_datasets)} datasets")
@@ -750,12 +764,12 @@ def main():
         )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # CHECKING PLATFORM METADATA
+    # VALIDATING EACH PLATFORM SEPARATELY, DATASET BY DATASET
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info(f"Checking platform metadata for {len(checked_datasets)} datasets")
+    logger.info(f"Checking each platform for {len(checked_datasets)} datasets")
     func = partial(
-        check_platform_metadata,
+        check_dataset_platforms,
         accession_to_platform_metadata=accession_to_platform_metadata,
         species=args.species,
     )
