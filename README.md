@@ -22,7 +22,18 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / local count datasets. It takes as main inputs a species name (mandatory), keywords for expression atlas search (optional) and / or a CSV input file listing local raw / normalised count datasets (optional). **A typical usage is to find the most suitable qPCR housekeeping genes for a specific species (and optionally specific conditions)**.
+**nf-core/stableexpression** is a bioinformatics pipeline aiming to aggregate multiple count datasets (public / provided by the user) for a specific species and find the most stable genes.
+
+It takes as main inputs :
+  * a species name (mandatory)
+  * keywords for Expression Atlas / GEO search (optional)
+  * a CSV input file listing your own raw / normalised count datasets (optional).
+
+**Use cases**:
+  * **find the most suitable genes as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
+  * download all Expression Atlas and NCBI GEO datasets (microarray only!) for a species
+
+
 
 <p align="center">
     <img title="Stableexpression Workflow" src="docs/images/nf-core-stableexpression_metro_map.png" width=100%>

@@ -5,6 +5,9 @@
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
+> [!TIP]
+> In case of issues with the pipeline, please check the [troubleshooting page](troubleshooting.md) or [report a new issue](https://github.com/nf-core/stableexpression/issues).
+
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
 
@@ -40,6 +43,7 @@ nextflow run nf-core/stableexpression \
 > - Multiple keywords must be separated by commas.
 > - Note that the keywords are additive: you will get datasets that fit with __either of the keywords__.
 > - A dataset will be downloaded if a keyword is found in its summary or in the same of a sample.
+> - The natural language processing [`ǹltk`](https://www.nltk.org/) python package is used to find keywords as well as derived words. For example, the `leaf` keyword should match 'leaf', 'leaves', 'leafy', etc.
 
 
 ## 3. Provide your own accessions
@@ -62,7 +66,7 @@ nextflow run nf-core/stableexpression \
 ```
 
 > [!WARNING]
-> If you want to download only the datasets corresponding to the accessions supplied, ou must set the `--skip_fetch_eatlas_accessions` and `--skip_fetch_geo_accessions`.
+> If you want to download only the datasets corresponding to the accessions supplied, you must set the `--skip_fetch_eatlas_accessions` and `--skip_fetch_geo_accessions`.
 
 > [!NOTE]
 > If you provide accessions through `--eatlas_accessions_file` or `--geo_accessions_file`, there must be one accession per line. The extension of the file does not matter.
@@ -85,11 +89,11 @@ Fetched accessions with their respective metadata will be available in `<OUTDIR>
 You can of course provide your own counts datasets / experimental designs.
 
 > [!NOTE]
-> - To ensure all RNAseq datasets are processed the same way, it is better to provide them raw.
-> - In case you want to provide normalise counts, please provide CPMs (counts per million) in order to stay aligned with the way raw datasets are processed in the pipeline.
+> - To ensure all RNAseq datasets are processed the same way, you should provide **raw counts**.
+> - In case normalised counts are provided, you should provide the same normalisation method for all of them (TPM, FPKM, etc.).
 
 > [!WARNING]
-> Microarray data must be already normalised. To be compliant with Expression Atlas, you should use the `RMA` methods.
+> Microarray data must be already normalised. When mixing your own datasets with public ones in a single run, you should use the `RMA` method to be compliant with Expression Atlas and GEO datasets.
 
 First, prepare a samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
 
@@ -171,7 +175,7 @@ nextflow run nf-core/stableexpression \
 > The `--skip_fetch_eatlas_accessions` and `--skip_fetch_geo_accessions` parameters are supplied here to show how to analyse __only your own dataset__. You may remove these parameters if you want to mix you dataset(s) with public ones.
 
 > [!IMPORTANT]
-> By default, the pipeline tries to map gene IDs to Ensembl gene IDs. __All genes that cannot be mapped are discarded from the analysis__. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think that your gene IDs won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, it is recommended to supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
+> By default, the pipeline tries to map gene IDs to Ensembl gene IDs. __All genes that cannot be mapped are discarded from the analysis__. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think that your gene IDs won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, you may supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
 
 > [!TIP]
 > You can check if your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
@@ -230,7 +234,7 @@ OTHERmappedgeneID,My OTHER Gene,Another description
 
 ### 6. More advanced scenarios
 
-For advanced scenarios and if you want the entire list of avalable parameters, you can see the [parameter documentation](https://nf-co.re/stableexpression/parameters).
+For advanced scenarios, you can see the list of available parameters in the [parameter documentation](https://nf-co.re/stableexpression/parameters).
 
 
 ## Pipeline output
