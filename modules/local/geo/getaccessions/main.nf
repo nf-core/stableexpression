@@ -13,7 +13,7 @@ process GEO_GETACCESSIONS {
     val species
     val keywords
     val platform
-    val excluded_accessions_file
+    path excluded_accessions_file
     val accessions
 
     output:
@@ -39,7 +39,7 @@ process GEO_GETACCESSIONS {
     if ( platform != 'none' ) {
         args += " --platform $platform"
     }
-    if ( excluded_accessions_file != 'none' ) {
+    if ( excluded_accessions_file != [] ) {
         args += " --exclude-accessions-in $excluded_accessions_file"
     }
     if ( accessions != 'none' ) {

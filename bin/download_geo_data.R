@@ -51,7 +51,7 @@ get_samples_for_species <- function(eset, species) {
   }
 
   # return a data.frame with matching samples
-  pheno$geo_accession[keep]
+  return(pheno$geo_accession[keep])
 }
 
 
@@ -158,52 +158,62 @@ clean_count_data <- function(df) {
     message("Cleaning counts")
     # removes rows that are all NA
     df <- df[rowSums(!is.na(df)) > 0, ]
-
+    return(df)
 }
 
 
 process_data <- function(geo_data, accession, species) {
 
-    eset <- geo_data[[ 1 ]]
-    #print(exprs(eset))
-    # Get metadata table
-    metadata_df <- pData(eset)
-    design_df <- build_design_dataframe(metadata_df, accession)
+    for (i in 1:length(geo_data)) {
 
-    # get samples corresponding to species
-    species_samples <- get_samples_for_species(eset, species)
+        eset <- geo_data[[ i ]]
 
-    # filter design dataframe
-    design_df <- design_df %>%
-        filter(sample %in% species_samples)
+        #print(exprs(eset))
+        # Get metadata table
+        metadata_df <- pData(eset)
+        design_df <- build_design_dataframe(metadata_df, accession)
 
-    if ( length(names(geo_data)) > 1 ) {
-        warning("Multiple data files were found")
-        write("EXPERIMENT CONTAINS MULTIPLE FILES", file = FAILURE_REASON_FILE)
-        quit(save = "no", status = 0)
+        # get samples corresponding to species
+        species_samples <- get_samples_for_species(eset, species)
+
+        # filter design dataframe
+        design_df <- design_df %>%
+            filter(sample %in% species_samples)
+
+        file <- names(geo_data)[[ i ]]
+
+        data <- geo_data [[ file ]]
+
+        # keeping only non empty data
+        if (nrow(data) == 0) {
+          message(paste0("No data found for ", file))
+          next
+        }
+
+        # get count data for samples corresponding to the species of interest
+        count_df <- data.frame(exprs(data)) %>%
+            select(all_of(species_samples))
+
+        # keeping only non empty data
+        if (nrow(count_df) == 0 || ncol(count_df) == 0) {
+          message(paste0("No data found for ", file))
+          next
+        }
+
+        # checking that data are from RMA pipeline and followed proper normalisation
+        # raises error otherwise
+        check_microarray_normalisation(count_df)
+
+        # clean counts:
+        # * removes rows that are all NA
+        count_df <- clean_count_data(count_df)
+
+        # exporting count data to CSV
+        export_count_data(count_df, accession)
+
+        # exporting metadata to CSV
+        export_metadata(design_df, accession)
     }
-
-    file <- names(geo_data)[[ 1 ]]
-
-    data <- geo_data [[ file ]]
-
-    # get count data for samples corresponding to the species of interest
-    count_df <- data.frame(exprs(data)) %>%
-        select(all_of(species_samples))
-
-    # checking that data are from RMA pipeline and followed proper normalisation
-    # raises error otherwise
-    check_microarray_normalisation(count_df)
-
-    # clean counts:
-    # * removes rows that are all NA
-    count_df <- clean_count_data(count_df)
-
-    # exporting count data to CSV
-    export_count_data(count_df, accession)
-
-    # exporting metadata to CSV
-    export_metadata(design_df, accession)
 }
 
 

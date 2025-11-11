@@ -79,8 +79,9 @@ workflow EXPRESSIONATLAS_FETCHDATA {
         EXPRESSIONATLAS_GETDATA( ch_accessions )
 
         // adding dataset id (accession + data_type) in the file meta
-        ch_design = addDatasetIdToMetadata( EXPRESSIONATLAS_GETDATA.out.design )
-        ch_counts = addDatasetIdToMetadata( EXPRESSIONATLAS_GETDATA.out.counts )
+        // flattening in case multiple files are returned at once
+        ch_design = addDatasetIdToMetadata( EXPRESSIONATLAS_GETDATA.out.design.flatten() )
+        ch_counts = addDatasetIdToMetadata( EXPRESSIONATLAS_GETDATA.out.counts.flatten() )
 
         // adding design files to the meta of their respective count files
         ch_eatlas_datasets = groupFilesByDatasetId( ch_design, ch_counts )

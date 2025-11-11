@@ -49,7 +49,7 @@ workflow GEO_FETCHDATA {
                 sort: true,
                 newLine: true
             )
-            .ifEmpty('none')
+            .ifEmpty( [] )
             .set { ch_excluded_accessions_file }
 
     // ------------------------------------------------------------------------------------
@@ -103,8 +103,9 @@ workflow GEO_FETCHDATA {
         )
 
         // adding dataset id (accession + data_type) in the file meta
-        ch_design = addDatasetIdToMetadata( GEO_GETDATA.out.design )
-        ch_counts = addDatasetIdToMetadata( GEO_GETDATA.out.counts )
+        // flattening in case multiple files are returned at once
+        ch_design = addDatasetIdToMetadata( GEO_GETDATA.out.design.flatten() )
+        ch_counts = addDatasetIdToMetadata( GEO_GETDATA.out.counts.flatten() )
 
         // adding design files to the meta of their respective count files
         ch_datasets = groupFilesByDatasetId( ch_design, ch_counts )
