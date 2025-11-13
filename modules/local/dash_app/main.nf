@@ -49,7 +49,7 @@ process DASH_APP {
 
     # trying to launch the app
     # if the resulting exit code is not 124 (exit code of timeout) then there is an error
-    timeout 20 python app.py || exit_code=\$?; [ "\$exit_code" -eq 124 ] && exit 0 || exit 100
+    timeout 10 python app.py || exit_code=\$?; [ "\$exit_code" -eq 124 ] && exit 0 || exit 100
     """
 
 }
