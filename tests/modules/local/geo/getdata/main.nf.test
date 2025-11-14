@@ -53,4 +53,52 @@ nextflow_process {
 
     }
 
+    test("Drosophila simulans - Only one sample among several") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE59707"
+                ]
+                input[1] = "drosophila_simulans"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Drosophila simulans - No data found") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE124142"
+                ]
+                input[1] = "drosophila_simulans"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
 }

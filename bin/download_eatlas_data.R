@@ -178,13 +178,14 @@ process_data <- function(atlas_data, accession) {
             } else if ( startsWith(data_type, 'A-') ) { # typically: A-AFFY- or A-GEOD-
                 result <- get_one_colour_microarray_data(data)
             } else {
-                write(paste("UNKNOWN DATA TYPE:", data_type), file = FAILURE_REASON_FILE)
-                quit(save = "no", status = 0)
+                warning(paste("Unknown data type:", data_type))
+                write(paste("UNKNOWN DATA TYPE:", data_type), file = WARNING_REASON_FILE, append=TRUE)
+                skip_iteration <<- TRUE
             }
 
         }, error = function(e) {
             warning(paste("Caught an error: ", e$message))
-            write(paste('ERROR: COULD NOT GET ASSAY DATA FOR EXPERIMENT ID', accession, 'AND DATA TYPE', data_type), file = WARNING_REASON_FILE)
+            write(paste('ERROR: COULD NOT GET ASSAY DATA FOR EXPERIMENT ID', accession, 'AND DATA TYPE', data_type), file = WARNING_REASON_FILE, append=TRUE)
             skip_iteration <<- TRUE
         })
 

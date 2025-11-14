@@ -414,8 +414,9 @@ def checkCounts(ch_counts) {
     // display a warning if no datasets are found
     def msg = (
         "No dataset found. "
-        + "Please note that for the moment only Microarray count datasets are fetched from NCBI GEO. "
-        + "\nYou can check at https://www.ncbi.nlm.nih.gov/gds if there are raw RNA-seq count datasets for this species. "
+        + "\nYou may want to check at https://www.ncbi.nlm.nih.gov/gds if there are datasets for this species that you can prepare yourself. "
+        + "\nOnce you have prepared your own data, you can relaunch the pipeline with the --datasets parameter."
+        + "\nFor more information, see the online documentation at https://nf-co.re/stableexpression."
     )
     ch_counts.count().map { n ->
         if( n == 0 ) {

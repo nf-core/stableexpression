@@ -54,14 +54,11 @@ NB_PROBE_IDS_TO_SAMPLE = 10
 SUPERSERIES_SUMMARY = "This SuperSeries is composed of the SubSeries listed below."
 
 ALLOWED_LIBRARY_SOURCES = ["transcriptomic", "RNA"]
-ALLOWED_MOLECULE_TYPES = [
-    "RNA",
-    # "SRA"
-]
+ALLOWED_MOLECULE_TYPES = ["RNA", "SRA"]
 
 GEO_EXPERIMENT_TYPE_TO_PLATFORM = {
     "Expression profiling by array": "microarray",
-    # "Expression profiling by high throughput sequencing": "rnaseq",
+    "Expression profiling by high throughput sequencing": "rnaseq",
 }
 
 MINIML_TMPDIR = "geo_miniml"
