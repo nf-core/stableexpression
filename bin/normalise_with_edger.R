@@ -43,7 +43,7 @@ parse_dataframe <- function(file_path, ...) {
 
 remove_all_zero_columns <- function(df) {
     # remove columns which contain only zeros
-    df <- df[, colSums(df) != 0]
+    df <- df[, colSums(df) != 0, drop = FALSE]
     return(df)
 }
 
@@ -66,8 +66,8 @@ check_samples <- function(count_matrix, design_data) {
 prefilter_counts <- function(count_matrix) {
     # remove genes having zeros for all counts
     # it is advised to remove them analysis
-    non_zero_rows <- rownames(count_matrix[apply(count_matrix!=0, 1, any),])
-    filtered_count_matrix <- count_matrix[rownames(count_matrix) %in% non_zero_rows, ]
+    non_zero_rows <- rownames(count_matrix[apply(count_matrix!=0, 1, any), , drop = FALSE])
+    filtered_count_matrix <- count_matrix[rownames(count_matrix) %in% non_zero_rows, , drop = FALSE]
     return(filtered_count_matrix)
 }
 
@@ -95,45 +95,73 @@ get_cpm_counts <- function(dge) {
 get_normalised_cpm_counts <- function(count_file, design_file) {
 
     message(paste('Normalizing counts in:', count_file))
-
+    message("Parsing count file")
     count_data <- parse_dataframe(count_file, row.names = 1)
 
     count_matrix <- as.matrix(count_data)
     # in some rare datasets, columns can contain only zeros
     # we do not consider these columns
+    message("Removing columns with all zeros")
     count_matrix <- remove_all_zero_columns(count_matrix)
 
+    if (ncol(count_matrix) == 0) {
+        message("All columns were full of zeros.")
+        write("ALL COLUMNS WERE FULL OF ZEROS", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
+    }
+
     # getting design data
+    message("Parsing design file")
     design_data <- parse_dataframe(design_file)
     # removing extra samples in design table
+    message("Removing extra samples in design table")
     design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
 
+    if (nrow(design_data) == 0) {
+        message("Design and sample names do not match.")
+        write("DESIGN AND SAMPLE NAMES DO NOT MATCH", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
+    }
+
     # check if the column names of count_matrix match the sample names
+    message("Checking sample names")
     check_samples(count_matrix, design_data)
 
     # pre-filter genes with low counts
+    message("Pre-filtering genes")
     count_matrix <- prefilter_counts(count_matrix)
-
-    # Add a small pseudocount to avoid zero counts
-    count_matrix_pseudocount <- replace_zero_counts_with_pseudocounts(count_matrix)
-
-    group <- factor(design_data$condition)
-    dge <- DGEList(counts = count_matrix_pseudocount, group = group)
-    rownames(dge) <- rownames(count_matrix)
-    colnames(dge) <- colnames(count_matrix)
-
-    dge <- filter_out_lowly_expressed_genes(dge)
-
     # if the dataframe is now empty, stop the process
-    if (nrow(dge) == 0) {
+    if (nrow(count_matrix) == 0) {
         message("No genes left after pre-filtering.")
         write("NO GENES LEFT AFTER PRE-FILTERING", file = FAILURE_REASON_FILE)
         quit(save = "no", status = 0)
     }
 
+    # Add a small pseudocount to avoid zero counts
+    message("Replacing zero counts with pseudocounts")
+    count_matrix_pseudocount <- replace_zero_counts_with_pseudocounts(count_matrix)
+
+    message("Normalising data")
+    group <- factor(design_data$condition)
+    dge <- DGEList(counts = count_matrix_pseudocount, group = group)
+    rownames(dge) <- rownames(count_matrix)
+    colnames(dge) <- colnames(count_matrix)
+
+    message("Filtering out lowly expressed genes")
+    dge <- filter_out_lowly_expressed_genes(dge)
+
+    # if the dataframe is now empty, stop the process
+    if (nrow(dge) == 0) {
+        message("No genes left after filtering lowly expressed genes.")
+        write("NO GENES LEFT AFTER FILTERING LOWLY EXPRESSED GENES", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
+    }
+
     # normalisation
+    message("Calculating normalisation factors")
     dge <- calcNormFactors(dge, method="TMM")
 
+    message("Calculating CPM counts")
     cpm_counts <- get_cpm_counts(dge)
 
     return(cpm_counts)

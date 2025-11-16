@@ -507,16 +507,7 @@ is_valid_rnaseq <- function(platform) {
 export_count_data <- function(platform, series) {
     # renaming columns, to make them specific to accession and data type
     colnames(platform$counts) <- paste0(series$accession, '_', colnames(platform$counts))
-
-    # if nothing is left after cleaning, we still return the original data
-    # so that we can have a look at it afterwards
-    if (platform$type == "microarray") {
-        extension <- paste0(".normalised", COUNT_FILE_EXTENSION)
-    } else {
-        extension <- paste0(".raw", COUNT_FILE_EXTENSION)
-    }
-
-    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, extension)
+    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, '.', platform$count_type, COUNT_FILE_EXTENSION)
     if (!platform$is_valid) {
         outfilename <- file.path(get_rejected_dir(platform, series), outfilename)
     }
@@ -534,7 +525,7 @@ export_design <- function(platform, series) {
         mutate(sample = new_sample_names ) %>%
         select(sample, condition, batch)
 
-    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, DESIGN_FILE_EXTENSION)
+    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type,'.', platform$count_type, DESIGN_FILE_EXTENSION)
     if (!platform$is_valid) {
         outfilename <- file.path(get_rejected_dir(platform, series), outfilename)
     }
@@ -545,7 +536,7 @@ export_design <- function(platform, series) {
 
 
 export_name_mapping <- function(platform, series) {
-    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, MAPPING_FILE_EXTENSION)
+    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, '.', platform$count_type, MAPPING_FILE_EXTENSION)
     if (!platform$is_valid) {
         outfilename <- file.path(get_rejected_dir(platform, series), outfilename)
     }
@@ -554,7 +545,7 @@ export_name_mapping <- function(platform, series) {
 }
 
 export_metadata <- function(platform, series) {
-    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, METADATA_FILE_EXTENSION)
+    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, '.', platform$count_type, METADATA_FILE_EXTENSION)
     if (!platform$is_valid) {
         outfilename <- file.path(get_rejected_dir(platform, series), outfilename)
     }
@@ -657,6 +648,7 @@ main <- function() {
             platform <- list(
                 type = "rnaseq",
                 id = "suppl",
+                count_type = "raw",
                 counts = counts,
                 design = series$design
             )
@@ -674,6 +666,7 @@ main <- function() {
         for (i in 1:length(geo_data)) {
             platform <- list(
               type = "microarray",
+              count_type = "normalised",
               data = geo_data[[ i ]]
             )
             process_platform_data(platform, series)
@@ -690,6 +683,7 @@ main <- function() {
             for (i in 1:length(geo_data)) {
                 platform <- list(
                   type = "rnaseq",
+                  count_type = "raw",
                   data = geo_data[[ i ]]
                 )
                 process_platform_data(platform, series)

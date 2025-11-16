@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Written by Olivier Coen. Released under the MIT license.
-
+options(error = traceback)
 suppressPackageStartupMessages(library("DESeq2"))
 library(DESeq2)
 library(optparse)
@@ -60,15 +60,15 @@ check_samples <- function(count_matrix, design_data) {
 }
 
 prefilter_counts <- function(count_matrix, design_data) {
-    if (is.null(design_data)) {
-        keep <- rowSums(count_matrix >= 10) >= 1
+    if (ncol(count_matrix) == 1) {
+        keep <- count_matrix[, 1] >= 1
     } else {
         # see https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
         # getting size of smallest group
         group_sizes <- table(design_data$condition)
         smallest_group_size <- min(group_sizes)
         # keep genes with at least 10 counts over a certain number of samples
-        keep <- rowSums(count_matrix >= 10) >= smallest_group_size
+        keep <- rowSums(count_matrix >= 1) >= smallest_group_size
     }
     filtered_count_matrix <- count_matrix[keep, , drop = FALSE] # drop = FALSE: keep dataframe structure even if only one column remains
     return(filtered_count_matrix)
@@ -76,7 +76,7 @@ prefilter_counts <- function(count_matrix, design_data) {
 
 remove_all_zero_columns <- function(df) {
     # remove columns which contains only zeros
-    df <- df[, colSums(df) != 0]
+    df <- df[, colSums(df) != 0, drop = FALSE]
     return(df)
 }
 
@@ -107,6 +107,7 @@ get_cpm_counts <- function(normalised_counts, filtered_count_matrix) {
 
 get_normalised_cpm_counts <- function(count_file, design_file) {
 
+    message("Parsing count file")
     count_data <- parse_dataframe(count_file, row.names = 1)
 
     # data should all be integers but sometimes they are integers converted to floats (1234 -> 1234.0)
@@ -114,29 +115,43 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     count_data[] <- lapply(count_data, as.integer)
 
     count_matrix <- as.matrix(count_data)
+
     # in some rare datasets, columns can contain only zeros
     # we do not consider these columns
+    message("Removing columns with all zeros")
     count_matrix <- remove_all_zero_columns(count_matrix)
 
+    if (ncol(count_matrix) == 0) {
+        message("All columns were full of zeros.")
+        write("ALL COLUMNS WERE FULL OF ZEROS", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
+    }
+
     # getting design data
+    message("Parsing design file")
     design_data <- parse_dataframe(design_file)
+
     # removing extra samples in design table
-    design_data <- design_data[design_data$sample %in% colnames(count_matrix), ]
+    message("Removing extra samples in design table")
+    design_data <- design_data[design_data$sample %in% colnames(count_matrix), , drop = FALSE]
+
+    if (nrow(design_data) == 0) {
+        message("Design and sample names do not match.")
+        write("DESIGN AND SAMPLE NAMES DO NOT MATCH", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
+    }
 
     # check if the column names of count_matrix match the sample names
+    message("Checking sample names")
     check_samples(count_matrix, design_data)
-
-    col_data <- data.frame(
-        row.names = design_data$sample,
-        condition = factor(design_data$condition)
-    )
 
     # reorder count matrix columns to match design row order
     # this is absolutely mandatory
     # see https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html at part "Count matrix input"
-    count_matrix <- count_matrix[, design_data$sample ]
+    count_matrix <- count_matrix[, as.character(design_data$sample), drop = FALSE]
 
     # pre-filter genes with low counts
+    message("Pre-filtering genes")
     filtered_count_matrix <- prefilter_counts(count_matrix, design_data)
 
     # if the dataframe is now empty, stop the process
@@ -147,9 +162,15 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
     }
 
     # add a small pseudocount to avoid zero counts
+    message("Replacing zero counts with pseudocounts")
     filtered_count_matrix <- replace_zero_counts_with_pseudocounts(filtered_count_matrix)
 
     # if the number of distinct conditions is only 1, DESeq2 returns an error
+    message("Creating DESeqDataSet")
+    col_data <- data.frame(
+        row.names = design_data$sample,
+        condition = factor(design_data$condition)
+    )
     num_unique_conditions <- length(unique(design_data$condition))
     if (num_unique_conditions == 1) {
         dds <- DESeqDataSetFromMatrix(countData = filtered_count_matrix, colData = col_data, design = ~ 1)
@@ -157,8 +178,10 @@ get_normalised_cpm_counts <- function(count_file, design_file) {
         dds <- DESeqDataSetFromMatrix(countData = filtered_count_matrix, colData = col_data, design = ~ condition)
     }
 
+    message("Normalising counts")
     normalised_counts <- get_normalised_counts(dds)
 
+    message("Calculating CPM counts")
     cpm_counts <- get_cpm_counts(normalised_counts, filtered_count_matrix)
 
     return(cpm_counts)

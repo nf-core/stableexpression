@@ -28,14 +28,17 @@ workflow EXPRESSION_NORMALISATION {
             normalised: meta.normalised == true
         }
 
-    ch_raw_rnaseq_datasets = ch_datasets.raw.filter { meta, file -> meta.platform == 'rnaseq' }
+    ch_datasets
+        .raw.filter { meta, file -> meta.platform == 'rnaseq' }
+        .map { meta, file -> [ meta, file, meta.design ] }
+        .set { ch_raw_rnaseq_datasets_to_normalise }
 
     if ( normalisation_method == 'deseq2' ) {
-        NORMALISATION_DESEQ2( ch_raw_rnaseq_datasets )
+        NORMALISATION_DESEQ2( ch_raw_rnaseq_datasets_to_normalise )
         ch_raw_rnaseq_datasets_normalised = NORMALISATION_DESEQ2.out.cpm
 
     } else { // 'edger'
-        NORMALISATION_EDGER( ch_raw_rnaseq_datasets )
+        NORMALISATION_EDGER( ch_raw_rnaseq_datasets_to_normalise )
         ch_raw_rnaseq_datasets_normalised = NORMALISATION_EDGER.out.cpm
     }
 
