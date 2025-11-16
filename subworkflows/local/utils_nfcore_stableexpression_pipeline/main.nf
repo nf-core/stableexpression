@@ -387,9 +387,17 @@ def storeDatasetSize( ch_counts, nb_genes_key, nb_samples_key ) {
     // adding nb genes and nb samples in the meta map under keys provided as parameters
     return ch_counts
             .map { meta, count_file ->
-                def content = count_file.splitCsv( header: true )
+                def header = count_file.withReader { reader -> reader.readLine() }
+                if ( header.contains('\t') ) {
+                    columns = header.split('\t')
+                } else if ( header.contains(',') ) {
+                    columns = header.split(',')
+                } else {
+                    error("Invalid separator in file ${count_file.name}")
+                }
+                def content = count_file.splitCsv( header: false, skip: 1 )
                 meta[nb_genes_key] = content.size()
-                meta[nb_samples_key] = content[0].findAll {it.key != 'ensembl_gene_id'}.size()
+                meta[nb_samples_key] = columns.size() - 1 // removing index column
                 [ meta, count_file ]
             }
 }
