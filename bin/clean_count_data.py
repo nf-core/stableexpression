@@ -42,7 +42,7 @@ def parse_args():
     )
     parser.add_argument(
         "--ks-pvalue-threshold",
-        type=str,
+        type=float,
         dest="ks_pvalue_threshold",
         required=True,
         help="KS p-value threshold",
@@ -68,19 +68,11 @@ def get_counts(
 
 
 def remove_samples_with_low_ks_pvalue(
-    count_lf: pl.LazyFrame, ks_stats_file: Path, ks_pvalue_threshold: str
+    count_lf: pl.LazyFrame, ks_stats_file: Path, ks_pvalue_threshold: float
 ) -> pl.LazyFrame:
     ks_stats_df = pl.read_csv(ks_stats_file, has_header=True).select(
         [config.SAMPLE_COLNAME, config.KS_TEST_COLNAME]
     )
-
-    # parsing threshold
-    try:
-        ks_pvalue_threshold = float(ks_pvalue_threshold)
-    except ValueError:
-        raise ValueError(
-            f"KS p-value threshold {ks_pvalue_threshold} could not be cast to float"
-        )
 
     # logging number of samples excluded from analysis
     not_valid_samples = ks_stats_df.filter(

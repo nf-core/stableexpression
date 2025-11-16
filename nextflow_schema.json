@@ -227,7 +227,7 @@
                     "description": "Threshold for KS p-value for considering samples counts as a uniform distribution",
                     "fa_icon": "fas fa-battery-three-quarters",
                     "maximum": 1,
-                    "default": 0,
+                    "default": -1,
                     "help_text": "P-value threshold for the Kolmogorov-Smirnov test of samples counts against a uniform distribution. Samples showing a p-value equal or below this threshold are considered not uniform and will therefore not be considered for computation of the stability score. Examples: `0`, `'0.05'`, `'1E-27'`. Provide a negative value to disable this filter. By default, all samples showing a pvalue of 0 will be discarded."
                 },
                 "min_expr_threshold": {
