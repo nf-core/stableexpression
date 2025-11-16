@@ -4,7 +4,7 @@ process GEO_GETDATA {
 
     tag "$accession"
 
-    maxForks 8 // limiting to 8 threads at a time to avoid 429 errors with the Expression Atlas API server
+    maxForks 8 // limiting to 8 threads at a time to avoid 429 errors with the NCBI server
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
@@ -18,6 +18,7 @@ process GEO_GETDATA {
     output:
     path("*.counts.csv"),                             optional: true,                                                                   emit: counts
     path("*.design.csv"),                             optional: true,                                                                   emit: design
+    path("rejected/**"),                              optional: true
     tuple val(accession), path("failure_reason.txt"), optional: true,                                                                   topic: geo_failure_reason
     tuple val(accession), path("warning_reason.txt"), optional: true,                                                                   topic: geo_warning_reason
     tuple val("${task.process}"), val('R'),               eval('Rscript -e "cat(R.version.string)" | sed "s/R version //"'),            topic: versions
