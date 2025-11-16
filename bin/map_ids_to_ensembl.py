@@ -80,6 +80,7 @@ def main():
     # PARSING FILES
     #############################################################
 
+    # whatever the name of the first col, rename it to "ensembl_gene_id"
     df = parse_table(count_file, index_col=0)
     df.index.rename(config.ENSEMBL_GENE_ID_COLNAME, inplace=True)
 
@@ -150,7 +151,17 @@ def main():
     # TODO: check is there is another way to avoid duplicate gene names
     # sometimes different gene names have the same ensembl ID
     # for now, we just get the mean of values, but this is not ideal
-    df = df.groupby(config.ENSEMBL_GENE_ID_COLNAME, as_index=False).mean()
+
+    #############################################################
+    # GENE COUNT HANDLING
+    #############################################################
+
+    # handling cases where multiple genes have the same ensembl ID
+    # since subsequent steps in the pipeline require integer values,
+    # we need to ensure that the resulting DataFrame has integer values
+    df = df.groupby(config.ENSEMBL_GENE_ID_COLNAME, as_index=False, sort=False).agg(
+        lambda x: x.mean().astype(int)
+    )
 
     #############################################################
     # WRITING OUTFILES
