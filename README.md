@@ -31,13 +31,9 @@ It takes as main inputs :
 
 **Use cases**:
   * **find the most suitable genes as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
-  * download all Expression Atlas and NCBI GEO datasets (microarray only!) for a species
+  * download all Expression Atlas and NCBI GEO datasets for a species
 
 
-
-<p align="center">
-    <img title="Stableexpression Workflow" src="docs/images/nf-core-stableexpression_metro_map.png" width=100%>
-</p>
 
 ## Basic usage
 

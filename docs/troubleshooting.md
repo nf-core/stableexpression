@@ -2,9 +2,6 @@
 
 ## Ǹo dataset found
 
->[!IMPORTANT]
-> For the time being, only Microarray count datasets are fetched from NCBI GEO.
-
 For species that are not on Expression Atlas and that do not have microarray data on NCBI data, the pipeline will not be able to find suitable datasets and will log the following message:
 
 ```
