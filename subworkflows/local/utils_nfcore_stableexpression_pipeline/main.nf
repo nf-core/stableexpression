@@ -388,13 +388,9 @@ def storeDatasetSize( ch_counts, nb_genes_key, nb_samples_key ) {
     return ch_counts
             .map { meta, count_file ->
                 def header = count_file.withReader { reader -> reader.readLine() }
-                if ( header.contains('\t') ) {
-                    columns = header.split('\t')
-                } else if ( header.contains(',') ) {
-                    columns = header.split(',')
-                } else {
-                    error("Invalid separator in file ${count_file.name}")
-                }
+                def columns = header.contains(',') ? header.split(',') :
+                              header.contains('\t') ? header.split('\t') :
+                              [header]
                 def content = count_file.splitCsv( header: false, skip: 1 )
                 meta[nb_genes_key] = content.size()
                 meta[nb_samples_key] = columns.size() - 1 // removing index column
@@ -423,12 +419,13 @@ def getWholeDatasetSize( ch_counts ) {
 
 def checkCounts(ch_counts) {
     // display a warning if no datasets are found
-    def msg = (
-        "No dataset found. "
-        + "\nYou may want to check at https://www.ncbi.nlm.nih.gov/gds if there are datasets for this species that you can prepare yourself. "
-        + "\nOnce you have prepared your own data, you can relaunch the pipeline with the --datasets parameter."
-        + "\nFor more information, see the online documentation at https://nf-co.re/stableexpression."
-    )
+    def msg = [
+        "No dataset found. ",
+        "You may want to check at https://www.ncbi.nlm.nih.gov/gds if there are datasets for this species that you can prepare yourself. ",
+        "Once you have prepared your own data, you can relaunch the pipeline with the --datasets parameter. ",
+        "For more information, see the online documentation at https://nf-co.re/stableexpression."
+    ].join("\n").trim()
+
     ch_counts.count().map { n ->
         if( n == 0 ) {
             log.warn(msg)
