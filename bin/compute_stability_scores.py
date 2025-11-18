@@ -3,14 +3,14 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
-import polars as pl
-from pathlib import Path
-from sklearn.preprocessing import QuantileTransformer
-from dataclasses import dataclass, field
-from typing import ClassVar
 import logging
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import ClassVar
 
 import config
+import polars as pl
+from sklearn.preprocessing import QuantileTransformer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -52,7 +52,7 @@ class StabilityScorer:
         Quantile normalize a series
         """
         array = data.to_numpy().reshape(-1, 1)
-        transformer = QuantileTransformer(output_distribution="uniform")
+        transformer = QuantileTransformer(output_distribution="uniform", subsample=None)
         normalised_array = transformer.fit_transform(array)
         return pl.Series(new_name, normalised_array.ravel())
 
@@ -212,7 +212,9 @@ def get_statistics(stat_files: list[Path]) -> pl.LazyFrame:
 def export_data(scored_df: pl.DataFrame):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
-    scored_df.write_csv(STATISTICS_WITH_SCORES_OUTFILENAME)
+    scored_df.write_csv(
+        STATISTICS_WITH_SCORES_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
+    )
     logger.info("Done")
 
 

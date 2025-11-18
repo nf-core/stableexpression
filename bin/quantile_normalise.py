@@ -3,12 +3,12 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
-from pathlib import Path
-import pandas as pd
-from sklearn.preprocessing import QuantileTransformer
 import logging
+from pathlib import Path
 
 import config
+import pandas as pd
+from sklearn.preprocessing import QuantileTransformer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ def quantile_normalise(data: pd.DataFrame, target_distribution: str):
     Quantile normalize a data matrix based on a target distribution.
     """
     transformer = QuantileTransformer(
-        n_quantiles=N_QUANTILES, output_distribution=target_distribution
+        n_quantiles=N_QUANTILES, output_distribution=target_distribution, subsample=None
     )
 
     normalised_data = pd.DataFrame(index=data.index, columns=data.columns)
