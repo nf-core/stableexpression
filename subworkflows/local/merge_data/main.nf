@@ -101,6 +101,7 @@ workflow MERGE_DATA {
     // -----------------------------------------------------------------
 
     ch_gene_id_mapping
+        .filter { it != [] } // handle case where there are no mappings
         .splitCsv( header: true )
         .unique()
         .collectFile(
@@ -112,6 +113,7 @@ workflow MERGE_DATA {
         ) {
             item -> "${item.original_gene_id},${item.ensembl_gene_id}"
         }
+        .ifEmpty([]) // handle case where there are no mappings
         .set { ch_whole_gene_id_mapping }
 
     // -----------------------------------------------------------------
@@ -119,6 +121,7 @@ workflow MERGE_DATA {
     // -----------------------------------------------------------------
 
     ch_gene_metadata
+        .filter { it != [] } // handle case where there are no mappings
         .splitCsv( header: true )
         .unique()
         .collectFile(
@@ -130,6 +133,7 @@ workflow MERGE_DATA {
         ) {
             item -> "${item.ensembl_gene_id},${item.name},${item.description}"
         }
+        .ifEmpty([]) // handle case where there are no mappings
         .set { ch_whole_gene_metadata }
 
     emit:

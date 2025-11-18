@@ -24,14 +24,16 @@ process AGGREGATE_RESULTS {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
+    def mapping_files_arg = mapping_files ? "--mappings " + "$mapping_files" : ""
+    def metadata_files_arg = metadata_files ? "--metadata " + "$metadata_files" : ""
     def rnaseq_dataset_stat_file_arg = rnaseq_dataset_stat_file ? "--rnaseq $rnaseq_dataset_stat_file" : ""
     def microarray_dataset_stat_file_arg = microarray_dataset_stat_file ? "--microarray $microarray_dataset_stat_file" : ""
     """
     aggregate_results.py \\
         --counts $count_file \\
         --stats $stat_file \\
-        --metadata "$metadata_files" \\
-        --mappings "$mapping_files" \\
+        $mapping_files_arg \\
+        $metadata_files_arg \\
         $rnaseq_dataset_stat_file_arg \\
         $microarray_dataset_stat_file_arg \\
     """
