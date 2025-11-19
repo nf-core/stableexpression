@@ -251,7 +251,7 @@ def export_data(stat_lf: pl.LazyFrame, platform: str | None):
         else ALL_GENES_RESULT_OUTFILE_SUFFIX
     )
     logger.info(f"Exporting statistics for all genes to: {outfile}")
-    stat_lf.collect().write_csv(outfile)
+    stat_lf.collect().write_csv(outfile, float_precision=config.CSV_FLOAT_PRECISION)
     logger.info("Done")
 
 

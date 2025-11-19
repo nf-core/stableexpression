@@ -3,7 +3,6 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import logging
-import sys
 
 import config
 import pandas as pd

@@ -2,12 +2,12 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
-import polars as pl
-from pathlib import Path
 import argparse
 import logging
+from pathlib import Path
 
 import config
+import polars as pl
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -100,7 +100,9 @@ def main():
     #############################################################################
     # MAKING A FOLDER FOR EACH CHUNK OF GENE IDS
     #############################################################################
-    gene_ids = count_lf.select(config.ENSEMBL_GENE_ID_COLNAME).collect().to_series().to_list()
+    gene_ids = (
+        count_lf.select(config.ENSEMBL_GENE_ID_COLNAME).collect().to_series().to_list()
+    )
     gene_ids = sorted(gene_ids)
 
     chunksize = max(
@@ -166,7 +168,9 @@ def main():
                 raise ValueError("Duplicate values found for gene IDs!")
 
             process_gene_ids = sorted(
-                m_measure_df.select(config.ENSEMBL_GENE_ID_COLNAME).to_series().to_list()
+                m_measure_df.select(config.ENSEMBL_GENE_ID_COLNAME)
+                .to_series()
+                .to_list()
             )
             if process_gene_ids != gene_id_list_chunks[i]:
                 raise ValueError("Incorrect gene IDs found!")
@@ -190,9 +194,17 @@ def main():
 
             # appending to output file
             if i == 0:
-                m_measure_df.write_csv(fout, include_header=True)
+                m_measure_df.write_csv(
+                    fout,
+                    include_header=True,
+                    float_precision=config.CSV_FLOAT_PRECISION,
+                )
             else:
-                m_measure_df.write_csv(fout, include_header=False)
+                m_measure_df.write_csv(
+                    fout,
+                    include_header=False,
+                    float_precision=config.CSV_FLOAT_PRECISION,
+                )
 
     logger.info(f"Number of gene IDs: {len(gene_ids)}")
     logger.info(f"Number of computed genes: {computed_genes}")

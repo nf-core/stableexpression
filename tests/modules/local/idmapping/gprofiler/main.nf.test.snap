@@ -7,7 +7,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.ensembl_ids.renamed.csv:md5,b2f45fd17fcb2688ea08b94527f70c1f"
+                        "counts.ensembl_ids.renamed.csv:md5,3a4a73f829d7dcb93420cc3de98adcdd"
                     ]
                 ],
                 "1": [
@@ -45,7 +45,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.ensembl_ids.renamed.csv:md5,b2f45fd17fcb2688ea08b94527f70c1f"
+                        "counts.ensembl_ids.renamed.csv:md5,3a4a73f829d7dcb93420cc3de98adcdd"
                     ]
                 ],
                 "metadata": [
@@ -57,7 +57,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-08T19:45:48.962861272"
+        "timestamp": "2025-11-17T11:28:57.680785987"
     },
     "Custom mapping": {
         "content": [
@@ -67,7 +67,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.ensembl_ids.renamed.csv:md5,b2f45fd17fcb2688ea08b94527f70c1f"
+                        "counts.ensembl_ids.renamed.csv:md5,3a4a73f829d7dcb93420cc3de98adcdd"
                     ]
                 ],
                 "1": [
@@ -105,7 +105,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.ensembl_ids.renamed.csv:md5,b2f45fd17fcb2688ea08b94527f70c1f"
+                        "counts.ensembl_ids.renamed.csv:md5,3a4a73f829d7dcb93420cc3de98adcdd"
                     ]
                 ],
                 "metadata": [
@@ -117,7 +117,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-08T13:09:26.858764543"
+        "timestamp": "2025-11-17T11:28:52.208091927"
     },
     "Map Ensembl IDs to themselves": {
         "content": [
@@ -180,7 +180,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.uniprot_ids.renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
+                        "counts.uniprot_ids.renamed.csv:md5,e8d91cae1a6f2c888d9e46e9a8dce147"
                     ]
                 ],
                 "1": [
@@ -218,7 +218,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.uniprot_ids.renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
+                        "counts.uniprot_ids.renamed.csv:md5,e8d91cae1a6f2c888d9e46e9a8dce147"
                     ]
                 ],
                 "metadata": [
@@ -230,7 +230,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-08T12:59:34.111655741"
+        "timestamp": "2025-11-17T11:28:34.969677294"
     },
     "Map NCBI IDs": {
         "content": [
@@ -240,7 +240,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.ncbi_ids.renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
+                        "counts.ncbi_ids.renamed.csv:md5,e8d91cae1a6f2c888d9e46e9a8dce147"
                     ]
                 ],
                 "1": [
@@ -278,7 +278,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.ncbi_ids.renamed.csv:md5,a93d7145f8b35f6074cdf21c7c97de7c"
+                        "counts.ncbi_ids.renamed.csv:md5,e8d91cae1a6f2c888d9e46e9a8dce147"
                     ]
                 ],
                 "metadata": [
@@ -290,6 +290,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-08T12:59:28.504346412"
+        "timestamp": "2025-11-17T11:28:28.998501422"
     }
 }

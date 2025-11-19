@@ -12,8 +12,9 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    [ accession: "accession", design: file('$projectDir/tests/test_data/normalisation/base/design.csv') ],
-                    file('$projectDir/tests/test_data/normalisation/base/counts.csv')
+                    [ accession: "test" ],
+                    file('$projectDir/tests/test_data/normalisation/base/counts.csv'),
+                    file('$projectDir/tests/test_data/normalisation/base/design.csv')
                 ]
                 """
             }
@@ -37,8 +38,9 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    [ accession: "accession", design: file('$projectDir/tests/test_data/normalisation/many_zeros/design.csv') ],
-                    file('$projectDir/tests/test_data/normalisation/many_zeros/counts.csv')
+                    [ accession: "test"],
+                    file('$projectDir/tests/test_data/normalisation/many_zeros/counts.csv'),
+                    file('$projectDir/tests/test_data/normalisation/many_zeros/design.csv')
                 ]
                 """
             }
@@ -60,8 +62,9 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    [ accession: "accession", design: file('$projectDir/tests/test_data/normalisation/one_group/design.csv') ],
-                    file('$projectDir/tests/test_data/normalisation/one_group/counts.csv')
+                    [ accession: "accession" ],
+                    file('$projectDir/tests/test_data/normalisation/one_group/counts.csv'),
+                    file('$projectDir/tests/test_data/normalisation/one_group/design.csv')
                 ]
                 """
             }
@@ -76,28 +79,6 @@ nextflow_process {
 
     }
 
-    test("Without design") {
-
-        tag "deseq2_wo_design"
-
-        when {
-
-            process {
-                """
-                input[0] = [
-                    [ accession: "accession" ],
-                    file('$projectDir/tests/test_data/normalisation/base/counts.csv')
-                ]
-                """
-            }
-        }
-
-        then {
-            assert !process.success
-        }
-
-    }
-
     test("TSV files") {
 
         when {
@@ -105,8 +86,9 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    [ accession: "accession", design: file('$projectDir/tests/test_data/normalisation/base/design.tsv') ],
-                    file('$projectDir/tests/test_data/normalisation/base/counts.tsv')
+                    [ accession: "accession" ],
+                    file('$projectDir/tests/test_data/normalisation/base/counts.tsv'),
+                    file('$projectDir/tests/test_data/normalisation/base/design.tsv')
                 ]
                 """
             }

@@ -45,7 +45,9 @@ ENTREZ_QUERY_MAX_RESULTS = 9999
 ENTREZ_EMAIL = "stableexpression@nfcore.com"
 PLATFORM_METADATA_CHUNKSIZE = 2000
 
-# NCBI_API_BASE_URL = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={accession}"
+NCBI_API_BASE_URL = (
+    "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={accession}"
+)
 STOP_RETRY_AFTER_DELAY = 600
 
 NB_PROBE_IDS_TO_PARSE = 1000
@@ -652,11 +654,23 @@ def check_dataset_platforms(
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+def sort_if_list(x):
+    if isinstance(x, list):
+        return sorted(x)
+    else:
+        return x
+
+
 def export_dataset_metadatas(
     datasets: list[dict], output_file: str, clean_columns: bool = True
 ):
     if datasets:
         df = pd.DataFrame.from_dict(datasets)
+        # all dataframe contain the column "accession"
+        # sorting by accessions to ensure that outputs are reproducible
+        df.sort_values(by="accession", inplace=True)
+        for col in df.columns:
+            df[col] = df[col].apply(sort_if_list)
         # cleaning columns so that MultiQC can parse them
         if clean_columns:
             for col in df.columns:
@@ -793,7 +807,10 @@ def main():
 
     logger.info(f"Kept {len(selected_datasets)} datasets")
     # getting accessions of selected experiments
-    selected_accessions = [dataset["accession"] for dataset in selected_datasets]
+    # sorting accessions to ensure that outputs are reproducible
+    selected_accessions = sorted(
+        [dataset["accession"] for dataset in selected_datasets]
+    )
     with open(ACCESSION_OUTFILE_NAME, "w") as fout:
         fout.write("\n".join(selected_accessions))
 

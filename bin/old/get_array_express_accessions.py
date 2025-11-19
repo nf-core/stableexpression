@@ -4,6 +4,8 @@
 
 import argparse
 import logging
+import math
+import urllib.parse
 from functools import partial
 from multiprocessing import Pool
 
@@ -14,14 +16,22 @@ from natural_language_utils import keywords_in_fields
 from tenacity import (
     before_sleep_log,
     retry,
+    retry_if_exception_type,
     stop_after_delay,
     wait_exponential,
 )
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
+SEARCH_URL = "https://www.ebi.ac.uk/biostudies/api/v1/arrayexpress/search?"
+SEARCH_MAX_PAGE_SIZE = 100
+SEARCH_BASE_PARAMS = {"pageSize": SEARCH_MAX_PAGE_SIZE}
+
+STUDY_SEARCH_URL = (
+    "https://www.ebi.ac.uk/biostudies/api/v1/arrayexpress/study/{accession}"
+)
 ACCESSION_OUTFILE_NAME = "accessions.txt"
 # ALL_EXPERIMENTS_METADATA_OUTFILE_NAME = "all_experiments.metadata.tsv"
 SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME = "species_experiments.metadata.tsv"
@@ -85,6 +95,58 @@ def get_data(url: str) -> dict:
         raise RuntimeError(
             f"Failed to retrieve data: encountered error {response.status_code}"
         )
+
+
+def get_array_express_studies(species: str):
+    """
+    Gets all experiments from Array Express
+
+    Parameters
+    ----------
+    species : str
+        Name of species. Example: "human"
+
+    Returns
+    -------
+    experiments : list
+        A list of experiment dictionaries
+    """
+    nb_hits = None
+    page_number = 0
+    results = []
+    while not nb_hits or page_number * SEARCH_MAX_PAGE_SIZE < nb_hits:
+        params = {"organism": species, "page": page_number}
+        all_formatted_params = [
+            f"{key}={value}" for key, value in (params | SEARCH_BASE_PARAMS).items()
+        ]
+        all_params_str = " AND ".join(all_formatted_params)
+        print(all_params_str)
+        query_url = SEARCH_URL + urllib.parse.quote(all_params_str)
+        logger.info(f"Sending request {query_url}")
+        result = get_data(query_url)
+
+        if not result:
+            logger.warning(f"Failed to query Entrey Esearch with query: {query_url}")
+            continue
+        print()
+        # getting total nb of entries
+        if not nb_hits:
+            nb_hits = int(result["totalHits"])
+            nb_iters = math.ceil(nb_hits / SEARCH_MAX_PAGE_SIZE)
+            pbar = tqdm(total=nb_iters)
+
+            # if there is no entry for this species
+            if nb_hits == 0:
+                logger.info(f"No entries found for query: {query_url}")
+                return []
+
+        results += result
+        # setting next cursor to the next group
+        page_number += 1
+        pbar.update(page_number)
+
+    pbar.close()
+    return results
 
 
 def get_experiment_description(exp_dict: dict):
@@ -178,23 +240,7 @@ def get_properties_values(exp_dict: dict):
     return list(set(values))
 
 
-def get_eatlas_experiments():
-    """
-    Gets all experiments from Expression Atlas
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-    experiments : list
-        A list of experiment dictionaries
-    """
-    data = get_data(ALL_EXP_URL)
-    return data["experiments"]
-
-
-def get_platform_specific_experiments(experiments: list[dict], platform: str):
+def get_platform_specific_studies(experiments: list[dict], platform: str):
     """
     Gets all experiments for a given platform from Expression Atlas
     Possible platforms in Expression Atlas are 'rnaseq', 'microarray', 'proteomics'
@@ -226,26 +272,24 @@ def get_platform_specific_experiments(experiments: list[dict], platform: str):
     return platform_experiments
 
 
-def get_species_experiments(experiments: list[dict], species: str):
+def get_study_details(study: dict):
     """
-    Gets all experiments for a given species from Expression Atlas
+    Get details of a study
 
     Parameters
     ----------
-    experiments: list[str]
-    species : str
-        Name of species. Example: "Arabidopsis thaliana"
+    study : dict
+        A dictionary containing study details
 
     Returns
     -------
-    experiments : list
-        A list of experiment dictionaries
+    study_details : dict
+        A dictionary containing study details
     """
-    species_experiments = []
-    for exp_dict in experiments:
-        if exp_dict["species"] == species:
-            species_experiments.append(exp_dict)
-    return species_experiments
+    url = STUDY_SEARCH_URL.format(accession=study["accession"])
+    logger.info(f"Sending request {url}")
+    data = get_data(url)
+    return data["hits"]
 
 
 def get_experiment_data(exp_dict: dict):
@@ -304,7 +348,7 @@ def get_metadata_for_selected_experiments(
 
 
 def format_species_name(species: str) -> str:
-    return species.replace("_", " ").capitalize().strip()
+    return species.replace("_", " ").strip()
 
 
 ##################################################################
@@ -330,15 +374,14 @@ def main():
     keywords = args.keywords
 
     logger.info(f"Getting experiments corresponding to species {species_name}")
-    all_experiments = get_eatlas_experiments()
+    all_studies = get_array_express_studies(species_name)
 
     if args.platform:
         logger.info(f"Getting experiments corresponding to platform {args.platform}")
-        all_experiments = get_platform_specific_experiments(
-            all_experiments, args.platform
-        )
+        all_studies = get_platform_specific_studies(all_studies, args.platform)
 
-    species_experiments = get_species_experiments(all_experiments, species_name)
+    detailed_studies = [get_study_details(study) for study in all_studies]
+    print(detailed_studies[0])
     logger.info(
         f"Found {len(species_experiments)} experiments for species {species_name}"
     )
@@ -366,44 +409,6 @@ def main():
         logger.warning(
             f"Could not find experiments for species {species_name} and keywords {keywords}"
         )
-
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # EXPORTING DATA
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    # exporting list of accessions
-    logger.info(f"Writing accessions to {ACCESSION_OUTFILE_NAME}")
-    with open(ACCESSION_OUTFILE_NAME, "w") as fout:
-        fout.writelines([f"{acc}\n" for acc in selected_accessions])
-
-    # exporting metadata
-    logger.info(
-        f"Writing metadata of all experiments for species {species_name} to {SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME}"
-    )
-    df = pd.DataFrame.from_dict(species_experiments)
-    df.to_csv(
-        SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME, sep="\t", index=False, header=True
-    )
-
-    if selected_experiments:
-        logger.info(
-            f"Writing metadata of filtered experiments to {SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME}"
-        )
-        df = pd.DataFrame.from_dict(selected_experiments)
-        df.to_csv(
-            SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME,
-            sep="\t",
-            index=False,
-            header=True,
-        )
-
-    if results is not None:
-        # exporting list of selected experiments with their keywords
-        logger.info(
-            f"Writing filtered experiments with keywords to {FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME}"
-        )
-        with open(FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME, "w") as fout:
-            yaml.dump(results, fout)
 
 
 if __name__ == "__main__":

@@ -3,11 +3,11 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
-import polars as pl
-from pathlib import Path
 import logging
+from pathlib import Path
 
 import config
+import polars as pl
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -61,11 +61,10 @@ def parse_args():
         "--metadata",
         type=str,
         dest="metadata_files",
-        required=True,
         help="Metadata file",
     )
     parser.add_argument(
-        "--mappings", type=str, dest="mapping_files", required=True, help="Mapping file"
+        "--mappings", type=str, dest="mapping_files", help="Mapping file"
     )
 
     return parser.parse_args()
@@ -147,16 +146,18 @@ def get_counts(file: Path) -> pl.LazyFrame:
     return pl.scan_parquet(file).sort(config.ENSEMBL_GENE_ID_COLNAME, descending=False)
 
 
-def get_metadata(metadata_files: list[Path]) -> pl.LazyFrame:
+def get_metadata(metadata_files: list[Path]) -> pl.LazyFrame | None:
     """Retrieve and concatenate metadata from a list of metadata files."""
+    if not metadata_files:
+        return None
     return concat_cast_to_string_and_drop_duplicates(metadata_files)
 
 
-def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame:
+def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame | None:
+    if not mapping_files:
+        return None
     concat_lf = concat_cast_to_string_and_drop_duplicates(mapping_files)
     # group by new gene IDs and gets the lis
-    """Group by new gene IDs, get the list of distinct original gene IDs and convert to a string representation."""
-    # t of distinct original gene IDs for each group
     # convert the list column to a string representation
     # separate the original gene IDs with a semicolon
     return concat_lf.group_by(config.ENSEMBL_GENE_ID_COLNAME).agg(
@@ -230,7 +231,6 @@ def get_top_stable_genes_counts(
         .to_series()
         .to_list()
     )
-
     return sorted_transposed_counts_df.drop(
         ["sort_order", config.ENSEMBL_GENE_ID_COLNAME]
     ).transpose(column_names=actual_gene_names)
@@ -244,12 +244,16 @@ def export_data(
 ):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
-    all_genes_summary_lf.collect().write_csv(ALL_GENE_SUMMARY_OUTFILENAME)
+    all_genes_summary_lf.collect().write_csv(
+        ALL_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
+    )
 
     logger.info(
         f"Exporting statistics of the top stable genes to: {TOP_STABLE_GENE_SUMMARY_OUTFILENAME}"
     )
-    top_stable_genes_summary_lf.collect().write_csv(TOP_STABLE_GENE_SUMMARY_OUTFILENAME)
+    top_stable_genes_summary_lf.collect().write_csv(
+        TOP_STABLE_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
+    )
 
     logger.info(f"Exporting all counts to: {ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME}")
     all_counts_lf.collect().write_parquet(ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME)
@@ -257,7 +261,9 @@ def export_data(
     logger.info(
         f"Exporting counts of the top stable genes to: {TOP_STABLE_GENES_COUNTS_OUTFILENAME}"
     )
-    top_stable_genes_counts_df.write_csv(TOP_STABLE_GENES_COUNTS_OUTFILENAME)
+    top_stable_genes_counts_df.write_csv(
+        TOP_STABLE_GENES_COUNTS_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
+    )
 
     logger.info("Done")
 
@@ -272,8 +278,16 @@ def export_data(
 def main():
     args = parse_args()
 
-    metadata_files = [Path(file) for file in args.metadata_files.split(" ")]
-    mapping_files = [Path(file) for file in args.mapping_files.split(" ")]
+    metadata_files = (
+        [Path(file) for file in args.metadata_files.split(" ")]
+        if args.metadata_files is not None
+        else []
+    )
+    mapping_files = (
+        [Path(file) for file in args.mapping_files.split(" ")]
+        if args.mapping_files is not None
+        else []
+    )
 
     count_lf = get_counts(args.count_file)
 
@@ -287,8 +301,9 @@ def main():
     ]
     metadata_lf = get_metadata(metadata_files)
     mapping_lf = get_mappings(mapping_files)
+    optional_lfs = [lf for lf in [metadata_lf, mapping_lf] if lf is not None]
 
-    additional_data_lfs = [metadata_lf, mapping_lf] + platform_datasets_stat_lfs
+    additional_data_lfs = optional_lfs + platform_datasets_stat_lfs
     all_genes_summary_lf = get_all_genes_summary(
         all_genes_stat_summary_lf, *additional_data_lfs
     )
@@ -300,6 +315,7 @@ def main():
     top_stable_genes_counts_df = get_top_stable_genes_counts(
         count_lf, top_stable_stat_summary_lf
     )
+
     # exporting computed data
     export_data(
         all_genes_summary_lf,

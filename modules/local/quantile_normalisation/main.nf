@@ -22,8 +22,8 @@ process QUANTILE_NORMALISATION {
 
     script:
     """
-    quantile_normalise.py \
-        --counts $count_file \
+    quantile_normalise.py \\
+        --counts $count_file \\
         --target-distrib $target_distribution
     """
 

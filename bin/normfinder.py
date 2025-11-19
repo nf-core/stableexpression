@@ -2,18 +2,18 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
-import polars as pl
-import sys
 import argparse
-from pathlib import Path
-from tqdm import tqdm
-from dataclasses import dataclass, field
-from statistics import mean
-import numpy as np
-from numba import njit, prange
 import logging
+import sys
+from dataclasses import dataclass, field
+from pathlib import Path
+from statistics import mean
 
 import config
+import numpy as np
+import polars as pl
+from numba import njit, prange
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -493,7 +493,9 @@ def parse_args():
 def export_stability(stabilities: pl.DataFrame):
     """Export stability values to CSV file."""
     logger.info(f"Exporting stability values to: {STABILITY_OUTFILENAME}")
-    stabilities.write_csv(STABILITY_OUTFILENAME)
+    stabilities.write_csv(
+        STABILITY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
+    )
 
 
 def main():
