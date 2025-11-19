@@ -413,7 +413,7 @@ def getWholeDatasetSize( ch_counts ) {
 
 /*
 ========================================================================================
-    FUNCTIONS FOR DISPLAYING INFORMATION ABOUT DATA
+    FUNCTIONS FOR CHECKING NB OF DATASETS
 ========================================================================================
 */
 
@@ -431,4 +431,22 @@ def checkCounts(ch_counts) {
             log.warn(msg)
         }
     }
+}
+
+def geoDatasetsToFetch(ch_nb_downloaded_eatlas_datasets, threshold) {
+    // display a warning if no datasets are found
+    def msg = [
+        "More than ${threshold} Expression Atlas datasets found. ",
+        "Will skip fetching GEO dataset accessions"
+    ].join("\n").trim()
+
+    return ch_nb_downloaded_eatlas_datasets
+        .map { n ->
+            if( n >= threshold ) {
+                log.warn(msg)
+                return false
+            } else {
+                return true
+            }
+        }
 }

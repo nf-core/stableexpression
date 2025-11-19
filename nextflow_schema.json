@@ -126,6 +126,13 @@
             "fa_icon": "fas fa-book-atlas",
             "description": "Options for fetching datasets from NCBI GEO.",
             "properties": {
+                "min_nb_eatlas_datasets_auto_skip_geo": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 1500,
+                    "description": "Automatically skip fetching GEO datasets when the number of downloaded Expression Atlas datasets exceeds this threshold.",
+                    "help_text": "By default, both Expression Atlas and GEO datasets are fetched. If enough Expression Atlas datasets are downloaded, fetching GEO accessing and downloading datasets will be skipped automatically. As of November 2025, this feature was made specifically for `homo sapiens`, for which the overall number of datasets largely exceeds usual needs."
+                },
                 "skip_fetch_geo_accessions": {
                     "type": "boolean",
                     "fa_icon": "fas fa-cloud-arrow-down",

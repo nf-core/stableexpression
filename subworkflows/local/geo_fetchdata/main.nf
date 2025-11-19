@@ -2,7 +2,8 @@ include { GEO_GETACCESSIONS          } from '../../../modules/local/geo/getacces
 include { GEO_GETDATA                } from '../../../modules/local/geo/getdata'
 include { addDatasetIdToMetadata     } from '../utils_nfcore_stableexpression_pipeline'
 include { groupFilesByDatasetId      } from '../utils_nfcore_stableexpression_pipeline'
-include { augmentMetadata          } from '../utils_nfcore_stableexpression_pipeline'
+include { augmentMetadata            } from '../utils_nfcore_stableexpression_pipeline'
+include { geoDatasetsToFetch         } from '../utils_nfcore_stableexpression_pipeline'
 
 /*
 ========================================================================================
@@ -14,7 +15,19 @@ workflow GEO_FETCHDATA {
 
     take:
     species
+    skip_fetch_geo_accessions
+    accessions_only
+    platform
+    keywords
+    geo_accessions
+    geo_accessions_file
+    exclude_geo_accessions
+    exclude_geo_accessions_file
     ch_eatlas_excluded_accessions
+    ch_nb_downloaded_eatlas_datasets
+    min_nb_eatlas_datasets_auto_skip_geo
+    outdir
+
 
     main:
 
@@ -32,10 +45,10 @@ workflow GEO_FETCHDATA {
         .set { ch_excluded_eatlas_accessions }
 
     // parsing file listing excluded accessions
-    ch_exclude_geo_accessions_file = params.exclude_geo_accessions_file ? Channel.fromPath(params.exclude_geo_accessions_file, checkIfExists: true) : Channel.empty()
+    ch_exclude_geo_accessions_file = exclude_geo_accessions_file ? Channel.fromPath(exclude_geo_accessions_file, checkIfExists: true) : Channel.empty()
 
     // getting accessions to exclude and preparing in the right format
-    Channel.fromList( params.exclude_geo_accessions.tokenize(',') )
+    Channel.fromList( exclude_geo_accessions.tokenize(',') )
         .mix( ch_excluded_eatlas_accessions )
         .mix( ch_exclude_geo_accessions_file.splitText() )
         .unique()
@@ -45,7 +58,7 @@ workflow GEO_FETCHDATA {
         ch_excluded_accessions
             .collectFile(
                 name: 'excluded_geo_accessions.txt',
-                storeDir: "${params.outdir}/geo/",
+                storeDir: "${outdir}/geo/",
                 sort: true,
                 newLine: true
             )
@@ -57,15 +70,25 @@ workflow GEO_FETCHDATA {
     // ------------------------------------------------------------------------------------
 
     // fetching GEO accessions if applicable
-    if ( !params.skip_fetch_geo_accessions ) {
+    if ( !skip_fetch_geo_accessions ) {
+
+        // checking the number of Expression Atlas datasets downloaded
+        // and storing whether to skip fetching GEO accessions
+        ch_geo_to_fetch = geoDatasetsToFetch( ch_nb_downloaded_eatlas_datasets, min_nb_eatlas_datasets_auto_skip_geo )
+
+        // trick to decide whether to fetch GEO accessions or not depending on ch_geo_to_fetch
+        Channel.value(species)
+            .combine( ch_geo_to_fetch )
+            .filter{ species_name, to_fetch -> to_fetch } // kept only when to_fetch is true
+            .map { species_name, to_fetch -> species_name }
+            .set { ch_species }
 
         // getting GEO accessions given a species name and keywords
         // keywords can be an empty string
-        def platform = params.platform ?: 'none'
         GEO_GETACCESSIONS(
-            species,
-            params.keywords,
-            platform,
+            ch_species,
+            keywords,
+            platform ?: 'none',
             ch_excluded_accessions_file,
             "none"
         )
@@ -80,9 +103,9 @@ workflow GEO_FETCHDATA {
     // PREPARE ACCESSIONS PROVIDED BY THE USER
     // ------------------------------------------------------------------------------------
 
-    ch_geo_accessions_file = params.geo_accessions_file ? Channel.fromPath(params.geo_accessions_file, checkIfExists: true) : Channel.empty()
+    ch_geo_accessions_file = geo_accessions_file ? Channel.fromPath(geo_accessions_file, checkIfExists: true) : Channel.empty()
 
-    Channel.fromList( params.geo_accessions.tokenize(',') )
+    Channel.fromList( geo_accessions.tokenize(',') )
         .mix( ch_geo_accessions_file.splitText() )
         .mix( ch_fetched_accessions )
         .unique()
@@ -94,7 +117,7 @@ workflow GEO_FETCHDATA {
     // DOWNLOAD GEO DATASETS
     // ------------------------------------------------------------------------------------
 
-    if ( !params.accessions_only ) {
+    if ( !accessions_only ) {
 
         // Downloading GEO datasets for each accession in ch_accessions
         GEO_GETDATA(

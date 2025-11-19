@@ -1,0 +1,140 @@
+nextflow_workflow {
+
+    name "Test Workflow GEO_FETCHDATA"
+    script "subworkflows/local/geo_fetchdata/main.nf"
+    workflow "GEO_FETCHDATA"
+    tag "geo_fetchdata"
+    tag "subworkflow"
+
+    test("Simple run") {
+
+        when {
+
+            workflow {
+                """
+                input[0] = "beta_vulgaris" // species
+                input[1] = false // skip_fetch_geo_accessions
+                input[2] = false // accessions_only
+                input[3] = null // platform
+                input[4] = "" // keywords
+                input[5] = "" // geo_accessions
+                input[6] = null // geo_accessions_file
+                input[7] = "" // exclude_geo_accessions
+                input[8] = null // exclude_geo_accessions_file
+                input[9] = Channel.empty() // ch_eatlas_excluded_accessions
+                input[10] = Channel.value(1) // ch_nb_downloaded_eatlas_datasets
+                input[11] = 1500 // min_nb_eatlas_datasets_auto_skip_geo
+                input[12] = "test_output" // outdir
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("Accesions only") {
+
+        when {
+
+            workflow {
+                """
+                input[0] = "beta_vulgaris" // species
+                input[1] = false // skip_fetch_geo_accessions
+                input[2] = true // accessions_only
+                input[3] = null // platform
+                input[4] = "" // keywords
+                input[5] = "" // geo_accessions
+                input[6] = null // geo_accessions_file
+                input[7] = "" // exclude_geo_accessions
+                input[8] = null // exclude_geo_accessions_file
+                input[9] = Channel.empty() // ch_eatlas_excluded_accessions
+                input[10] = Channel.value(1) // ch_nb_downloaded_eatlas_datasets
+                input[11] = 1500 // min_nb_eatlas_datasets_auto_skip_geo
+                input[12] = "test_output" // outdir
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.downloaded_datasets.size() == 0 },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("Exclude / force include accessions + platform + keyword") {
+
+        when {
+
+            workflow {
+                """
+                input[0] = "beta_vulgaris" // species
+                input[1] = false // skip_fetch_geo_accessions
+                input[2] = false // accessions_only
+                input[3] = "rnaseq" // platform
+                input[4] = "leaf" // keywords
+                input[5] = "GSE55951" // geo_accessions
+                input[6] = null // geo_accessions_file
+                input[7] = "GSE79526" // exclude_geo_accessions
+                input[8] = file( '$projectDir/tests/test_data/geo/get_accessions/exclude_two_accessions.txt', checkIfExists: true ) // exclude_geo_accessions_file
+                input[9] = Channel.empty() // ch_eatlas_excluded_accessions
+                input[10] = Channel.value(1) // ch_nb_downloaded_eatlas_datasets
+                input[11] = 1500 // min_nb_eatlas_datasets_auto_skip_geo
+                input[12] = "test_output" // outdir
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.downloaded_datasets.size() == 1 },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("Number of Eatlas datasets exceeded threshold + force download one accession") {
+        tag "geo_fetchdata_over_threshold"
+        when {
+
+            workflow {
+                """
+                input[0] = "beta_vulgaris" // species
+                input[1] = false // skip_fetch_geo_accessions
+                input[2] = false // accessions_only
+                input[3] = null // platform
+                input[4] = "" // keywords
+                input[5] = "GSE55951" // geo_accessions
+                input[6] = null // geo_accessions_file
+                input[7] = "" // exclude_geo_accessions
+                input[8] = null // exclude_geo_accessions_file
+                input[9] = Channel.empty() // ch_eatlas_excluded_accessions
+                input[10] = Channel.value(10) // ch_nb_downloaded_eatlas_datasets
+                input[11] = 10 // min_nb_eatlas_datasets_auto_skip_geo
+                input[12] = "test_output" // outdir
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.downloaded_datasets.size() == 1 },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+}

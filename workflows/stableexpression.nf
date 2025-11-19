@@ -20,9 +20,6 @@ include { DASH_APP                               } from '../modules/local/dash_a
 include { storeDatasetSize                       } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { checkCounts                            } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
-
-
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -51,6 +48,7 @@ workflow STABLEEXPRESSION {
     // -----------------------------------------------------------------
 
     EXPRESSIONATLAS_FETCHDATA( species )
+    EXPRESSIONATLAS_FETCHDATA.out.downloaded_datasets.set { ch_eatlas_downloaded_datasets }
 
     // -----------------------------------------------------------------
     // FETCH AND DOWNLOAD GEO DATASETS IF NEEDED
@@ -58,12 +56,24 @@ workflow STABLEEXPRESSION {
 
     GEO_FETCHDATA (
         species,
-        EXPRESSIONATLAS_FETCHDATA.out.accessions
+        params.skip_fetch_geo_accessions,
+        params.accessions_only,
+        params.platform,
+        params.keywords,
+        params.geo_accessions,
+        params.geo_accessions_file,
+        params.exclude_geo_accessions,
+        params.exclude_geo_accessions_file,
+        EXPRESSIONATLAS_FETCHDATA.out.accessions,
+        ch_eatlas_downloaded_datasets.count(),
+        params.min_nb_eatlas_datasets_auto_skip_geo,
+        params.outdir
     )
+
 
     // putting all datasets together (local datasets + Expression Atlas datasets)
     ch_input_datasets
-        .concat( EXPRESSIONATLAS_FETCHDATA.out.downloaded_datasets )
+        .concat( ch_eatlas_downloaded_datasets )
         .concat( GEO_FETCHDATA.out.downloaded_datasets )
         .set { ch_counts }
 
