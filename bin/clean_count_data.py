@@ -62,14 +62,14 @@ def get_count_columns(lf: pl.LazyFrame) -> list[str]:
 
 def get_counts(
     file: Path,
-) -> pl.LazyFrame:
+) -> pl.DataFrame:
     # sorting dataframe (necessary to get consistent output)
-    return pl.scan_parquet(file).sort(config.ENSEMBL_GENE_ID_COLNAME, descending=False)
+    return pl.read_parquet(file).sort(config.ENSEMBL_GENE_ID_COLNAME, descending=False)
 
 
 def remove_samples_with_low_ks_pvalue(
-    count_lf: pl.LazyFrame, ks_stats_file: Path, ks_pvalue_threshold: float
-) -> pl.LazyFrame:
+    count_lf: pl.DataFrame, ks_stats_file: Path, ks_pvalue_threshold: float
+) -> pl.DataFrame:
     ks_stats_df = pl.read_csv(ks_stats_file, has_header=True).select(
         [config.SAMPLE_COLNAME, config.KS_TEST_COLNAME]
     )
@@ -103,8 +103,8 @@ def remove_samples_with_low_ks_pvalue(
     return count_lf.select([config.ENSEMBL_GENE_ID_COLNAME] + valid_samples)
 
 
-def export_data(all_counts_lf: pl.LazyFrame):
-    all_counts_lf.collect().write_parquet(ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME)
+def export_data(all_counts_lf: pl.DataFrame):
+    all_counts_lf.write_parquet(ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME)
     logger.info("Done")
 
 
