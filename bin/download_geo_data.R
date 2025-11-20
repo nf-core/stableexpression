@@ -358,6 +358,7 @@ get_microarray_counts <- function(platform) {
   # get count data corresponding to samples in the design
   counts <- data.frame(exprs(platform$data)) %>%
       select(all_of(platform$design$sample))
+  # for now, only one element in the list
   return(counts)
 }
 
@@ -427,44 +428,63 @@ get_all_rnaseq_counts <- function(platform) {
     # getting list of samples
     samples <- pdata$geo_accession
     # getting list of columns corresponding to supp data
-    supplementary_cols <- grep("^supplementary_file(_\\d+)?$", names(pdata), value = TRUE)
+    # IMPORTANT: we assume here that data are of the same type (raw, TPM, FPKM, etc.) in each supplementary file column
+    supplementary_cols <- grep("^supplementary_file(_\\d)?$", names(pdata), value = TRUE)
 
-    count_df_list <- list()
-    cpt = 1
-    for (i in 1:length(samples)) {
-        sample <- samples[[i]]
+    if (length(supplementary_cols) == 0) {
+        message("No supplementary files found")
+        return(data.frame())
+    } else if (length(supplementary_cols) > 1) {
+        message("Multiple supplementary files found")
+    }
 
-        for (j in 1:length(supplementary_cols)) {
-            data_url <- pdata[pdata$geo_accession == sample, supplementary_cols[j]]
+    suppl_df_cpt <- 1
+    suppl_count_dfs <- list()
+    # building one count dataframe by type of suppl data
+    for (i in 1:length(supplementary_cols)) {
+
+        count_df_list <- list()
+        cpt = 1
+        for (j in 1:length(samples)) {
+            sample <- samples[[j]]
+            data_url <- pdata[pdata$geo_accession == sample, supplementary_cols[i]]
+
             counts <- get_raw_counts_from_url(data_url)
             if (is.null(counts)) {
               next
             }
-            # if only one column
+
             if (ncol(counts) == 1) {
                 colnames(counts) <- c(sample)
+            } else {
+              # if multiple columns, we don't know how to deal with it
+              # nut it will be filtered out later at column match checking
+              message(paste("Multiple columns found for sample", sample))
             }
+
             counts <- tibble::rownames_to_column(counts, var = "gene_id")
             # adding to list
             count_df_list[[cpt]] <- counts
             cpt = cpt + 1
         }
+
+        # checking if all files were skipped
+        if (length(count_df_list) == 0) {
+            message("No valid files found")
+            return(data.frame())
+        }
+
+        # full outer join
+        joined_df <- Reduce(
+          function(df1, df2) merge(df1, df2, by = "gene_id", all = TRUE),
+          count_df_list
+        )
+        joined_df <- tibble::column_to_rownames(joined_df, var = "gene_id")
+
+        suppl_count_dfs[[suppl_df_cpt]] <- joined_df
+        suppl_df_cpt = suppl_df_cpt + 1
     }
-
-    # checking if all files were skipped
-    if (length(count_df_list) == 0) {
-        message("No valid files found")
-        return(data.frame())
-    }
-
-    # full outer join
-    joined_df <- Reduce(
-      function(df1, df2) merge(df1, df2, by = "gene_id", all = TRUE),
-      count_df_list
-    )
-    joined_df <- tibble::column_to_rownames(joined_df, var = "gene_id")
-
-    return(joined_df)
+    return(suppl_count_dfs)
 }
 
 
@@ -474,14 +494,14 @@ get_all_rnaseq_counts <- function(platform) {
 #####################################################
 #####################################################
 
-is_valid_microarray <- function(platform) {
+is_valid_microarray <- function(counts, platform) {
 
-  if (!all(colnames(platform$counts) %in% platform$design$sample)) {
+  if (!all(colnames(counts) %in% platform$design$sample)) {
     message("Column names do not match samples in design")
     return(FALSE)
   }
 
-  vals <- unlist(platform$counts, use.names = FALSE)
+  vals <- unlist(counts, use.names = FALSE)
   vals <- vals[!is.na(vals)]
 
   all_integers <- all(abs(vals - round(vals)) < 1e-8)
@@ -502,9 +522,9 @@ is_valid_microarray <- function(platform) {
   }
 }
 
-is_valid_rnaseq <- function(platform) {
+is_valid_rnaseq <- function(counts, platform) {
 
-  if (!all(colnames(platform$counts) %in% platform$design$sample)) {
+  if (!all(colnames(counts) %in% platform$design$sample)) {
     message(paste(platform$id, ": column names do not match samples in design"))
     return(FALSE)
   }
@@ -513,22 +533,28 @@ is_valid_rnaseq <- function(platform) {
 }
 
 
-check_rnaseq_normalised_state <- function(platform) {
+check_rnaseq_normalisation_state <- function(counts, platform) {
 
   # checking if all values are integers
   tryCatch({
     is_all_integer <- function(x) all(floor(x) == x)
-    int_counts <- platform$counts %>% select_if(is_all_integer)
-    # if some values were not integers
-    if (nrow(int_counts) < nrow(platform$counts)) {
+    int_counts <- counts %>%
+        select_if(is_all_integer)
+
+    # if all or the majority of values are decimals
+    if (nrow(int_counts) < nrow(counts) * 0.01 ) {
         return("normalised")
+    } else if (nrow(int_counts) == nrow(counts)) {
+        return("raw")
+    } else {
+        return("unknown")
     }
+
   }, error = function(e) {
       write_warning(paste(platform$id, ": COULD NOT COMPUTE FLOOR"))
       return("unknown")
   })
 
-  return(TRUE)
 }
 
 
@@ -538,29 +564,29 @@ check_rnaseq_normalised_state <- function(platform) {
 #####################################################
 #####################################################
 
-export_count_data <- function(platform, series) {
+export_count_data <- function(data, platform, series) {
     # renaming columns, to make them specific to accession and data type
-    colnames(platform$counts) <- paste0(series$accession, '_', colnames(platform$counts))
-    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, '.', platform$count_type, COUNT_FILE_EXTENSION)
-    if (!platform$is_valid) {
+    colnames(data$counts) <- paste0(series$accession, '_', colnames(data$counts))
+    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, '.', data$norm_state, COUNT_FILE_EXTENSION)
+    if (!data$is_valid) {
         outfilename <- file.path(get_rejected_dir(platform, series), outfilename)
     }
 
     # exporting to CSV file
     # index represents gene names
     message(paste(platform$id, ': exporting count data to file', outfilename))
-    write.table(platform$counts, outfilename, sep = ',', row.names = TRUE, col.names = TRUE, quote = FALSE)
+    write.table(data$counts, outfilename, sep = ',', row.names = TRUE, col.names = TRUE, quote = FALSE)
 }
 
 
-export_design <- function(platform, series) {
+export_design <- function(data, platform, series) {
     new_sample_names <- paste0(series$accession, '_', series$design$sample)
     design_df <- series$design %>%
         mutate(sample = new_sample_names ) %>%
         select(sample, condition, batch)
 
-    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type,'.', platform$count_type, DESIGN_FILE_EXTENSION)
-    if (!platform$is_valid) {
+    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type,'.', data$norm_state, DESIGN_FILE_EXTENSION)
+    if (!data$is_valid) {
         outfilename <- file.path(get_rejected_dir(platform, series), outfilename)
     }
 
@@ -569,18 +595,18 @@ export_design <- function(platform, series) {
 }
 
 
-export_name_mapping <- function(platform, series) {
-    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, '.', platform$count_type, MAPPING_FILE_EXTENSION)
-    if (!platform$is_valid) {
+export_name_mapping <- function(data, platform, series) {
+    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, '.', data$norm_state, MAPPING_FILE_EXTENSION)
+    if (!data$is_valid) {
         outfilename <- file.path(get_rejected_dir(platform, series), outfilename)
     }
     message(paste(platform$id, ': exporting design data to file', outfilename))
     write.table(series$mapping, outfilename, sep = ',', row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
 
-export_metadata <- function(platform, series) {
-    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, '.', platform$count_type, METADATA_FILE_EXTENSION)
-    if (!platform$is_valid) {
+export_metadata <- function(data, platform, series) {
+    outfilename <- paste0(series$accession, '_', platform$id, '.', platform$type, '.', data$norm_state, METADATA_FILE_EXTENSION)
+    if (!data$is_valid) {
         outfilename <- file.path(get_rejected_dir(platform, series), outfilename)
     }
     message(paste(platform$id, ': exporting metadata to file', outfilename))
@@ -594,20 +620,20 @@ export_metadata <- function(platform, series) {
 #####################################################
 #####################################################
 
-post_process_and_export <- function(platform, series) {
+post_process_and_export <- function(data, platform, series) {
     # keeping only non empty data
-    if (nrow(platform$counts) == 0 || ncol(platform$counts) == 0) {
+    if (nrow(data$counts) == 0 || ncol(data$counts) == 0) {
     message(paste(platform$id, ': no data found'))
       write_warning(paste(platform$id, ": NO DATA"))
       return(NULL)
     }
     # rename columns when needed
-    platform$counts <- rename_columns(platform$counts, series$mapping)
+    counts <- rename_columns(counts, series$mapping)
 
-    export_count_data(platform, series)
-    export_design(platform, series)
-    export_name_mapping(platform, series)
-    export_metadata(platform, series)
+    export_count_data(data, platform, series)
+    export_design(data, platform, series)
+    export_name_mapping(data, platform, series)
+    export_metadata(data, platform, series)
 }
 
 
@@ -624,14 +650,27 @@ process_platform_data <- function(platform, series) {
     }
 
     if (platform$type == "microarray") {
-        platform$counts <- get_microarray_counts(platform)
-        platform$is_valid <- is_valid_microarray(platform)
+
+        counts <- get_microarray_counts(platform)
+        data <- list( counts = counts )
+        data$is_valid <- is_valid_microarray(counts, platform)
+        data$norm_state <- "normalised"
+        post_process_and_export(data, platform, series)
+
     } else {
-        platform$counts <- get_all_rnaseq_counts(platform)
-        platform$is_valid <- is_valid_rnaseq(platform)
+
+        parsed_counts <- get_all_rnaseq_counts(platform)
+        for (counts in parsed_counts) {
+            data <- list(
+              counts = counts,
+              is_valid = is_valid_rnaseq(counts, platform),
+              norm_state = check_rnaseq_normalisation_state(counts, platform)
+            )
+            post_process_and_export(data, platform, series)
+        }
+
     }
 
-    post_process_and_export(platform, series)
 }
 
 
@@ -682,12 +721,14 @@ main <- function() {
             platform <- list(
                 type = "rnaseq",
                 id = "suppl",
-                count_type = "raw",
-                counts = counts,
                 design = series$design
             )
-            platform$is_valid <- is_valid_rnaseq(platform)
-            post_process_and_export(platform, series)
+            data <- list(
+              counts = counts,
+              is_valid = is_valid_rnaseq(counts, platform),
+              norm_state = check_rnaseq_normalisation_state(counts, platform)
+            )
+            post_process_and_export(data, platform, series)
         }
 
     }
@@ -700,7 +741,6 @@ main <- function() {
         for (i in 1:length(geo_data)) {
             platform <- list(
               type = "microarray",
-              count_type = "normalised",
               data = geo_data[[ i ]]
             )
             process_platform_data(platform, series)
