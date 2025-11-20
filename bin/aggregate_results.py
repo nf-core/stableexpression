@@ -70,95 +70,73 @@ def parse_args():
     return parser.parse_args()
 
 
-def is_valid_lf(lf: pl.LazyFrame, file: Path) -> bool:
-    """Check if a LazyFrame is valid.
-
-    A LazyFrame is considered valid if it contains at least one row.
-    """
-    try:
-        return not lf.limit(1).collect().is_empty()
-    except FileNotFoundError:
-        # strangely enough we get this error for some files existing but empty
-        logger.error(f"Could not find file {str(file)}")
-        return False
-    except pl.exceptions.NoDataError as err:
-        logger.error(f"File {str(file)} is empty: {err}")
-        return False
-
-
-def get_valid_lazy_lfs(files: list[Path]) -> list[pl.LazyFrame]:
-    """Get a list of valid LazyFrames from a list of files.
-
-    A LazyFrame is considered valid if it contains at least one row.
-    """
-    lf_dict = {file: pl.scan_csv(file) for file in files}
-    return [lf for file, lf in lf_dict.items() if is_valid_lf(lf, file)]
-
-
-def cast_cols_to_string(lf: pl.LazyFrame) -> pl.LazyFrame:
-    return lf.select(
-        [pl.col(column).cast(pl.String) for column in lf.collect_schema().names()]
+def parse_stat_file(file: Path) -> pl.DataFrame:
+    return pl.read_csv(file).with_columns(
+        pl.col(config.GENE_ID_COLNAME).cast(pl.String())
     )
 
 
-def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame:
-    """Concatenate LazyFrames, cast all columns to String, and drop duplicates.
+def get_non_empty_dataframes(files: list[Path]) -> list[pl.DataFrame]:
+    dfs = [pl.read_csv(file) for file in files]
+    return [df for df in dfs if not df.is_empty()]
 
-    The first step is to concatenate the LazyFrames. Then, the dataframe is cast
+
+def cast_cols_to_string(df: pl.DataFrame) -> pl.DataFrame:
+    return df.select(
+        [pl.col(column).cast(pl.String) for column in df.collect_schema().names()]
+    )
+
+
+def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.DataFrame:
+    """Concatenate DataFrames, cast all columns to String, and drop duplicates.
+
+    The first step is to concatenate the DataFrames. Then, the dataframe is cast
     to String to ensure that all columns have the same data type. Finally, duplicate
     rows are dropped.
     """
-    lfs = get_valid_lazy_lfs(files)
-    lfs = [cast_cols_to_string(lf) for lf in lfs]
-    concat_lf = pl.concat(lfs)
+    dfs = get_non_empty_dataframes(files)
+    dfs = [cast_cols_to_string(df) for df in dfs]
+    concat_df = pl.concat(dfs)
     # dropping duplicates
     # casting all columns to String
-    return concat_lf.unique()
+    return concat_df.unique()
 
 
-def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the GENE_ID column.
-
-    The GENE_ID column contains only gene IDs.
-    """
-    return lf.select(pl.exclude(config.GENE_ID_COLNAME)).collect_schema().names()
-
-
-def cast_count_columns_to_float32(lf: pl.LazyFrame) -> pl.LazyFrame:
-    return lf.select(
-        [pl.col(config.GENE_ID_COLNAME)]
-        + [pl.col(column).cast(pl.Float32) for column in get_count_columns(lf)]
+def cast_count_columns_to_float(df: pl.DataFrame) -> pl.DataFrame:
+    return df.select(
+        pl.col(config.GENE_ID_COLNAME),
+        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64),
     )
 
 
-def join_data_on_gene_id(stat_lf: pl.LazyFrame, *lfs: pl.LazyFrame) -> pl.LazyFrame:
+def join_data_on_gene_id(stat_df: pl.DataFrame, *dfs: pl.DataFrame) -> pl.DataFrame:
     """Merge the statistics dataframe with the metadata dataframe and the mapping dataframe."""
-    # we need to ensure that the index of stat_lf are strings
-    for lf in lfs:
-        stat_lf = stat_lf.join(lf, on=config.GENE_ID_COLNAME, how="left")
-    return stat_lf
+    # we need to ensure that the index of stat_df are strings
+    for df in dfs:
+        stat_df = stat_df.join(df, on=config.GENE_ID_COLNAME, how="left")
+    return stat_df
 
 
-def get_counts(file: Path) -> pl.LazyFrame:
+def get_counts(file: Path) -> pl.DataFrame:
     # sorting dataframe (necessary to get consistent output)
-    return pl.scan_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
+    return pl.read_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
 
 
-def get_metadata(metadata_files: list[Path]) -> pl.LazyFrame | None:
+def get_metadata(metadata_files: list[Path]) -> pl.DataFrame | None:
     """Retrieve and concatenate metadata from a list of metadata files."""
     if not metadata_files:
         return None
     return concat_cast_to_string_and_drop_duplicates(metadata_files)
 
 
-def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame | None:
+def get_mappings(mapping_files: list[Path]) -> pl.DataFrame | None:
     if not mapping_files:
         return None
-    concat_lf = concat_cast_to_string_and_drop_duplicates(mapping_files)
+    concat_df = concat_cast_to_string_and_drop_duplicates(mapping_files)
     # group by new gene IDs and gets the lis
     # convert the list column to a string representation
     # separate the original gene IDs with a semicolon
-    return concat_lf.group_by(config.GENE_ID_COLNAME).agg(
+    return concat_df.group_by(config.GENE_ID_COLNAME).agg(
         pl.col(config.ORIGINAL_GENE_ID_COLNAME)
         .unique()
         .sort()
@@ -181,13 +159,13 @@ def get_status(quantile_interval: int) -> str:
         return "Medium range"
 
 
-def add_expression_level_status(lf: pl.LazyFrame) -> pl.LazyFrame:
+def add_expression_level_status(df: pl.DataFrame) -> pl.DataFrame:
     logger.info("Adding expression level status")
     mapping_dict = {
         quantile_interval: get_status(quantile_interval)
         for quantile_interval in range(NB_QUANTILES)
     }
-    return lf.with_columns(
+    return df.with_columns(
         pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
         .replace_strict(mapping_dict)
         .alias(config.EXPRESSION_LEVEL_STATUS_COLNAME)
@@ -195,19 +173,19 @@ def add_expression_level_status(lf: pl.LazyFrame) -> pl.LazyFrame:
 
 
 def get_all_genes_summary(
-    stat_summary_lf: pl.LazyFrame, *lfs: pl.LazyFrame
-) -> pl.LazyFrame:
+    stat_summary_df: pl.DataFrame, *dfs: pl.DataFrame
+) -> pl.DataFrame:
     """
     Extract the most stable genes from the statistics dataframe.
     """
     # add gene name, description and original gene IDs to statistics summary
-    stat_summary_lf = join_data_on_gene_id(stat_summary_lf, *lfs)
-    stat_summary_lf = add_expression_level_status(stat_summary_lf)
-    return stat_summary_lf
+    stat_summary_df = join_data_on_gene_id(stat_summary_df, *dfs)
+    stat_summary_df = add_expression_level_status(stat_summary_df)
+    return stat_summary_df
 
 
 def get_top_stable_genes_counts(
-    log_count_lf: pl.LazyFrame, stat_summary_df: pl.LazyFrame
+    log_count_df: pl.DataFrame, stat_summary_df: pl.DataFrame
 ) -> pl.DataFrame:
     # getting list of top stable genes with their order
     top_genes_with_order = (
@@ -217,11 +195,9 @@ def get_top_stable_genes_counts(
     )
 
     # join to get only existing genes and maintain order
-    sorted_transposed_counts_df = (
-        log_count_lf.join(
-            top_genes_with_order, on=config.GENE_ID_COLNAME, how="inner"
-        ).sort("sort_order", descending=False)
-    ).collect()
+    sorted_transposed_counts_df = log_count_df.join(
+        top_genes_with_order, on=config.GENE_ID_COLNAME, how="inner"
+    ).sort("sort_order", descending=False)
 
     # get the actual gene names that were found (in order)
     actual_gene_names = (
@@ -233,26 +209,26 @@ def get_top_stable_genes_counts(
 
 
 def export_data(
-    all_genes_summary_lf: pl.LazyFrame,
-    top_stable_genes_summary_lf: pl.LazyFrame,
-    all_counts_lf: pl.LazyFrame,
+    all_genes_summary_df: pl.DataFrame,
+    top_stable_genes_summary_df: pl.DataFrame,
+    all_counts_df: pl.DataFrame,
     top_stable_genes_counts_df: pl.DataFrame,
 ):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
-    all_genes_summary_lf.collect().write_csv(
+    all_genes_summary_df.write_csv(
         ALL_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
     )
 
     logger.info(
         f"Exporting statistics of the top stable genes to: {TOP_STABLE_GENE_SUMMARY_OUTFILENAME}"
     )
-    top_stable_genes_summary_lf.collect().write_csv(
+    top_stable_genes_summary_df.write_csv(
         TOP_STABLE_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
     )
 
     logger.info(f"Exporting all counts to: {ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME}")
-    all_counts_lf.collect().write_parquet(ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME)
+    all_counts_df.write_parquet(ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME)
 
     logger.info(
         f"Exporting counts of the top stable genes to: {TOP_STABLE_GENES_COUNTS_OUTFILENAME}"
@@ -285,38 +261,39 @@ def main():
         else []
     )
 
-    count_lf = get_counts(args.count_file)
+    count_df = get_counts(args.count_file)
 
     # getting data, including metadata and mappings
-    all_genes_stat_summary_lf = pl.scan_csv(args.stat_file)
+    all_genes_stat_summary_df = parse_stat_file(args.stat_file)
 
-    platform_datasets_stat_lfs = [
-        pl.scan_csv(file)
+    platform_datasets_stat_dfs = [
+        parse_stat_file(file)
         for file in [args.rnaseq_dataset_stat_file, args.microarray_dataset_stat_file]
         if file is not None
     ]
-    metadata_lf = get_metadata(metadata_files)
-    mapping_lf = get_mappings(mapping_files)
-    optional_lfs = [lf for lf in [metadata_lf, mapping_lf] if lf is not None]
 
-    additional_data_lfs = optional_lfs + platform_datasets_stat_lfs
-    all_genes_summary_lf = get_all_genes_summary(
-        all_genes_stat_summary_lf, *additional_data_lfs
+    metadata_df = get_metadata(metadata_files)
+    mapping_df = get_mappings(mapping_files)
+    optional_dfs = [df for df in [metadata_df, mapping_df] if df is not None]
+
+    additional_data_dfs = optional_dfs + platform_datasets_stat_dfs
+    all_genes_summary_df = get_all_genes_summary(
+        all_genes_stat_summary_df, *additional_data_dfs
     )
 
-    top_stable_stat_summary_lf = all_genes_summary_lf.head(NB_TOP_STABLE_GENES)
+    top_stable_stat_summary_df = all_genes_summary_df.head(NB_TOP_STABLE_GENES)
 
     # reducing dataframe size (it is only used for plotting by MultiQC)
-    count_lf = cast_count_columns_to_float32(count_lf)
+    count_df = cast_count_columns_to_float(count_df)
     top_stable_genes_counts_df = get_top_stable_genes_counts(
-        count_lf, top_stable_stat_summary_lf
+        count_df, top_stable_stat_summary_df
     )
 
     # exporting computed data
     export_data(
-        all_genes_summary_lf,
-        top_stable_stat_summary_lf,
-        count_lf,
+        all_genes_summary_df,
+        top_stable_stat_summary_df,
+        count_df,
         top_stable_genes_counts_df,
     )
 
