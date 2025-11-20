@@ -30,7 +30,6 @@ GPROFILER_CONVERT_BETA_API_ENDPOINT = (
 
 CHUNKSIZE = 2000  # number of IDs to convert at a time - may create trouble if > 2000
 
-TARGET_DATABASE = "ENSG"  # Ensembl database
 COLS_TO_KEEP = ["incoming", "converted", "name", "description"]
 DESCRIPTION_PART_TO_REMOVE_REGEX = r"\s*\[Source:.*?\]"
 
@@ -146,13 +145,15 @@ def request_conversion(
         else:
             # both servers appear down, we stop here...
             logger.error(GPROFILER_ERROR_MESSAGE)
-            raise GProfilerConnectionError
+            raise GProfilerConnectionError(GPROFILER_ERROR_MESSAGE)
 
     else:
         return response.json()["result"]
 
 
-def convert_chunk_of_ids(gene_ids: list, species: str) -> tuple[dict, pd.DataFrame]:
+def convert_chunk_of_ids(
+    gene_ids: list, species: str, gprofiler_target_db: str
+) -> tuple[dict, pd.DataFrame]:
     """
     Wrapper function that converts a list of gene IDs to another namespace.
 
@@ -171,7 +172,7 @@ def convert_chunk_of_ids(gene_ids: list, species: str) -> tuple[dict, pd.DataFra
         A dictionary where the keys are the original IDs and the values are the converted IDs.
     """
 
-    results = request_conversion(gene_ids, species, TARGET_DATABASE)
+    results = request_conversion(gene_ids, species, gprofiler_target_db)
     df = pd.DataFrame.from_records(results)
 
     if df.empty:
@@ -185,7 +186,7 @@ def convert_chunk_of_ids(gene_ids: list, species: str) -> tuple[dict, pd.DataFra
 
     # DataFrame associating converted IDs to name and description
     meta_df = df.drop(columns=["incoming"]).rename(
-        columns={"converted": config.ENSEMBL_GENE_ID_COLNAME}
+        columns={"converted": config.GENE_ID_COLNAME}
     )
 
     meta_df["name"] = meta_df["name"].str.replace(",", ";")
@@ -213,14 +214,18 @@ def chunk_list(lst: list, chunksize: int) -> list:
     return [lst[i : i + chunksize] for i in range(0, len(lst), chunksize)]
 
 
-def convert_ids(ids: list[str], species: str) -> tuple[dict, pd.DataFrame]:
+def convert_ids(
+    ids: list[str], species: str, gprofiler_target_db: str
+) -> tuple[dict, pd.DataFrame]:
     mapping_dict = {}
     gene_metadata_dfs = []
 
     chunks = chunk_list(ids, chunksize=CHUNKSIZE)
     for chunk_gene_ids in chunks:
-        # converting to Ensembl IDs for all IDs comprised in this chunk
-        gene_mapping, meta_df = convert_chunk_of_ids(chunk_gene_ids, species)
+        # converting to Gene IDs for all IDs comprised in this chunk
+        gene_mapping, meta_df = convert_chunk_of_ids(
+            chunk_gene_ids, species, gprofiler_target_db
+        )
         mapping_dict.update(gene_mapping)
         gene_metadata_dfs.append(meta_df)
 

@@ -1,11 +1,8 @@
 process GPROFILER_IDMAPPING {
 
-    label 'process_single'
+    label 'process_medium'
 
-    tag "${meta.dataset} on ${meta.platform_taxon}"
-
-    // limiting to 8 threads at a time to avoid 429 errors with the G Profiler API server
-    maxForks 8
+    tag "${species} IDs to ${gprofiler_target_db}"
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
@@ -13,37 +10,30 @@ process GPROFILER_IDMAPPING {
         'community.wave.seqera.io/library/pandas_requests_tenacity:5ba56df089a9d718' }"
 
     input:
-    tuple val(meta), path(count_file)
+    path gene_id_file
     val species
-    val gene_id_mapping_file
-    val gene_metadata_file
+    val gprofiler_target_db
 
     output:
-    tuple val(meta), path('*.renamed.csv'),              optional: true,                                              emit: counts
-    path('*.metadata.csv'),                              optional: true,                                              emit: metadata
-    path('*.mapping.csv'),                               optional: true,                                              emit: mapping
-    tuple val(meta.dataset), path("failure_reason.txt"), optional: true,                                              topic: id_mapping_failure_reason
+    path('mapped_gene_ids.csv'),                         optional: true,                                              emit: mapping
+    path('gene_metadata.csv'),                           optional: true,                                              emit: metadata
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),     topic: versions
     tuple val("${task.process}"), val('requests'), eval('python3 -c "import requests; print(requests.__version__)"'), topic: versions
 
     script:
-    def custom_mapping_arg  = gene_id_mapping_file ? "--custom-mappings $gene_id_mapping_file" : ""
-    def custom_metadata_arg = gene_metadata_file   ? "--custom-metadata $gene_metadata_file" : ""
     """
-    map_ids_to_ensembl.py \\
-        --count-file "$count_file" \\
+    gprofiler_map_ids.py \\
+        --gene-ids $gene_id_file \\
         --species "$species" \\
-        $custom_mapping_arg \\
-        $custom_metadata_arg
+        --target-db "$gprofiler_target_db"
     """
 
 
     stub:
     """
-    touch fake_renamed.csv
-    touch fake_metadata.csv
-    touch fake_mapping.json
+    touch mapped_gene_ids.csv
+    touch gene_metadata.csv
     """
 
 }

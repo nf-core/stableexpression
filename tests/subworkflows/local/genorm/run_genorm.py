@@ -1,11 +1,12 @@
-import pandas as pd
-import numpy as np
 import sys
+
+import numpy as np
+import pandas as pd
 
 file = sys.argv[1]
 # Expression data for three control genes.
 counts = pd.read_parquet(file)
-counts.set_index("ensembl_gene_id", inplace=True)
+counts.set_index("gene_id", inplace=True)
 counts = counts.T.replace(0, 1e-8)
 
 

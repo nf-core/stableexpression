@@ -175,7 +175,7 @@ nextflow run nf-core/stableexpression \
 > The `--skip_fetch_eatlas_accessions` and `--skip_fetch_geo_accessions` parameters are supplied here to show how to analyse __only your own dataset__. You may remove these parameters if you want to mix you dataset(s) with public ones.
 
 > [!IMPORTANT]
-> By default, the pipeline tries to map gene IDs to Ensembl gene IDs. __All genes that cannot be mapped are discarded from the analysis__. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think that your gene IDs won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, you may supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
+> By default, the pipeline tries to map gene IDs to NCBI Entrez Gene IDs. __All genes that cannot be mapped are discarded from the analysis__. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think that your gene IDs won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, you may supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
 
 > [!TIP]
 > You can check if your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
@@ -202,32 +202,30 @@ Structure of the gene id mapping file:
 | Column              | Description                                                                                                                                                                                                                                          |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `original_gene_id`            | Gene ID used in the provided count dataset(s)                                                                                                                          |
-| `ensembl_gene_id`           | Mapped gene ID              |
+| `gene_id`           | Mapped gene ID              |
 
 It should look as follows:
 
 ```csv title=gene_id_mapping.csv
-original_gene_id,ensembl_gene_id
+original_gene_id,gene_id
 gene_A,ENSG1234567890
 geneB,OTHERmappedgeneID
 ```
 
-> [!NOTE]
-> The gene IDs in the `ensembl_gene_id` column do not have to be real Ensembl gene IDs.
 
 
 Structure of the gene metadata file:
 
 | Column              | Description                                                                                                                                                                                                                                          |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ensembl_gene_id`            | Mapped gene ID                                                                                                                          |
-| `name`           | Gene common name              |
-| `description`           | Gene description              |
+| `gene_id`            | Mapped gene ID                                                                                                                          |
+| `name`               | Gene common name              |
+| `description`        | Gene description              |
 
 It should look as follows:
 
 ```csv title=gene_metadata.csv
-ensembl_gene_id,name,description
+gene_id,name,description
 ENSG1234567890,Gene A,Description of gene A
 OTHERmappedgeneID,My OTHER Gene,Another description
 ```

@@ -72,10 +72,22 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_geo_warning_reasons }
 
-    Channel.topic('id_mapping_failure_reason')
+    Channel.topic('renaming_warning_reason')
         .map { accession, file -> [ accession, file.readLines()[0] ] }
         .collectFile(
-            name: 'id_mapping_failure_reasons.tsv',
+            name: 'renaming_warning_reasons.tsv',
+            seed: "Dataset\tReason",
+            newLine: true,
+            storeDir: "${params.outdir}/warnings/"
+        ) {
+            item -> "${item[0]}\t${item[1]}"
+        }
+        .set { ch_id_mapping_failure_reasons }
+
+    Channel.topic('renaming_failure_reason')
+        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .collectFile(
+            name: 'renaming_failure_reasons.tsv',
             seed: "Dataset\tReason",
             newLine: true,
             storeDir: "${params.outdir}/errors/"

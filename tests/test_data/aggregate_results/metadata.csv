@@ -1,4 +1,4 @@
-ensembl_gene_id,name,description
+gene_id,name,description
 ENSRNA049454747,geneA,descriptionA
 ENSRNA049454887,geneB,descriptionB
 ENSRNA049454747,geneC,descriptionC

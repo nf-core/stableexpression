@@ -9,7 +9,6 @@ from pathlib import Path
 
 import config
 import pandas as pd
-from gprofiler_utils import GProfilerConnectionError, convert_ids
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,6 +22,7 @@ RENAMED_FILE_SUFFIX = ".renamed.csv"
 METADATA_FILE_SUFFIX = ".metadata.csv"
 MAPPING_FILE_SUFFIX = ".mapping.csv"
 
+WARNING_REASON_FILE = "warning_reason.txt"
 FAILURE_REASON_FILE = "failure_reason.txt"
 
 ##################################################################
@@ -31,24 +31,21 @@ FAILURE_REASON_FILE = "failure_reason.txt"
 
 
 def parse_args():
-    parser = argparse.ArgumentParser("Map IDs to Ensembl")
+    parser = argparse.ArgumentParser("Rename gene IDs using mapped IDs")
     parser.add_argument(
         "--count-file", type=Path, required=True, help="Input file containing counts"
     )
     parser.add_argument(
-        "--species", type=str, required=True, help="Species to convert IDs for"
+        "--mappings",
+        type=Path,
+        dest="mapping_file",
+        help="Mapping file containing gene IDs",
     )
     parser.add_argument(
         "--custom-mappings",
         type=Path,
-        dest="custom_mappings",
+        dest="custom_mapping_file",
         help="Optional file containing custom mappings",
-    )
-    parser.add_argument(
-        "--custom-metadata",
-        type=Path,
-        dest="custom_metadata",
-        help="Optional file containing custom metadata",
     )
     return parser.parse_args()
 
@@ -68,21 +65,15 @@ def parse_table(file: Path, **kwargs):
 def main():
     args = parse_args()
 
-    count_file = args.count_file
-    custom_mapping_file = args.custom_mappings
-    custom_metadata_file = args.custom_metadata
-
-    logger.info(
-        f"Converting IDs for species {args.species} and count file {count_file.name}..."
-    )
+    logger.info(f"Converting IDs for count file {args.count_file.name}...")
 
     #############################################################
     # PARSING FILES
     #############################################################
 
-    # whatever the name of the first col, rename it to "ensembl_gene_id"
-    df = parse_table(count_file, index_col=0)
-    df.index.rename(config.ENSEMBL_GENE_ID_COLNAME, inplace=True)
+    # whatever the name of the first col, rename it to "gene_id"
+    df = parse_table(args.count_file, index_col=0)
+    df.index.rename(config.GENE_ID_COLNAME, inplace=True)
 
     if df.empty:
         msg = "COUNT FILE IS EMPTY"
@@ -92,49 +83,29 @@ def main():
         sys.exit(0)
 
     df.index = df.index.astype(str)
-    gene_ids = df.index.tolist()
 
-    custom_mappings_dict = {}
-    if custom_mapping_file:
-        custom_mapping_df = parse_table(custom_mapping_file)
-        custom_mappings_dict = custom_mapping_df.set_index(
+    #############################################################
+    # GETTING MAPPINGS
+    #############################################################
+
+    mapping_dict = {}
+    if args.mapping_file is not None:
+        mapping_df = parse_table(args.mapping_file)
+        mapping_dict = mapping_df.set_index(config.ORIGINAL_GENE_ID_COLNAME)[
+            config.GENE_ID_COLNAME
+        ].to_dict()
+
+    custom_mapping_dict = {}
+    if args.custom_mapping_file is not None:
+        custom_mapping_df = parse_table(args.custom_mapping_file)
+        custom_mapping_dict = custom_mapping_df.set_index(
             config.ORIGINAL_GENE_ID_COLNAME
-        )[config.ENSEMBL_GENE_ID_COLNAME].to_dict()
+        )[config.GENE_ID_COLNAME].to_dict()
 
-    gene_ids_left_to_map = [
-        gene_id for gene_id in gene_ids if gene_id not in custom_mappings_dict
-    ]
-    logger.info(f"Number of genes left to map: {len(gene_ids_left_to_map)}")
+    mapping_dict |= custom_mapping_dict
 
-    #############################################################
-    # QUERYING g:PROFILER SERVER
-    #############################################################
-
-    gprofiler_mapping_dict = {}
-    gene_metadata_dfs = []
-
-    try:
-        if gene_ids_left_to_map:
-            gprofiler_mapping_dict, gene_metadata_dfs = convert_ids(
-                gene_ids_left_to_map, args.species
-            )
-    except GProfilerConnectionError:
-        msg = "COULD NOT CONNECT TO GPROFILER SERVER"
-        logger.warning(msg)
-        with open(FAILURE_REASON_FILE, "w") as f:
-            f.write(msg)
-        sys.exit(0)
-
-    # overall mappings is the custom_mappings_dict complemented with gprofiler_mapping_dict
-    mapping_dict = custom_mappings_dict | gprofiler_mapping_dict
-
-    # if mapping dict is empty
     if not mapping_dict:
-        msg = f"NO MAPPING FOR GENE IDS: {', '.join(df.index[:5].tolist())}, ..."
-        logger.warning(msg)
-        with open(FAILURE_REASON_FILE, "w") as f:
-            f.write(msg)
-        sys.exit(0)
+        raise ValueError("No mapping found")  # should not happen
 
     #############################################################
     # MAPPING GENE IDS IN DATAFRAME
@@ -142,24 +113,40 @@ def main():
 
     # IMPORTANT: KEEPING ONLY GENES THAT HAVE BEEN CONVERTED
     # filtering the DataFrame to keep only the rows where the index can be mapped
+    original_nb_genes = len(df)
+
     df = df.loc[df.index.isin(mapping_dict)]
+    if df.empty:
+        msg = "NO GENES WERE MAPPED"
+        logger.error(msg)
+        with open(FAILURE_REASON_FILE, "w") as f:
+            f.write(msg)
+        sys.exit(0)
+
+    if len(df) < original_nb_genes:
+        msg = f"Only {len(df) / original_nb_genes:.2%} of genes were mapped ({len(df)} out of {original_nb_genes})"
+        logger.warning(msg)
+        with open(WARNING_REASON_FILE, "a") as f:
+            f.write(msg)
+    else:
+        logger.info(f"All genes were mapped ({len(df)} out of {original_nb_genes})")
 
     # renaming gene names to mapped ids using mapping dict
     df.index = df.index.map(mapping_dict)
     df.reset_index(inplace=True)
 
     # TODO: check is there is another way to avoid duplicate gene names
-    # sometimes different gene names have the same ensembl ID
+    # sometimes different gene names have the same Gene ID
     # for now, we just get the mean of values, but this is not ideal
 
     #############################################################
     # GENE COUNT HANDLING
     #############################################################
 
-    # handling cases where multiple genes have the same ensembl ID
+    # handling cases where multiple genes have the same Gene ID
     # since subsequent steps in the pipeline require integer values,
     # we need to ensure that the resulting DataFrame has integer values
-    df = df.groupby(config.ENSEMBL_GENE_ID_COLNAME, as_index=False, sort=False).agg(
+    df = df.groupby(config.GENE_ID_COLNAME, as_index=False, sort=False).agg(
         lambda x: x.mean().astype(int)
     )
 
@@ -167,25 +154,8 @@ def main():
     # WRITING OUTFILES
     #############################################################
     # writing to output file
-    outfile = count_file.with_name(count_file.stem + RENAMED_FILE_SUFFIX)
+    outfile = args.count_file.with_name(args.count_file.stem + RENAMED_FILE_SUFFIX)
     df.to_csv(outfile, index=False, header=True)
-
-    # if the user provides custom metadata file
-    if custom_metadata_file:
-        custom_metadata_df = parse_table(custom_metadata_file)
-        # prepending custom metadata in gene metadata
-        gene_metadata_dfs = [custom_metadata_df] + gene_metadata_dfs
-
-    # concatenating all metadata and ensuring there are no duplicates
-    if gene_metadata_dfs:
-        gene_metadata_df = pd.concat(gene_metadata_dfs, ignore_index=True)
-        # dropping duplicates and keeping the first occurence
-        gene_metadata_df.drop_duplicates(
-            inplace=True, subset=[config.ENSEMBL_GENE_ID_COLNAME], keep="first"
-        )
-        # writing gene metadata to file
-        metadata_file = count_file.with_name(count_file.stem + METADATA_FILE_SUFFIX)
-        gene_metadata_df.to_csv(metadata_file, index=False, header=True)
 
     # making dataframe for mapping (only two columns: original and new)
     mapping_df = (
@@ -194,11 +164,11 @@ def main():
         .rename(
             columns={
                 "index": config.ORIGINAL_GENE_ID_COLNAME,
-                0: config.ENSEMBL_GENE_ID_COLNAME,
+                0: config.GENE_ID_COLNAME,
             }
         )
     )
-    mapping_file = count_file.with_name(count_file.stem + MAPPING_FILE_SUFFIX)
+    mapping_file = args.count_file.with_name(args.count_file.stem + MAPPING_FILE_SUFFIX)
     mapping_df.to_csv(mapping_file, index=False, header=True)
 
 

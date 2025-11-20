@@ -117,18 +117,16 @@ def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.LazyFrame
 
 
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the ENSEMBL_GENE_ID column.
+    """Get all column names except the GENE_ID column.
 
-    The ENSEMBL_GENE_ID column contains only gene IDs.
+    The GENE_ID column contains only gene IDs.
     """
-    return (
-        lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
-    )
+    return lf.select(pl.exclude(config.GENE_ID_COLNAME)).collect_schema().names()
 
 
 def cast_count_columns_to_float32(lf: pl.LazyFrame) -> pl.LazyFrame:
     return lf.select(
-        [pl.col(config.ENSEMBL_GENE_ID_COLNAME)]
+        [pl.col(config.GENE_ID_COLNAME)]
         + [pl.col(column).cast(pl.Float32) for column in get_count_columns(lf)]
     )
 
@@ -137,13 +135,13 @@ def join_data_on_gene_id(stat_lf: pl.LazyFrame, *lfs: pl.LazyFrame) -> pl.LazyFr
     """Merge the statistics dataframe with the metadata dataframe and the mapping dataframe."""
     # we need to ensure that the index of stat_lf are strings
     for lf in lfs:
-        stat_lf = stat_lf.join(lf, on=config.ENSEMBL_GENE_ID_COLNAME, how="left")
+        stat_lf = stat_lf.join(lf, on=config.GENE_ID_COLNAME, how="left")
     return stat_lf
 
 
 def get_counts(file: Path) -> pl.LazyFrame:
     # sorting dataframe (necessary to get consistent output)
-    return pl.scan_parquet(file).sort(config.ENSEMBL_GENE_ID_COLNAME, descending=False)
+    return pl.scan_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
 
 
 def get_metadata(metadata_files: list[Path]) -> pl.LazyFrame | None:
@@ -160,7 +158,7 @@ def get_mappings(mapping_files: list[Path]) -> pl.LazyFrame | None:
     # group by new gene IDs and gets the lis
     # convert the list column to a string representation
     # separate the original gene IDs with a semicolon
-    return concat_lf.group_by(config.ENSEMBL_GENE_ID_COLNAME).agg(
+    return concat_lf.group_by(config.GENE_ID_COLNAME).agg(
         pl.col(config.ORIGINAL_GENE_ID_COLNAME)
         .unique()
         .sort()
@@ -214,25 +212,23 @@ def get_top_stable_genes_counts(
     # getting list of top stable genes with their order
     top_genes_with_order = (
         stat_summary_df.head(NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS)
-        .select(config.ENSEMBL_GENE_ID_COLNAME)
+        .select(config.GENE_ID_COLNAME)
         .with_row_index("sort_order")
     )
 
     # join to get only existing genes and maintain order
     sorted_transposed_counts_df = (
         log_count_lf.join(
-            top_genes_with_order, on=config.ENSEMBL_GENE_ID_COLNAME, how="inner"
+            top_genes_with_order, on=config.GENE_ID_COLNAME, how="inner"
         ).sort("sort_order", descending=False)
     ).collect()
 
     # get the actual gene names that were found (in order)
     actual_gene_names = (
-        sorted_transposed_counts_df.select(config.ENSEMBL_GENE_ID_COLNAME)
-        .to_series()
-        .to_list()
+        sorted_transposed_counts_df.select(config.GENE_ID_COLNAME).to_series().to_list()
     )
     return sorted_transposed_counts_df.drop(
-        ["sort_order", config.ENSEMBL_GENE_ID_COLNAME]
+        ["sort_order", config.GENE_ID_COLNAME]
     ).transpose(column_names=actual_gene_names)
 
 

@@ -127,10 +127,7 @@ class NormFinder:
         self.n_groups = len(groups)
 
         self.genes = (
-            self.count_lf.select(config.ENSEMBL_GENE_ID_COLNAME)
-            .collect()
-            .to_series()
-            .to_list()
+            self.count_lf.select(config.GENE_ID_COLNAME).collect().to_series().to_list()
         )
         self.n_genes = len(self.genes)
 
@@ -190,7 +187,7 @@ class NormFinder:
             data = {gene: [0] for gene in self.genes}
             return pl.DataFrame(data)
 
-        # lf is a lazyframe with a column being the gene ids (ensembl_gene_id)
+        # lf is a lazyframe with a column being the gene ids (gene_id)
         # and other columns being the samples
         # the current chunk corresponds to only one group
         # means_over_samples_df is a single column dataframe containing the means across each row (ie for each gene across samples)
@@ -432,7 +429,7 @@ class NormFinder:
             .mean()
             .transpose(
                 include_header=True,
-                header_name=config.ENSEMBL_GENE_ID_COLNAME,
+                header_name=config.GENE_ID_COLNAME,
                 column_names=[config.NORMFINDER_STABILITY_VALUE_COLNAME],
             )
         )

@@ -78,7 +78,7 @@ INPUTS
             </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="ensembl_gene_id" />
+                    <has_text text="gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">
@@ -97,7 +97,7 @@ INPUTS
             </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="ensembl_gene_id" />
+                    <has_text text="gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">
@@ -118,7 +118,7 @@ INPUTS
             </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="ensembl_gene_id" />
+                    <has_text text="gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">

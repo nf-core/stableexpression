@@ -3,12 +3,12 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
-from pathlib import Path
-from scipy import stats
-import pandas as pd
 import logging
+from pathlib import Path
 
 import config
+import pandas as pd
+from scipy import stats
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -101,7 +101,7 @@ def main():
 
     logger.info(f"Computing dataset statistics for {count_file.name}")
     count_df = pd.read_parquet(count_file)
-    count_df.set_index(config.ENSEMBL_GENE_ID_COLNAME, inplace=True)
+    count_df.set_index(config.GENE_ID_COLNAME, inplace=True)
 
     dataset_stats_df = compute_dataset_statistics(count_df, args.target_distribution)
 

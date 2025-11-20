@@ -280,11 +280,11 @@ library(dplyr)
 
 data <- counts %>%
   tidyr::pivot_longer(
-    cols = -ensembl_gene_id,
+    cols = -gene_id,
     names_to = "sample",
     values_to = "cq"
   ) %>%
-  dplyr::rename(gene = ensembl_gene_id) %>%
+  dplyr::rename(gene = gene_id) %>%
   dplyr::left_join(design, by = "sample")
 
 # Inspect

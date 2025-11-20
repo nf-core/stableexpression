@@ -7,6 +7,7 @@ import json
 import logging
 from pathlib import Path
 
+import config
 import pandas as pd
 import requests
 from tenacity import (
@@ -61,17 +62,17 @@ def parse_args():
     stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
     wait=wait_exponential(multiplier=1, min=1, max=30),
     before_sleep=before_sleep_log(logger, logging.WARNING),
-    retry_error_callback=(lambda _: {}),
 )
 def send_post_request_to_ensembl(gene_ids: list[str]) -> list[dict]:
     data = {"ids": gene_ids, "type": "cdna"}
     url = ENSEMBL_REST_SERVER + SEQUENCE_INFO_EXT
     response = requests.post(url, headers=HEADERS, data=json.dumps(data))
-    try:
+    if response.status_code == 200:
         response.raise_for_status()
-    except:
-        logger.error(f"Could not get info for genes {gene_ids}")
-        return []
+    else:
+        raise RuntimeError(
+            f"Failed to retrieve data: encountered error {response.status_code}"
+        )
     return response.json()
 
 
@@ -79,9 +80,8 @@ def get_gene_lengths(gene_ids: list[str]) -> list[dict]:
     records = send_post_request_to_ensembl(gene_ids)
     return [
         {
-            "gene_id": record["query"],
-            "transcript_id": record["id"],
-            "length": len(record["seq"]),
+            config.GENE_ID_COLNAME: record["query"],
+            config.CDNA_LENGTH_COLNAME: len(record["seq"]),
         }
         for record in records
         if record.get("query") is not None and record.get("seq") is not None
@@ -122,7 +122,9 @@ def main():
 
     df = pd.DataFrame.from_dict(records)
     # taking the length of the longest transcript for each gene
-    df = df.groupby("gene_id", as_index=False).agg({"length": "max"})
+    df = df.groupby(config.GENE_ID_COLNAME, as_index=False).agg(
+        {config.CDNA_LENGTH_COLNAME: "max"}
+    )
 
     df.to_csv(OUTFILE, index=False, header=True)
 

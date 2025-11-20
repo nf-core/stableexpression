@@ -51,20 +51,18 @@ def parse_args():
 
 
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the config.ENSEMBL_GENE_ID_COLNAME column.
+    """Get all column names except the config.GENE_ID_COLNAME column.
 
-    The config.ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
+    The config.GENE_ID_COLNAME column contains only gene IDs.
     """
-    return (
-        lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).collect_schema().names()
-    )
+    return lf.select(pl.exclude(config.GENE_ID_COLNAME)).collect_schema().names()
 
 
 def get_counts(
     file: Path,
 ) -> pl.DataFrame:
     # sorting dataframe (necessary to get consistent output)
-    return pl.read_parquet(file).sort(config.ENSEMBL_GENE_ID_COLNAME, descending=False)
+    return pl.read_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
 
 
 def remove_samples_with_low_ks_pvalue(
@@ -100,7 +98,7 @@ def remove_samples_with_low_ks_pvalue(
         sys.exit(0)
 
     # filtering the count dataframe to keep only the valid samples
-    return count_lf.select([config.ENSEMBL_GENE_ID_COLNAME] + valid_samples)
+    return count_lf.select([config.GENE_ID_COLNAME] + valid_samples)
 
 
 def export_data(all_counts_lf: pl.DataFrame):

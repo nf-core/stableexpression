@@ -3,11 +3,11 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
-import polars as pl
-from pathlib import Path
 import logging
+from pathlib import Path
 
 import config
+import polars as pl
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -75,7 +75,7 @@ def get_best_candidates(
     return (
         stat_lf.sort(column_for_sorting, descending=False, nulls_last=True)
         .head(nb_top_stable_genes)
-        .select(config.ENSEMBL_GENE_ID_COLNAME)
+        .select(config.GENE_ID_COLNAME)
         .collect()
         .to_series()
         .to_list()
@@ -108,7 +108,7 @@ def filter_out_low_expression_genes(
 def get_counts_for_candidates(file: Path, best_candidates: list[str]) -> pl.DataFrame:
     logger.info("Getting counts for candidate genes")
     return pl.read_parquet(file).filter(
-        pl.col(config.ENSEMBL_GENE_ID_COLNAME).is_in(best_candidates)
+        pl.col(config.GENE_ID_COLNAME).is_in(best_candidates)
     )
 
 

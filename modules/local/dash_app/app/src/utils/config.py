@@ -15,7 +15,7 @@ ALL_COUNT_FILENAME = "all_counts.parquet"
 ALL_GENES_STAT_FILENAME = "all_genes_summary.csv"
 ALL_DESIGNS_FILENAME = "whole_design.csv"
 
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
+GENE_ID_COLNAME = "gene_id"
 STD_COLNAME = "standard_deviation"
 STABILITY_SCORE_COLNAME = "stability_score"
 

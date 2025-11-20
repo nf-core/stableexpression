@@ -1,6 +1,5 @@
-from dash_extensions.enrich import Input, Output, State, callback, ctx, Serverside
 import plotly.graph_objects as go
-
+from dash_extensions.enrich import Input, Output, Serverside, State, callback, ctx
 from src.utils.data_management import DataManager
 
 data_manager = DataManager()
@@ -15,7 +14,7 @@ data_manager = DataManager()
 
 def get_selected_rows(selected_genes: list[str]) -> list[dict]:
     return data_manager.all_genes_stat_df.filter(
-        data_manager.all_genes_stat_df["ensembl_gene_id"].is_in(selected_genes)
+        data_manager.all_genes_stat_df["gene_id"].is_in(selected_genes)
     ).to_dicts()
 
 
@@ -35,7 +34,7 @@ def register_callbacks():
         if ctx.triggered_id == "gene-stats-table":
             # updating selected genes
             if table_selected_rows is not None:
-                selected_genes = [row["ensembl_gene_id"] for row in table_selected_rows]
+                selected_genes = [row["gene_id"] for row in table_selected_rows]
             else:
                 selected_genes = []
         else:

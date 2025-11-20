@@ -74,7 +74,7 @@ class GeneStatistician:
     def __post_init__(self):
         self.gene_count_per_sample_df = self.get_gene_counts_per_sample()
         self.samples = (
-            self.count_lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME))
+            self.count_lf.select(pl.exclude(config.GENE_ID_COLNAME))
             .collect_schema()
             .names()
         )
@@ -84,7 +84,7 @@ class GeneStatistician:
         return f"{self.platform}_{colname}" if self.platform else colname
 
     def get_valid_counts(self) -> pl.LazyFrame:
-        return self.count_lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME))
+        return self.count_lf.select(pl.exclude(config.GENE_ID_COLNAME))
 
     def get_gene_counts_per_sample(self) -> pl.DataFrame:
         """
@@ -95,7 +95,7 @@ class GeneStatistician:
             - nb_not_nulls: number of non-null values
         """
         return (
-            self.count_lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME))
+            self.count_lf.select(pl.exclude(config.GENE_ID_COLNAME))
             .count()
             .collect()
             .transpose(
@@ -131,7 +131,7 @@ class GeneStatistician:
         )
 
         return augmented_count_lf.select(
-            pl.col(config.ENSEMBL_GENE_ID_COLNAME),
+            pl.col(config.GENE_ID_COLNAME),
             pl.col("mean").alias(self.get_colname(config.MEAN_COLNAME)),
             pl.col("std").alias(self.get_colname(config.STANDARD_DEVIATION_COLNAME)),
             pl.col("median").alias(self.get_colname(config.MEDIAN_COLNAME)),
@@ -153,7 +153,7 @@ class GeneStatistician:
         ]
 
         nb_nulls = (
-            self.count_lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME).is_null())
+            self.count_lf.select(pl.exclude(config.GENE_ID_COLNAME).is_null())
             .collect()
             .sum_horizontal()
         )
@@ -174,7 +174,7 @@ class GeneStatistician:
 
     def compute_ratio_zeros(self):
         nb_zeros = (
-            self.count_lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME) == 0)
+            self.count_lf.select(pl.exclude(config.GENE_ID_COLNAME) == 0)
             .collect()
             .sum_horizontal()
         )
@@ -240,7 +240,7 @@ def parse_args():
 
 def get_counts(file: Path) -> pl.LazyFrame:
     # sorting dataframe (necessary to get consistent output)
-    return pl.scan_parquet(file).sort(config.ENSEMBL_GENE_ID_COLNAME, descending=False)
+    return pl.scan_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
 
 
 def export_data(stat_lf: pl.LazyFrame, platform: str | None):

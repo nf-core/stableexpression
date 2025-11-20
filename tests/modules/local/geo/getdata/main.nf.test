@@ -198,4 +198,29 @@ nextflow_process {
 
     }
 
+    test("Drosophila simulans - Mismatch in suppl data colnames / design") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE49127"
+                ]
+                input[1] = "drosophila_simulans"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.counts.size() == 0 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
 }

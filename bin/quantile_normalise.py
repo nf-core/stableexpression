@@ -79,8 +79,10 @@ def main():
     count_file = args.count_file
 
     logger.info(f"Quantile normalising {count_file.name}")
+    # count_df = pd.read_parquet(count_file)
+    # count_df.set_index(config.GENE_ID_COLNAME, inplace=True)
     count_df = pd.read_csv(count_file, index_col=0)
-    count_df.index.name = config.ENSEMBL_GENE_ID_COLNAME
+    count_df.index.name = config.GENE_ID_COLNAME
 
     quantile_normalized_counts = quantile_normalise(count_df, args.target_distribution)
 

@@ -1,5 +1,6 @@
 # general column names
-ENSEMBL_GENE_ID_COLNAME = "ensembl_gene_id"
+GENE_ID_COLNAME = "gene_id"
+CDNA_LENGTH_COLNAME = "cdna_length"
 RANK_COLNAME = "rank"
 
 # base statistics

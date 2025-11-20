@@ -23,7 +23,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
   - Download [Expression Atlas](https://www.ebi.ac.uk/gxa/home) data (run by default; optional)
   - Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data (run by default; optional)
 3. ID Mapping
-  - Map gene IDS to Ensembl IDS for standardisation among datasets using [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
+  - Map gene IDS to NCBI Entrez Gene IDS (or Ensembl IDs) for standardisation among datasets using [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
 4. Data normalisation
   - Normalize RNAseq raw data using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) or [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)
   - Perform quantile normalisation on each dataset separately using [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html)
@@ -109,9 +109,9 @@ and open your browser at `http://localhost:8080`
 <summary>Output files</summary>
 
 - `idmapping/`
-  - Count datasets whose gene IDs have been mapped to Ensembl IDs: `*.renamed.csv`.
-  - Table associating original gene IDs and Ensembl IDs: `*.mapping.csv`.
-  - Ensembl gene metadata (name and description): `*.metadata.csv`.
+  - Count datasets whose gene IDs have been mapped: `*.renamed.csv`.
+  - Table associating original gene IDs and mapped gene IDs: `*.mapping.csv`.
+  - Gene metadata (name and description): `*.metadata.csv`.
 
 </details>
 

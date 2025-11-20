@@ -195,7 +195,7 @@ def get_stabilities(stability_files: list[Path]) -> pl.LazyFrame:
     if len(stability_files) > 1:
         for file in stability_files[1:]:
             new_df = pl.scan_csv(file)
-            lf = lf.join(new_df, on=config.ENSEMBL_GENE_ID_COLNAME, how="left")
+            lf = lf.join(new_df, on=config.GENE_ID_COLNAME, how="left")
     return lf.with_columns(pl.lit(1).alias(config.IS_CANDIDATE_COLNAME))
 
 
@@ -205,7 +205,7 @@ def get_statistics(stat_files: list[Path]) -> pl.LazyFrame:
     if len(stat_files) > 1:
         for file in stat_files[1:]:
             new_df = pl.scan_csv(file)
-            lf = lf.join(new_df, on=config.ENSEMBL_GENE_ID_COLNAME, how="left")
+            lf = lf.join(new_df, on=config.GENE_ID_COLNAME, how="left")
     return lf
 
 
@@ -240,7 +240,7 @@ def main():
     # getting metadata and mappings
     stability_lf = get_stabilities(stability_files)
     # merges base statistics with computed stability measurements
-    lf = stat_lf.join(stability_lf, on=config.ENSEMBL_GENE_ID_COLNAME, how="left")
+    lf = stat_lf.join(stability_lf, on=config.GENE_ID_COLNAME, how="left")
 
     # sort genes according to the metrics present in the dataframe
     stability_scorer = StabilityScorer(lf.collect(), args.stability_score_weights)

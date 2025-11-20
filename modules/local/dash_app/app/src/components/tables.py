@@ -1,8 +1,5 @@
 import dash_ag_grid as dag
-
 from src.utils import style
-
-
 from src.utils.data_management import DataManager
 
 data_manager = DataManager()
@@ -39,7 +36,7 @@ all_genes_stats_table = dag.AgGrid(
         animateRows=False,
         rowSelection=dict(mode="multiRow"),
         headerCheckboxSelection=False,
-        getRowId="params.data.ensembl_gene_id",
+        getRowId="params.data.gene_id",
     ),
     selectedRows=default_selected_rows,
     style=style.AG_GRID,

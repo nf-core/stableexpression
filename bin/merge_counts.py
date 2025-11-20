@@ -3,13 +3,13 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
-from tqdm import tqdm
-import polars as pl
-from pathlib import Path
 import logging
 from functools import reduce
+from pathlib import Path
 
 import config
+import polars as pl
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -39,11 +39,11 @@ def parse_args():
 
 def parse_count_file(count_file: Path) -> pl.DataFrame:
     df = pl.read_parquet(count_file)
-    # in some cases, the first column may have an empty name or be different than config.ENSEMBL_GENE_ID_COLNAME
-    # in any case, this column must have the config.ENSEMBL_GENE_ID_COLNAME name
+    # in some cases, the first column may have an empty name or be different than config.GENE_ID_COLNAME
+    # in any case, this column must have the config.GENE_ID_COLNAME name
     first_column_name = df.columns[0]
-    if first_column_name != config.ENSEMBL_GENE_ID_COLNAME:
-        df = df.rename({first_column_name: config.ENSEMBL_GENE_ID_COLNAME})
+    if first_column_name != config.GENE_ID_COLNAME:
+        df = df.rename({first_column_name: config.GENE_ID_COLNAME})
     return df
 
 
@@ -71,27 +71,27 @@ def get_valid_dfs(files: list[Path]) -> list[pl.DataFrame]:
 
 
 def join_count_dfs(df1: pl.DataFrame, df2: pl.DataFrame) -> pl.DataFrame:
-    """Join two DataFrames on the config.ENSEMBL_GENE_ID_COLNAME column.
+    """Join two DataFrames on the config.GENE_ID_COLNAME column.
 
     The how parameter is set to "full" to include all rows from both dfs.
     The coalesce parameter is set to True to fill NaN values in the
     resulting dataframe with values from the other dataframe.
     """
-    return df1.join(df2, on=config.ENSEMBL_GENE_ID_COLNAME, how="full", coalesce=True)
+    return df1.join(df2, on=config.GENE_ID_COLNAME, how="full", coalesce=True)
 
 
 def get_count_columns(df: pl.DataFrame) -> list[str]:
-    """Get all column names except the config.ENSEMBL_GENE_ID_COLNAME column.
+    """Get all column names except the config.GENE_ID_COLNAME column.
 
-    The config.ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
+    The config.GENE_ID_COLNAME column contains only gene IDs.
     """
-    return df.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME)).columns
+    return df.select(pl.exclude(config.GENE_ID_COLNAME)).columns
 
 
 def get_counts(files: list[Path]) -> pl.DataFrame:
     """Get all count data from a list of files.
 
-    The files are merged into a single dataframe. The config.ENSEMBL_GENE_ID_COLNAME column is cast
+    The files are merged into a single dataframe. The config.GENE_ID_COLNAME column is cast
     to String, and all other columns are cast to Float64.
     """
     logger.info("Parsing counts")
@@ -99,7 +99,7 @@ def get_counts(files: list[Path]) -> pl.DataFrame:
 
     # joining all count files
     logger.info(
-        f"Joining count files recursively on the {config.ENSEMBL_GENE_ID_COLNAME} column"
+        f"Joining count files recursively on the {config.GENE_ID_COLNAME} column"
     )
     merged_df = reduce(join_count_dfs, tqdm(dfs))
 
@@ -109,7 +109,7 @@ def get_counts(files: list[Path]) -> pl.DataFrame:
     # casting nans to nulls
     logger.info("Cleaning mergeed dataframe")
     return merged_df.select(
-        [pl.col(config.ENSEMBL_GENE_ID_COLNAME).cast(pl.String)]
+        [pl.col(config.GENE_ID_COLNAME).cast(pl.String)]
         + [pl.col(column).cast(pl.Float64) for column in count_columns]
     ).fill_nan(None)
 

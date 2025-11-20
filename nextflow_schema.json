@@ -183,6 +183,14 @@
                     "fa_icon": "fas fa-ban",
                     "help": "If you don't want to map gene IDs with g:Profiler, you can skip this step by providing `--skip_id_mapping`. It can be in particular useful if the g:Profiler is down and if you already have a custom mapping file."
                 },
+                "gprofiler_target_db": {
+                    "type": "string",
+                    "description": "Target database for g:Profiler",
+                    "fa_icon": "fas fa-divide",
+                    "enum": ["ENTREZGENE", "ENSG"],
+                    "default": "ENTREZGENE",
+                    "help_text": "Target database for g:Profiler. By default, it is set to ENTREZGENE (NCBI Entrez Gene IDs). You can choose to use ENSEMBL IDs instead."
+                },
                 "gene_id_mapping_file": {
                     "type": "string",
                     "format": "file-path",
@@ -191,7 +199,7 @@
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.(csv|tsv|dat)$",
                     "description": "Custom gene id mapping file",
-                    "help_text": "Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler. The mapping file should be a comma-separated file with 2 columns (original_gene_id and ensembl_gene_id) and a header row.",
+                    "help_text": "Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to a prefered gene ID. The mapping file should be a comma-separated file with 2 columns (original_gene_id and gene_id) and a header row.",
                     "fa_icon": "fas fa-file"
                 },
                 "gene_metadata": {
@@ -202,7 +210,7 @@
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.(csv|tsv|dat)$",
                     "description": "Custom gene metadata file",
-                    "help_text": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (ensembl_gene_id, name and description) and a header row.",
+                    "help_text": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (gene_id, name and description) and a header row.",
                     "fa_icon": "fas fa-file"
                 }
             }

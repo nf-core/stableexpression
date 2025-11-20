@@ -180,8 +180,8 @@ VERSION="1.0dev"; echo "$VERSION"
 		</section>
 		<section name="idmapping_options" title="ID mapping options" help="Options for mapping gene IDs." expanded="false">
 			<param name="skip_id_mapping" type="boolean" label="Skip g:Profiler ID mapping step" truevalue="--skip_id_mapping" falsevalue="" optional="true" />
-			<param name="gene_id_mapping_file" type="data" label="Custom gene id mapping file" format="csv" help="Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler. The mapping file should be a comma-separated file with 2 columns (original_gene_id and ensembl_gene_id) and a header row." optional="true" />
-			<param name="gene_metadata" type="data" label="Custom gene metadata file" format="csv" help="Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (ensembl_gene_id, name and description) and a header row." optional="true" />
+			<param name="gene_id_mapping_file" type="data" label="Custom gene id mapping file" format="csv" help="Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to the ensembl ID in g:Profiler. The mapping file should be a comma-separated file with 2 columns (original_gene_id and gene_id) and a header row." optional="true" />
+			<param name="gene_metadata" type="data" label="Custom gene metadata file" format="csv" help="Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its ensembl gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (gene_id, name and description) and a header row." optional="true" />
 		</section>
 		<section name="statistical_options" title="Statistics options" help="Statistical options for normalisation and calculation of gene expression variation." expanded="false">
 			<param name="normalisation_method" type="select" label="Tool to use for normalisation" help="Raw RNAseq data must be normalised before further processing. You can select the package used for normalisation." optional="false">
@@ -229,7 +229,7 @@ VERSION="1.0dev"; echo "$VERSION"
             </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="ensembl_gene_id" />
+                    <has_text text="gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">
@@ -248,7 +248,7 @@ VERSION="1.0dev"; echo "$VERSION"
             </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="ensembl_gene_id" />
+                    <has_text text="gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">
@@ -269,7 +269,7 @@ VERSION="1.0dev"; echo "$VERSION"
             </section>
             <output name="top_stable_genes_summary">
                 <assert_contents>
-                    <has_text text="ensembl_gene_id" />
+                    <has_text text="gene_id" />
                 </assert_contents>
             </output>
             <output name="multiqc_report">

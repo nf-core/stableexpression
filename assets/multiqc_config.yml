@@ -41,13 +41,11 @@ custom_data:
       Genes are sorted by stability score - from the most stable to the least stable.
     plot_type: "table"
     pconfig:
-      col1_header: "Ensembl Gene ID"
+      col1_header: "Gene ID"
       sort_rows: false
     headers:
-      ensembl_gene_id:
-        title: "Ensembl Gene ID"
-        description: |
-          Gene IDs as shown in Ensembl
+      gene_id:
+        title: "Gene ID"
       rank:
         title: "Rank"
         description: |
@@ -69,13 +67,9 @@ custom_data:
           first:
             - eq: 1
       name:
-        title: "Ensembl name"
-        description: |
-          Gene name as shown in Ensembl (g:Profiler)
+        title: "Gene name"
       description:
-        title: "Ensembl description"
-        description: |
-          Gene description as shown in Ensembl (g:Profiler)
+        title: "Gene description"
       original_gene_ids:
         title: "Original gene IDs"
         description: |
@@ -581,7 +575,18 @@ custom_data:
       Warnings during download of GEO datasets
     plot_type: "table"
 
-  id_mapping_failure_reasons:
+  renaming_warning_reasons:
+    section_name: "Warning reasons"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "tsv"
+    no_violin: true
+    description: |
+      Reasons of warning during gene ID renaming
+    plot_type: "table"
+
+  renaming_failure_reasons:
     section_name: "Failure reasons"
     parent_id: idmapping
     parent_name: "ID mapping"
@@ -589,7 +594,7 @@ custom_data:
     file_format: "tsv"
     no_violin: true
     description: |
-      Reasons of failure during ID mapping
+      Reasons of failure during gene ID renaming
     plot_type: "table"
 
   normalisation_failure_reasons:
@@ -663,8 +668,10 @@ sp:
     fn: "*geo_failure_reasons.csv"
   geo_warning_reasons:
     fn: "*geo_warning_reasons.csv"
-  id_mapping_failure_reasons:
-    fn: "*id_mapping_failure_reasons.tsv"
+  renaming_warning_reasons:
+    fn: "*renaming_warning_reasons.tsv"
+  renaming_failure_reasons:
+    fn: "*renaming_failure_reasons.tsv"
   normalisation_failure_reasons:
     fn: "*normalisation_failure_reasons.csv"
   normalisation_warning_reasons:

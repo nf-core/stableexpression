@@ -2,13 +2,13 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
-import polars as pl
-from pathlib import Path
-from math import ceil
 import argparse
 import logging
+from math import ceil
+from pathlib import Path
 
 import config
+import polars as pl
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ def get_nb_rows(lf: pl.LazyFrame):
 def parse_count_dataset(file: Path, low_memory: bool) -> pl.LazyFrame:
     lf = pl.scan_parquet(file, low_memory=low_memory).fill_null(0).fill_nan(0)
     count_columns = get_count_columns(lf)
-    cols = [pl.col(config.ENSEMBL_GENE_ID_COLNAME)] + [
+    cols = [pl.col(config.GENE_ID_COLNAME)] + [
         pl.col(column).replace({0: ZERO_REPLACE_VALUE}).cast(pl.Float64)
         for column in count_columns
     ]
@@ -58,14 +58,14 @@ def parse_count_dataset(file: Path, low_memory: bool) -> pl.LazyFrame:
 
 
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the config.ENSEMBL_GENE_ID_COLNAME column.
+    """Get all column names except the config.GENE_ID_COLNAME column.
 
-    The config.ENSEMBL_GENE_ID_COLNAME column contains only gene IDs.
+    The config.GENE_ID_COLNAME column contains only gene IDs.
     """
     return [
         col
         for col in lf.collect_schema().names()
-        if not col.startswith(config.ENSEMBL_GENE_ID_COLNAME)
+        if not col.startswith(config.GENE_ID_COLNAME)
     ]
 
 

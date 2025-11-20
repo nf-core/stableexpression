@@ -106,12 +106,12 @@ workflow MERGE_DATA {
         .unique()
         .collectFile(
             name: 'whole_gene_id_mapping.csv',
-            seed: "original_gene_id,ensembl_gene_id",
+            seed: "original_gene_id,gene_id",
             newLine: true,
             sort: true,
             storeDir: "${params.outdir}/idmapping/"
         ) {
-            item -> "${item.original_gene_id},${item.ensembl_gene_id}"
+            item -> "${item.original_gene_id},${item.gene_id}"
         }
         .ifEmpty([]) // handle case where there are no mappings
         .set { ch_whole_gene_id_mapping }
@@ -126,12 +126,12 @@ workflow MERGE_DATA {
         .unique()
         .collectFile(
             name: 'whole_gene_metadata.csv',
-            seed: "ensembl_gene_id,name,description",
+            seed: "gene_id,name,description",
             newLine: true,
             sort: true,
             storeDir: "${params.outdir}/idmapping/"
         ) {
-            item -> "${item.ensembl_gene_id},${item.name},${item.description}"
+            item -> "${item.gene_id},${item.name},${item.description}"
         }
         .ifEmpty([]) // handle case where there are no mappings
         .set { ch_whole_gene_metadata }

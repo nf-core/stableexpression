@@ -1,11 +1,11 @@
 nextflow_process {
 
-    name "Test Process GPROFILER_IDMAPPING"
-    script "modules/local/gprofiler/idmapping/main.nf"
-    process "GPROFILER_IDMAPPING"
-    tag "idmapping"
+    name "Test Process RENAME_GENE_IDS"
+    script "modules/local/rename_gene_ids/main.nf"
+    process "RENAME_GENE_IDS"
+    tag "rename_gene_ids"
 
-    test("Map Ensembl IDs to themselves") {
+    test("Map Ensembl IDs") {
 
         when {
             process {
@@ -16,9 +16,8 @@ nextflow_process {
                         file("$projectDir/tests/test_data/idmapping/base/counts.ensembl_ids.csv", checkIfExists: true)
                     ]
                 )
-                input[1] = "Beta vulgaris"
+                input[1] = "Solanum tuberosum"
                 input[2] = Channel.value([])
-                input[3] = Channel.value([])
                 """
             }
         }
@@ -166,7 +165,6 @@ nextflow_process {
                 )
                 input[1] = "Beta vulgaris"
                 input[2] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/custom/mapping.csv", checkIfExists: true)
-                input[3] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/custom/metadata.csv", checkIfExists: true)
                 """
             }
         }
@@ -195,7 +193,6 @@ nextflow_process {
                 )
                 input[1] = "Beta vulgaris"
                 input[2] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/tsv/mapping.tsv", checkIfExists: true)
-                input[3] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/tsv/metadata.tsv", checkIfExists: true)
                 """
             }
         }

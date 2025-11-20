@@ -1,7 +1,7 @@
-import polars as pl
-import pandas as pd
 from functools import lru_cache
 
+import pandas as pd
+import polars as pl
 from src.utils import config
 
 
@@ -18,7 +18,7 @@ class DataManager:
 
     def get_sorted_samples(self) -> list[str]:
         return sorted(
-            self.all_counts_lf.select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME))
+            self.all_counts_lf.select(pl.exclude(config.GENE_ID_COLNAME))
             .collect_schema()
             .names()
         )
@@ -59,15 +59,15 @@ class DataManager:
             self.all_genes_stat_df.sort(
                 by=config.STABILITY_SCORE_COLNAME, descending=False
             )
-            .select(config.ENSEMBL_GENE_ID_COLNAME)
+            .select(config.GENE_ID_COLNAME)
             .to_series()
             .to_list()
         )
 
     def get_gene_counts(self, gene: str) -> pd.Series:
         return (
-            self.all_counts_lf.filter(pl.col(config.ENSEMBL_GENE_ID_COLNAME) == gene)
-            .select(pl.exclude(config.ENSEMBL_GENE_ID_COLNAME))
+            self.all_counts_lf.filter(pl.col(config.GENE_ID_COLNAME) == gene)
+            .select(pl.exclude(config.GENE_ID_COLNAME))
             .collect()
             .to_pandas()
             .iloc[0]

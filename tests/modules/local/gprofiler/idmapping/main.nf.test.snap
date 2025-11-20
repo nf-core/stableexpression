@@ -1,0 +1,43 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "python",
+                        "3.13.5"
+                    ]
+                ],
+                "3": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "pandas",
+                        "2.3.1"
+                    ]
+                ],
+                "4": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "requests",
+                        "2.32.4"
+                    ]
+                ],
+                "metadata": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-11-20T16:46:09.976019836"
+    }
+}
