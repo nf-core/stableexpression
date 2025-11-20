@@ -88,17 +88,15 @@ workflow STABLEEXPRESSION {
         // IDMAPPING
         // -----------------------------------------------------------------
 
-        ch_gene_id_mapping = params.gene_id_mapping_file ? Channel.fromPath( params.gene_id_mapping_file, checkIfExists: true ) : Channel.value( [] )
-        ch_gene_metadata = params.gene_metadata ? Channel.fromPath( params.gene_metadata, checkIfExists: true ) : Channel.value( [] )
-
         // tries to map gene IDs to Ensembl IDs whenever possible
         ID_MAPPING(
             ch_counts,
             species,
             params.skip_id_mapping,
             params.gprofiler_target_db,
-            ch_gene_id_mapping,
-            ch_gene_metadata
+            params.gene_id_mapping ? Channel.fromPath( params.gene_id_mapping, checkIfExists: true ) : Channel.value( [] ),
+            params.gene_metadata ?   Channel.fromPath( params.gene_metadata, checkIfExists: true )   : Channel.value( [] ),
+            params.outdir
         )
         ID_MAPPING.out.counts.set { ch_counts }
         ID_MAPPING.out.mapping.set { ch_gene_id_mapping }

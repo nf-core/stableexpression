@@ -191,7 +191,7 @@
                     "default": "ENSG",
                     "help_text": "Target database for g:Profiler. You can see the full list of available target databases at https://biit.cs.ut.ee/gprofiler/convert."
                 },
-                "gene_id_mapping_file": {
+                "gene_id_mapping": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,

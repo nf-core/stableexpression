@@ -10,10 +10,10 @@ process AGGREGATE_RESULTS {
     input:
     path count_file
     path stat_file
-    path rnaseq_dataset_stat_file, stageAs: "*/*"
-    path microarray_dataset_stat_file, stageAs: "*/*"
-    path metadata_files, stageAs: "*/*"
-    path mapping_files, stageAs: "*/*"
+    path rnaseq_dataset_stat_file
+    path microarray_dataset_stat_file
+    path metadata_files
+    path mapping_files
 
     output:
     path 'all_genes_summary.csv',                                                                                     emit: all_genes_summary
