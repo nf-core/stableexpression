@@ -58,6 +58,6 @@ workflow EXPRESSION_NORMALISATION {
 
 
     emit:
-    normalised_counts                   = QUANTILE_NORMALISATION.out.counts
+    counts                   = QUANTILE_NORMALISATION.out.counts
 
 }

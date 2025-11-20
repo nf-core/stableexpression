@@ -8,7 +8,6 @@ include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/e
 include { GEO_FETCHDATA                          } from '../subworkflows/local/geo_fetchdata'
 include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
-include { DATA_CLEANSING                         } from '../subworkflows/local/data_cleansing'
 include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
 include { BASE_STATISTICS                        } from '../subworkflows/local/base_statistics'
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
@@ -118,21 +117,11 @@ workflow STABLEEXPRESSION {
         )
 
         // -----------------------------------------------------------------
-        // GET STATISTICS DATASET BY DATASET AND PERFORM SOME CLEANING OPERATIONS
-        // -----------------------------------------------------------------
-
-        DATA_CLEANSING(
-            EXPRESSION_NORMALISATION.out.normalised_counts,
-            params.quantile_norm_target_distrib,
-            params.ks_pvalue_threshold
-        )
-
-        // -----------------------------------------------------------------
         // MERGE DATA
         // -----------------------------------------------------------------
 
         MERGE_DATA (
-            DATA_CLEANSING.out.cleaned_counts,
+            EXPRESSION_NORMALISATION.out.counts,
             ch_gene_id_mapping,
             ch_gene_metadata
         )

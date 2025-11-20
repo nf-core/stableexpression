@@ -20,7 +20,7 @@ workflow ID_MAPPING {
 
 
     main:
-
+    ch_counts.view { a -> "counts ${a}"}
     ch_gene_id_mapping = Channel.empty()
 
     if ( !params.skip_id_mapping ) {

@@ -619,17 +619,6 @@ custom_data:
       Reasons of failure during Normalisation (DESeq2 or edgeR)
     plot_type: "table"
 
-  clean_count_failure_reasons:
-    section_name: "Failure reasons"
-    parent_id: cleaning
-    parent_name: "Cleaning"
-    parent_description: "Information about the cleaning"
-    file_format: "tsv"
-    no_violin: true
-    description: |
-      Reasons of failure during dataset cleaning
-    plot_type: "table"
-
 #violin_downsample_after: 10000
 
 log_filesize_limit: 10000000000 # 10GB
@@ -676,5 +665,3 @@ sp:
     fn: "*normalisation_failure_reasons.csv"
   normalisation_warning_reasons:
     fn: "*normalisation_warning_reasons.csv"
-  clean_count_failure_reasons:
-    fn: "*clean_count_failure_reasons.csv"
