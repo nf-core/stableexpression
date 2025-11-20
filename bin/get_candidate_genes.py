@@ -65,18 +65,24 @@ def parse_args():
     return parser.parse_args()
 
 
+def parse_stats(file: Path) -> pl.DataFrame:
+    return pl.read_csv(file).select(
+        pl.col(config.GENE_ID_COLNAME).cast(pl.String()),
+        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64()),
+    )
+
+
 def get_best_candidates(
-    stat_lf: pl.LazyFrame, candidate_selection_descriptor: str, nb_top_stable_genes: int
+    stat_df: pl.DataFrame, candidate_selection_descriptor: str, nb_top_stable_genes: int
 ) -> list[str]:
     logger.info("Getting best candidates")
     column_for_sorting = config.SCORING_BASE_TO_STABILITY_SCORE_COLUMN[
         candidate_selection_descriptor
     ]
     return (
-        stat_lf.sort(column_for_sorting, descending=False, nulls_last=True)
+        stat_df.sort(column_for_sorting, descending=False, nulls_last=True)
         .head(nb_top_stable_genes)
         .select(config.GENE_ID_COLNAME)
-        .collect()
         .to_series()
         .to_list()
     )
@@ -90,16 +96,13 @@ def filter_out_genes_with_zero_counts(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
 
 
 def filter_out_low_expression_genes(
-    stat_lf: pl.LazyFrame, min_pct_quantile_expr_level: float
-) -> pl.LazyFrame:
+    stat_df: pl.DataFrame, min_pct_quantile_expr_level: float
+) -> pl.DataFrame:
     logger.info("Filtering out low expression genes")
     max_quantile = (
-        stat_lf.select(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
-        .max()
-        .collect()
-        .item()
+        stat_df.select(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME).max().item()
     )
-    return stat_lf.filter(
+    return stat_df.filter(
         pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
         >= max_quantile * min_pct_quantile_expr_level
     )
@@ -131,15 +134,15 @@ def export_data(filtered_count_df: pl.DataFrame):
 def main():
     args = parse_args()
 
-    stat_lf = pl.scan_csv(args.stat_file)
+    stat_df = parse_stats(args.stat_file)
 
     # first basic filters
-    stat_lf = filter_out_low_expression_genes(stat_lf, args.min_pct_quantile_expr_level)
+    stat_df = filter_out_low_expression_genes(stat_df, args.min_pct_quantile_expr_level)
     # stat_lf = filter_out_genes_with_zero_counts(stat_lf)
 
     # get base candidate genes based on the chosen statistical descriptor (cv, rcvm)
     best_candidates = get_best_candidates(
-        stat_lf, args.candidate_selection_descriptor, args.nb_top_stable_genes
+        stat_df, args.candidate_selection_descriptor, args.nb_top_stable_genes
     )
 
     # get counts for candidate genes

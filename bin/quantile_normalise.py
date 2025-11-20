@@ -60,11 +60,13 @@ def quantile_normalise(data: pd.DataFrame, target_distribution: str):
     return normalised_data
 
 
-def export_count_data(quantile_normalized_counts: pd.DataFrame, count_file: Path):
+def export_count_data(count_df: pd.DataFrame, count_file: Path):
     """Export gene expression data to CSV files."""
     outfilename = count_file.name.replace(".csv", QUANT_NORM_SUFFIX)
     logger.info(f"Exporting quantile normalised counts to: {outfilename}")
-    quantile_normalized_counts.reset_index().to_parquet(outfilename)
+    count_df.reset_index(inplace=True)
+    count_df[config.GENE_ID_COLNAME] = count_df[config.GENE_ID_COLNAME].astype(str)
+    count_df.to_parquet(outfilename)
 
 
 #####################################################

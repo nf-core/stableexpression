@@ -187,9 +187,9 @@
                     "type": "string",
                     "description": "Target database for g:Profiler",
                     "fa_icon": "fas fa-divide",
-                    "enum": ["ENTREZGENE", "ENSG"],
-                    "default": "ENTREZGENE",
-                    "help_text": "Target database for g:Profiler. By default, it is set to ENTREZGENE (NCBI Entrez Gene IDs). You can choose to use ENSEMBL IDs instead."
+                    "enum": ["ENSG", "ENTREZGENE", "UNIPROTSPTREMBL", "UNIPROTSWISSPROT"],
+                    "default": "ENSG",
+                    "help_text": "Target database for g:Profiler. You can see the full list of available target databases at https://biit.cs.ut.ee/gprofiler/convert."
                 },
                 "gene_id_mapping_file": {
                     "type": "string",
