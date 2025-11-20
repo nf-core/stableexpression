@@ -16,155 +16,8 @@ nextflow_process {
                         file("$projectDir/tests/test_data/idmapping/base/counts.ensembl_ids.csv", checkIfExists: true)
                     ]
                 )
-                input[1] = "Solanum tuberosum"
+                input[1] = file("$projectDir/tests/test_data/idmapping/mapped/mapped_gene_ids.csv", checkIfExists: true)
                 input[2] = Channel.value([])
-                """
-            }
-        }
-
-        then {
-            assertAll(
-                { assert process.success },
-                { assert snapshot(process.out).match() }
-            )
-        }
-
-    }
-
-    test("Map NCBI IDs") {
-
-        when {
-            process {
-                """
-                input[0] = Channel.of(
-                    [
-                        [ dataset: "test" ],
-                        file("$projectDir/tests/test_data/idmapping/base/counts.ncbi_ids.csv", checkIfExists: true)
-                    ]
-                )
-                input[1] = "Arabidopsis thaliana"
-                input[2] = Channel.value([])
-                input[3] = Channel.value([])
-                """
-            }
-        }
-
-        then {
-            assertAll(
-                { assert process.success },
-                { assert snapshot(process.out).match() }
-            )
-        }
-
-    }
-
-
-    test("Map Uniprot IDs") {
-
-        when {
-            process {
-                """
-                input[0] = Channel.of(
-                    [
-                        [ dataset: "test" ],
-                        file("$projectDir/tests/test_data/idmapping/base/counts.uniprot_ids.csv", checkIfExists: true)
-                    ]
-                )
-                input[1] = "Arabidopsis thaliana"
-                input[2] = Channel.value([])
-                input[3] = Channel.value([])
-                """
-            }
-        }
-
-        then {
-            assertAll(
-                { assert process.success },
-                { assert snapshot(process.out).match() }
-            )
-        }
-
-    }
-
-    test("Empty count file - ignore error") {
-
-        tag "idmapping_empty"
-
-        when {
-            process {
-                """
-                input[0] = Channel.of(
-                    [
-                        [ dataset: "test" ],
-                        file("$projectDir/tests/test_data/idmapping/empty/counts.csv", checkIfExists: true)
-                    ]
-                )
-                input[1] = "Arabidopsis thaliana"
-                input[2] = Channel.value([])
-                input[3] = Channel.value([])
-                """
-            }
-        }
-
-        // check for the absence of expected output (the error is ignored but no output is produced)
-        then {
-            assertAll(
-                { assert process.success },
-                { assert process.out.counts.size() == 0 },
-                { assert process.out.metadata.size() == 0 },
-                { assert process.out.mapping.size() == 0 }
-            )
-        }
-
-    }
-
-    test("Mapping not found - ignore error") {
-
-        tag "idmapping_not_found"
-
-        when {
-            process {
-                """
-                input[0] = Channel.of(
-                    [
-                        [ dataset: "test" ],
-                        file("$projectDir/tests/test_data/idmapping/not_found/counts.csv", checkIfExists: true)
-                    ]
-                )
-                input[1] = "Homo sapiens"
-                input[2] = Channel.value([])
-                input[3] = Channel.value([])
-                """
-            }
-        }
-
-        // check for the absence of expected output (the error is ignored but no output is produced)
-        then {
-            assertAll(
-                { assert process.success },
-                { assert process.out.counts.size() == 0 },
-                { assert process.out.metadata.size() == 0 },
-                { assert process.out.mapping.size() == 0 }
-            )
-        }
-
-    }
-
-    test("Custom mapping") {
-
-        tag "custom_mapping"
-
-        when {
-            process {
-                """
-                input[0] = Channel.of(
-                    [
-                        [ dataset: "test" ],
-                        file("$projectDir/tests/test_data/idmapping/base/counts.ensembl_ids.csv", checkIfExists: true)
-                    ]
-                )
-                input[1] = "Beta vulgaris"
-                input[2] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/custom/mapping.csv", checkIfExists: true)
                 """
             }
         }
@@ -191,8 +44,8 @@ nextflow_process {
                         file("$projectDir/tests/test_data/idmapping/tsv/counts.ensembl_ids.tsv", checkIfExists: true)
                     ]
                 )
-                input[1] = "Beta vulgaris"
-                input[2] = Channel.fromPath( "$projectDir/tests/test_data/idmapping/tsv/mapping.tsv", checkIfExists: true)
+                input[1] = file("$projectDir/tests/test_data/idmapping/mapped/mapped_gene_ids.csv", checkIfExists: true)
+                input[2] = file( "$projectDir/tests/test_data/idmapping/tsv/mapping.tsv", checkIfExists: true)
                 """
             }
         }

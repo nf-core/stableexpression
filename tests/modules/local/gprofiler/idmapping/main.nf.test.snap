@@ -1,5 +1,5 @@
 {
-    "Should run without failures": {
+    "ENtrez - No mapping found": {
         "content": [
             {
                 "0": [
@@ -38,6 +38,47 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-20T16:46:09.976019836"
+        "timestamp": "2025-11-20T18:15:42.597266116"
+    },
+    "ENSG - Mapping found": {
+        "content": [
+            {
+                "0": [
+                    "mapped_gene_ids.csv:md5,c4ef4df6530509b486662a107ba8de44"
+                ],
+                "1": [
+                    "gene_metadata.csv:md5,f4dad0185e6f2d780f561d3efc301562"
+                ],
+                "2": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "python",
+                        "3.13.5"
+                    ]
+                ],
+                "3": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "pandas",
+                        "2.3.1"
+                    ]
+                ],
+                "4": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "requests",
+                        "2.32.4"
+                    ]
+                ],
+                "metadata": [
+                    "gene_metadata.csv:md5,f4dad0185e6f2d780f561d3efc301562"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-11-20T18:15:36.900376779"
     }
 }
