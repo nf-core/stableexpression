@@ -75,6 +75,16 @@ get_rejected_dir <- function(platform, series) {
     return(rejected_dir)
 }
 
+
+clean_column_names <- function(df){
+
+  if (length(unique(colnames(df))) < length(colnames(df))){
+    colnames(df) <- paste0(colnames(df), '_', seq_along(df))
+    return(df)
+  }
+}
+
+
 #####################################################
 #####################################################
 # DOWNLOAD
@@ -462,6 +472,7 @@ get_all_rnaseq_counts <- function(platform) {
               message(paste("Multiple columns found for sample", sample))
             }
 
+            # setting the row names (gene ids) as a column
             counts <- tibble::rownames_to_column(counts, var = "gene_id")
             # adding to list
             count_df_list[[cpt]] <- counts
@@ -479,7 +490,11 @@ get_all_rnaseq_counts <- function(platform) {
           function(df1, df2) merge(df1, df2, by = "gene_id", all = TRUE),
           count_df_list
         )
+        # setting the column gene_id as row names
         joined_df <- tibble::column_to_rownames(joined_df, var = "gene_id")
+        # cleaning column names in case of duplicates
+        # it should happen only when there were multiple columns for the same sample
+        joined_df <- clean_column_names(joined_df)
 
         suppl_count_dfs[[suppl_df_cpt]] <- joined_df
         suppl_df_cpt = suppl_df_cpt + 1
@@ -551,6 +566,8 @@ check_rnaseq_normalisation_state <- function(counts, platform) {
     }
 
   }, error = function(e) {
+      print(head(counts))
+      print(e)
       write_warning(paste(platform$id, ": COULD NOT COMPUTE FLOOR"))
       return("unknown")
   })
