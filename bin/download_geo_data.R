@@ -137,11 +137,41 @@ get_experiment_type <- function(geo_data) {
   }
 }
 
+get_series_species <- function(geo_data) {
+    message("Getting species included in series")
+    species_list <- list()
+    for (i in 1:length(geo_data)) {
+        data <- geo_data[[ i ]]
+        metadata <- pData(data)
+        li <- unique(metadata$organism_ch1)
+        # check if organism_ch2 exists
+        if ("organism_ch2" %in% colnames(metadata)) {
+          li <- append(li, unique(metadata$organism_ch2))
+        }
+        species_list[[i]] <- li
+    }
+    species_list <- unique(unlist(species_list))
+    return(species_list)
+}
 
-get_series_supplementary_data <- function(geo_data) {
-  experiment_data <- get_experiment_data(geo_data)
-  suppl_data_str <- attr(experiment_data, "other")$supplementary_file
-  return(stringr::str_split(suppl_data_str, "\n")[[1]])
+
+get_series_supplementary_data <- function(geo_data, series) {
+    series_species <- get_series_species(geo_data)
+    if (length(series_species) > 1) {
+        message(paste("Multiple species found in series:", paste(series_species, collapse = ", "), ". Will not download supplementary data"))
+        return(list())
+    } else if (length(series_species) == 0) {
+        message("No species found in series...")
+        return(list())
+    } else {
+        if (series_species != series$species) {
+            message(paste("Species provided by the user:", series_species, "does not match species in GEO data:", series$species))
+            return(list())
+        }
+        experiment_data <- get_experiment_data(geo_data)
+        suppl_data_str <- attr(experiment_data, "other")$supplementary_file
+        return(stringr::str_split(suppl_data_str, "\n")[[1]])
+    }
 }
 
 
@@ -173,7 +203,6 @@ get_rnaseq_samples <- function(geo_data, design_df) {
   )
   return(rnaseq_sample_df$geo_accession)
 }
-
 
 
 #####################################################
@@ -480,18 +509,23 @@ is_valid_rnaseq <- function(platform) {
     return(FALSE)
   }
 
+  return(TRUE)
+}
+
+
+check_rnaseq_normalised_state <- function(platform) {
+
   # checking if all values are integers
   tryCatch({
     is_all_integer <- function(x) all(floor(x) == x)
     int_counts <- platform$counts %>% select_if(is_all_integer)
     # if some values were not integers
     if (nrow(int_counts) < nrow(platform$counts)) {
-        write_warning(paste(platform$id, ": NOT ALL INTEGERS"))
-        return(FALSE)
+        return("normalised")
     }
   }, error = function(e) {
       write_warning(paste(platform$id, ": COULD NOT COMPUTE FLOOR"))
-      return(FALSE)
+      return("unknown")
   })
 
   return(TRUE)
@@ -634,7 +668,7 @@ main <- function() {
 
     series$experiment_type <- get_experiment_type(geo_data)
 
-    suppl_data_urls <- get_series_supplementary_data(geo_data)
+    suppl_data_urls <- get_series_supplementary_data(geo_data, series)
     # for now, considering suppl data as raw rnaseq data
     # TODO: check if these are always raw rnaseq data
     if (length(suppl_data_urls) > 0) {
