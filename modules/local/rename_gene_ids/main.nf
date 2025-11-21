@@ -12,7 +12,6 @@ process RENAME_GENE_IDS {
     input:
     tuple val(meta), path(count_file)
     path gene_id_mapping_file
-    path custom_gene_id_mapping_file
 
     output:
     tuple val(meta), path('*.renamed.csv'),                 optional: true,                                           emit: counts
@@ -24,12 +23,10 @@ process RENAME_GENE_IDS {
 
     script:
     def mapping_arg  = gene_id_mapping_file ? "--mappings $gene_id_mapping_file" : ""
-    def custom_mapping_arg  = custom_gene_id_mapping_file ? "--custom-mappings $custom_gene_id_mapping_file" : ""
     """
     rename_gene_ids.py \\
         --count-file "$count_file" \\
-        $mapping_arg \\
-        $custom_mapping_arg
+        $mapping_arg
     """
 
 

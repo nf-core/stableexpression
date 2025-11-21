@@ -38,14 +38,9 @@ def parse_args():
     parser.add_argument(
         "--mappings",
         type=Path,
+        required=True,
         dest="mapping_file",
         help="Mapping file containing gene IDs",
-    )
-    parser.add_argument(
-        "--custom-mappings",
-        type=Path,
-        dest="custom_mapping_file",
-        help="Optional file containing custom mappings",
     )
     return parser.parse_args()
 
@@ -88,24 +83,10 @@ def main():
     # GETTING MAPPINGS
     #############################################################
 
-    mapping_dict = {}
-    if args.mapping_file is not None:
-        mapping_df = parse_table(args.mapping_file)
-        mapping_dict = mapping_df.set_index(config.ORIGINAL_GENE_ID_COLNAME)[
-            config.GENE_ID_COLNAME
-        ].to_dict()
-
-    custom_mapping_dict = {}
-    if args.custom_mapping_file is not None:
-        custom_mapping_df = parse_table(args.custom_mapping_file)
-        custom_mapping_dict = custom_mapping_df.set_index(
-            config.ORIGINAL_GENE_ID_COLNAME
-        )[config.GENE_ID_COLNAME].to_dict()
-
-    mapping_dict |= custom_mapping_dict
-
-    if not mapping_dict:
-        raise ValueError("No mapping found")  # should not happen
+    mapping_df = parse_table(args.mapping_file)
+    mapping_dict = mapping_df.set_index(config.ORIGINAL_GENE_ID_COLNAME)[
+        config.GENE_ID_COLNAME
+    ].to_dict()
 
     #############################################################
     # MAPPING GENE IDS IN DATAFRAME

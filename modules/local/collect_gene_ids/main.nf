@@ -1,5 +1,6 @@
 process COLLECT_GENE_IDS {
 
+    tag "chunk ${task.index}"
     label "process_high"
 
     conda "${moduleDir}/spec-file.txt"

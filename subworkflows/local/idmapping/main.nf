@@ -15,8 +15,8 @@ workflow ID_MAPPING {
     species
     skip_id_mapping
     gprofiler_target_db
-    ch_custom_gene_id_mapping
-    ch_custom_gene_metadata
+    custom_gene_id_mapping
+    custom_gene_metadata
     outdir
 
 
@@ -25,22 +25,41 @@ workflow ID_MAPPING {
     ch_gene_id_mapping = Channel.empty()
     ch_gene_metadata = Channel.empty()
 
-    if ( !params.skip_id_mapping ) {
+    if ( !skip_id_mapping ) {
 
         // -----------------------------------------------------------------
-        // COLLECTING ALL GENE IDS FROm ALL DATASETS
+        // COLLECTING ALL GENE IDS FROM ALL DATASETS
         // -----------------------------------------------------------------
 
-        COLLECT_GENE_IDS(
-            ch_counts.map{ meta, file -> file }.collect()
-        )
+        // here we cannot use directly COLLECT_GENE_IDS for runs comprising a huge number of files (eg. human)
+        // so that we proceed by chunks, and perform a final merging step using the Java VM
+
+        // TRICK:
+        // the buffer operator creates non-deterministic chunks
+        // which prevents resuming the pipeline
+        // so we sort the list of files before buffering them
+        ch_chunck_counts = ch_counts
+                            .map{ meta, file -> file }
+                            .collect( sort: true ) // get all files and sort them
+                            .flatten() // needed to convert the list back to individual channel items
+                            .buffer( size: 100, remainder: true )
+
+        COLLECT_GENE_IDS( ch_chunck_counts )
+
+        ch_gene_ids = COLLECT_GENE_IDS.out.gene_ids
+                        .splitText()
+                        .unique()
+                        .collectFile(
+                            name: 'original_gene_ids.txt',
+                            storeDir: "${outdir}/idmapping/"
+                        )
 
         // -----------------------------------------------------------------
         // MAPPING THESE GENE IDS TO THE CHOSEN TARGET DB
         // -----------------------------------------------------------------
 
         GPROFILER_IDMAPPING(
-            COLLECT_GENE_IDS.out.gene_ids,
+            ch_gene_ids,
             species,
             gprofiler_target_db
         )
@@ -49,53 +68,54 @@ workflow ID_MAPPING {
     }
 
     // -----------------------------------------------------------------
-    // RENAMING GENE IDS IN ALL COUNT DATASETS
-    // -----------------------------------------------------------------
-
-    RENAME_GENE_IDS(
-        ch_counts,
-        ch_gene_id_mapping,
-        ch_custom_gene_id_mapping
-    )
-
-    // -----------------------------------------------------------------
     // COLLECTING GLOBAL GENE ID MAPPING AND METADATA
     // -----------------------------------------------------------------
 
     ch_gene_id_mapping
-        .mix( ch_custom_gene_id_mapping )
-        .filter { it != [] } // handle no custom mappings
+        .mix( custom_gene_id_mapping ? Channel.fromPath( custom_gene_id_mapping, checkIfExists: true ) : Channel.empty() )
         .splitCsv( header: true )
         .unique()
         .collectFile(
             name: 'global_gene_id_mapping.csv',
             seed: "original_gene_id,gene_id",
             newLine: true,
-            storeDir: "${params.outdir}/idmapping/"
+            storeDir: "${outdir}/idmapping/"
         ) {
             item -> "${item["original_gene_id"]},${item["gene_id"]}"
         }
-        .ifEmpty([])
         .set { ch_global_gene_id_mapping }
 
     ch_gene_metadata
-        .mix( ch_custom_gene_metadata )
-        .filter { it != [] } // handle no custom metadata
+        .mix( custom_gene_metadata ? Channel.fromPath( custom_gene_metadata, checkIfExists: true ) : Channel.empty() )
         .splitCsv( header: true )
         .unique()
         .collectFile(
             name: 'global_gene_metadata.csv',
             seed: "gene_id,name,description",
             newLine: true,
-            storeDir: "${params.outdir}/idmapping/"
+            storeDir: "${outdir}/idmapping/"
         ) {
             item -> "${item["gene_id"]},${item["name"]},${item["description"]}"
         }
-        .ifEmpty([])
         .set { ch_global_gene_metadata }
 
+    // -----------------------------------------------------------------
+    // RENAMING GENE IDS IN ALL COUNT DATASETS (ONLY IF NECESSARY)
+    // -----------------------------------------------------------------
+
+    if ( !skip_id_mapping || custom_gene_id_mapping ) {
+
+        RENAME_GENE_IDS(
+            ch_counts,
+            ch_global_gene_id_mapping.first()
+        )
+        ch_counts = RENAME_GENE_IDS.out.counts
+
+    }
+
+
     emit:
-    counts          = RENAME_GENE_IDS.out.counts
+    counts          = ch_counts
     mapping         = ch_global_gene_id_mapping
     metadata        = ch_global_gene_metadata
 

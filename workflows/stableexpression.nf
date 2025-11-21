@@ -94,8 +94,8 @@ workflow STABLEEXPRESSION {
             species,
             params.skip_id_mapping,
             params.gprofiler_target_db,
-            params.gene_id_mapping ? Channel.fromPath( params.gene_id_mapping, checkIfExists: true ) : Channel.value( [] ),
-            params.gene_metadata ?   Channel.fromPath( params.gene_metadata, checkIfExists: true )   : Channel.value( [] ),
+            params.gene_id_mapping,
+            params.gene_metadata,
             params.outdir
         )
         ID_MAPPING.out.counts.set { ch_counts }

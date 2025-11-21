@@ -78,11 +78,10 @@ def main():
     )
 
     if not mapping_dict:
-        msg = "NO MAPPINGS FOUND"
-        logger.warning(msg)
-        with open(FAILURE_REASON_FILE, "w") as f:
-            f.write(msg)
-        sys.exit(0)
+        raise ValueError(
+            f"No mapping found for gene IDs such as {' '.join(gene_ids[:5])} on species {args.species} "
+            + f"and g:Profiler target database {args.gprofiler_target_db}"
+        )
 
     #############################################################
     # WRITING MAPPING
