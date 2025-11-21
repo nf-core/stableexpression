@@ -42,8 +42,11 @@ workflow EXPRESSIONATLAS_FETCHDATA {
             platform
         )
 
+        // removing E-GTEX-* accessions by default because they are too big
+        // however, contrary to E-PROT- accessions, they can be added by the user
         EXPRESSIONATLAS_GETACCESSIONS.out.accessions
             .splitText()
+            .filter { acc -> !acc.startsWith('E-GTEX-') }
             .set { ch_fetched_accessions }
 
     }
@@ -61,7 +64,7 @@ workflow EXPRESSIONATLAS_FETCHDATA {
 
     // appending to accessions provided by the user
     // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
-    // removing E-PROT- accessions
+    // removing E-PROT- accessions because they are not supported in subsequent steps
     // removing excluded accessions
     ch_input_accessions
         .mix( ch_fetched_accessions )
