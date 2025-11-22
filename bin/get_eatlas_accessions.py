@@ -79,12 +79,8 @@ def get_data(url: str) -> dict:
         If the query fails
     """
     response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        raise RuntimeError(
-            f"Failed to retrieve data: encountered error {response.status_code}"
-        )
+    response.raise_for_status()
+    return response.json()
 
 
 def get_experiment_description(exp_dict: dict):
