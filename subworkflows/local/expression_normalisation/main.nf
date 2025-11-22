@@ -1,6 +1,6 @@
-include { NORMALISATION_DESEQ2                 } from '../../../modules/local/normalisation/deseq2'
-include { NORMALISATION_EDGER                  } from '../../../modules/local/normalisation/edger'
-include { QUANTILE_NORMALISATION               } from '../../../modules/local/quantile_normalisation'
+include { NORMALISATION_COMPUTE_CPM as COMPUTE_CPM   } from '../../../modules/local/normalisation/compute_cpm'
+include { NORMALISATION_COMPUTE_CPM as COMPUTE_TPM   } from '../../../modules/local/normalisation/compute_tpm'
+include { QUANTILE_NORMALISATION                     } from '../../../modules/local/quantile_normalisation'
 
 /*
 ========================================================================================
@@ -33,13 +33,13 @@ workflow EXPRESSION_NORMALISATION {
         .map { meta, file -> [ meta, file, meta.design ] }
         .set { ch_raw_rnaseq_datasets_to_normalise }
 
-    if ( normalisation_method == 'deseq2' ) {
-        NORMALISATION_DESEQ2( ch_raw_rnaseq_datasets_to_normalise )
-        ch_raw_rnaseq_datasets_normalised = NORMALISATION_DESEQ2.out.cpm
+    if ( normalisation_method == 'tpm' ) {
+        COMPUTE_TPM( ch_raw_rnaseq_datasets_to_normalise )
+        ch_raw_rnaseq_datasets_normalised = COMPUTE_TPM.out.counts
 
-    } else { // 'edger'
-        NORMALISATION_EDGER( ch_raw_rnaseq_datasets_to_normalise )
-        ch_raw_rnaseq_datasets_normalised = NORMALISATION_EDGER.out.cpm
+    } else { // 'cpm'
+        COMPUTE_CPM( ch_raw_rnaseq_datasets_to_normalise )
+        ch_raw_rnaseq_datasets_normalised = COMPUTE_CPM.out.counts
     }
 
     //

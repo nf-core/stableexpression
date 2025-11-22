@@ -1,6 +1,6 @@
-process RENAME_GENE_IDS {
+process NORMALISATION_COMPUTE_TPM {
 
-    label 'process_low'
+    label 'process_single'
 
     tag "${meta.dataset}"
 
@@ -11,27 +11,17 @@ process RENAME_GENE_IDS {
 
     input:
     tuple val(meta), path(count_file)
-    path gene_id_mapping_file
 
     output:
-    tuple val(meta), path('*.renamed.csv'),                 optional: true,                                           emit: counts
-    tuple val(meta.dataset), path("failure_reason.txt"),    optional: true,                                           topic: renaming_failure_reason
-    tuple val(meta.dataset), path("warning_reason.txt"),    optional: true,                                           topic: renaming_warning_reason
+    tuple val(meta), path('*.tpm.csv'), optional: true,                                                               emit: counts
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),     topic: versions
 
     script:
-    def mapping_arg  = gene_id_mapping_file ? "--mappings $gene_id_mapping_file" : ""
     """
-    rename_gene_ids.py \\
-        --count-file "$count_file" \\
-        $mapping_arg
+    compute_cpm.py \\
+        --counts $count_file
     """
 
-
-    stub:
-    """
-    touch fake_renamed.csv
-    """
 
 }

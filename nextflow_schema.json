@@ -225,9 +225,9 @@
                     "type": "string",
                     "description": "Count normalisation method",
                     "fa_icon": "fas fa-divide",
-                    "enum": ["deseq2", "edger"],
-                    "default": "deseq2",
-                    "help_text": "Raw RNAseq data must be normalised before further processing. You can select the R package used for normalisation."
+                    "enum": ["tpm", "cpm"],
+                    "default": "cpm",
+                    "help_text": "Raw RNAseq data must be normalised before further processing. `tmp offers a more accurate representation of gene expression levels as it is unbiased toward gene length. However, you can choose `cpm` if you do not have access to a genome annotation."
                 },
                 "quantile_norm_target_distrib": {
                     "type": "string",
