@@ -161,12 +161,12 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         AGGREGATE_RESULTS (
-            ch_all_counts,
-            ch_stats_all_genes_with_scores,
+            ch_all_counts.collect(),
+            ch_stats_all_genes_with_scores.collect(),
             BASE_STATISTICS.out.rnaseq_stats.ifEmpty( [] ),
             BASE_STATISTICS.out.microarray_stats.ifEmpty( [] ),
-            MERGE_DATA.out.whole_gene_metadata,
-            MERGE_DATA.out.whole_gene_id_mapping
+            MERGE_DATA.out.whole_gene_metadata.collect(),
+            MERGE_DATA.out.whole_gene_id_mapping.collect()
         )
 
         AGGREGATE_RESULTS.out.all_genes_summary.set { ch_all_genes_summary }
@@ -178,9 +178,9 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         DASH_APP(
-            ch_all_counts,
-            ch_whole_design,
-            ch_all_genes_summary
+            ch_all_counts.collect(),
+            ch_whole_design.collect(),
+            ch_all_genes_summary.collect()
         )
         ch_versions = ch_versions.mix ( DASH_APP.out.versions )
 

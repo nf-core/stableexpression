@@ -1,5 +1,5 @@
 include { NORMALISATION_COMPUTE_CPM as COMPUTE_CPM   } from '../../../modules/local/normalisation/compute_cpm'
-include { NORMALISATION_COMPUTE_CPM as COMPUTE_TPM   } from '../../../modules/local/normalisation/compute_tpm'
+include { NORMALISATION_COMPUTE_TPM as COMPUTE_TPM   } from '../../../modules/local/normalisation/compute_tpm'
 include { QUANTILE_NORMALISATION                     } from '../../../modules/local/quantile_normalisation'
 
 /*
@@ -30,7 +30,6 @@ workflow EXPRESSION_NORMALISATION {
 
     ch_datasets
         .raw.filter { meta, file -> meta.platform == 'rnaseq' }
-        .map { meta, file -> [ meta, file, meta.design ] }
         .set { ch_raw_rnaseq_datasets_to_normalise }
 
     if ( normalisation_method == 'tpm' ) {

@@ -33,7 +33,7 @@ workflow MERGE_DATA {
 
     MERGE_RNASEQ_COUNTS (
         ch_normalised_rnaseq_counts.map { meta, file -> file }.collect(),
-        ch_whole_rnaseq_size
+        ch_whole_rnaseq_size.collect()
     )
     MERGE_RNASEQ_COUNTS.out.counts.set { ch_merged_rnaseq_counts }
 
@@ -46,7 +46,7 @@ workflow MERGE_DATA {
 
     MERGE_MICROARRAY_COUNTS (
         ch_normalised_microarray_counts.map { meta, file -> file }.collect(),
-        ch_whole_microarray_size
+        ch_whole_microarray_size.collect()
     )
     MERGE_MICROARRAY_COUNTS.out.counts.set { ch_merged_microarray_counts }
 
@@ -65,7 +65,7 @@ workflow MERGE_DATA {
 
     MERGE_ALL_COUNTS(
         ch_platform_counts.collect(),
-        ch_whole_size
+        ch_whole_size.collect()
     )
 
     // -----------------------------------------------------------------

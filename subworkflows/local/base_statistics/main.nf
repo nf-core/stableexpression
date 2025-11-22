@@ -22,12 +22,12 @@ workflow BASE_STATISTICS {
     // -----------------------------------------------------------------
 
     COMPUTE_BASE_STATISTICS_FOR_RNASEQ(
-        ch_rnaseq_counts,
+        ch_rnaseq_counts.collect(),
         "rnaseq"
     )
 
     COMPUTE_BASE_STATISTICS_FOR_MICROARRAY(
-        ch_microarray_counts,
+        ch_microarray_counts.collect(),
         "microarray"
     )
 
@@ -36,7 +36,7 @@ workflow BASE_STATISTICS {
     // -----------------------------------------------------------------
 
     COMPUTE_BASE_STATISTICS (
-        ch_all_counts,
+        ch_all_counts.collect(),
         []
     )
 
