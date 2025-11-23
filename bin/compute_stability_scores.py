@@ -46,18 +46,28 @@ class StabilityScorer:
         ):
             self.weights[weight_field] = float(weight)
 
+    """
     @staticmethod
     def quantile_normalise(data: pl.Series, new_name: str) -> pl.Series:
-        """
+        '''
         Quantile normalize a series
-        """
+        '''
         array = data.to_numpy().reshape(-1, 1)
         transformer = QuantileTransformer(output_distribution="uniform", subsample=None)
         normalised_array = transformer.fit_transform(array)
         return pl.Series(new_name, normalised_array.ravel())
+    """
+
+    def linear_normalise(self, data: pl.Series, new_name: str) -> pl.Series:
+        """
+        Linearly normalise a series
+        """
+        min_val = data.min()
+        max_val = data.max()
+        return pl.Series(new_name, (data - min_val) / (max_val - min_val))
 
     @staticmethod
-    def get_normalsed_col(col: str) -> str:
+    def get_normalised_col(col: str) -> str:
         return f"{col}_normalised"
 
     def compute_stability_score(self):
@@ -79,10 +89,8 @@ class StabilityScorer:
             data = candidate_df.select(col).to_series()
             # for each column present, we quantile normalise the data to have values between 0 and 1
             # and put these normalised data in another column suffixed with "_normalised"
-            normalised_col = self.get_normalsed_col(col)
-            normalised_data[col] = self.quantile_normalise(
-                data, new_name=normalised_col
-            )
+            normalised_col = self.get_normalised_col(col)
+            normalised_data[col] = self.linear_normalise(data, new_name=normalised_col)
             # creating a null column with same name
             null_data[col] = pl.Series(normalised_col, [None] * len(non_candidate_df))
             # counting the sum of weights corresponding to the columns present
@@ -115,7 +123,7 @@ class StabilityScorer:
             if col not in self.df.columns:
                 logger.warning(f"Column {col} not found in dataframe")
                 continue
-            normalised_col = self.get_normalsed_col(col)
+            normalised_col = self.get_normalised_col(col)
             # we do not want to include null / nan values in the stability score calculation
             # because this would result in a total null / nan value for the stability score
             stability_scoring_expr += (
