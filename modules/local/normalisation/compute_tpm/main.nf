@@ -1,6 +1,6 @@
 process NORMALISATION_COMPUTE_TPM {
 
-    label 'process_single'
+    label 'process_low'
 
     tag "${meta.dataset}"
 
@@ -11,6 +11,7 @@ process NORMALISATION_COMPUTE_TPM {
 
     input:
     tuple val(meta), path(count_file)
+    path gene_lengths_file
 
     output:
     tuple val(meta), path('*.tpm.csv'), optional: true,                                                               emit: counts
@@ -19,8 +20,9 @@ process NORMALISATION_COMPUTE_TPM {
 
     script:
     """
-    compute_cpm.py \\
-        --counts $count_file
+    compute_tpm.py \\
+        --counts $count_file \\
+        --gene-lengths $gene_lengths_file
     """
 
 

@@ -6,12 +6,13 @@ import argparse
 import logging
 from pathlib import Path
 
+import config
 import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-OUTFILE = "gene_lengths.csv"
+OUTFILE = "gene_transcript_lengths.csv"
 
 GFF_COLUMNS = [
     "chromosome",
@@ -75,9 +76,11 @@ def compute_transcript_lengths(df: pd.DataFrame):
         r"Parent=transcript:([^;]+)"
     )
     # compute transcript length
-    exon_df["length"] = exon_df["end"] - exon_df["start"] + 1
-    exon_df = exon_df[["transcript_id", "length"]]
-    return exon_df.groupby("transcript_id", as_index=False).agg({"length": "sum"})
+    exon_df[config.CDNA_LENGTH_COLNAME] = exon_df["end"] - exon_df["start"] + 1
+    exon_df = exon_df[["transcript_id", config.CDNA_LENGTH_COLNAME]]
+    return exon_df.groupby("transcript_id", as_index=False).agg(
+        {config.CDNA_LENGTH_COLNAME: "sum"}
+    )
 
 
 def compute_max_transcript_lengths_per_gene(
@@ -91,7 +94,9 @@ def compute_max_transcript_lengths_per_gene(
     rna_df = df.loc[df["feature"].isin(rna_cols)].copy()
 
     # extract gene ID from attributes column for each transcript
-    rna_df["gene_id"] = rna_df["attributes"].str.extract(r"Parent=gene:([^;]+)")
+    rna_df[config.GENE_ID_COLNAME] = rna_df["attributes"].str.extract(
+        r"Parent=gene:([^;]+)"
+    )
     # extract transcript ID from attributes column
     rna_df["transcript_id"] = rna_df["attributes"].str.extract(r"ID=transcript:([^;]+)")
 
@@ -101,8 +106,10 @@ def compute_max_transcript_lengths_per_gene(
         f"Got length for {len(merged_df) / len(rna_df) * 100:.2f}% of transcripts"
     )
     # compute max transcript length per gene
-    merged_df = merged_df[["gene_id", "length"]]
-    return merged_df.groupby("gene_id", as_index=False).agg({"length": "max"})
+    merged_df = merged_df[[config.GENE_ID_COLNAME, config.CDNA_LENGTH_COLNAME]]
+    return merged_df.groupby(config.GENE_ID_COLNAME, as_index=False).agg(
+        {config.CDNA_LENGTH_COLNAME: "max"}
+    )
 
 
 ##################################################################

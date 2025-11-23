@@ -2,6 +2,8 @@ include { NORMALISATION_COMPUTE_CPM as COMPUTE_CPM   } from '../../../modules/lo
 include { NORMALISATION_COMPUTE_TPM as COMPUTE_TPM   } from '../../../modules/local/normalisation/compute_tpm'
 include { QUANTILE_NORMALISATION                     } from '../../../modules/local/quantile_normalisation'
 
+include { GET_TRANSCRIPT_LENGTHS                     } from '../../../subworkflows/local/get_transcript_lengths'
+
 /*
 ========================================================================================
     SUBWORKFLOW TO NORMALISE AND HARMONISE EXPRESSION DATASETS
@@ -11,6 +13,7 @@ include { QUANTILE_NORMALISATION                     } from '../../../modules/lo
 workflow EXPRESSION_NORMALISATION {
 
     take:
+    species
     ch_datasets
     normalisation_method
     quantile_norm_target_distrib
@@ -33,7 +36,15 @@ workflow EXPRESSION_NORMALISATION {
         .set { ch_raw_rnaseq_datasets_to_normalise }
 
     if ( normalisation_method == 'tpm' ) {
-        COMPUTE_TPM( ch_raw_rnaseq_datasets_to_normalise )
+
+        // download genome annotation
+        // and computing length of the longest transcript gene per gene
+        GET_TRANSCRIPT_LENGTHS (species)
+
+        COMPUTE_TPM(
+            ch_raw_rnaseq_datasets_to_normalise,
+            GET_TRANSCRIPT_LENGTHS.out.csv
+        )
         ch_raw_rnaseq_datasets_normalised = COMPUTE_TPM.out.counts
 
     } else { // 'cpm'

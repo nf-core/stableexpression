@@ -109,6 +109,7 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         EXPRESSION_NORMALISATION(
+            species,
             ch_counts,
             params.normalisation_method,
             params.quantile_norm_target_distrib

@@ -29,11 +29,11 @@ def parse_args():
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
     parser.add_argument(
-        "--annotation",
+        "--gene-lengths",
         type=Path,
-        dest="annotation_file",
+        dest="gene_lengths_file",
         required=True,
-        help="Gene annotation file (GFF format)",
+        help="Gene lengths file (CSV format)",
     )
     return parser.parse_args()
 
@@ -45,22 +45,17 @@ def parse_counts(file: Path):
         return pd.read_csv(file, header=0, sep="\t", index_col=0)
 
 
-def parse_annotation(file: Path) -> pd.DataFrame:
-    pass
-
-
-def get_cdna_lengths(annotation_df: pd.DataFrame) -> pd.DataFrame:
-    pass
-
-
 def reorder_gene_lengths(
     count_df: pd.DataFrame, cdna_length_df: pd.DataFrame
-) -> tuple[pd.DataFrame, pd.Series]:
+) -> pd.Series:
     # merge with gene length and extracts it afterwards
     # so that the genes are in the same order in df and in cdna_length_series
-    gene_id_df = pd.DataFrame({"gene_id": count_df.index})
-    gene_id_df = pd.merge(gene_id_df, cdna_length_df, how="left", on="gene_id")
+    gene_id_df = pd.DataFrame({config.GENE_ID_COLNAME: count_df.index})
+    gene_id_df = pd.merge(
+        gene_id_df, cdna_length_df, how="left", on=config.GENE_ID_COLNAME
+    )
     cdna_length_series = gene_id_df[config.CDNA_LENGTH_COLNAME].astype(float)
+    cdna_length_series.index = gene_id_df[config.GENE_ID_COLNAME]
     return cdna_length_series
 
 
@@ -123,9 +118,7 @@ def main():
     count_df = parse_counts(args.count_file)
     count_df.index.name = config.GENE_ID_COLNAME
 
-    annotation_df = parse_annotation(args.annotation_file)
-
-    cdna_length_df
+    cdna_length_df = pd.read_csv(args.gene_lengths_file, header=0)
 
     logger.info("Reordering gene lengths")
     cdna_length_series = reorder_gene_lengths(count_df, cdna_length_df)
@@ -133,7 +126,7 @@ def main():
     logger.info(f"Normalising {args.count_file.name}")
 
     count_df = compute_tpm(count_df, cdna_length_series)
-
+    print(count_df)
     export_normalised_data(count_df, args.count_file)
 
 
