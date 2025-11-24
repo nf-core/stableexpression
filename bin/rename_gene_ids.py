@@ -112,6 +112,7 @@ def main():
     else:
         logger.info(f"All genes were mapped ({len(df)} out of {original_nb_genes})")
 
+    logger.info("Renaming gene names")
     # renaming gene names to mapped ids using mapping dict
     df.index = df.index.map(mapping_dict)
     df.reset_index(inplace=True)
@@ -127,6 +128,7 @@ def main():
     # handling cases where multiple genes have the same Gene ID
     # since subsequent steps in the pipeline require integer values,
     # we need to ensure that the resulting DataFrame has integer values
+    logger.info("Computing mean counts for genes with duplicate IDs")
     df = df.groupby(config.GENE_ID_COLNAME, as_index=False, sort=False).agg(
         lambda x: x.mean().astype(int)
     )
@@ -135,6 +137,8 @@ def main():
     # WRITING OUTFILES
     #############################################################
     # writing to output file
+
+    logger.info("Writing output file")
     outfile = args.count_file.with_name(args.count_file.stem + RENAMED_FILE_SUFFIX)
     df.to_csv(outfile, index=False, header=True)
 

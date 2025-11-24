@@ -82,7 +82,7 @@ workflow MULTIQC_WORKFLOW {
         ) {
             item -> "${item[0]}\t${item[1]}"
         }
-        .set { ch_id_mapping_failure_reasons }
+        .set { ch_id_mapping_warning_reasons }
 
     Channel.topic('renaming_failure_reason')
         .map { accession, file -> [ accession, file.readLines()[0] ] }
@@ -96,18 +96,6 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_id_mapping_failure_reasons }
 
-    Channel.topic('normalisation_failure_reason')
-        .map { accession, file -> [ accession, file.readLines()[0] ] }
-        .collectFile(
-            name: 'normalisation_failure_reasons.tsv',
-            seed: "Dataset\tReason",
-            newLine: true,
-            storeDir: "${params.outdir}/errors/"
-        ) {
-            item -> "${item[0]}\t${item[1]}"
-        }
-        .set { ch_normalisation_failure_reasons }
-
     Channel.topic('normalisation_warning_reason')
         .map { accession, file -> [ accession, file.readLines()[0] ] }
         .collectFile(
@@ -119,6 +107,18 @@ workflow MULTIQC_WORKFLOW {
             item -> "${item[0]}\t${item[1]}"
         }
         .set { ch_normalisation_warning_reasons }
+
+    Channel.topic('normalisation_failure_reason')
+        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .collectFile(
+            name: 'normalisation_failure_reasons.tsv',
+            seed: "Dataset\tReason",
+            newLine: true,
+            storeDir: "${params.outdir}/errors/"
+        ) {
+            item -> "${item[0]}\t${item[1]}"
+        }
+        .set { ch_normalisation_failure_reasons }
 
 
     // ------------------------------------------------------------------------------------
@@ -135,6 +135,7 @@ workflow MULTIQC_WORKFLOW {
         .mix( Channel.topic('geo_rejected_datasets').collect() )
         .mix( ch_geo_failure_reasons )
         .mix( ch_geo_warning_reasons )
+        .mix( ch_id_mapping_warning_reasons )
         .mix( ch_id_mapping_failure_reasons )
         .mix( ch_normalisation_failure_reasons )
         .mix( ch_normalisation_warning_reasons )

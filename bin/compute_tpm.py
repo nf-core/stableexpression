@@ -4,6 +4,7 @@
 
 import argparse
 import logging
+import sys
 from pathlib import Path
 
 import config
@@ -14,6 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 TPM_NORM_SUFFIX = ".tpm.csv"
+
+WARNING_REASON_FILE = "warning_reason.txt"
+FAILURE_REASON_FILE = "failure_reason.txt"
 
 
 #####################################################
@@ -114,20 +118,29 @@ def export_normalised_data(count_df: pd.DataFrame, count_file: Path):
 def main():
     args = parse_args()
 
-    logger.info("Parsing data")
-    count_df = parse_counts(args.count_file)
-    count_df.index.name = config.GENE_ID_COLNAME
+    try:
+        logger.info("Parsing data")
+        count_df = parse_counts(args.count_file)
+        count_df.index.name = config.GENE_ID_COLNAME
 
-    cdna_length_df = pd.read_csv(args.gene_lengths_file, header=0)
+        cdna_length_df = pd.read_csv(args.gene_lengths_file, header=0)
 
-    logger.info("Reordering gene lengths")
-    cdna_length_series = reorder_gene_lengths(count_df, cdna_length_df)
+        logger.info("Reordering gene lengths")
+        cdna_length_series = reorder_gene_lengths(count_df, cdna_length_df)
 
-    logger.info(f"Normalising {args.count_file.name}")
+        logger.info(f"Normalising {args.count_file.name}")
 
-    count_df = compute_tpm(count_df, cdna_length_series)
-    print(count_df)
-    export_normalised_data(count_df, args.count_file)
+        count_df = compute_tpm(count_df, cdna_length_series)
+
+        export_normalised_data(count_df, args.count_file)
+
+    except Exception as e:
+        logger.error(f"Error occurred while normalising data: {e}")
+        msg = "UNEXPECTED ERROR"
+        logger.error(msg)
+        with open(FAILURE_REASON_FILE, "w") as f:
+            f.write(msg)
+        sys.exit(0)
 
 
 if __name__ == "__main__":

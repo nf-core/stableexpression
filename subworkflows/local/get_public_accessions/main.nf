@@ -98,6 +98,9 @@ workflow GET_PUBLIC_ACCESSIONS {
     ch_fetched_public_accessions = ch_fetched_eatlas_accessions
         .mix( ch_fetched_geo_accessions )
         .map { acc -> acc.trim() }
+        .filter { acc ->
+            (acc.startsWith('E-') || acc.startsWith('GSE')) && !acc.startsWith('E-PROT-')
+        }
         .combine ( ch_excluded_accessions )
         .filter { accession, excluded_accessions -> !(accession in excluded_accessions) }
         .map { accession, excluded_accessions -> accession }
@@ -113,7 +116,7 @@ workflow GET_PUBLIC_ACCESSIONS {
             ch_fetched_public_accessions = ch_fetched_public_accessions.randomSample( random_sampling_size )
         }
     }
-    ch_fetched_public_accessions.view()
+
     // -----------------------------------------------------------------
     // ADDING USER PROVIDED ACCESSIONS
     // -----------------------------------------------------------------
@@ -131,10 +134,6 @@ workflow GET_PUBLIC_ACCESSIONS {
         .mix( ch_fetched_public_accessions )
         .unique()
         .map { acc -> acc.trim() }
-        .filter { acc ->
-            (acc.startsWith('E-') || acc.startsWith('GSE')) && !acc.startsWith('E-PROT-')
-        }
-
 
     emit:
     accessions          = ch_accessions
