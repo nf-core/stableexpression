@@ -4,8 +4,8 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { EXPRESSIONATLAS_FETCHDATA              } from '../subworkflows/local/expressionatlas_fetchdata'
-include { GEO_FETCHDATA                          } from '../subworkflows/local/geo_fetchdata'
+include { GET_PUBLIC_ACCESSIONS                  } from '../subworkflows/local/get_public_accessions'
+include { DOWNLOAD_PUBLIC_DATASETS               } from '../subworkflows/local/download_public_datasets'
 include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
 include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
@@ -33,6 +33,9 @@ workflow STABLEEXPRESSION {
 
     main:
 
+    ch_accessions = Channel.empty()
+    ch_counts = Channel.empty()
+
     ch_versions = Channel.empty()
     ch_multiqc_files = Channel.empty()
 
@@ -43,38 +46,39 @@ workflow STABLEEXPRESSION {
     def species = params.species.split(' ').join('_').toLowerCase()
 
     // -----------------------------------------------------------------
-    // FETCH AND DOWNLOAD EXPRESSION ATLAS DATASETS IF NEEDED
+    // FETCH PUBLIC ACCESSIONS
     // -----------------------------------------------------------------
 
-    EXPRESSIONATLAS_FETCHDATA( species )
-    EXPRESSIONATLAS_FETCHDATA.out.downloaded_datasets.set { ch_eatlas_downloaded_datasets }
-
-    // -----------------------------------------------------------------
-    // FETCH AND DOWNLOAD GEO DATASETS IF NEEDED
-    // -----------------------------------------------------------------
-
-    GEO_FETCHDATA (
+    GET_PUBLIC_ACCESSIONS(
         species,
+        params.skip_fetch_public_accessions,
+        params.skip_fetch_eatlas_accessions,
         params.skip_fetch_geo_accessions,
-        params.accessions_only,
         params.platform,
         params.keywords,
-        params.geo_accessions,
-        params.geo_accessions_file,
-        params.exclude_geo_accessions,
-        params.exclude_geo_accessions_file,
-        EXPRESSIONATLAS_FETCHDATA.out.accessions,
-        ch_eatlas_downloaded_datasets.count(),
-        params.min_nb_eatlas_datasets_auto_skip_geo,
+        Channel.fromList( params.accessions.tokenize(',') ),
+        params.accessions_file ? Channel.fromPath(params.accessions_file, checkIfExists: true) : Channel.empty(),
+        Channel.fromList( params.excluded_accessions.tokenize(',') ),
+        params.excluded_accessions_file ? Channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : Channel.empty(),
+        params.random_sampling_size,
+        params.random_sampling_seed,
         params.outdir
-    )
+        )
+    ch_accessions = GET_PUBLIC_ACCESSIONS.out.accessions
 
+    // -----------------------------------------------------------------
+    // DOWNLOAD GEO DATASETS IF NEEDED
+    // -----------------------------------------------------------------
 
-    // putting all datasets together (local datasets + Expression Atlas datasets)
-    ch_input_datasets
-        .concat( ch_eatlas_downloaded_datasets )
-        .concat( GEO_FETCHDATA.out.downloaded_datasets )
-        .set { ch_counts }
+    if ( !params.accessions_only) {
+
+        DOWNLOAD_PUBLIC_DATASETS (
+            species,
+            ch_accessions
+        )
+        ch_counts = DOWNLOAD_PUBLIC_DATASETS.out.datasets
+
+    }
 
     // store nb of genes and nb f samples at this stage in the meta maps
     ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )

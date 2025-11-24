@@ -173,9 +173,9 @@ nextflow_workflow {
             params {
                 species = "solanum tuberosum"
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690"
-                exclude_eatlas_accessions = "E-MTAB-4251"
+                excluded_eatlas_accessions = "E-MTAB-4251"
                 eatlas_accessions_file = file( '$projectDir/tests/test_data/misc/accessions_to_include.txt.txt', checkIfExists: true)
-                exclude_eatlas_accessions_file = file( '$projectDir/tests/test_data/misc/excluded_accessions.txt', checkIfExists: true)
+                excluded_eatlas_accessions_file = file( '$projectDir/tests/test_data/misc/excluded_accessions.txt', checkIfExists: true)
             }
             workflow {
                 """

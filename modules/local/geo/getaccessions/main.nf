@@ -14,7 +14,6 @@ process GEO_GETACCESSIONS {
     val keywords
     val platform
     path excluded_accessions_file
-    val accessions
 
     output:
     path "accessions.txt",                     optional: true,          emit: accessions
@@ -41,9 +40,6 @@ process GEO_GETACCESSIONS {
     }
     if ( excluded_accessions_file != [] ) {
         args += " --exclude-accessions-in $excluded_accessions_file"
-    }
-    if ( accessions != 'none' ) {
-        args += " --accessions $accessions"
     }
     // the folder where nltk will download data needs to be writable (necessary for singularity)
     """

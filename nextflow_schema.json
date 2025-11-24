@@ -76,62 +76,23 @@
                 }
             }
         },
-        "expression_atlas_options": {
-            "title": "Expression Atlas options",
+        "public_data_options": {
+            "title": "Public data options",
             "type": "object",
             "fa_icon": "fas fa-book-atlas",
-            "description": "Options for fetching experiment data from Expression Atlas.",
+            "description": "Options for fetching experiment data from Expression Atlas / GEO.",
             "properties": {
+                "skip_fetch_public_accessions": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-cloud-arrow-down",
+                    "description": "Skip fetching public accessions",
+                    "help_text": "Expression Atlas / GEO accessions are automatically fetched by default. Set this parameter to skip this step. Equivalent to `--skip_fetch_eatlas_accessions --skip_fetch_geo_accessions`"
+                },
                 "skip_fetch_eatlas_accessions": {
                     "type": "boolean",
                     "fa_icon": "fas fa-cloud-arrow-down",
                     "description": "Skip fetching Expression Atlas accessions",
                     "help_text": "Expression Atlas accessions are automatically fetched by default. Set this parameter to skip this step."
-                },
-                "eatlas_accessions": {
-                    "type": "string",
-                    "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Expression Atlas accession(s) to include",
-                    "fa_icon": "fas fa-address-card",
-                    "help_text": "Provide Expression Atlas accession(s) that you want to download. The accessions should be comma-separated. Example: `--eatlas_accessions E-MTAB-552,E-GEOD-61690`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
-                },
-                "eatlas_accessions_file": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "description": "File containing Expression Atlas accession(s) to download",
-                    "fa_icon": "fas fa-file",
-                    "help_text": "File containing Expression Atlas accession(s) that you want to download. One accession per line. Example: `--eatlas_accessions_file included_accessions.txt`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used."
-                },
-                "exclude_eatlas_accessions": {
-                    "type": "string",
-                    "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Expression Atlas accession(s) to exclude",
-                    "fa_icon": "fas fa-id-card",
-                    "help_text": "Provide Expression Atlas accession(s) that you want to exclude. The accessions should be comma-separated. Example: `--exclude_eatlas_accessions E-MTAB-552,E-GEOD-61690`"
-                },
-                "exclude_eatlas_accessions_file": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "description": "File containing Expression Atlas accession(s) to exclude",
-                    "fa_icon": "fas fa-file",
-                    "help_text": "File containing Expression Atlas accession(s) that you want to exclude. One accession per line. Example: `--exclude_eatlas_accessions_file excluded_accessions.txt`."
-                }
-            }
-        },
-        "geo_dataset_options": {
-            "title": "GEO dataset options",
-            "type": "object",
-            "fa_icon": "fas fa-book-atlas",
-            "description": "Options for fetching datasets from NCBI GEO.",
-            "properties": {
-                "min_nb_eatlas_datasets_auto_skip_geo": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "default": 1500,
-                    "description": "Automatically skip fetching GEO datasets when the number of downloaded Expression Atlas datasets exceeds this threshold.",
-                    "help_text": "By default, both Expression Atlas and GEO datasets are fetched. If enough Expression Atlas datasets are downloaded, fetching GEO accessing and downloading datasets will be skipped automatically. As of November 2025, this feature was made specifically for `homo sapiens`, for which the overall number of datasets largely exceeds usual needs."
                 },
                 "skip_fetch_geo_accessions": {
                     "type": "boolean",
@@ -139,35 +100,35 @@
                     "description": "Skip fetching GEO accessions",
                     "help_text": "GEO accessions are automatically fetched by default. Set this parameter to skip this step."
                 },
-                "geo_accessions": {
+                "accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "GEO accession(s) to include",
-                    "fa_icon": "fas fa-id-card",
-                    "help_text": "Provide GEO accessions that you want to download. The accessions should be comma-separated. Example: `--geo_accessions GSE8165,GSE8161`. Combine with --skip_fetch_geo_accessions if you want only these accessions to be used."
+                    "description": "Expression Atlas / GEO accession(s) to include",
+                    "fa_icon": "fas fa-address-card",
+                    "help_text": "Provide Expression Atlas / GEO accession(s) that you want to download. The accessions should be comma-separated. Example: `--accessions E-MTAB-552,E-GEOD-61690,GSE8165,GSE8161`. Combine with --skip_fetch_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions."
                 },
-                "geo_accessions_file": {
+                "accessions_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "description": "File containing GEO accession(s) to download",
+                    "description": "File containing Expression Atlas / GEO accession(s) to download",
                     "fa_icon": "fas fa-file",
-                    "help_text": "File containing GEO series accession(s) that you want to download. One accession per line. Example: `--geo_accessions_file included_accessions.txt`. Combine with --skip_fetch_geo_accessions if you want only these accessions to be used."
+                    "help_text": "File containing Expression Atlas / GEO accession(s) that you want to download. One accession per line. Example: `--accessions_file included_accessions.txt`. Combine with --skip_fetch_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions."
                 },
-                "exclude_geo_accessions": {
+                "excluded_accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "GEO accession(s) to exclude",
+                    "description": "Expression Atlas accession(s) to exclude",
                     "fa_icon": "fas fa-id-card",
-                    "help_text": "Provide GEO accessions that you want to exclude. The accessions should be comma-separated. Example: `--exclude_geo_accessions GSE8165,GSE8161`"
+                    "help_text": "Provide Expression Atlas / GEO accession(s) that you want to exclude. The accessions should be comma-separated. Example: `--excluded_accessions E-MTAB-552,E-GEOD-61690`"
                 },
-                "exclude_geo_accessions_file": {
+                "excluded_accessions_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "description": "File containing GEO accession(s) to exclude",
+                    "description": "File containing Expression Atlas accession(s) to exclude",
                     "fa_icon": "fas fa-file",
-                    "help_text": "File containing GEO series accession(s) that you want to exclude. One accession per line. Example: `--exclude_geo_accessions_file excluded_accessions.txt`."
+                    "help_text": "File containing Expression Atlas / GEO accession(s) that you want to exclude. One accession per line. Example: `--excluded_accessions_file excluded_accessions.txt`."
                 }
             }
         },
@@ -289,6 +250,28 @@
                     "fa_icon": "fas fa-balance-scale",
                     "help_text": "Weights for Coefficient of Variation / Robust Coefficient of Variation on Median / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.8,0.1,0.1,0",
                     "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$"
+                }
+            }
+        },
+        "scalability_options": {
+            "title": "Scalability options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Options to improve pipeline scalability and robustness",
+            "properties": {
+                "random_sampling_size": {
+                    "type": "integer",
+                    "description": "Number of public dataset accessions (Expression Atlas + GEO) to sample randomly before downloading.",
+                    "fa_icon": "fas fa-sort-numeric-up-alt",
+                    "minimum": 1,
+                    "help_text": "When dealing with species for which there is a large number (eg. >1000) of public datasets, users may encounter RAM issues (eg. errors with `137` exit codes). In such cases, it is recommended to sample a random subset of these datasets to reduce the computational load. The subsampling is performed after getting proper accessions from Expression Atlas and GEO, AFTER excluding unwanted accessions (obtained through `--excluded_accessions` or `--excluded_accession_file`) but BEFORE including user provided accessions (obtained through `--accessions` or `--accession_file`)."
+                },
+                "random_sampling_seed": {
+                    "type": "integer",
+                    "description": "Seed for dataset random sampling.",
+                    "fa_icon": "fas fa-sort-numeric-up-alt",
+                    "minimum": 0,
+                    "help_text": "Seed for dataset random sampling. This ensures reproducibility of the random sampling process. Changing the seed will result in a different random sample being selected."
                 }
             }
         },
@@ -455,10 +438,7 @@
             "$ref": "#/$defs/input_output_options"
         },
         {
-            "$ref": "#/$defs/expression_atlas_options"
-        },
-        {
-            "$ref": "#/$defs/geo_dataset_options"
+            "$ref": "#/$defs/public_data_options"
         },
         {
             "$ref": "#/$defs/idmapping_options"
@@ -468,6 +448,9 @@
         },
         {
             "$ref": "#/$defs/stability_scoring_options"
+        },
+        {
+            "$ref": "#/$defs/scalability_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"

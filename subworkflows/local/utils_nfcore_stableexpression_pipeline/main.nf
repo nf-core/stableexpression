@@ -176,15 +176,15 @@ def validateInputParameters(params) {
     }
 
     // if expression atlas accessions are provided, checking that they are well formated
-    if ( params.eatlas_accessions ) {
-        params.eatlas_accessions.tokenize(',').each { accession ->
-            if ( !accession.startsWith('E-') ) {
-                error('Expression Atlas accession ' + accession + ' is not well formated. All accessions should start with "E-".')
+    if ( params.accessions ) {
+        params.accessions.tokenize(',').each { accession ->
+            if ( !accession.startsWith('E-') || !accession.startsWith('GSE') ) {
+                error('Accession ' + accession + ' is not well formated. All accessions should start with "E-" or "GSE".')
             }
         }
     }
 
-    if ( params.keywords && params.skip_fetch_eatlas_accessions && params.skip_fetch_geo_accessions ) {
+    if ( params.keywords && ( params.skip_fetch_public_accessions || ( params.skip_fetch_eatlas_accessions && params.skip_fetch_geo_accessions ) ) ) {
         log.warn "Ignoring keywords as accessions will not be fetched from Expression Atlas or GEO"
     }
 
@@ -431,22 +431,4 @@ def checkCounts(ch_counts) {
             log.warn(msg)
         }
     }
-}
-
-def geoDatasetsToFetch(ch_nb_downloaded_eatlas_datasets, threshold) {
-    // display a warning if no datasets are found
-    def msg = [
-        "More than ${threshold} Expression Atlas datasets found. ",
-        "Will skip fetching GEO dataset accessions"
-    ].join("\n").trim()
-
-    return ch_nb_downloaded_eatlas_datasets
-        .map { n ->
-            if( n >= threshold ) {
-                log.warn(msg)
-                return false
-            } else {
-                return true
-            }
-        }
 }

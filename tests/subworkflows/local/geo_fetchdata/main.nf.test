@@ -19,8 +19,8 @@ nextflow_workflow {
                 input[4] = "" // keywords
                 input[5] = "" // geo_accessions
                 input[6] = null // geo_accessions_file
-                input[7] = "" // exclude_geo_accessions
-                input[8] = null // exclude_geo_accessions_file
+                input[7] = "" // excluded_geo_accessions
+                input[8] = null // excluded_geo_accessions_file
                 input[9] = Channel.empty() // ch_eatlas_excluded_accessions
                 input[10] = Channel.value(1) // ch_nb_downloaded_eatlas_datasets
                 input[11] = 1500 // min_nb_eatlas_datasets_auto_skip_geo
@@ -51,8 +51,8 @@ nextflow_workflow {
                 input[4] = "" // keywords
                 input[5] = "" // geo_accessions
                 input[6] = null // geo_accessions_file
-                input[7] = "" // exclude_geo_accessions
-                input[8] = null // exclude_geo_accessions_file
+                input[7] = "" // excluded_geo_accessions
+                input[8] = null // excluded_geo_accessions_file
                 input[9] = Channel.empty() // ch_eatlas_excluded_accessions
                 input[10] = Channel.value(1) // ch_nb_downloaded_eatlas_datasets
                 input[11] = 1500 // min_nb_eatlas_datasets_auto_skip_geo
@@ -84,8 +84,8 @@ nextflow_workflow {
                 input[4] = "leaf" // keywords
                 input[5] = "GSE55951" // geo_accessions
                 input[6] = null // geo_accessions_file
-                input[7] = "GSE79526" // exclude_geo_accessions
-                input[8] = file( '$projectDir/tests/test_data/geo/get_accessions/exclude_two_accessions.txt', checkIfExists: true ) // exclude_geo_accessions_file
+                input[7] = "GSE79526" // excluded_geo_accessions
+                input[8] = file( '$projectDir/tests/test_data/geo/get_accessions/exclude_two_accessions.txt', checkIfExists: true ) // excluded_geo_accessions_file
                 input[9] = Channel.empty() // ch_eatlas_excluded_accessions
                 input[10] = Channel.value(1) // ch_nb_downloaded_eatlas_datasets
                 input[11] = 1500 // min_nb_eatlas_datasets_auto_skip_geo
@@ -117,8 +117,8 @@ nextflow_workflow {
                 input[4] = "" // keywords
                 input[5] = "GSE55951" // geo_accessions
                 input[6] = null // geo_accessions_file
-                input[7] = "" // exclude_geo_accessions
-                input[8] = null // exclude_geo_accessions_file
+                input[7] = "" // excluded_geo_accessions
+                input[8] = null // excluded_geo_accessions_file
                 input[9] = Channel.empty() // ch_eatlas_excluded_accessions
                 input[10] = Channel.value(10) // ch_nb_downloaded_eatlas_datasets
                 input[11] = 10 // min_nb_eatlas_datasets_auto_skip_geo

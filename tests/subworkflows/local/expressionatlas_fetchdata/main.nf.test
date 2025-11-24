@@ -13,7 +13,7 @@ nextflow_workflow {
             params {
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
                 eatlas_accessions_file = null
-                exclude_eatlas_accessions_file = null
+                excluded_eatlas_accessions_file = null
                 keywords = "potato,stress"
                 skip_fetch_eatlas_accessions = false
                 accessions_only = false
@@ -43,7 +43,7 @@ nextflow_workflow {
             params {
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
                 eatlas_accessions_file = null
-                exclude_eatlas_accessions_file = null
+                excluded_eatlas_accessions_file = null
                 keywords = "potato,stress"
                 skip_fetch_eatlas_accessions = false
                 accessions_only = true
@@ -72,7 +72,7 @@ nextflow_workflow {
             params {
                 eatlas_accessions = ""
                 eatlas_accessions_file = null
-                exclude_eatlas_accessions_file = null
+                excluded_eatlas_accessions_file = null
                 keywords = ""
                 skip_fetch_eatlas_accessions = false
                 accessions_only = false
@@ -101,7 +101,7 @@ nextflow_workflow {
             params {
                 eatlas_accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
                 eatlas_accessions_file = null
-                exclude_eatlas_accessions_file = null
+                excluded_eatlas_accessions_file = null
                 keywords = ""
                 skip_fetch_eatlas_accessions = false
                 accessions_only = false
