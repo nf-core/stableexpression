@@ -4,7 +4,10 @@
 
 import argparse
 import logging
+import shutil
 import sys
+import zipfile
+from pathlib import Path
 
 import requests
 from tenacity import (
@@ -20,13 +23,20 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Modern NCBI API
-NCBI_TAXONOMY_API_URL = "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy"
-NCBI_GENOME_DATASET_REPORT_API_URL = (
-    "https://api.ncbi.nlm.nih.gov/datasets/v2/genome/taxon/{taxid}/dataset_report"
-)
-NCBI_GENOME_DATASET_REPORT_API_PARAMS = "filters.has_annotation=true&page_size=1000"
+NCBI_DATASET_API_URL = "https://api.ncbi.nlm.nih.gov/datasets/v2/"
+
+NCBI_TAXONOMY_ENDPOINT = "taxonomy"
+NCBI_GENOME_DATASET_REPORT_BASE_ENDPOINT = "genome/taxon/{taxid}/dataset_report"
+NCBI_DOWNLOAD_ENDPOINT = "genome/download"
+
+
+NCBI_GENOME_DATASET_REPORT_API_PARAMS = {
+    "filters.has_annotation": True,
+    "page_size": 1000,
+}
 NCBI_API_HEADERS = {"accept": "application/json", "content-type": "application/json"}
 
+DOWNLOADED_FILENAME = "ncbi_dataset.zip"
 ACCESSION_FILE = "accession.txt"
 
 
@@ -57,10 +67,9 @@ def parse_args():
     wait=wait_exponential(multiplier=1, min=1, max=30),
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
-def send_request_to_ncbi_taxonomy(taxid: str | int):
-    taxons = [str(taxid)]
-    data = {"taxons": taxons}
-    response = requests.post(NCBI_TAXONOMY_API_URL, headers=NCBI_API_HEADERS, json=data)
+def send_post_request_to_ncbi_dataset(endpoint: str, data: dict, params: dict = {}):
+    url = NCBI_DATASET_API_URL + endpoint
+    response = requests.post(url, headers=NCBI_API_HEADERS, json=data, params=params)
     response.raise_for_status()
     return response.json()
 
@@ -70,10 +79,9 @@ def send_request_to_ncbi_taxonomy(taxid: str | int):
     wait=wait_exponential(multiplier=1, min=1, max=30),
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
-def send_request_to_ncbi_genome_dataset_report_api(taxid: int):
-    url = NCBI_GENOME_DATASET_REPORT_API_URL.format(taxid=taxid)
-    url += f"?{NCBI_GENOME_DATASET_REPORT_API_PARAMS}"
-    response = requests.get(url, headers=NCBI_API_HEADERS)
+def send_get_request_to_ncbi_dataset(endpoint: str, params: dict = {}):
+    url = NCBI_DATASET_API_URL + endpoint
+    response = requests.get(url, headers=NCBI_API_HEADERS, params=params)
     response.raise_for_status()
     return response.json()
 
@@ -86,7 +94,8 @@ def send_request_to_ncbi_genome_dataset_report_api(taxid: int):
 
 
 def get_species_taxid(species: str) -> int:
-    result = send_request_to_ncbi_taxonomy(species)
+    data = {"taxons": [species]}
+    result = send_post_request_to_ncbi_dataset(NCBI_TAXONOMY_ENDPOINT, data)
 
     if len(result["taxonomy_nodes"]) > 1:
         raise ValueError(f"Multiple taxids for species {species}")
@@ -99,6 +108,14 @@ def get_species_taxid(species: str) -> int:
                 logger.error(f"Error: {error['reason']}\n")
                 sys.exit(100)
     return int(metadata["taxonomy"]["tax_id"])
+
+
+def get_assembly_reports(taxid: int):
+    result = send_get_request_to_ncbi_dataset(
+        endpoint=NCBI_GENOME_DATASET_REPORT_BASE_ENDPOINT.format(taxid=taxid),
+        params=NCBI_GENOME_DATASET_REPORT_API_PARAMS,
+    )
+    return result.get("reports", [])
 
 
 def get_assembly_with_best_stats(reports: list[dict]):
@@ -146,6 +163,30 @@ def format_species_name(species: str):
     return species.replace("_", " ").lower()
 
 
+def download_genome_annotation(genome_accession: str) -> str:
+    data = {"accessions": [genome_accession], "include_annotation_type": ["GENOME_GFF"]}
+    params = {"filename": DOWNLOADED_FILENAME}
+    send_post_request_to_ncbi_dataset(NCBI_TAXONOMY_ENDPOINT, data, params)
+
+
+def extract_annotation_file_from_archive():
+    with zipfile.ZipFile(DOWNLOADED_FILENAME, "r") as zip_ref:
+        zip_ref.extractall()
+
+    valid_files = list(Path().cwd().glob(f"ncbi_dataset/data/{accession}/*.gff"))
+
+    if not valid_files:
+        raise ValueError(f"No annotation file found for accession {accession}")
+
+    if len(valid_files) > 1:
+        logger.warning(
+            f"Multiple annotation files found for accession {accession}. Taking the first one"
+        )
+
+    annotation_file = valid_files[0]
+    shutil.move(annotation_file, f"{accession}.gff")
+
+
 #####################################################
 #####################################################
 # MAIN
@@ -160,17 +201,33 @@ if __name__ == "__main__":
     logger.info(f"Species taxid: {species_taxid}")
 
     logger.info(f"Getting best NCBI assembly for taxid: {species_taxid}")
-    result = send_request_to_ncbi_genome_dataset_report_api(species_taxid)
+    reports = get_assembly_reports(species_taxid)
 
-    try:
-        reports = result["reports"]
-        best_assembly_report = get_reference_assembly(reports)
-        logger.info(f"Best assembly: {best_assembly_report['accession']}")
-    except Exception as e:
-        logger.error(f"Could not get any assembly for taxid {species_taxid}: {e}")
+    if not reports:
+        logger.error(f"No assembly reports found for taxid {species_taxid}")
         sys.exit(100)
 
-    with open(ACCESSION_FILE, "w") as fout:
-        fout.write(best_assembly_report["accession"])
+    # looping while we can get an annotation file
+    annotation_found = False
+    while not annotation_found:
+        best_assembly_report = get_reference_assembly(reports)
+        logger.info(
+            f"Best assembly: {best_assembly_report['accession']}. Trying to download annotation"
+        )
+        accession = best_assembly_report["accession"]
+        try:
+            download_genome_annotation(accession)
+            extract_annotation_file_from_archive()
+            annotation_found = True
+        except Exception as e:
+            logger.error(f"Error downloading annotation for accession {accession}: {e}")
+
+        if not annotation_found:
+            # Remove the best assembly report from the list of reports
+            reports = [report for report in reports if report["accession"] != accession]
+
+    if not annotation_found:
+        logger.error(f"No annotation found for taxid {species_taxid}")
+        sys.exit(100)
 
     logger.info("Done")
