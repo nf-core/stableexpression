@@ -6,8 +6,8 @@ process RENAME_GENE_IDS {
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/3d/3d7126100b0eb7cb53dfb50291707ea8dda3b9738b76551ab73605d0acbe114b/data':
-        'community.wave.seqera.io/library/pandas:2.3.3--5a902bf824a79745' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c9/c9b43e446f2c3b794644fd4c1c86ab09ba0afafc0c02e3fcdf45509ffc89fc4d/data':
+        'community.wave.seqera.io/library/pandas_polars:29ea1468b5490a67' }"
 
     input:
     tuple val(meta), path(count_file)

@@ -9,6 +9,7 @@ from pathlib import Path
 
 import config
 import pandas as pd
+import polars as pl
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -52,6 +53,15 @@ def parse_table(file: Path, **kwargs):
         return pd.read_csv(file, header=0, sep="\t", **kwargs)
 
 
+def parse_count_table(file: Path):
+    # transitting to pandas dataframe helps to avoid parsing errors
+    df = parse_table(file, index_col=0)
+    # whatever the name of the first col, rename it to "gene_id"
+    df.index.rename(config.GENE_ID_COLNAME, inplace=True)
+    df.index = df.index.astype(str)
+    return pl.from_pandas(df.reset_index())
+
+
 ##################################################################
 # MAIN
 ##################################################################
@@ -66,18 +76,14 @@ def main():
     # PARSING FILES
     #############################################################
 
-    # whatever the name of the first col, rename it to "gene_id"
-    df = parse_table(args.count_file, index_col=0)
-    df.index.rename(config.GENE_ID_COLNAME, inplace=True)
+    df = parse_count_table(args.count_file)
 
-    if df.empty:
+    if df.is_empty():
         msg = "COUNT FILE IS EMPTY"
         logger.warning(msg)
         with open(FAILURE_REASON_FILE, "w") as f:
             f.write(msg)
         sys.exit(0)
-
-    df.index = df.index.astype(str)
 
     #############################################################
     # GETTING MAPPINGS
@@ -96,8 +102,10 @@ def main():
     # filtering the DataFrame to keep only the rows where the index can be mapped
     original_nb_genes = len(df)
 
-    df = df.loc[df.index.isin(mapping_dict)]
-    if df.empty:
+    # df = df.loc[df.index.isin(mapping_dict)]
+    df = df.filter(pl.col(config.GENE_ID_COLNAME).is_in(mapping_dict.keys()))
+
+    if df.is_empty():
         msg = "NO GENES WERE MAPPED"
         logger.error(msg)
         with open(FAILURE_REASON_FILE, "w") as f:
@@ -114,8 +122,11 @@ def main():
 
     logger.info("Renaming gene names")
     # renaming gene names to mapped ids using mapping dict
-    df.index = df.index.map(mapping_dict)
-    df.reset_index(inplace=True)
+    df = df.with_columns(
+        pl.col(config.GENE_ID_COLNAME)
+        .replace(mapping_dict)
+        .alias(config.GENE_ID_COLNAME)
+    )
 
     # TODO: check is there is another way to avoid duplicate gene names
     # sometimes different gene names have the same Gene ID
@@ -129,8 +140,8 @@ def main():
     # since subsequent steps in the pipeline require integer values,
     # we need to ensure that the resulting DataFrame has integer values
     logger.info("Computing mean counts for genes with duplicate IDs")
-    df = df.groupby(config.GENE_ID_COLNAME, as_index=False, sort=False).agg(
-        lambda x: x.mean().astype(int)
+    df = df.group_by(config.GENE_ID_COLNAME, maintain_order=True).agg(
+        pl.exclude(config.GENE_ID_COLNAME).mean()
     )
 
     #############################################################
@@ -140,7 +151,7 @@ def main():
 
     logger.info("Writing output file")
     outfile = args.count_file.with_name(args.count_file.stem + RENAMED_FILE_SUFFIX)
-    df.to_csv(outfile, index=False, header=True)
+    df.write_csv(outfile)
 
     # making dataframe for mapping (only two columns: original and new)
     mapping_df = (
