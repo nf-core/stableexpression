@@ -25,12 +25,13 @@ logger = logging.getLogger(__name__)
 GENE_IDS_CHUNKSIZE = 50  # max allowed by Ensembl REST API
 
 ENSEMBL_REST_SERVER = "https://rest.ensembl.org/"
-SPECIES_INFO_EXT = "info/genomes/taxonomy/{species}"
+SPECIES_INFO_BASE_ENDPOINT = "info/genomes/taxonomy/{species}"
+TAXONOMY_NAME_ENDPOINT = "taxonomy/name/{species}"
 ENSEMBL_API_HEADERS = {
     "Content-Type": "application/json",
     "Accept": "application/json",
 }
-STOP_RETRY_AFTER_DELAY = 600
+STOP_RETRY_AFTER_DELAY = 120
 
 NCBI_TAXONOMY_API_URL = "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy"
 NCBI_API_HEADERS = {"accept": "application/json", "content-type": "application/json"}
@@ -91,6 +92,7 @@ def parse_page_data(url: str) -> BeautifulSoup:
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
 def send_request_to_ncbi_taxonomy(taxid: str | int):
+    logger.info(f"Sending POST request to {NCBI_TAXONOMY_API_URL}")
     taxons = [str(taxid)]
     data = {"taxons": taxons}
     response = requests.post(NCBI_TAXONOMY_API_URL, headers=NCBI_API_HEADERS, json=data)
@@ -136,6 +138,34 @@ def download_file(url: str, output_path: str):
 
 
 def get_species_taxid(species: str) -> int:
+    try:
+        return get_species_taxid_from_ensembl(species)
+    except Exception as e:
+        logger.error(
+            f"Could not get species taxid for species {species} using the Ensembl REST API: {e}.\nTrying NCBI taxonomy."
+        )
+        ncbi_formated_species_name = format_species_name_for_ncbi_taxonomy(species)
+        return get_species_taxid_from_ncbi(ncbi_formated_species_name)
+
+
+def get_species_taxid_from_ensembl(species: str) -> int:
+    url = ENSEMBL_REST_SERVER + TAXONOMY_NAME_ENDPOINT.format(species=species)
+    data = send_get_request_to_ensembl(url)
+    if len(data) == 0:
+        raise ValueError(f"No species found for species {species}")
+    elif len(data) > 1:
+        logger.warning(
+            f"Multiple species found for species {species}. Keeping the first one."
+        )
+    species_data = data[0]
+    if "id" not in species_data:
+        raise ValueError(
+            f"Could not find taxid for species {species}. Data collected: {species_data}"
+        )
+    return species_data["id"]
+
+
+def get_species_taxid_from_ncbi(species: str) -> int:
     result = send_request_to_ncbi_taxonomy(species)
     if len(result["taxonomy_nodes"]) > 1:
         raise ValueError(f"Multiple taxids for species {species}")
@@ -146,7 +176,9 @@ def get_species_taxid(species: str) -> int:
 
 
 def get_species_division(species_taxid: int) -> str:
-    url = ENSEMBL_REST_SERVER + SPECIES_INFO_EXT.format(species=str(species_taxid))
+    url = ENSEMBL_REST_SERVER + SPECIES_INFO_BASE_ENDPOINT.format(
+        species=str(species_taxid)
+    )
     data = send_get_request_to_ensembl(url)
     if len(data) == 0:
         raise ValueError(f"No division found for species Taxon ID {species_taxid}")
@@ -158,9 +190,10 @@ def get_species_division(species_taxid: int) -> str:
 
 
 def get_species_category(species: str) -> str:
-    ncbi_formated_species_name = format_species_name_for_ncbi_taxonomy(species)
-    species_taxid = get_species_taxid(ncbi_formated_species_name)
+    species_taxid = get_species_taxid(species)
+    logger.info(f"Got species taxid: {species_taxid}")
     division = get_species_division(species_taxid)
+    logger.info(f"Got division: {division}")
     return ENSEMBL_DIVISION_TO_FOLDER[division]
 
 
