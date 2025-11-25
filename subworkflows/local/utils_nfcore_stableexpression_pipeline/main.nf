@@ -168,6 +168,31 @@ workflow PIPELINE_COMPLETION {
 // Check and validate pipeline parameters
 //
 
+
+def check_accession(accession) {
+    if ( !( accession.startsWith('E-') || accession.startsWith('GSE') ) ) {
+        error('Accession ' + accession + ' is not well formated. All accessions should start with "E-" or "GSE".')
+    }
+}
+
+
+def check_accession_string(accessions_str) {
+    if ( accessions_str != null && accessions_str != "" ) {
+        accessions_str.tokenize(',').each { accession ->
+            check_accession(accession)
+        }
+    }
+}
+
+def check_accession_file(accession_file) {
+    if ( accession_file != null ) {
+        def lines = new File(accession_file).readLines()
+        lines.each { accession ->
+            check_accession(accession)
+        }
+    }
+}
+
 def validateInputParameters(params) {
 
     // checking that a species has been provided
@@ -175,14 +200,12 @@ def validateInputParameters(params) {
         error('You must provide a species name')
     }
 
-    // if expression atlas accessions are provided, checking that they are well formated
-    if ( params.accessions ) {
-        params.accessions.tokenize(',').each { accession ->
-            if ( !accession.startsWith('E-') || !accession.startsWith('GSE') ) {
-                error('Accession ' + accession + ' is not well formated. All accessions should start with "E-" or "GSE".')
-            }
-        }
-    }
+    // if accessions are provided or excluded, checking that they are well formated
+    check_accession_string( params.accessions )
+    check_accession_string( params.excluded_accessions )
+
+    check_accession_file( params.accessions_file )
+    check_accession_file( params.excluded_accessions_file )
 
     if ( params.keywords && ( params.skip_fetch_public_accessions || ( params.skip_fetch_eatlas_accessions && params.skip_fetch_geo_accessions ) ) ) {
         log.warn "Ignoring keywords as accessions will not be fetched from Expression Atlas or GEO"
