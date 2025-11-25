@@ -1,6 +1,6 @@
 process DOWNLOAD_ENSEMBL_ANNOTATION {
 
-    label 'process_low'
+    label 'process_single'
 
     tag "${species}"
 

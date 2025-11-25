@@ -1,6 +1,6 @@
 process COMPUTE_GENE_TRANSCRIPT_LENGTHS {
 
-    label 'process_low'
+    label 'process_single'
 
     tag "${gff3.baseName}"
 

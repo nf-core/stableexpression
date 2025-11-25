@@ -1,6 +1,6 @@
 process DASH_APP {
 
-    label 'process_high'
+    label 'process_high_memory'
 
     conda "${moduleDir}/app/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?

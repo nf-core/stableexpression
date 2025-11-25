@@ -1,6 +1,6 @@
 process COMPUTE_BASE_STATISTICS {
 
-    label 'process_high'
+    label 'process_high_memory'
 
     conda "${moduleDir}/spec-file.txt"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
