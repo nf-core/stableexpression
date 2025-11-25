@@ -34,7 +34,7 @@ workflow STABLEEXPRESSION {
     main:
 
     ch_accessions = Channel.empty()
-    ch_counts = Channel.empty()
+    ch_downloaded_datasets = Channel.empty()
 
     ch_versions = Channel.empty()
     ch_multiqc_files = Channel.empty()
@@ -76,9 +76,11 @@ workflow STABLEEXPRESSION {
             species,
             ch_accessions
         )
-        ch_counts = DOWNLOAD_PUBLIC_DATASETS.out.datasets
+        ch_downloaded_datasets = DOWNLOAD_PUBLIC_DATASETS.out.datasets
 
     }
+
+    ch_counts = ch_input_datasets.mix( ch_downloaded_datasets )
 
     // store nb of genes and nb f samples at this stage in the meta maps
     ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
