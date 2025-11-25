@@ -1,6 +1,6 @@
 process EXPRESSIONATLAS_GETACCESSIONS {
 
-    label 'process_medium'
+    label 'process_high_cpus'
 
     tag "${species}"
 
@@ -35,9 +35,13 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     if ( platform != 'none' ) {
         args += " --platform $platform"
     }
-    // the folder where nltk will download data needs to be writable (necessary for singularity)
     """
-    NLTK_DATA=\${PWD} get_eatlas_accessions.py $args
+    # the folder where nltk will download data needs to be writable (necessary for singularity)
+    export NLTK_DATA=\${PWD}
+
+    get_eatlas_accessions.py \\
+        $args \\
+        --cpus ${task.cpus}
     """
 
     stub:

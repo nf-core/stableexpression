@@ -45,6 +45,13 @@ def parse_args():
         help="Search Expression Atlas for this specific species",
     )
     parser.add_argument(
+        "--cpus",
+        dest="nb_cpus",
+        type=int,
+        required=True,
+        help="Number of CPUs to use",
+    )
+    parser.add_argument(
         "--keywords",
         type=str,
         nargs="*",
@@ -340,13 +347,13 @@ def main():
     )
 
     logger.info("Parsing experiments")
-    with Pool() as pool:
+    with Pool(processes=args.nb_cpu) as pool:
         results = pool.map(parse_experiment, species_experiments)
 
     if keywords:
         logger.info(f"Filtering experiments with keywords {keywords}")
         func = partial(filter_experiment_with_keywords, keywords=keywords)
-        with Pool() as pool:
+        with Pool(processes=args.nb_cpu) as pool:
             results = [res for res in pool.map(func, results) if res is not None]
 
     if results:
