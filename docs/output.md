@@ -88,8 +88,8 @@ and open your browser at `http://localhost:8080`
 <details markdown="1">
 <summary>Output files</summary>
 
-- `expression_atlas/accessions/`: accessions found when querying Expression Atlas
-- `expression_atlas/datasets/`: count datasets (normalized: `*.normalised.csv` / raw: `*.raw.csv`) and experimental designs (`*.design.csv`) downloaded from Expression Atlas.
+- `public_data/expression_atlas/accessions/`: accessions found when querying Expression Atlas
+- `public_data/expression_atlas/datasets/`: count datasets (normalized: `*.normalised.csv` / raw: `*.raw.csv`) and experimental designs (`*.design.csv`) downloaded from Expression Atlas.
 
 </details>
 
@@ -98,8 +98,8 @@ and open your browser at `http://localhost:8080`
 <details markdown="1">
 <summary>Output files</summary>
 
-- `geo/accessions/`: accessions found when querying GEO
-- `geo/datasets/`: count datasets (normalized: `*.normalised.csv` / raw: `*.raw.csv`) and experimental designs (`*.design.csv`) downloaded from GEO.
+- `public_data/geo/accessions/`: accessions found when querying GEO
+- `public_data/geo/datasets/`: count datasets (normalized: `*.normalised.csv` / raw: `*.raw.csv`) and experimental designs (`*.design.csv`) downloaded from GEO.
 
 </details>
 

@@ -1,10 +1,8 @@
 process MERGE_COUNTS {
 
-    label "process_high"
+    label "process_high_memory"
 
-    maxRetries 5
-
-    memory { def calc = (dataset_size / 10000).toInteger()
+    memory { def calc = (dataset_size / 50000).toInteger()
         def result = Math.max(1, calc)  // Ensure at least 1 MB
         def multiplicator = 1 + 0.2 * task.attempt // increase memory usage with each attempt by 20%
         return 1.MB * result * multiplicator

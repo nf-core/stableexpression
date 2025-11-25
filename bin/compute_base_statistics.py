@@ -63,28 +63,26 @@ class GeneStatistician:
     # quantile intervals
     NB_QUANTILES: ClassVar[int] = 100
 
-    count_lf: pl.LazyFrame
+    count_df: pl.DataFrame
     platform: str | None = field(default=None)
 
     gene_count_per_sample_df: pl.DataFrame = field(init=False)
-    stat_lf: pl.LazyFrame = field(init=False)
+    stat_df: pl.DataFrame = field(init=False)
     samples: list[str] = field(init=False)
     samples_with_low_gene_count: list[str] = field(init=False)
 
     def __post_init__(self):
         self.gene_count_per_sample_df = self.get_gene_counts_per_sample()
-        self.samples = (
-            self.count_lf.select(pl.exclude(config.GENE_ID_COLNAME))
-            .collect_schema()
-            .names()
-        )
+        self.samples = [
+            col for col in self.count_df.columns if col != config.GENE_ID_COLNAME
+        ]
         self.samples_with_low_gene_count = self.get_samples_with_low_gene_count()
 
     def get_colname(self, colname: str) -> str:
         return f"{self.platform}_{colname}" if self.platform else colname
 
-    def get_valid_counts(self) -> pl.LazyFrame:
-        return self.count_lf.select(pl.exclude(config.GENE_ID_COLNAME))
+    def get_valid_counts(self) -> pl.DataFrame:
+        return self.count_df.select(pl.exclude(config.GENE_ID_COLNAME))
 
     def get_gene_counts_per_sample(self) -> pl.DataFrame:
         """
@@ -95,9 +93,8 @@ class GeneStatistician:
             - nb_not_nulls: number of non-null values
         """
         return (
-            self.count_lf.select(pl.exclude(config.GENE_ID_COLNAME))
+            self.count_df.select(pl.exclude(config.GENE_ID_COLNAME))
             .count()
-            .collect()
             .transpose(
                 include_header=True, header_name="sample", column_names=["count"]
             )
@@ -117,20 +114,20 @@ class GeneStatistician:
             .to_list()
         )
 
-    def get_main_statistics(self) -> pl.LazyFrame:
+    def get_main_statistics(self) -> pl.DataFrame:
         """
         Compute count descriptive statistics for each gene in the count dataframe.
         """
         logger.info("Getting descriptive statistics")
         # computing main stats
-        augmented_count_lf = self.count_lf.with_columns(
+        augmented_count_df = self.count_df.with_columns(
             mean=pl.concat_list(self.samples).row.mean(),
             std=pl.concat_list(self.samples).row.std(),
             median=pl.concat_list(self.samples).row.median(),
             mad=pl.concat_list(self.samples).row.mad(),
         )
 
-        return augmented_count_lf.select(
+        return augmented_count_df.select(
             pl.col(config.GENE_ID_COLNAME),
             pl.col("mean").alias(self.get_colname(config.MEAN_COLNAME)),
             pl.col("std").alias(self.get_colname(config.STANDARD_DEVIATION_COLNAME)),
@@ -152,18 +149,14 @@ class GeneStatistician:
             if sample not in self.samples_with_low_gene_count
         ]
 
-        nb_nulls = (
-            self.count_lf.select(pl.exclude(config.GENE_ID_COLNAME).is_null())
-            .collect()
-            .sum_horizontal()
-        )
-        nb_nulls_valid_samples = (
-            self.count_lf.select(pl.col(valid_samples).is_null())
-            .collect()
-            .sum_horizontal()
-        )
+        nb_nulls = self.count_df.select(
+            pl.exclude(config.GENE_ID_COLNAME).is_null()
+        ).sum_horizontal()
+        nb_nulls_valid_samples = self.count_df.select(
+            pl.col(valid_samples).is_null()
+        ).sum_horizontal()
 
-        self.stat_lf = self.stat_lf.with_columns(
+        self.stat_df = self.stat_df.with_columns(
             (nb_nulls / len(self.samples)).alias(
                 self.get_colname(config.RATIO_NULLS_COLNAME)
             ),
@@ -173,13 +166,11 @@ class GeneStatistician:
         )
 
     def compute_ratio_zeros(self):
-        nb_zeros = (
-            self.count_lf.select(pl.exclude(config.GENE_ID_COLNAME) == 0)
-            .collect()
-            .sum_horizontal()
-        )
+        nb_zeros = self.count_df.select(
+            pl.exclude(config.GENE_ID_COLNAME) == 0
+        ).sum_horizontal()
 
-        self.stat_lf = self.stat_lf.with_columns(
+        self.stat_df = self.stat_df.with_columns(
             (nb_zeros / len(self.samples)).alias(
                 self.get_colname(config.RATIO_ZEROS_COLNAME)
             ),
@@ -193,7 +184,7 @@ class GeneStatistician:
         """
         logger.info("Getting cpm quantiles")
         mean_colname = self.get_colname(config.MEAN_COLNAME)
-        self.stat_lf = self.stat_lf.with_columns(
+        self.stat_df = self.stat_df.with_columns(
             (
                 pl.col(mean_colname).rank()
                 / pl.col(mean_colname).count()
@@ -207,17 +198,17 @@ class GeneStatistician:
             .alias(self.get_colname(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME))
         )
 
-    def compute_statistics(self) -> pl.LazyFrame:
+    def compute_statistics(self) -> pl.DataFrame:
         logger.info("Computing statistics and stability score")
         # getting expression statistics
-        self.stat_lf = self.get_main_statistics()
+        self.stat_df = self.get_main_statistics()
         # adding column for nb of null values for each gene
         self.compute_ratios_null_values()
         # adding a column for the frequency of zero values
         self.compute_ratio_zeros()
         # getting quantile intervals
         self.get_quantile_intervals()
-        return self.stat_lf
+        return self.stat_df
 
 
 #####################################################
@@ -238,12 +229,12 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_counts(file: Path) -> pl.LazyFrame:
+def get_counts(file: Path) -> pl.DataFrame:
     # sorting dataframe (necessary to get consistent output)
-    return pl.scan_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
+    return pl.read_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
 
 
-def export_data(stat_lf: pl.LazyFrame, platform: str | None):
+def export_data(stat_df: pl.DataFrame, platform: str | None):
     """Export gene expression data to CSV files."""
     outfile = (
         f"{platform}.{ALL_GENES_RESULT_OUTFILE_SUFFIX}"
@@ -251,7 +242,7 @@ def export_data(stat_lf: pl.LazyFrame, platform: str | None):
         else ALL_GENES_RESULT_OUTFILE_SUFFIX
     )
     logger.info(f"Exporting statistics for all genes to: {outfile}")
-    stat_lf.collect().write_csv(outfile, float_precision=config.CSV_FLOAT_PRECISION)
+    stat_df.write_csv(outfile, float_precision=config.CSV_FLOAT_PRECISION)
     logger.info("Done")
 
 
@@ -266,14 +257,18 @@ def main():
     args = parse_args()
 
     # putting all counts into a single dataframe
-    count_lf = get_counts(args.count_file)
+    logger.info("Loading count data...")
+    count_df = get_counts(args.count_file)
+    logger.info(
+        f"Loaded count data with {count_df.shape[0]} rows and {count_df.shape[1]} columns"
+    )
 
     # computing statistics (mean, standard deviation, coefficient of variation, quantiles)
-    gene_stat = GeneStatistician(count_lf, args.platform)
-    stat_lf = gene_stat.compute_statistics()
+    gene_stat = GeneStatistician(count_df, args.platform)
+    stat_df = gene_stat.compute_statistics()
 
     # exporting computed data
-    export_data(stat_lf, args.platform)
+    export_data(stat_df, args.platform)
 
 
 if __name__ == "__main__":

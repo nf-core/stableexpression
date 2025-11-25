@@ -4,7 +4,6 @@ include { MERGE_COUNTS as MERGE_MICROARRAY_COUNTS       } from '../../../modules
 
 include { getWholeDatasetSize                           } from '../../../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
-
 /*
 ========================================================================================
     SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
@@ -59,9 +58,9 @@ workflow MERGE_DATA {
         .set { ch_platform_counts }
 
     ch_whole_rnaseq_size
-        .mix(ch_whole_microarray_size)
-        .reduce { rnaseq_size, microarray_size -> rnaseq_size + microarray_size }
-        .set { ch_whole_size }
+            .mix(ch_whole_microarray_size)
+            .reduce { rnaseq_size, microarray_size -> rnaseq_size + microarray_size }
+            .set { ch_whole_size }
 
     MERGE_ALL_COUNTS(
         ch_platform_counts.collect(),
