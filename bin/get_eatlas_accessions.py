@@ -347,13 +347,13 @@ def main():
     )
 
     logger.info("Parsing experiments")
-    with Pool(processes=args.nb_cpu) as pool:
+    with Pool(processes=args.nb_cpus) as pool:
         results = pool.map(parse_experiment, species_experiments)
 
     if keywords:
         logger.info(f"Filtering experiments with keywords {keywords}")
         func = partial(filter_experiment_with_keywords, keywords=keywords)
-        with Pool(processes=args.nb_cpu) as pool:
+        with Pool(processes=args.nb_cpus) as pool:
             results = [res for res in pool.map(func, results) if res is not None]
 
     if results:
