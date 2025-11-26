@@ -13,6 +13,7 @@ include { BASE_STATISTICS                        } from '../subworkflows/local/b
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { MULTIQC_WORKFLOW                       } from '../subworkflows/local/multiqc'
 
+include { COMPUTE_DATASET_STATISTICS             } from '../modules/local/compute_dataset_statistics'
 include { AGGREGATE_RESULTS                      } from '../modules/local/aggregate_results'
 include { DASH_APP                               } from '../modules/local/dash_app'
 
@@ -120,6 +121,12 @@ workflow STABLEEXPRESSION {
             params.normalisation_method,
             params.quantile_norm_target_distrib
         )
+
+        // -----------------------------------------------------------------
+        // COMPUTE VARIOUS STATISTICS AT THE SAMPLE LEVEL
+        // -----------------------------------------------------------------
+
+        COMPUTE_DATASET_STATISTICS ( ch_counts )
 
         // -----------------------------------------------------------------
         // MERGE DATA

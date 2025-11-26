@@ -1,4 +1,5 @@
 include { MULTIQC                                } from '../../../modules/nf-core/multiqc'
+include { COLLECT_STATISTICS                     } from '../../../modules/local/collect_statistics'
 
 include { formatVersionsToYAML                   } from '../utils_nfcore_stableexpression_pipeline'
 include { methodsDescriptionText                 } from '../utils_nfcore_stableexpression_pipeline'
@@ -19,6 +20,42 @@ workflow MULTIQC_WORKFLOW {
     ch_versions
 
     main:
+
+    // ------------------------------------------------------------------------------------
+    // STATS
+    // ------------------------------------------------------------------------------------
+
+    Channel.topic('id_mapping_stats')
+        .collectFile(
+            name: 'id_mapping_stats.csv',
+            seed: "Dataset,Nb mapped,Nb unmapped",
+            newLine: true,
+            storeDir: "${params.outdir}/statistics/"
+        ) {
+            item -> "${item[0]},${item[1]},${item[2]}"
+        }
+        .set { ch_id_mapping_stats }
+
+    Channel.topic('skewness')
+        .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
+        .collectFile(
+            name: 'skewness.csv',
+            newLine: true,
+            storeDir: "${params.outdir}/statistics/"
+        )
+        .set { ch_skewness }
+
+    Channel.topic('ratio_zeros')
+        .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
+        .collectFile(
+            name: 'ratio_zeros.csv',
+            newLine: true,
+            storeDir: "${params.outdir}/statistics/"
+        )
+        .set { ch_ratio_zeros }
+
+    ch_to_collect = ch_skewness.mix( ch_ratio_zeros )
+    COLLECT_STATISTICS( ch_to_collect )
 
     // ------------------------------------------------------------------------------------
     // FAILURE / WARNING REPORTS
@@ -84,17 +121,6 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_id_cleaning_failure_reasons }
 
-    Channel.topic('id_mapping_stats')
-        .collectFile(
-            name: 'id_mapping_stats.csv',
-            seed: "Dataset,Nb mapped,Nb unmapped",
-            newLine: true,
-            storeDir: "${params.outdir}/statistics/"
-        ) {
-            item -> "${item[0]},${item[1]},${item[2]}"
-        }
-        .set { ch_id_mapping_stats }
-
     Channel.topic('renaming_warning_reason')
         .map { dataset, file -> [ dataset, file.readLines()[0] ] }
         .collectFile(
@@ -151,15 +177,16 @@ workflow MULTIQC_WORKFLOW {
     ch_multiqc_files
         .mix( Channel.topic('eatlas_all_datasets').collect() )
         .mix( Channel.topic('eatlas_selected_datasets').collect() )
-        .mix( ch_eatlas_failure_reasons )
-        .mix( ch_eatlas_warning_reasons )
         .mix( Channel.topic('geo_all_datasets').collect() )
         .mix( Channel.topic('geo_selected_datasets').collect() )
         .mix( Channel.topic('geo_rejected_datasets').collect() )
+        .mix( COLLECT_STATISTICS.out.csv )
+        .mix( ch_id_mapping_stats )
+        .mix( ch_eatlas_failure_reasons )
+        .mix( ch_eatlas_warning_reasons )
         .mix( ch_geo_failure_reasons )
         .mix( ch_geo_warning_reasons )
         .mix( ch_id_cleaning_failure_reasons )
-        .mix( ch_id_mapping_stats )
         .mix( ch_id_mapping_warning_reasons )
         .mix( ch_id_mapping_failure_reasons )
         .mix( ch_normalisation_failure_reasons )

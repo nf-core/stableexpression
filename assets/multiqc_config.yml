@@ -317,6 +317,9 @@ custom_data:
 
   gene_statistics:
     section_name: "Descriptive statistics - All genes"
+    parent_id: stats
+    parent_name: "Statistics"
+    parent_description: "Various statistics at the gene or sample level"
     file_format: "csv"
     description: |
       Distribution of descriptive statistics for all genes.
@@ -425,20 +428,60 @@ custom_data:
         title: "Ratio zero values [Microarray only]"
         color: "rgb(106, 78, 193)"
 
-  gene_counts:
-    section_name: "Gene counts"
+  skewness:
+    section_name: "Count skewness"
+    parent_id: stats
+    parent_name: "Statistics"
+    parent_description: "Various statistics at the gene or sample level"
     file_format: "csv"
-    description: |
-      Distribution of gene counts across samples.
-    plot_type: "linegraph"
     pconfig:
-      categories: true
-    headers:
-      count:
-        title: "Gene count"
-        description: |
-          Number of genes included in the dataset after normalisation
-        color: "#bf812d"
+      sort_samples: false
+      #xmin: 0
+      #xmax: 1
+      xlab: Skewness
+      ylab: Dataset
+    description: |
+      Distribution of count skewness across samples, displayed dataset per dataset.
+    plot_type: "boxplot"
+
+  ratio_zeros:
+    section_name: "Proportion of zeros"
+    parent_id: stats
+    parent_name: "Statistics"
+    parent_description: "Various statistics at the gene or sample level"
+    file_format: "csv"
+    pconfig:
+      sort_samples: false
+      #xmin: 0
+      #xmax: 1
+      xlab: Proportion of zeros
+      ylab: Dataset
+    description: |
+      Distribution of zeros across samples, displayed dataset per dataset.
+    plot_type: "boxplot"
+
+  id_mapping_stats:
+    section_name: "Gene ID mapping statistics"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "csv"
+    pconfig:
+      sort_samples: true
+      tt_decimals: 0
+      cpswitch: true # show the 'Counts / Percentages' switch
+      cpswitch_c_active: false # show percentages
+      stacking: "relative"
+    description: |
+      Statistics of gene ID mapping, dataset per dataset
+    categories:
+      mapped:
+        name: "Mapped gene IDs"
+        color: "#10C995"
+      unmapped:
+        name: "Unmapped gene IDs"
+        color: "#E3224A"
+    plot_type: "barplot"
 
   eatlas_selected_experiments_metadata:
     section_name: "Selected"
@@ -550,29 +593,6 @@ custom_data:
       Reasons of failure during gene ID cleaning
     plot_type: "table"
 
-  id_mapping_stats:
-    section_name: "Gene ID mapping statistics"
-    parent_id: idmapping
-    parent_name: "ID mapping"
-    parent_description: "Information about the ID mapping"
-    file_format: "csv"
-    pconfig:
-      sort_samples: true
-      tt_decimals: 0
-      cpswitch: true # show the 'Counts / Percentages' switch
-      cpswitch_c_active: false # show percentages
-      stacking: "relative"
-    description: |
-      Statistics of gene ID mapping, dataset per dataset
-    categories:
-      mapped:
-        name: "Mapped gene IDs"
-        color: "#10C995"
-      unmapped:
-        name: "Unmapped gene IDs"
-        color: "#E3224A"
-    plot_type: "barplot"
-
   renaming_warning_reasons:
     section_name: "Gene renaming warning reasons"
     parent_id: idmapping
@@ -581,7 +601,7 @@ custom_data:
     file_format: "tsv"
     no_violin: true
     description: |
-      Reasons of warning during gene ID renaming
+      Reasons of warning during gene ID renaming. You can further investigate ID mapping issues on the g:Profiler website at https://biit.cs.ut.ee/gprofiler/convert
     plot_type: "table"
 
   renaming_failure_reasons:
@@ -631,12 +651,12 @@ sp:
   gene_statistics:
     fn: "*all_genes_summary.csv"
     max_filesize: 50000000 # 50MB
-  gene_counts:
-    fn: "*gene_count_statistics.csv"
+  id_mapping_stats:
+    fn: "*id_mapping_stats.csv"
   skewness:
-    fn: "*skewness_statistics.csv"
-  uniform_distribution_probabilities:
-    fn: "*ks_test_statistics.csv"
+    fn: "*skewness.transposed.csv"
+  ratio_zeros:
+    fn: "*ratio_zeros.transposed.csv"
   eatlas_selected_experiments_metadata:
     fn: "*selected_experiments.metadata.tsv"
   eatlas_all_experiments_metadata:
@@ -659,8 +679,6 @@ sp:
     fn: "*id_cleaning_failure_reasons.tsv"
   renaming_warning_reasons:
     fn: "*renaming_warning_reasons.tsv"
-  id_mapping_stats:
-    fn: "*id_mapping_stats.csv"
   renaming_failure_reasons:
     fn: "*renaming_failure_reasons.tsv"
   normalisation_failure_reasons:

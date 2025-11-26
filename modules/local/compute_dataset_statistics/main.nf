@@ -1,4 +1,4 @@
-process DATASET_STATISTICS {
+process COMPUTE_DATASET_STATISTICS {
 
     label 'process_single'
 
@@ -11,28 +11,18 @@ process DATASET_STATISTICS {
 
     input:
     tuple val(meta), path(count_file)
-    val target_distribution
 
     output:
-    tuple val(meta), path('*.dataset_stats.csv'),                                                                       emit: stats
+    tuple val(meta.dataset), path("skewness.txt"),                                                                      topic: skewness
+    tuple val(meta.dataset), path("ratio_zeros.txt"),                                                                   topic: ratio_zeros
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                       topic: versions
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),       topic: versions
-    tuple val("${task.process}"), val('scipy'),    eval('python3 -c "import scipy; print(scipy.__version__)"'),         topic: versions
-    tuple val("${task.process}"), val('pyarrow'),  eval('python3 -c "import pyarrow; print(pyarrow.__version__)"'),     topic: versions
 
     script:
     def prefix = task.ext.prefix ?: "${meta.dataset}"
     """
     get_dataset_statistics.py \
-        --counts $count_file \
-        --target-distrib $target_distribution \
-        --output ${prefix}.dataset_stats.csv
-    """
-
-
-    stub:
-    """
-    touch count.cpm.dataset_stats.csv
+        --counts $count_file
     """
 
 }

@@ -23,7 +23,7 @@ ALL_GENE_IDS_OUTFILE = "all_gene_ids.txt"
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Merge count datasets")
+    parser = argparse.ArgumentParser(description="Collect gene IDs from count files")
     parser.add_argument(
         "--counts", type=str, dest="count_files", required=True, help="Count files"
     )
