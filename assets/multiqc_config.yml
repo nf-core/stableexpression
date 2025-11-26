@@ -440,42 +440,6 @@ custom_data:
           Number of genes included in the dataset after normalisation
         color: "#bf812d"
 
-  skewness:
-    section_name: "Skewness"
-    file_format: "csv"
-    description: |
-      Distribution of expression skewness across samples.
-    plot_type: "linegraph"
-    pconfig:
-      categories: true
-    headers:
-      skewness:
-        title: "Skewness"
-        description: |
-          Skewness of the distribution of the normalised expression
-        color: "#bf812d"
-
-  uniform_distribution_probabilities:
-    section_name: "Probabilities of normal / uniform count distribution"
-    file_format: "csv"
-    description: |
-      Pvalue of Kolmogorov-Smirnov test to normal / uniform distribution.
-      The higher the pvalue, the more likely the distribution is normal / uniform.
-      If the pvalue < 0.05, the null hypothesis is rejected and the distribution is not normal / uniform.
-      Samples showing a pvalue lower than the threshold (set in parameters) when not considered for stability scoring.
-    plot_type: "linegraph"
-    pconfig:
-      categories: true
-      logswitch: true
-      logswitch_active: true
-      logswitch_label: "Log10"
-    headers:
-      kolmogorov_smirnov_pvalue:
-        title: "KS test to normal / uniform distribution - pvalue"
-        description: |
-          Pvalue of Kolmogorov-Smirnov test to normal / uniform distribution.
-        color: "#bf812d"
-
   eatlas_selected_experiments_metadata:
     section_name: "Selected"
     parent_id: eatlas
@@ -575,8 +539,42 @@ custom_data:
       Warnings during download of GEO datasets
     plot_type: "table"
 
+  id_cleaning_failure_reasons:
+    section_name: "Gene ID cleaning failure reasons"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "tsv"
+    no_violin: true
+    description: |
+      Reasons of failure during gene ID cleaning
+    plot_type: "table"
+
+  id_mapping_stats:
+    section_name: "Gene ID mapping statistics"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "csv"
+    pconfig:
+      sort_samples: true
+      tt_decimals: 0
+      cpswitch: true # show the 'Counts / Percentages' switch
+      cpswitch_c_active: false # show percentages
+      stacking: "relative"
+    description: |
+      Statistics of gene ID mapping, dataset per dataset
+    categories:
+      mapped:
+        name: "Mapped gene IDs"
+        color: "#10C995"
+      unmapped:
+        name: "Unmapped gene IDs"
+        color: "#E3224A"
+    plot_type: "barplot"
+
   renaming_warning_reasons:
-    section_name: "Warning reasons"
+    section_name: "Gene renaming warning reasons"
     parent_id: idmapping
     parent_name: "ID mapping"
     parent_description: "Information about the ID mapping"
@@ -587,7 +585,7 @@ custom_data:
     plot_type: "table"
 
   renaming_failure_reasons:
-    section_name: "Failure reasons"
+    section_name: "Gene renaming failure reasons"
     parent_id: idmapping
     parent_name: "ID mapping"
     parent_description: "Information about the ID mapping"
@@ -657,8 +655,12 @@ sp:
     fn: "*geo_failure_reasons.csv"
   geo_warning_reasons:
     fn: "*geo_warning_reasons.csv"
+  id_cleaning_failure_reasons:
+    fn: "*id_cleaning_failure_reasons.tsv"
   renaming_warning_reasons:
     fn: "*renaming_warning_reasons.tsv"
+  id_mapping_stats:
+    fn: "*id_mapping_stats.csv"
   renaming_failure_reasons:
     fn: "*renaming_failure_reasons.tsv"
   normalisation_failure_reasons:

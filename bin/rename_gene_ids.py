@@ -26,6 +26,9 @@ MAPPING_FILE_SUFFIX = ".mapping.csv"
 WARNING_REASON_FILE = "warning_reason.txt"
 FAILURE_REASON_FILE = "failure_reason.txt"
 
+MAPPED_FILE_SUFFIX = "mapped.txt"
+UNMAPPED_FILE_SUFFIX = "unmapped.txt"
+
 ##################################################################
 # FUNCTIONS
 ##################################################################
@@ -101,9 +104,18 @@ def main():
     # IMPORTANT: KEEPING ONLY GENES THAT HAVE BEEN CONVERTED
     # filtering the DataFrame to keep only the rows where the index can be mapped
     original_nb_genes = len(df)
+    rejected_df = df.filter(~pl.col(config.GENE_ID_COLNAME).is_in(mapping_dict.keys()))
+    nb_unmapped_genes = len(rejected_df)
 
     # df = df.loc[df.index.isin(mapping_dict)]
     df = df.filter(pl.col(config.GENE_ID_COLNAME).is_in(mapping_dict.keys()))
+    nb_mapped_genes = len(df)
+
+    with open(MAPPED_FILE_SUFFIX, "w") as f:
+        f.write(str(nb_mapped_genes))
+
+    with open(UNMAPPED_FILE_SUFFIX, "w") as f:
+        f.write(str(nb_unmapped_genes))
 
     if df.is_empty():
         msg = "NO GENES WERE MAPPED"
@@ -113,12 +125,21 @@ def main():
         sys.exit(0)
 
     if len(df) < original_nb_genes:
-        msg = f"Only {len(df) / original_nb_genes:.2%} of genes were mapped ({len(df)} out of {original_nb_genes})"
+        sample_size = min(5, nb_unmapped_genes)
+        example_rejected_genes = (
+            rejected_df[config.GENE_ID_COLNAME].head(sample_size).to_list()
+        )
+        msg = (
+            f"{nb_mapped_genes / original_nb_genes:.2%} of genes were mapped ({nb_mapped_genes} out of {original_nb_genes}). "
+            + f"Example of unmapped genes: {example_rejected_genes}"
+        )
         logger.warning(msg)
         with open(WARNING_REASON_FILE, "a") as f:
             f.write(msg)
     else:
-        logger.info(f"All genes were mapped ({len(df)} out of {original_nb_genes})")
+        logger.info(
+            f"All genes were mapped ({nb_mapped_genes} out of {original_nb_genes})"
+        )
 
     logger.info("Renaming gene names")
     # renaming gene names to mapped ids using mapping dict

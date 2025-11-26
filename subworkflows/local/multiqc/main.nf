@@ -72,8 +72,31 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_geo_warning_reasons }
 
+    Channel.topic('id_cleaning_failure_reason')
+        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
+        .collectFile(
+            name: 'id_cleaning_failure_reasons.tsv',
+            seed: "Dataset\tReason",
+            newLine: true,
+            storeDir: "${params.outdir}/errors/"
+        ) {
+            item -> "${item[0]}\t${item[1]}"
+        }
+        .set { ch_id_cleaning_failure_reasons }
+
+    Channel.topic('id_mapping_stats')
+        .collectFile(
+            name: 'id_mapping_stats.csv',
+            seed: "Dataset,Nb mapped,Nb unmapped",
+            newLine: true,
+            storeDir: "${params.outdir}/statistics/"
+        ) {
+            item -> "${item[0]},${item[1]},${item[2]}"
+        }
+        .set { ch_id_mapping_stats }
+
     Channel.topic('renaming_warning_reason')
-        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
         .collectFile(
             name: 'renaming_warning_reasons.tsv',
             seed: "Dataset\tReason",
@@ -85,7 +108,7 @@ workflow MULTIQC_WORKFLOW {
         .set { ch_id_mapping_warning_reasons }
 
     Channel.topic('renaming_failure_reason')
-        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
         .collectFile(
             name: 'renaming_failure_reasons.tsv',
             seed: "Dataset\tReason",
@@ -97,7 +120,7 @@ workflow MULTIQC_WORKFLOW {
         .set { ch_id_mapping_failure_reasons }
 
     Channel.topic('normalisation_warning_reason')
-        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
         .collectFile(
             name: 'normalisation_warning_reasons.tsv',
             seed: "Dataset\tReason",
@@ -109,7 +132,7 @@ workflow MULTIQC_WORKFLOW {
         .set { ch_normalisation_warning_reasons }
 
     Channel.topic('normalisation_failure_reason')
-        .map { accession, file -> [ accession, file.readLines()[0] ] }
+        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
         .collectFile(
             name: 'normalisation_failure_reasons.tsv',
             seed: "Dataset\tReason",
@@ -135,6 +158,8 @@ workflow MULTIQC_WORKFLOW {
         .mix( Channel.topic('geo_rejected_datasets').collect() )
         .mix( ch_geo_failure_reasons )
         .mix( ch_geo_warning_reasons )
+        .mix( ch_id_cleaning_failure_reasons )
+        .mix( ch_id_mapping_stats )
         .mix( ch_id_mapping_warning_reasons )
         .mix( ch_id_mapping_failure_reasons )
         .mix( ch_normalisation_failure_reasons )
