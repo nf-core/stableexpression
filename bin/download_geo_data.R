@@ -482,7 +482,7 @@ get_all_rnaseq_counts <- function(platform) {
         # checking if all files were skipped
         if (length(count_df_list) == 0) {
             message("No valid files found")
-            return(data.frame())
+            next
         }
 
         # full outer join
