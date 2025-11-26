@@ -1,3 +1,4 @@
+include { CLEAN_GENE_IDS                         } from '../../../modules/local/clean_gene_ids'
 include { COLLECT_GENE_IDS                       } from '../../../modules/local/collect_gene_ids'
 include { GPROFILER_IDMAPPING                    } from '../../../modules/local/gprofiler/idmapping'
 include { RENAME_GENE_IDS                        } from '../../../modules/local/rename_gene_ids'
@@ -19,7 +20,6 @@ workflow ID_MAPPING {
     custom_gene_metadata
     outdir
 
-
     main:
 
     ch_gene_id_mapping = Channel.empty()
@@ -33,6 +33,9 @@ workflow ID_MAPPING {
 
         // here we cannot use directly COLLECT_GENE_IDS for runs comprising a huge number of files (eg. human)
         // so that we proceed by chunks, and perform a final merging step using the Java VM
+
+        CLEAN_GENE_IDS ( ch_counts )
+        ch_counts = CLEAN_GENE_IDS.out.counts
 
         // TRICK:
         // the buffer operator creates non-deterministic chunks
