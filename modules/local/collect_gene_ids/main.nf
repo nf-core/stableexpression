@@ -3,7 +3,7 @@ process COLLECT_GENE_IDS {
     tag "chunk ${task.index}"
     label "process_high"
 
-    conda "${moduleDir}/spec-file.txt"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/60/604657081a64b39e17bb6ad307e545aa6aebf4133b64d6766515c9789bb2d304/data':
         'community.wave.seqera.io/library/pandas_tqdm:2ca37c1047243549' }"

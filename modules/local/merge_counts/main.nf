@@ -8,7 +8,7 @@ process MERGE_COUNTS {
         return 1.MB * result * multiplicator
     }
 
-    conda "${moduleDir}/spec-file.txt"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/90/90617e987f709570820b8e7752baf9004ba85917111425d4b44b429b27b201ca/data':
         'community.wave.seqera.io/library/polars_tqdm:54b124dde91d1bf3' }"

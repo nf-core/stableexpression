@@ -4,7 +4,7 @@ process NORMALISATION_EDGER {
 
     tag "${meta.dataset}"
 
-    conda "${moduleDir}/spec-file.txt"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/89/89bbc9544e18b624ed6d0a30e701cf8cec63e063cc9b5243e1efde362fe92228/data':
         'community.wave.seqera.io/library/bioconductor-edger_r-base_r-optparse:400aaabddeea1574' }"

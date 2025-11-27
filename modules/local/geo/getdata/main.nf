@@ -6,7 +6,7 @@ process GEO_GETDATA {
 
     maxForks 8 // limiting to 8 threads at a time to avoid 429 errors with the NCBI server
 
-    conda "${moduleDir}/spec-file.txt"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/4c/4cb08d96e62942e7b6288abf2cfd30e813521a022459700e610325a3a7c0b1c8/data':
         'community.wave.seqera.io/library/bioconductor-geoquery_r-base_r-dplyr_r-optparse:fcd002470b7d6809' }"

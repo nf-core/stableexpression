@@ -2,10 +2,10 @@ process COMPUTE_STABILITY_SCORES {
 
     label 'process_high_memory'
 
-    conda "${moduleDir}/spec-file.txt"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/01/0118e0577564644b18f94fa6525fe3a2aec845721081b55d82a18e803a50ab17/data':
-        'community.wave.seqera.io/library/polars_scikit-learn:036e189d7c1f9704' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f8a5d02e7b31980c887253a9f118da0ef91ead1c7b158caf855199e5c5d5473/data':
+        'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
     path stat_file

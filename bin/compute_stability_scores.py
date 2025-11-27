@@ -10,7 +10,6 @@ from typing import ClassVar
 
 import config
 import polars as pl
-from sklearn.preprocessing import QuantileTransformer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -45,18 +44,6 @@ class StabilityScorer:
             self.WEIGHT_FIELDS, self.stability_score_weights_str.split(",")
         ):
             self.weights[weight_field] = float(weight)
-
-    """
-    @staticmethod
-    def quantile_normalise(data: pl.Series, new_name: str) -> pl.Series:
-        '''
-        Quantile normalize a series
-        '''
-        array = data.to_numpy().reshape(-1, 1)
-        transformer = QuantileTransformer(output_distribution="uniform", subsample=None)
-        normalised_array = transformer.fit_transform(array)
-        return pl.Series(new_name, normalised_array.ravel())
-    """
 
     def linear_normalise(self, data: pl.Series, new_name: str) -> pl.Series:
         """

@@ -2,10 +2,11 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
-import polars as pl
-from pathlib import Path
 import argparse
 import logging
+from pathlib import Path
+
+import polars as pl
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

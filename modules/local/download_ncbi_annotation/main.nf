@@ -4,7 +4,7 @@ process DOWNLOAD_NCBI_ANNOTATION {
 
     tag "${species}"
 
-    conda "${moduleDir}/spec-file.txt"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5c/5c28c8e613c062828aaee4b950029bc90a1a1aa94d5f61016a588c8ec7be8b65/data':
         'community.wave.seqera.io/library/pandas_requests_tenacity:5ba56df089a9d718' }"

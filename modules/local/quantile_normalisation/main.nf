@@ -4,7 +4,7 @@ process QUANTILE_NORMALISATION {
 
     tag "${meta.dataset}"
 
-    conda "${moduleDir}/spec-file.txt"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/2d/2df931a4ea181fe1ea9527abe0fd4aff9453d6ea56d56aee7c4ac5dceed611e3/data':
         'community.wave.seqera.io/library/pandas_pyarrow_python_scikit-learn:6f85e3c4d1706e81' }"

@@ -14,7 +14,6 @@ import pandas as pd
 import requests
 import xmltodict
 from Bio import Entrez
-from gprofiler_utils import chunk_list
 from natural_language_utils import keywords_in_fields
 from requests.exceptions import ConnectionError, HTTPError
 from tenacity import (
@@ -212,6 +211,19 @@ def download_file_at_url(url: str, output_file: Path):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # GEO DATASETS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+def chunk_list(lst: list, chunksize: int) -> list:
+    """Splits a list into chunks of a given size.
+
+    Args:
+        lst (list): The list to split.
+        chunksize (int): The size of each chunk.
+
+    Returns:
+        list: A list of chunks, where each chunk is a list of len(chunksize).
+    """
+    return [lst[i : i + chunksize] for i in range(0, len(lst), chunksize)]
 
 
 def fetch_geo_datasets_for_species(species: str) -> list[dict]:

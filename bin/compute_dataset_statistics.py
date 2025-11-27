@@ -8,8 +8,6 @@ from pathlib import Path
 
 import pandas as pd
 
-# from scipy import stats
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ process GET_ANNOTATION_ACCESSION {
 
     tag "$species"
 
-    conda "${moduleDir}/spec-file.txt"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b4/b4d686ef63e22bc4d461178fc241cefddd2aa3436e189d3787c8e019448f056e/data':
         'community.wave.seqera.io/library/requests_tenacity_tqdm:126dbed8ef3ff96f' }"

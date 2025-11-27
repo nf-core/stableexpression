@@ -2,7 +2,7 @@ process DASH_APP {
 
     label 'process_high_memory'
 
-    conda "${moduleDir}/app/spec-file.txt"
+    conda "${moduleDir}/app/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/4e/4eec747f2063edcc2d1b64e3b84a6b154fde1b9cd9d698446321b4a535432272/data':
         'community.wave.seqera.io/library/dash-ag-grid_dash-extensions_dash-iconify_dash-mantine-components_pruned:7cf6396dd8cd850e' }"

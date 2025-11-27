@@ -6,7 +6,7 @@ process EXPRESSIONATLAS_GETDATA {
 
     maxForks 8 // limiting to 8 threads at a time to avoid 429 errors with the Expression Atlas API server
 
-    conda "${moduleDir}/spec-file.txt"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer']  && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/7f/7fd21450c3a3f7df37fa0480170780019e9686be319da1c9e10712f7f17cca26/data':
         'community.wave.seqera.io/library/bioconductor-expressionatlas_r-base_r-optparse:ca0f8cd9d3f44af9' }"
@@ -24,6 +24,7 @@ process EXPRESSIONATLAS_GETDATA {
 
     script:
     """
+    which python
     download_eatlas_data.R --accession $accession
     """
 
