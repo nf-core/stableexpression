@@ -198,10 +198,15 @@ get_platform_id <- function(metadata) {
 #####################################################
 
 get_rnaseq_samples <- function(geo_data, design_df) {
+
   rnaseq_sample_df_list <- list()
   for (i in 1:length(geo_data)) {
       data <- geo_data[[ i ]]
       metadata <- pData(data)
+      if (!("library_strategy" %in% colnames(metadata))) {
+        message("library_strategy column not found in metadata")
+        next
+      }
       rnaseq_sample_df_list[[i]] <- metadata %>%
           filter(library_strategy == "RNA-Seq" & geo_accession %in% design_df$sample) %>%
           select(geo_accession)
@@ -423,7 +428,7 @@ get_raw_counts_from_url <- function(data_url) {
     tryCatch({
       counts <- read.table(filename, header = has_header, sep = separator, row.names = 1)
     }, error = function(e) {
-        write_warning(paste("ERROR WHILE PARSING:", filename))
+        write_warning(paste("ERROR WHILE PARSING", filename, ":", e))
         return(NULL)
     })
 
