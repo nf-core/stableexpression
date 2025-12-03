@@ -18,7 +18,13 @@ process MAKE_CHUNKS {
 
     script:
     def args = "--task-attempts ${task.attempt}"
+    def is_using_containers = workflow.containerEngine ? true : false
     """
+    # limiting number of threads when using conda / micromamba
+    if [ "${is_using_containers}" == "false" ]; then
+        export POLARS_MAX_THREADS=${task.cpus}
+    fi
+
     make_parquet_chunks.py --counts $count_file $args
     """
 

@@ -131,6 +131,7 @@ download_geo_data_with_retries <- function(accession, max_retries = 3, wait_time
 get_experiment_data <- function(geo_data) {
     data <- geo_data[[1]]
     experiment_data <- experimentData(data)
+    #print(experiment_data)
     return(experiment_data)
 }
 
@@ -348,6 +349,7 @@ make_overall_design <- function(geo_data, series) {
     for (i in 1:length(geo_data)) {
         data <- geo_data[[ i ]]
         metadata <- pData(data)
+        #print(metadata)
         # make design dataframe
         # keep only samples corresponding to the species of interest
         design_df <- make_design(metadata, series)
@@ -477,6 +479,10 @@ get_all_rnaseq_counts <- function(platform) {
               message(paste("Multiple columns found for sample", sample))
             }
 
+            # in case there is already a gene_id column, remove it
+            if ("gene_id" %in% names(counts)) {
+              counts <- counts[, -which(names(counts) == "gene_id")]
+            }
             # setting the row names (gene ids) as a column
             counts <- tibble::rownames_to_column(counts, var = "gene_id")
             # adding to list
@@ -571,8 +577,6 @@ check_rnaseq_normalisation_state <- function(counts, platform) {
     }
 
   }, error = function(e) {
-      print(head(counts))
-      print(e)
       write_warning(paste(platform$id, ": COULD NOT COMPUTE FLOOR"))
       return("unknown")
   })

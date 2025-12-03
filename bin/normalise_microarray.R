@@ -118,10 +118,11 @@ main <- function() {
 
     # cleaning colnames
     colnames(normalised_data_df) <- sub("\\..*", "", colnames(normalised_data_df))
+    colnames(normalised_data_df) <- sub("-", "_", colnames(normalised_data_df))
 
     # Save results
     message("Saving results to normalised_expression.csv")
-    write.csv(normalised_data, "normalised_expression.csv")
+    write.csv(normalised_data_df, "normalised_expression.csv")
 
 }
 

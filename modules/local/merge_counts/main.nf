@@ -24,7 +24,13 @@ process MERGE_COUNTS {
     tuple val("${task.process}"), val('tqdm'),     eval('python3 -c "import tqdm; print(tqdm.__version__)"'),         topic: versions
 
     script:
+    def is_using_containers = workflow.containerEngine ? true : false
     """
+    # limiting number of threads when using conda / micromamba
+    if [ "${is_using_containers}" == "false" ]; then
+        export POLARS_MAX_THREADS=${task.cpus}
+    fi
+
     merge_counts.py \\
         --counts "$count_files"
     """

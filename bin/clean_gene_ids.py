@@ -36,16 +36,16 @@ def parse_args():
     return parser.parse_args()
 
 
-def parse_table(file: Path, **kwargs):
+def parse_table(file: Path):
     if file.suffix == ".csv":
-        return pd.read_csv(file, header=0, **kwargs)
+        return pd.read_csv(file, header=0, index_col=0)
     else:  # .tsv
-        return pd.read_csv(file, header=0, sep="\t", **kwargs)
+        return pd.read_csv(file, header=0, sep="\t", index_col=0)
 
 
 def parse_count_table(file: Path):
     # transitting to pandas dataframe helps to avoid parsing errors
-    df = parse_table(file, index_col=0)
+    df = parse_table(file)
     # whatever the name of the first col, rename it to "gene_id"
     df.index.rename(config.GENE_ID_COLNAME, inplace=True)
     df.index = df.index.astype(str)

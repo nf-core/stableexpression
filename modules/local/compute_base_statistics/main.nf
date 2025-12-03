@@ -27,7 +27,13 @@ process COMPUTE_BASE_STATISTICS {
     if ( platform != [] ) {
         args += " --platform $platform"
     }
+    def is_using_containers = workflow.containerEngine ? true : false
     """
+    # limiting number of threads when using conda / micromamba
+    if [ "${is_using_containers}" == "false" ]; then
+        export POLARS_MAX_THREADS=${task.cpus}
+    fi
+
     compute_base_statistics.py \\
         --counts $count_file \\
         $args

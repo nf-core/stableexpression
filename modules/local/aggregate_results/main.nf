@@ -28,7 +28,13 @@ process AGGREGATE_RESULTS {
     def metadata_files_arg = metadata_files ? "--metadata " + "$metadata_files" : ""
     def rnaseq_dataset_stat_file_arg = rnaseq_dataset_stat_file ? "--rnaseq $rnaseq_dataset_stat_file" : ""
     def microarray_dataset_stat_file_arg = microarray_dataset_stat_file ? "--microarray $microarray_dataset_stat_file" : ""
+    def is_using_containers = workflow.containerEngine ? true : false
     """
+    # limiting number of threads when using conda / micromamba
+    if [ "${is_using_containers}" == "false" ]; then
+        export POLARS_MAX_THREADS=${task.cpus}
+    fi
+
     aggregate_results.py \\
         --counts $count_file \\
         --stats $stat_file \\

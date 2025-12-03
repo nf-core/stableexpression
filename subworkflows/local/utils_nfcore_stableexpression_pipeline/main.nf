@@ -230,23 +230,36 @@ def parseInputDatasets(samplesheet) {
 //
 // Validate channels from input samplesheet
 //
-def validateInputSamplesheet(input) {
+def validateInputSamplesheet( ch_datasets ) {
     // checking that all microarray datasets (if any) are normalised
-    input.filter {
-        meta, file ->
-            meta.platform == 'microarray' && !meta.normalised
-    }
-    .count()
-    .map { count ->
-        if (count > 0) {
-            def error_text = [
-                "Error: You provided at least one microarray dataset that is not normalised. ",
-                "Microarray datasets must already be normalised before being submitted. ",
-                "Please perform normalisation (typically using RMA for one-colour intensities / LOESS (limma) for two-colour intensities) and run again."
-            ].join(' ').trim()
-            error(error_text)
+    ch_datasets
+        .filter {
+            meta, file ->
+                meta.platform == 'microarray' && !meta.normalised
         }
-    }
+        .count()
+        .map { count ->
+            if (count > 0) {
+                def error_text = [
+                    "Error: You provided at least one microarray dataset that is not normalised. ",
+                    "Microarray datasets must already be normalised before being submitted. ",
+                    "Please perform normalisation (typically using RMA for one-colour intensities / LOESS (limma) for two-colour intensities) and run again."
+                ].join(' ').trim()
+                error(error_text)
+            }
+        }
+
+    // checking that all count files are well formated (same number of columns in header and rows)
+    ch_datasets
+        .map { meta, file ->
+            def header = file.withReader { reader -> reader.readLine() }
+            def separator = header.contains(',') ? "," :
+                            header.contains('\t') ? "\t" :
+                            " "
+            def first_row = file.splitCsv( header: false, skip: 1, limit: 1, sep: separator )
+
+            assert header.split(separator).size() == first_row[0].size() : "Header and first row do not have the same number of columns in file ${file}"
+        }
 }
 
 //

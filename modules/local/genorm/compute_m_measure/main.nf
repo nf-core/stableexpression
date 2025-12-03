@@ -19,7 +19,13 @@ process COMPUTE_M_MEASURE {
 
     script:
     def args = "--task-attempts ${task.attempt}"
+    def is_using_containers = workflow.containerEngine ? true : false
     """
+    # limiting number of threads when using conda / micromamba
+    if [ "${is_using_containers}" == "false" ]; then
+        export POLARS_MAX_THREADS=${task.cpus}
+    fi
+
     compute_m_measures.py \\
         --counts $count_file \\
         --std-files "$files" $args

@@ -20,7 +20,13 @@ process COMPUTE_STABILITY_SCORES {
 
     script:
     def genorm_stability_file_arg = genorm_stability_file ? "--genorm-stability $genorm_stability_file" : ""
+    def is_using_containers = workflow.containerEngine ? true : false
     """
+    # limiting number of threads when using conda / micromamba
+    if [ "${is_using_containers}" == "false" ]; then
+        export POLARS_MAX_THREADS=${task.cpus}
+    fi
+
     compute_stability_scores.py \\
         --stats $stat_file \\
         --weights "$stability_score_weights" \\
