@@ -17,7 +17,6 @@ nextflow_process {
                     ]
                 )
                 input[1] = file("$projectDir/tests/test_data/idmapping/mapped/mapped_gene_ids.csv", checkIfExists: true)
-                input[2] = Channel.value([])
                 """
             }
         }
@@ -44,8 +43,7 @@ nextflow_process {
                         file("$projectDir/tests/test_data/idmapping/tsv/counts.ensembl_ids.tsv", checkIfExists: true)
                     ]
                 )
-                input[1] = file("$projectDir/tests/test_data/idmapping/mapped/mapped_gene_ids.csv", checkIfExists: true)
-                input[2] = file( "$projectDir/tests/test_data/idmapping/tsv/mapping.tsv", checkIfExists: true)
+                input[1] = file( "$projectDir/tests/test_data/idmapping/tsv/mapping.tsv", checkIfExists: true)
                 """
             }
         }

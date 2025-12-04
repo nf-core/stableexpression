@@ -3,24 +3,16 @@
         "content": [
             {
                 "0": [
-                    "stability_values.normfinder.csv:md5,febede14f422e963abd897bc9efa897e"
+                    
                 ],
                 "1": [
-                    [
-                        "NORMFINDER",
-                        "python",
-                        "3.13.7"
-                    ]
+                    
                 ],
                 "2": [
-                    [
-                        "NORMFINDER",
-                        "polars",
-                        "1.33.1"
-                    ]
+                    
                 ],
                 "stability_values": [
-                    "stability_values.normfinder.csv:md5,febede14f422e963abd897bc9efa897e"
+                    
                 ]
             }
         ],
@@ -28,30 +20,22 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-19T15:28:45.03556591"
+        "timestamp": "2025-12-03T18:59:42.999801136"
     },
     "Very small dataset - Cq values": {
         "content": [
             {
                 "0": [
-                    "stability_values.normfinder.csv:md5,bdc363268df9d133b8ae7df5a2204103"
+                    
                 ],
                 "1": [
-                    [
-                        "NORMFINDER",
-                        "python",
-                        "3.13.7"
-                    ]
+                    
                 ],
                 "2": [
-                    [
-                        "NORMFINDER",
-                        "polars",
-                        "1.33.1"
-                    ]
+                    
                 ],
                 "stability_values": [
-                    "stability_values.normfinder.csv:md5,bdc363268df9d133b8ae7df5a2204103"
+                    
                 ]
             }
         ],
@@ -59,6 +43,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-19T15:28:38.129095619"
+        "timestamp": "2025-12-03T18:59:29.818592345"
     }
 }

@@ -13,7 +13,7 @@ process NORMALISATION_COMPUTE_CPM {
     tuple val(meta), path(count_file)
 
     output:
-    tuple val(meta), path('*.cpm.csv'), optional: true,                                                               emit: counts
+    tuple val(meta), path('*.cpm.csv'),                     optional: true,                                           emit: counts
     tuple val(meta.dataset), path("failure_reason.txt"),    optional: true,                                           topic: normalisation_failure_reason
     tuple val(meta.dataset), path("warning_reason.txt"),    optional: true,                                           topic: normalisation_warning_reason
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions

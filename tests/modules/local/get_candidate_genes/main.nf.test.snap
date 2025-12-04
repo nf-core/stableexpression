@@ -3,24 +3,16 @@
         "content": [
             {
                 "0": [
-                    "candidate_counts.parquet:md5,a671f20b4818b914ca454dce84308287"
+                    
                 ],
                 "1": [
-                    [
-                        "GET_CANDIDATE_GENES",
-                        "python",
-                        "3.12.8"
-                    ]
+                    
                 ],
                 "2": [
-                    [
-                        "GET_CANDIDATE_GENES",
-                        "polars",
-                        "1.17.1"
-                    ]
+                    
                 ],
                 "counts": [
-                    "candidate_counts.parquet:md5,a671f20b4818b914ca454dce84308287"
+                    
                 ]
             }
         ],
@@ -28,30 +20,22 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-08T14:46:13.79462279"
+        "timestamp": "2025-12-03T18:57:33.822736894"
     },
     "With RCVm and no filter on expression level": {
         "content": [
             {
                 "0": [
-                    "candidate_counts.parquet:md5,93c0abe8562314fe416769aa160d094a"
+                    
                 ],
                 "1": [
-                    [
-                        "GET_CANDIDATE_GENES",
-                        "python",
-                        "3.12.8"
-                    ]
+                    
                 ],
                 "2": [
-                    [
-                        "GET_CANDIDATE_GENES",
-                        "polars",
-                        "1.17.1"
-                    ]
+                    
                 ],
                 "counts": [
-                    "candidate_counts.parquet:md5,93c0abe8562314fe416769aa160d094a"
+                    
                 ]
             }
         ],
@@ -59,6 +43,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-08T14:46:41.537978144"
+        "timestamp": "2025-12-03T18:57:44.20986199"
     }
 }

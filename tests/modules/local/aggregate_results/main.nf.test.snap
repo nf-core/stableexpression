@@ -3,42 +3,34 @@
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,f2248dde8d461101270c5fceaf2d8c40"
+                    
                 ],
                 "1": [
-                    "top_stable_genes_summary.csv:md5,f2248dde8d461101270c5fceaf2d8c40"
+                    
                 ],
                 "2": [
-                    "all_counts_filtered.parquet:md5,286e7595b3a7b961e39976585d3c106e"
+                    
                 ],
                 "3": [
-                    "top_stable_genes_transposed_counts_filtered.csv:md5,dcb4f5e4bf8fc0538bf99554fbc47f5f"
+                    
                 ],
                 "4": [
-                    [
-                        "AGGREGATE_RESULTS",
-                        "python",
-                        "3.12.8"
-                    ]
+                    
                 ],
                 "5": [
-                    [
-                        "AGGREGATE_RESULTS",
-                        "polars",
-                        "1.17.1"
-                    ]
+                    
                 ],
                 "all_counts_filtered": [
-                    "all_counts_filtered.parquet:md5,286e7595b3a7b961e39976585d3c106e"
+                    
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,f2248dde8d461101270c5fceaf2d8c40"
+                    
                 ],
                 "top_stable_genes_summary": [
-                    "top_stable_genes_summary.csv:md5,f2248dde8d461101270c5fceaf2d8c40"
+                    
                 ],
                 "top_stable_genes_transposed_counts_filtered": [
-                    "top_stable_genes_transposed_counts_filtered.csv:md5,dcb4f5e4bf8fc0538bf99554fbc47f5f"
+                    
                 ]
             }
         ],
@@ -46,48 +38,40 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-19T15:20:34.967697416"
+        "timestamp": "2025-12-03T18:51:31.019751859"
     },
     "With microarray": {
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,1757570c492a6aa0b150613f92304d24"
+                    
                 ],
                 "1": [
-                    "top_stable_genes_summary.csv:md5,4ab34096569e9bf21e2344daa23c2f41"
+                    
                 ],
                 "2": [
-                    "all_counts_filtered.parquet:md5,286e7595b3a7b961e39976585d3c106e"
+                    
                 ],
                 "3": [
-                    "top_stable_genes_transposed_counts_filtered.csv:md5,dcb4f5e4bf8fc0538bf99554fbc47f5f"
+                    
                 ],
                 "4": [
-                    [
-                        "AGGREGATE_RESULTS",
-                        "python",
-                        "3.12.8"
-                    ]
+                    
                 ],
                 "5": [
-                    [
-                        "AGGREGATE_RESULTS",
-                        "polars",
-                        "1.17.1"
-                    ]
+                    
                 ],
                 "all_counts_filtered": [
-                    "all_counts_filtered.parquet:md5,286e7595b3a7b961e39976585d3c106e"
+                    
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,1757570c492a6aa0b150613f92304d24"
+                    
                 ],
                 "top_stable_genes_summary": [
-                    "top_stable_genes_summary.csv:md5,4ab34096569e9bf21e2344daa23c2f41"
+                    
                 ],
                 "top_stable_genes_transposed_counts_filtered": [
-                    "top_stable_genes_transposed_counts_filtered.csv:md5,dcb4f5e4bf8fc0538bf99554fbc47f5f"
+                    
                 ]
             }
         ],
@@ -95,6 +79,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-19T15:20:39.606518336"
+        "timestamp": "2025-12-03T18:51:42.230203404"
     }
 }

@@ -1,0 +1,110 @@
+{
+    "Accessions file + Excluded accessions file": {
+        "content": [
+            {
+                "0": [
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-MTAB-8187",
+                    "E-PROT-138"
+                ],
+                "accessions": [
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-MTAB-8187",
+                    "E-PROT-138"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-12-04T10:38:22.46774778"
+    },
+    "No GEO + accessions provided": {
+        "content": [
+            {
+                "0": [
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-MTAB-8187",
+                    "E-PROT-138"
+                ],
+                "accessions": [
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-MTAB-8187",
+                    "E-PROT-138"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-12-04T10:38:15.084508905"
+    },
+    "Fetch public accessions without keywords": {
+        "content": [
+            {
+                "0": [
+                    "E-MTAB-8187",
+                    "GSE107627",
+                    "GSE114968",
+                    "GSE135555",
+                    "GSE205413",
+                    "GSE269454",
+                    "GSE281272",
+                    "GSE55951",
+                    "GSE79526",
+                    "GSE92859"
+                ],
+                "accessions": [
+                    "E-MTAB-8187",
+                    "GSE107627",
+                    "GSE114968",
+                    "GSE135555",
+                    "GSE205413",
+                    "GSE269454",
+                    "GSE281272",
+                    "GSE55951",
+                    "GSE79526",
+                    "GSE92859"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-12-04T10:37:50.665649081"
+    },
+    "Fetch public accessions with keywords": {
+        "content": [
+            {
+                "0": [
+                    "E-MTAB-8187",
+                    "GSE107627",
+                    "GSE114968",
+                    "GSE269454",
+                    "GSE281272",
+                    "GSE79526"
+                ],
+                "accessions": [
+                    "E-MTAB-8187",
+                    "GSE107627",
+                    "GSE114968",
+                    "GSE269454",
+                    "GSE281272",
+                    "GSE79526"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-12-04T10:38:07.290638456"
+    }
+}

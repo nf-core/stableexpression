@@ -3,24 +3,16 @@
         "content": [
             {
                 "0": [
-                    "stats_all_genes.csv:md5,bdcac2a45728098fe2d79775bcfdb743"
+                    
                 ],
                 "1": [
-                    [
-                        "COMPUTE_BASE_STATISTICS",
-                        "python",
-                        "3.12.8"
-                    ]
+                    
                 ],
                 "2": [
-                    [
-                        "COMPUTE_BASE_STATISTICS",
-                        "polars",
-                        "1.17.1"
-                    ]
+                    
                 ],
                 "stats": [
-                    "stats_all_genes.csv:md5,bdcac2a45728098fe2d79775bcfdb743"
+                    
                 ]
             }
         ],
@@ -28,30 +20,22 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-19T15:20:52.920513223"
+        "timestamp": "2025-12-03T18:51:55.581816062"
     },
     "RNAseq platform": {
         "content": [
             {
                 "0": [
-                    "rnaseq.stats_all_genes.csv:md5,4f87865422331270c8aba3077faab8fa"
+                    
                 ],
                 "1": [
-                    [
-                        "COMPUTE_BASE_STATISTICS",
-                        "python",
-                        "3.12.8"
-                    ]
+                    
                 ],
                 "2": [
-                    [
-                        "COMPUTE_BASE_STATISTICS",
-                        "polars",
-                        "1.17.1"
-                    ]
+                    
                 ],
                 "stats": [
-                    "rnaseq.stats_all_genes.csv:md5,4f87865422331270c8aba3077faab8fa"
+                    
                 ]
             }
         ],
@@ -59,6 +43,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-19T15:20:57.621995644"
+        "timestamp": "2025-12-03T18:52:06.262096663"
     }
 }

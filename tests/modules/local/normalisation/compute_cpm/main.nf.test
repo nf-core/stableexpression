@@ -1,0 +1,101 @@
+nextflow_process {
+
+    name "Test Process NORMALISATION_COMPUTE_CPM"
+    script "modules/local/normalisation/compute_cpm/main.nf"
+    process "NORMALISATION_COMPUTE_CPM"
+    tag "cpm_norm"
+
+
+    test("Very small dataset") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ dataset: "test" ],
+                    file('$projectDir/tests/test_data/normalisation/base/counts.csv')
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Rows with many zeros") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ dataset: "test"],
+                    file('$projectDir/tests/test_data/normalisation/many_zeros/counts.csv')
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("One group") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ dataset: "accession" ],
+                    file('$projectDir/tests/test_data/normalisation/one_group/counts.csv')
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("TSV files") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ dataset: "accession" ],
+                    file('$projectDir/tests/test_data/normalisation/base/counts.tsv')
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}
