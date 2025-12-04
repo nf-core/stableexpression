@@ -10,7 +10,7 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = Channel.of(
+                input[0] = channel.of(
                     [
                         [ dataset: "test" ],
                         file("$projectDir/tests/test_data/idmapping/base/counts.ensembl_ids.csv", checkIfExists: true)
@@ -37,7 +37,7 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = Channel.of(
+                input[0] = channel.of(
                     [
                         [ dataset: "test" ],
                         file("$projectDir/tests/test_data/idmapping/tsv/counts.ensembl_ids.tsv", checkIfExists: true)

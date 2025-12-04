@@ -54,7 +54,7 @@ workflow STABILITY_SCORING {
         GENORM ( ch_candidate_gene_counts )
         GENORM.out.m_measures.set { ch_genorm_stability }
     } else {
-        ch_genorm_stability = Channel.value([])
+        ch_genorm_stability = channel.value([])
     }
 
     // -----------------------------------------------------------------

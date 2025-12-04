@@ -22,8 +22,8 @@ workflow ID_MAPPING {
 
     main:
 
-    ch_gene_id_mapping = Channel.empty()
-    ch_gene_metadata = Channel.empty()
+    ch_gene_id_mapping = channel.empty()
+    ch_gene_metadata = channel.empty()
 
     if ( !skip_id_mapping ) {
 
@@ -75,7 +75,7 @@ workflow ID_MAPPING {
     // -----------------------------------------------------------------
 
     ch_gene_id_mapping
-        .mix( custom_gene_id_mapping ? Channel.fromPath( custom_gene_id_mapping, checkIfExists: true ) : Channel.empty() )
+        .mix( custom_gene_id_mapping ? channel.fromPath( custom_gene_id_mapping, checkIfExists: true ) : channel.empty() )
         .splitCsv( header: true )
         .unique()
         .collectFile(
@@ -89,7 +89,7 @@ workflow ID_MAPPING {
         .set { ch_global_gene_id_mapping }
 
     ch_gene_metadata
-        .mix( custom_gene_metadata ? Channel.fromPath( custom_gene_metadata, checkIfExists: true ) : Channel.empty() )
+        .mix( custom_gene_metadata ? channel.fromPath( custom_gene_metadata, checkIfExists: true ) : channel.empty() )
         .splitCsv( header: true )
         .unique()
         .collectFile(

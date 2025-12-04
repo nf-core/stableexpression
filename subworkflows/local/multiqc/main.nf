@@ -25,7 +25,7 @@ workflow MULTIQC_WORKFLOW {
     // STATS
     // ------------------------------------------------------------------------------------
 
-    Channel.topic('id_mapping_stats')
+    channel.topic('id_mapping_stats')
         .collectFile(
             name: 'id_mapping_stats.csv',
             seed: "Dataset,Nb mapped,Nb unmapped",
@@ -36,7 +36,7 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_id_mapping_stats }
 
-    Channel.topic('skewness')
+    channel.topic('skewness')
         .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
         .collectFile(
             name: 'skewness.csv',
@@ -45,7 +45,7 @@ workflow MULTIQC_WORKFLOW {
         )
         .set { ch_skewness }
 
-    Channel.topic('ratio_zeros')
+    channel.topic('ratio_zeros')
         .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
         .collectFile(
             name: 'ratio_zeros.csv',
@@ -61,7 +61,7 @@ workflow MULTIQC_WORKFLOW {
     // FAILURE / WARNING REPORTS
     // ------------------------------------------------------------------------------------
 
-    Channel.topic('eatlas_failure_reason')
+    channel.topic('eatlas_failure_reason')
         .map { accession, file -> [ accession, file.readLines()[0] ] }
         .collectFile(
             name: 'eatlas_failure_reasons.csv',
@@ -73,7 +73,7 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_eatlas_failure_reasons }
 
-    Channel.topic('eatlas_warning_reason')
+    channel.topic('eatlas_warning_reason')
         .map { accession, file -> [ accession, file.readLines()[0] ] }
         .collectFile(
             name: 'eatlas_warning_reasons.csv',
@@ -85,7 +85,7 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_eatlas_warning_reasons }
 
-    Channel.topic('geo_failure_reason')
+    channel.topic('geo_failure_reason')
         .map { accession, file -> [ accession, file.readLines()[0] ] }
         .collectFile(
             name: 'geo_failure_reasons.csv',
@@ -97,7 +97,7 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_geo_failure_reasons }
 
-    Channel.topic('geo_warning_reason')
+    channel.topic('geo_warning_reason')
         .map { accession, file -> [ accession, file.readLines()[0] ] }
         .collectFile(
             name: 'geo_warning_reasons.csv',
@@ -109,7 +109,7 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_geo_warning_reasons }
 
-    Channel.topic('id_cleaning_failure_reason')
+    channel.topic('id_cleaning_failure_reason')
         .map { dataset, file -> [ dataset, file.readLines()[0] ] }
         .collectFile(
             name: 'id_cleaning_failure_reasons.tsv',
@@ -121,7 +121,7 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_id_cleaning_failure_reasons }
 
-    Channel.topic('renaming_warning_reason')
+    channel.topic('renaming_warning_reason')
         .map { dataset, file -> [ dataset, file.readLines()[0] ] }
         .collectFile(
             name: 'renaming_warning_reasons.tsv',
@@ -133,7 +133,7 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_id_mapping_warning_reasons }
 
-    Channel.topic('renaming_failure_reason')
+    channel.topic('renaming_failure_reason')
         .map { dataset, file -> [ dataset, file.readLines()[0] ] }
         .collectFile(
             name: 'renaming_failure_reasons.tsv',
@@ -145,7 +145,7 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_id_mapping_failure_reasons }
 
-    Channel.topic('normalisation_warning_reason')
+    channel.topic('normalisation_warning_reason')
         .map { dataset, file -> [ dataset, file.readLines()[0] ] }
         .collectFile(
             name: 'normalisation_warning_reasons.tsv',
@@ -157,7 +157,7 @@ workflow MULTIQC_WORKFLOW {
         }
         .set { ch_normalisation_warning_reasons }
 
-    Channel.topic('normalisation_failure_reason')
+    channel.topic('normalisation_failure_reason')
         .map { dataset, file -> [ dataset, file.readLines()[0] ] }
         .collectFile(
             name: 'normalisation_failure_reasons.tsv',
@@ -175,11 +175,11 @@ workflow MULTIQC_WORKFLOW {
     // ------------------------------------------------------------------------------------
 
     ch_multiqc_files
-        .mix( Channel.topic('eatlas_all_datasets').collect() )
-        .mix( Channel.topic('eatlas_selected_datasets').collect() )
-        .mix( Channel.topic('geo_all_datasets').collect() )
-        .mix( Channel.topic('geo_selected_datasets').collect() )
-        .mix( Channel.topic('geo_rejected_datasets').collect() )
+        .mix( channel.topic('eatlas_all_datasets').collect() )
+        .mix( channel.topic('eatlas_selected_datasets').collect() )
+        .mix( channel.topic('geo_all_datasets').collect() )
+        .mix( channel.topic('geo_selected_datasets').collect() )
+        .mix( channel.topic('geo_rejected_datasets').collect() )
         .mix( COLLECT_STATISTICS.out.csv )
         .mix( ch_id_mapping_stats )
         .mix( ch_eatlas_failure_reasons )
@@ -201,7 +201,7 @@ workflow MULTIQC_WORKFLOW {
     // TODO: use the nf-core functions when they are adapted to channel topics
 
     // Collate and save software versions
-    formatVersionsToYAML ( Channel.topic('versions') )
+    formatVersionsToYAML ( channel.topic('versions') )
         .mix ( softwareVersionsToYAML( ch_versions ) ) // mix with versions obtained from emit outputs
         .collectFile(storeDir: "${params.outdir}/pipeline_info", name: 'software_mqc_versions.yml', sort: true, newLine: true)
         .set { ch_collated_versions }
@@ -212,13 +212,13 @@ workflow MULTIQC_WORKFLOW {
     // ------------------------------------------------------------------------------------
 
     summary_params = paramsSummaryMap( workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
+    ch_workflow_summary = channel.value(paramsSummaryMultiqc(summary_params))
 
     ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
         file(params.multiqc_methods_description, checkIfExists: true) :
         file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
 
-    Channel.value( methodsDescriptionText( ch_multiqc_custom_methods_description ) )
+    channel.value( methodsDescriptionText( ch_multiqc_custom_methods_description ) )
         .collectFile(
             name: 'methods_description_mqc.yaml',
             sort: true
@@ -231,9 +231,9 @@ workflow MULTIQC_WORKFLOW {
         .mix( ch_methods_description_file )
         .set { ch_multiqc_files }
 
-    ch_multiqc_config = Channel.fromPath( "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config, checkIfExists: true) : Channel.empty()
-    ch_multiqc_logo = params.multiqc_logo ? Channel.fromPath(params.multiqc_logo, checkIfExists: true) : Channel.empty()
+    ch_multiqc_config = channel.fromPath( "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config ? channel.fromPath(params.multiqc_config, checkIfExists: true) : channel.empty()
+    ch_multiqc_logo = params.multiqc_logo ? channel.fromPath(params.multiqc_logo, checkIfExists: true) : channel.empty()
 
     MULTIQC (
         ch_multiqc_files.collect(),

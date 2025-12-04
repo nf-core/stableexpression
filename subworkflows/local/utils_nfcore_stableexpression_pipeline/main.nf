@@ -103,7 +103,7 @@ workflow PIPELINE_INITIALISATION {
         ch_input_datasets = parseInputDatasets( params.datasets )
         validateInputSamplesheet( ch_input_datasets )
     } else {
-        ch_input_datasets = Channel.empty()
+        ch_input_datasets = channel.empty()
     }
 
     emit:
@@ -217,7 +217,7 @@ def validateInputParameters(params) {
 // Parses files from input dataset and creates two subchannels raw and normalized
 // with elements like [meta, count_file, normalised]
 def parseInputDatasets(samplesheet) {
-    return Channel.fromList( samplesheetToList(samplesheet, "assets/schema_datasets.json") )
+    return channel.fromList( samplesheetToList(samplesheet, "assets/schema_datasets.json") )
             .map {
                 item ->
                     def (meta, count_file) = item

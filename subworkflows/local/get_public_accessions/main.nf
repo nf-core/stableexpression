@@ -26,8 +26,8 @@ workflow GET_PUBLIC_ACCESSIONS {
 
     main:
 
-    ch_fetched_eatlas_accessions = Channel.empty()
-    ch_fetched_geo_accessions = Channel.empty()
+    ch_fetched_eatlas_accessions = channel.empty()
+    ch_fetched_geo_accessions = channel.empty()
 
     // -----------------------------------------------------------------
     // GET EATLAS ACCESSIONS

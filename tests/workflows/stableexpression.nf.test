@@ -17,7 +17,7 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = Channel.empty()
+                input[0] = channel.empty()
                 """
             }
         }
@@ -44,7 +44,7 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = Channel.empty()
+                input[0] = channel.empty()
                 """
             }
         }
@@ -71,7 +71,7 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = Channel.empty()
+                input[0] = channel.empty()
                 """
             }
         }
@@ -99,7 +99,7 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = Channel.empty()
+                input[0] = channel.empty()
                 """
             }
         }
@@ -127,7 +127,7 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = Channel.empty()
+                input[0] = channel.empty()
                 """
             }
         }
@@ -155,7 +155,7 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = Channel.empty()
+                input[0] = channel.empty()
                 """
             }
         }
@@ -179,7 +179,7 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = Channel.empty()
+                input[0] = channel.empty()
                 """
             }
         }

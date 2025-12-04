@@ -20,8 +20,8 @@ workflow DOWNLOAD_PUBLIC_DATASETS {
 
     main:
 
-    ch_datasets = Channel.empty()
-    ch_fetched_accessions = Channel.empty()
+    ch_datasets = channel.empty()
+    ch_fetched_accessions = channel.empty()
 
     ch_accessions = ch_accessions
          .branch { acc ->

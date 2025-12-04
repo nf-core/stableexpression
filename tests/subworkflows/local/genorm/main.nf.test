@@ -13,7 +13,7 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                ch_counts = Channel.fromPath( '$projectDir/tests/test_data/genorm/make_chunks/input/counts.head.parquet', checkIfExists: true)
+                ch_counts = channel.fromPath( '$projectDir/tests/test_data/genorm/make_chunks/input/counts.head.parquet', checkIfExists: true)
                 input[0] = ch_counts
                 """
             }
@@ -33,7 +33,7 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                ch_counts = Channel.fromPath( '$projectDir/tests/test_data/genorm/make_chunks/input/counts.parquet', checkIfExists: true)
+                ch_counts = channel.fromPath( '$projectDir/tests/test_data/genorm/make_chunks/input/counts.parquet', checkIfExists: true)
                 input[0] = ch_counts
                 """
             }

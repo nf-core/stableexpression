@@ -34,15 +34,15 @@ workflow STABLEEXPRESSION {
 
     main:
 
-    ch_accessions = Channel.empty()
-    ch_downloaded_datasets = Channel.empty()
+    ch_accessions = channel.empty()
+    ch_downloaded_datasets = channel.empty()
 
-    ch_versions = Channel.empty()
-    ch_multiqc_files = Channel.empty()
+    ch_versions = channel.empty()
+    ch_multiqc_files = channel.empty()
 
-    ch_top_stable_genes_summary = Channel.empty()
-    ch_all_genes_statistics = Channel.empty()
-    ch_top_stable_genes_transposed_counts = Channel.empty()
+    ch_top_stable_genes_summary = channel.empty()
+    ch_all_genes_statistics = channel.empty()
+    ch_top_stable_genes_transposed_counts = channel.empty()
 
     def species = params.species.split(' ').join('_').toLowerCase()
 
@@ -57,10 +57,10 @@ workflow STABLEEXPRESSION {
         params.skip_fetch_geo_accessions,
         params.platform,
         params.keywords,
-        Channel.fromList( params.accessions.tokenize(',') ),
-        params.accessions_file ? Channel.fromPath(params.accessions_file, checkIfExists: true) : Channel.empty(),
-        Channel.fromList( params.excluded_accessions.tokenize(',') ),
-        params.excluded_accessions_file ? Channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : Channel.empty(),
+        channel.fromList( params.accessions.tokenize(',') ),
+        params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty(),
+        channel.fromList( params.excluded_accessions.tokenize(',') ),
+        params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty(),
         params.random_sampling_size,
         params.random_sampling_seed,
         params.outdir
