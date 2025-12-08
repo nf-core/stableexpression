@@ -1,7 +1,6 @@
 include { MULTIQC                                } from '../../../modules/nf-core/multiqc'
 include { COLLECT_STATISTICS                     } from '../../../modules/local/collect_statistics'
 
-include { formatVersionsToYAML                   } from '../utils_nfcore_stableexpression_pipeline'
 include { methodsDescriptionText                 } from '../utils_nfcore_stableexpression_pipeline'
 include { paramsSummaryMultiqc                   } from '../../nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML                 } from '../../nf-core/utils_nfcore_pipeline'
@@ -197,15 +196,33 @@ workflow MULTIQC_WORKFLOW {
     // VERSIONS
     // ------------------------------------------------------------------------------------
 
-    // Collate and save software versions obtained from topic channels
-    // TODO: use the nf-core functions when they are adapted to channel topics
-
     // Collate and save software versions
-    formatVersionsToYAML ( channel.topic('versions') )
-        .mix ( softwareVersionsToYAML( ch_versions ) ) // mix with versions obtained from emit outputs
-        .collectFile(storeDir: "${params.outdir}/pipeline_info", name: 'software_mqc_versions.yml', sort: true, newLine: true)
-        .set { ch_collated_versions }
+    //
+    def topic_versions = channel.topic("versions")
+        .distinct()
+        .branch { entry ->
+            versions_file: entry instanceof Path
+            versions_tuple: true
+        }
 
+    def topic_versions_string = topic_versions.versions_tuple
+        .map { process, tool, version ->
+            [ process[process.lastIndexOf(':')+1..-1], "  ${tool}: ${version}" ]
+        }
+        .groupTuple(by:0)
+        .map { process, tool_versions ->
+            tool_versions.unique().sort()
+            "${process}:\n${tool_versions.join('\n')}"
+        }
+
+    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+        .mix(topic_versions_string)
+        .collectFile(
+            storeDir: "${params.outdir}/pipeline_info",
+            name: 'nf_core_'  +  'stableexpression_software_'  + 'mqc_'  + 'versions.yml',
+            sort: true,
+            newLine: true
+        ).set { ch_collated_versions }
 
     // ------------------------------------------------------------------------------------
     // CONFIG
