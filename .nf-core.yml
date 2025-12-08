@@ -9,7 +9,12 @@ lint:
     - .github/PULL_REQUEST_TEMPLATE.md
   nextflow_config:
     - params.input
+  template_strings:
+    - tests/test_data/genorm/compute_m_measure/input/std.0.0.parquet
+    - tests/test_data/genorm/compute_m_measure/input/std.1.2.parquet
+    - tests/test_data/genorm/compute_m_measure/input/std.1.2.parquet
   schema_lint: false
+
 nf_core_version: 3.5.1
 repository_type: pipeline
 template:
