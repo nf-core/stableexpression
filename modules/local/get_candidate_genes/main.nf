@@ -1,6 +1,6 @@
 process GET_CANDIDATE_GENES {
 
-    label 'process_high_memory'
+    label 'process_high'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?

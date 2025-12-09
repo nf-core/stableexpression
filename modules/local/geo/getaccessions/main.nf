@@ -1,6 +1,6 @@
 process GEO_GETACCESSIONS {
 
-    label 'process_high_cpus'
+    label 'process_high'
 
     tag "${species}"
 

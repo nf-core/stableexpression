@@ -1,6 +1,6 @@
 process MERGE_COUNTS {
 
-    label "process_high_memory"
+    label "process_high"
 
     memory { def calc = (dataset_size / 50000).toInteger()
         def result = Math.max(1, calc)  // Ensure at least 1 MB
