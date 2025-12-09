@@ -16,7 +16,7 @@
 
 - [NCBI GEO](https://www.ncbi.nlm.nih.gov/geo/)
 
-> Ron Edgar, Michael Domrachev & Alex E Lash. Gene Expression Omnibus: NCBI gene expression and hybridization array data repository. Nucleic Acids Res. 2002 Jan 1;30(1):207-10. doi: 10.1093/nar/30.1.207. PubMed PMID:  11752295.
+> Ron Edgar, Michael Domrachev & Alex E Lash. Gene Expression Omnibus: NCBI gene expression and hybridization array data repository. Nucleic Acids Res. 2002 Jan 1;30(1):207-10. doi: 10.1093/nar/30.1.207. PubMed PMID: 11752295.
 
 - [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost)
 
@@ -24,11 +24,11 @@
 
 - [Normfinder](https://rdrr.io/github/dhammarstrom/generefer/man/normfinder.html)
 
-> Claus Lindbjerg Andersen, Jens Ledet Jensen, Torben Falck Ørntoft. Normalization of Real-Time Quantitative Reverse Transcription-PCR Data: A Model-Based Variance Estimation Approach to Identify Genes Suited for Normalization, Applied to Bladder and Colon Cancer Data Sets. Cancer Res (2004) 64 (15): 5245–5250. doi:10.1158/0008-5472.CAN-04-0496. PubMed PMID:  15289330.
+> Claus Lindbjerg Andersen, Jens Ledet Jensen, Torben Falck Ørntoft. Normalization of Real-Time Quantitative Reverse Transcription-PCR Data: A Model-Based Variance Estimation Approach to Identify Genes Suited for Normalization, Applied to Bladder and Colon Cancer Data Sets. Cancer Res (2004) 64 (15): 5245–5250. doi:10.1158/0008-5472.CAN-04-0496. PubMed PMID: 15289330.
 
 - [GeNorm](https://pypi.org/project/rna-genorm/)
 
-> Jo Vandesompele, Katleen De Preter, Filip Pattyn, Bruce Poppe, Nadine Van Roy, Anne De Paepe, Frank Speleman. Accurate normalization of real-time quantitative RT-PCR data by geometric averaging of multiple internal control genes. Genome Biol. 2002 Jun 18;3(7):RESEARCH0034. doi: 10.1186/gb-2002-3-7-research0034 Pubmed PMID:  12184808.
+> Jo Vandesompele, Katleen De Preter, Filip Pattyn, Bruce Poppe, Nadine Van Roy, Anne De Paepe, Frank Speleman. Accurate normalization of real-time quantitative RT-PCR data by geometric averaging of multiple internal control genes. Genome Biol. 2002 Jun 18;3(7):RESEARCH0034. doi: 10.1186/gb-2002-3-7-research0034 Pubmed PMID: 12184808.
 
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
 

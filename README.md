@@ -25,15 +25,15 @@
 **nf-core/stableexpression** is a bioinformatics pipeline aiming to aggregate multiple count datasets (public / provided by the user) for a specific species and find the most stable genes.
 
 It takes as main inputs :
-  * a species name (mandatory)
-  * keywords for Expression Atlas / GEO search (optional)
-  * a CSV input file listing your own raw / normalised count datasets (optional).
+
+- a species name (mandatory)
+- keywords for Expression Atlas / GEO search (optional)
+- a CSV input file listing your own raw / normalised count datasets (optional).
 
 **Use cases**:
-  * **find the most suitable genes as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
-  * download all Expression Atlas and NCBI GEO datasets for a species
 
-
+- **find the most suitable genes as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
+- download all Expression Atlas and NCBI GEO datasets for a species
 
 ## Basic usage
 
@@ -48,10 +48,10 @@ nextflow run nf-core/stableexpression \
    -profile <PROFILE (examples: docker / apptainer / conda / micromamba)> \
    --species <SPECIES (examples: arabidopsis_thaliana / "drosophila melanogaster")> \
    --outdir <OUTDIR (example: ./results)>
- ```
+```
 
 > [!IMPORTANT]
- > For more specific scenarios, __like fetching only specific conditions or using your own expression dataset(s)__, please refer to the [usage documentation](https://nf-co.re/stableexpression/usage).
+> For more specific scenarios, **like fetching only specific conditions or using your own expression dataset(s)**, please refer to the [usage documentation](https://nf-co.re/stableexpression/usage).
 
 > [!NOTE]
 > See [here](https://nf-co.re/stableexpression/usage#profiles) for more information about profiles.

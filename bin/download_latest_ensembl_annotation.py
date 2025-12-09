@@ -5,7 +5,6 @@
 import argparse
 import logging
 from datetime import datetime
-from pathlib import Path
 from urllib.request import urlretrieve
 
 import pandas as pd

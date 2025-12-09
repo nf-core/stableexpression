@@ -17,26 +17,38 @@ The directories listed below will be created in the results directory after the 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
 1. Get accessions
-  - Get [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords) (run by default; optional)
-  - Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) __microarray__ dataset accessions corresponding to the provided species (and optionally keywords) (run by default; optional)
+
+- Get [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords) (run by default; optional)
+- Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) **microarray** dataset accessions corresponding to the provided species (and optionally keywords) (run by default; optional)
+
 2. Download data
-  - Download [Expression Atlas](https://www.ebi.ac.uk/gxa/home) data (run by default; optional)
-  - Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data (run by default; optional)
+
+- Download [Expression Atlas](https://www.ebi.ac.uk/gxa/home) data (run by default; optional)
+- Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data (run by default; optional)
+
 3. ID Mapping
-  - Map gene IDS to NCBI Entrez Gene IDS (or Ensembl IDs) for standardisation among datasets using [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
+
+- Map gene IDS to NCBI Entrez Gene IDS (or Ensembl IDs) for standardisation among datasets using [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
+
 4. Data normalisation
-  - Normalize RNAseq raw data using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) or [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)
-  - Perform quantile normalisation on each dataset separately using [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html)
+
+- Normalize RNAseq raw data using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) or [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)
+- Perform quantile normalisation on each dataset separately using [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html)
+
 5. Data cleaning
-  - Get statistics for each sample in each dataset
-  - Remove samples that diverge too much from the expected normalised profile
+
+- Get statistics for each sample in each dataset
+- Remove samples that diverge too much from the expected normalised profile
+
 6. Merge all data
 7. Compute base statistics for each gene, platform-wide and for each platform (RNAseq and microarray)
 8. Compute stability scoring
-  - Get list of candidate genes based on base statistics
-  - Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder)
-  - Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034) (NOT run by default; optional)
-  - Compute stability scores for each candidate gene
+
+- Get list of candidate genes based on base statistics
+- Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder)
+- Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034) (NOT run by default; optional)
+- Compute stability scores for each candidate gene
+
 9. Aggregate results
 10. Prepare [Dash Plotly](https://dash.plotly.com/) app for further investigation of gene / sample counts
 11. Make [`MultiQC`](http://multiqc.info/) report
@@ -73,15 +85,16 @@ conda activate nf-core-stableexpression-dash
 ```
 
 then:
+
 ```
 cd dash_app
 python app.py
 ```
+
 and open your browser at `http://localhost:8080`
 
 > [!NOTE]
 > The app will try to use the port `8080` by default. If it is already in use, it will try `8081`, `8082` and so on. Check the logs to see which port it is using.
-
 
 ### Expression Atlas
 
@@ -125,7 +138,6 @@ and open your browser at `http://localhost:8080`
   - `normalised/edger/` for EdgeR
 - `quantile_normalised` : Quantile normalised datasets
 
-
 ### Gene base statistics
 
 <details markdown="1">
@@ -168,9 +180,6 @@ The gene stat summary is also bundled with the Dash Plotly app.
 - `dash_app/data/whole_design.csv`: file containing all experimental design information
 
 </details>
-
-
-
 
 ### Pipeline information
 

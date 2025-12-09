@@ -20,10 +20,13 @@ java.lang.OutOfMemoryError: Java heap space
 ```
 
 We recommend adding the following line to your environment to limit this (typically in `~/.bashrc` or `~./bash_profile`):
+
 ```bash
 NXF_OPTS='-Xms1g -Xmx4g'
 ```
 
 or running the pipeline with:
+
 ```bash
 NXF_OPTS='-Xms1g -Xmx4g' nextflow run nf-core/stableexpression ...
+```

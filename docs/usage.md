@@ -10,7 +10,6 @@
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
-
 ## 1. Basic run
 
 This pipeline fetches Expression Atlas and GEO accessions for the provided species and downloads the corresponding data.
@@ -40,11 +39,11 @@ nextflow run nf-core/stableexpression \
 ```
 
 > [!NOTE]
+>
 > - Multiple keywords must be separated by commas.
-> - Note that the keywords are additive: you will get datasets that fit with __either of the keywords__.
+> - Note that the keywords are additive: you will get datasets that fit with **either of the keywords**.
 > - A dataset will be downloaded if a keyword is found in its summary or in the same of a sample.
 > - The natural language processing [`ǹltk`](https://www.nltk.org/) python package is used to find keywords as well as derived words. For example, the `leaf` keyword should match 'leaf', 'leaves', 'leafy', etc.
-
 
 ## 3. Provide your own accessions
 
@@ -89,6 +88,7 @@ Fetched accessions with their respective metadata will be available in `<OUTDIR>
 You can of course provide your own counts datasets / experimental designs.
 
 > [!NOTE]
+>
 > - To ensure all RNAseq datasets are processed the same way, you should provide **raw counts**.
 > - In case normalised counts are provided, you should provide the same normalisation method for all of them (TPM, FPKM, etc.).
 
@@ -97,12 +97,12 @@ You can of course provide your own counts datasets / experimental designs.
 
 First, prepare a samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
 
-| Column              | Description                                                                                                                                                                                                                                          |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `counts`            | Path to the count dataset (a CSV / TSV file)                                                                                                                                                                                                        |
-| `design`           | Path to the experimental design associated to this dataset (a CSV / TSV file)                                                                                                                          |
-| `platform`           | Platform used to generate the counts (`rnaseq` or `microarray`)
-| `normalised`           | Boolean (`true` / `false`) representing whether the counts are already normalised or not.
+| Column       | Description                                                                               |
+| ------------ | ----------------------------------------------------------------------------------------- |
+| `counts`     | Path to the count dataset (a CSV / TSV file)                                              |
+| `design`     | Path to the experimental design associated to this dataset (a CSV / TSV file)             |
+| `platform`   | Platform used to generate the counts (`rnaseq` or `microarray`)                           |
+| `normalised` | Boolean (`true` / `false`) representing whether the counts are already normalised or not. |
 
 It should look as follows:
 
@@ -130,7 +130,6 @@ It can also be a YAML file:
   normalised: true
 ```
 
-
 The counts should have the following structure:
 
 ```csv title=counts.csv
@@ -138,7 +137,6 @@ gene_id,sample_A,sample_B,sample_C
 gene_1,1,2,3
 gene_2,1,2,3
 ```
-
 
 While the design should look like:
 
@@ -149,14 +147,13 @@ sample_B,condition_2
 sample_C,condition_1
 ```
 
-
 > [!WARNING]
+>
 > - In the count file, the first header column (corresponding to gene IDs) should not be empty. However, its name can be anything.
 > - The count file should not have any column other than the first one (gene IDs) and the sample columns. Extra columns will be ignored.
 
 > [!TIP]
 > Both counts and design files can also be supplied as TSV files.
-
 
 Now run the pipeline with:
 
@@ -172,10 +169,10 @@ nextflow run nf-core/stableexpression \
 ```
 
 > [!TIP]
-> The `--skip_fetch_eatlas_accessions` and `--skip_fetch_geo_accessions` parameters are supplied here to show how to analyse __only your own dataset__. You may remove these parameters if you want to mix you dataset(s) with public ones.
+> The `--skip_fetch_eatlas_accessions` and `--skip_fetch_geo_accessions` parameters are supplied here to show how to analyse **only your own dataset**. You may remove these parameters if you want to mix you dataset(s) with public ones.
 
 > [!IMPORTANT]
-> By default, the pipeline tries to map gene IDs to NCBI Entrez Gene IDs. __All genes that cannot be mapped are discarded from the analysis__. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think that your gene IDs won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, you may supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
+> By default, the pipeline tries to map gene IDs to NCBI Entrez Gene IDs. **All genes that cannot be mapped are discarded from the analysis**. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think that your gene IDs won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, you may supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
 
 > [!TIP]
 > You can check if your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
@@ -199,10 +196,10 @@ nextflow run nf-core/stableexpression \
 
 Structure of the gene id mapping file:
 
-| Column              | Description                                                                                                                                                                                                                                          |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `original_gene_id`            | Gene ID used in the provided count dataset(s)                                                                                                                          |
-| `gene_id`           | Mapped gene ID              |
+| Column             | Description                                   |
+| ------------------ | --------------------------------------------- |
+| `original_gene_id` | Gene ID used in the provided count dataset(s) |
+| `gene_id`          | Mapped gene ID                                |
 
 It should look as follows:
 
@@ -212,15 +209,13 @@ gene_A,ENSG1234567890
 geneB,OTHERmappedgeneID
 ```
 
-
-
 Structure of the gene metadata file:
 
-| Column              | Description                                                                                                                                                                                                                                          |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `gene_id`            | Mapped gene ID                                                                                                                          |
-| `name`               | Gene common name              |
-| `description`        | Gene description              |
+| Column        | Description      |
+| ------------- | ---------------- |
+| `gene_id`     | Mapped gene ID   |
+| `name`        | Gene common name |
+| `description` | Gene description |
 
 It should look as follows:
 
@@ -233,7 +228,6 @@ OTHERmappedgeneID,My OTHER Gene,Another description
 ### 6. More advanced scenarios
 
 For advanced scenarios, you can see the list of available parameters in the [parameter documentation](https://nf-co.re/stableexpression/parameters).
-
 
 ## Pipeline output
 
@@ -274,7 +268,6 @@ outdir: './results/'
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
 
-
 ### Updating the pipeline
 
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
@@ -314,11 +307,14 @@ Several generic profiles are bundled with the pipeline which instruct the pipeli
 
 > When running the pipeline of multi-user server or on a cluster, the best practice is to use Apptainer (formerly Singularity). You can install Apptainer by following these [instructions](https://apptainer.org/docs/admin/main/installation.html#).
 > In case you encounter the following error when running Apptainer:
+>
 > ```
 > ERROR  : Could not write info to setgroups: Permission denied
 > ERROR  : Error while waiting event for user namespace mappings: no event received
 > ```
+>
 > you may need to install the `apptainer-suid` package instead of `apptainer`:
+>
 > ```
 > # Debian / Ubuntu
 > sudo apt install apptainer-suid
@@ -326,8 +322,7 @@ Several generic profiles are bundled with the pipeline which instruct the pipeli
 > sudo yum install apptainer-suid
 > # Fedora
 > sudo dnf install apptainer-suid
->```
-
+> ```
 
 The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to check if your system is supported, please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
 

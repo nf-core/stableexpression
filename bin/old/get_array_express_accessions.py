@@ -9,14 +9,11 @@ import urllib.parse
 from functools import partial
 from multiprocessing import Pool
 
-import pandas as pd
 import requests
-import yaml
 from natural_language_utils import keywords_in_fields
 from tenacity import (
     before_sleep_log,
     retry,
-    retry_if_exception_type,
     stop_after_delay,
     wait_exponential,
 )

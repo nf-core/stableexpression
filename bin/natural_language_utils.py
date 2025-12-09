@@ -137,4 +137,3 @@ def keywords_in_fields(fields: list[str], keywords: list[str]) -> list[str]:
         for field in fields
         if word_is_in_sentence(keyword, field)
     ]
-
