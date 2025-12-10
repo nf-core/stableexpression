@@ -34,6 +34,8 @@ SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME = "species_experiments.metadata.tsv"
 SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME = "selected_experiments.metadata.tsv"
 FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME = "filtered_experiments.keywords.yaml"
 
+SAMPLING_QUOTA_OUTFILE = "sampling_quota.txt"
+
 
 ##################################################################
 ##################################################################
@@ -353,38 +355,44 @@ def get_metadata_for_selected_experiments(
 
 def sample_experiments_randomly(
     experiments: list[dict], sampling_size: int, seed: int
-) -> list[str]:
+) -> tuple[list[str], bool]:
     random.seed(seed)
     sampled_experiments = []
 
     total_nb_samples = 0
+    sampling_quota_reached = False
     experiments_left = list(experiments)
-    while experiments_left and total_nb_samples <= sampling_size:
+    while experiments_left:
         # if the min number of samples is greater than the remaining space left, we get out of the loop
         experiments_left_nb_samples = [exp["nb_samples"] for exp in experiments_left]
         min_nb_samples = min(experiments_left_nb_samples)
         if min_nb_samples > sampling_size - total_nb_samples:
+            sampling_quota_reached = True
+            logger.warning("Sampling quota reached")
             break
 
-        found_experiment = False
+        experiment = None
         test_total_nb_samples = int(total_nb_samples)
-        not_chosen_yet = list(experiments_left)
-        while not_chosen_yet and not found_experiment:
-            experiment = random.choice(not_chosen_yet)
-            not_chosen_yet.remove(experiment)
+        experiments_not_tested = list(experiments_left)
+        while experiments_not_tested:
+            experiment = random.choice(experiments_not_tested)
+            experiments_not_tested.remove(experiment)
+            # if we do not exceed the sampling size with this experiment
+            # we keep it
             test_total_nb_samples = total_nb_samples + experiment["nb_samples"]
             if test_total_nb_samples <= sampling_size:
-                found_experiment = True
+                break
 
-        # if the last one was not good, it means we reached the limit of samples we can take
-        if not found_experiment:
-            break
-        else:
-            total_nb_samples = test_total_nb_samples
-            experiments_left.remove(experiment)
-            sampled_experiments.append(experiment)
+        # this should not happen but we keep it for safety
+        if experiment is None:
+            logger.error("No experiment found")
+            continue
 
-    return [exp["accession"] for exp in sampled_experiments]
+        total_nb_samples = test_total_nb_samples
+        experiments_left.remove(experiment)
+        sampled_experiments.append(experiment)
+
+    return [exp["accession"] for exp in sampled_experiments], sampling_quota_reached
 
 
 def format_species_name(species: str) -> str:
@@ -456,7 +464,7 @@ def main():
         nb_samples_df.to_csv("selected_accession_to_nb_samples.csv", index=False)
 
         logger.info("Sampling experiments randomly")
-        selected_accessions = sample_experiments_randomly(
+        selected_accessions, sampling_quota_reached = sample_experiments_randomly(
             selected_accession_to_nb_samples,
             args.random_sampling_size,
             args.random_sampling_seed,
@@ -464,6 +472,12 @@ def main():
         logger.info(
             f"Kept {len(selected_accessions)} experiments after random sampling"
         )
+
+        # writing status to file
+        # so that the wrapper module can get the status
+        with open(SAMPLING_QUOTA_OUTFILE, "w") as fout:
+            sampling_status = "full" if sampling_quota_reached else "ok"
+            fout.write(sampling_status)
 
     # keeping metadata only for selected experiments
     selected_experiments = get_metadata_for_selected_experiments(experiments, results)

@@ -18,6 +18,7 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     output:
     path "accessions.txt",                    optional: true,                                                         emit: accessions
+    env("SAMPLING_QUOTA"),                                                                                            emit: sampling_quota
     path "selected_experiments.metadata.tsv", optional: true,                                                         topic: eatlas_selected_datasets
     path "species_experiments.metadata.tsv",  optional: true,                                                         topic: eatlas_all_datasets
     //path "filtered_experiments.metadata.tsv", optional: true,                                                       topic: filtered_eatlas_experiment_metadata
@@ -50,6 +51,8 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     get_eatlas_accessions.py \\
         $args \\
         --cpus ${task.cpus}
+
+    SAMPLING_QUOTA=\$(cat sampling_quota.txt)
     """
 
     stub:
@@ -58,6 +61,8 @@ process EXPRESSIONATLAS_GETACCESSIONS {
         all_experiments.metadata.tsv \\
         filtered_experiments.metadata.tsv \\
         filtered_experiments.keywords.yaml
+
+    SAMPLING_QUOTA="ok"
     """
 
 }

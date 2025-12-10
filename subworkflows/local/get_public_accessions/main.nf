@@ -28,6 +28,7 @@ workflow GET_PUBLIC_ACCESSIONS {
 
     ch_fetched_eatlas_accessions = channel.empty()
     ch_fetched_geo_accessions = channel.empty()
+    ch_sampling_quota = channel.of( "ok" )
 
     // -----------------------------------------------------------------
     // GET EATLAS ACCESSIONS
@@ -47,6 +48,7 @@ workflow GET_PUBLIC_ACCESSIONS {
         )
 
         ch_fetched_eatlas_accessions = EXPRESSION_ATLAS.out.accessions.splitText()
+        ch_sampling_quota = EXPRESSION_ATLAS.out.sampling_quota
 
     }
 
@@ -70,10 +72,16 @@ workflow GET_PUBLIC_ACCESSIONS {
             )
             .ifEmpty( [] )
 
+        // trick to avoid fetching accessions from GEO when the sampling quota is already exceeded
+        ch_species = channel.of( species )
+            .combine( ch_sampling_quota )
+            .filter { species, quota -> quota == "ok" }
+            .map { species, quota -> species }
+
         // getting GEO accessions given a species name and keywords
         // keywords can be an empty string
         GEO(
-            species,
+            ch_species,
             keywords,
             platform?: [],
             ch_excluded_eatlas_accessions_file,
