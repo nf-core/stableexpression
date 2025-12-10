@@ -41,16 +41,13 @@ workflow GET_PUBLIC_ACCESSIONS {
         EXPRESSION_ATLAS(
             species,
             keywords,
-            platform?: 'none',
-            random_sampling_size
-            random_sampling_seed
+            platform?: [],
+            random_sampling_size?: [],
+            random_sampling_seed?: []
         )
 
-        // removing E-GTEX-* accessions by default because they are too big
-        // however, contrary to E-PROT- accessions, they can be added by the user
-        ch_fetched_eatlas_accessions = EXPRESSION_ATLAS.out.accessions
-            .splitText()
-            .filter { acc -> !acc.startsWith('E-GTEX-') }
+        ch_fetched_eatlas_accessions = EXPRESSION_ATLAS.out.accessions.splitText()
+
     }
 
     // ------------------------------------------------------------------------------------
@@ -78,8 +75,10 @@ workflow GET_PUBLIC_ACCESSIONS {
         GEO(
             species,
             keywords,
-            platform ?: 'none',
-            ch_excluded_eatlas_accessions_file
+            platform?: [],
+            ch_excluded_eatlas_accessions_file,
+            random_sampling_size?: [],
+            random_sampling_seed?: []
         )
 
         ch_fetched_geo_accessions = GEO.out.accessions.splitText()
@@ -106,18 +105,6 @@ workflow GET_PUBLIC_ACCESSIONS {
         .combine ( ch_excluded_accessions )
         .filter { accession, excluded_accessions -> !(accession in excluded_accessions) }
         .map { accession, excluded_accessions -> accession }
-
-    // -----------------------------------------------------------------
-    // IF NECESSARY, SUBSAMPLE RANDOMLY THE ACCESSIONS
-    // -----------------------------------------------------------------
-
-    if ( random_sampling_size != null ) {
-        if ( random_sampling_seed != null ) {
-            ch_fetched_public_accessions = ch_fetched_public_accessions.randomSample( random_sampling_size, random_sampling_seed )
-        } else {
-            ch_fetched_public_accessions = ch_fetched_public_accessions.randomSample( random_sampling_size )
-        }
-    }
 
     // -----------------------------------------------------------------
     // ADDING USER PROVIDED ACCESSIONS

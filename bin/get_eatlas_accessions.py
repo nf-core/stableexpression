@@ -23,6 +23,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 ALLOWED_PLATFORMS = ["rnaseq", "microarray"]
+# accessions that should not be fetched automatically:
+# - E-GTEX-8 contains 17350 samples (way too big)
+EXCLUDED_ACCESSION_PATTERNS = ["E-GTEX-"]
 
 ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
 ACCESSION_OUTFILE_NAME = "accessions.txt"
@@ -297,6 +300,20 @@ def get_experiment_data(exp_dict: dict):
     return get_data(exp_url)
 
 
+def filter_out_excluded_accessions(experiments: list[dict]) -> list[dict]:
+    valid_experiments = []
+    for exp_dict in experiments:
+        for accession_pattern in EXCLUDED_ACCESSION_PATTERNS:
+            if exp_dict["experimentAccession"].startswith(accession_pattern):
+                logger.warning(
+                    f"Skipping experiment {exp_dict['experimentAccession']} due to exclusion pattern"
+                )
+                break
+        else:
+            valid_experiments.append(exp_dict)
+    return valid_experiments
+
+
 def parse_experiment(exp_dict: dict):
     # getting accession and description
     accession = get_experiment_accession(exp_dict)
@@ -406,6 +423,9 @@ def main():
     logger.info("Filtering experiments based on platform")
     experiments = filter_by_platform(experiments, args.platform)
 
+    logger.info("Filtering out excluded accessions")
+    experiments = filter_out_excluded_accessions(experiments)
+
     logger.info("Parsing experiments")
     with Pool(processes=args.nb_cpus) as pool:
         results = pool.map(parse_experiment, experiments)
@@ -422,25 +442,28 @@ def main():
     # getting accessions of selected experiments
     selected_accessions = [exp_dict["accession"] for exp_dict in results]
 
-    selected_accession_to_nb_samples = [
-        {
-            "accession": exp_dict["experimentAccession"],
-            "nb_samples": exp_dict["numberOfAssays"],
-        }
-        for exp_dict in experiments
-        if exp_dict["experimentAccession"] in selected_accessions
-    ]
+    if args.random_sampling_size and args.random_sampling_seed:
+        selected_accession_to_nb_samples = [
+            {
+                "accession": exp_dict["experimentAccession"],
+                "nb_samples": exp_dict["numberOfAssays"],
+            }
+            for exp_dict in experiments
+            if exp_dict["experimentAccession"] in selected_accessions
+        ]
 
-    nb_samples_df = pd.DataFrame.from_dict(selected_accession_to_nb_samples)
-    nb_samples_df.to_csv("selected_accession_to_nb_samples.csv", index=False)
+        nb_samples_df = pd.DataFrame.from_dict(selected_accession_to_nb_samples)
+        nb_samples_df.to_csv("selected_accession_to_nb_samples.csv", index=False)
 
-    logger.info("Sampling experiments randomly")
-    selected_accessions = sample_experiments_randomly(
-        selected_accession_to_nb_samples,
-        args.random_sampling_size,
-        args.random_sampling_seed,
-    )
-    logger.info(f"Kept {len(selected_accessions)} experiments after random sampling")
+        logger.info("Sampling experiments randomly")
+        selected_accessions = sample_experiments_randomly(
+            selected_accession_to_nb_samples,
+            args.random_sampling_size,
+            args.random_sampling_seed,
+        )
+        logger.info(
+            f"Kept {len(selected_accessions)} experiments after random sampling"
+        )
 
     # keeping metadata only for selected experiments
     selected_experiments = get_metadata_for_selected_experiments(experiments, results)

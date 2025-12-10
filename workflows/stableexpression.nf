@@ -82,11 +82,9 @@ workflow STABLEEXPRESSION {
     }
 
     ch_counts = ch_input_datasets.mix( ch_downloaded_datasets )
-
     // store nb of genes and nb f samples at this stage in the meta maps
     ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
-
-    // displays a message if no dataset was found
+    // returns an error with a message if no dataset was found
     checkCounts( ch_counts )
 
     if ( !params.accessions_only && !params.download_only ) {
@@ -215,11 +213,9 @@ workflow STABLEEXPRESSION {
         ch_versions
     )
 
-    MULTIQC_WORKFLOW.out.report.toList().set { multiqc_report }
-
 
     emit:
-        multiqc_report
+    multiqc_report = MULTIQC_WORKFLOW.out.report.toList()
 
 }
 

@@ -41,7 +41,7 @@ process AGGREGATE_RESULTS {
         $mapping_files_arg \\
         $metadata_files_arg \\
         $rnaseq_dataset_stat_file_arg \\
-        $microarray_dataset_stat_file_arg \\
+        $microarray_dataset_stat_file_arg
     """
 
 }

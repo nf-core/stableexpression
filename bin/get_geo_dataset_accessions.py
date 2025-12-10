@@ -4,6 +4,7 @@
 
 import argparse
 import logging
+import random
 import tarfile
 from functools import partial
 from multiprocessing import Pool
@@ -30,6 +31,8 @@ logger = logging.getLogger(__name__)
 # set a custom writable directory before any Entrez operations
 # mandatory for running the script in an apptainer container
 # Entrez.Parser.Parser.directory("/tmp/biopython")
+
+ALLOWED_PLATFORMS = ["rnaseq", "microarray"]
 
 ACCESSION_OUTFILE_NAME = "accessions.txt"
 SPECIES_DATASETS_OUTFILE_NAME = "geo_all_datasets.metadata.tsv"
@@ -104,12 +107,26 @@ def parse_args():
         nargs="*",
         help="Keywords to search for in datasets description",
     )
-    parser.add_argument("--platform", type=str, help="Platform type")
+    parser.add_argument(
+        "--platform", type=str, help="Platform type", choices=ALLOWED_PLATFORMS
+    )
     parser.add_argument(
         "--exclude-accessions-in",
         dest="excluded_accessions_file",
         type=Path,
         help="Exclude accessions contained in this file",
+    )
+    parser.add_argument(
+        "--random-sampling-size",
+        dest="random_sampling_size",
+        type=int,
+        help="Random sampling size",
+    )
+    parser.add_argument(
+        "--random-sampling-seed",
+        dest="random_sampling_seed",
+        type=int,
+        help="Random sampling seed",
     )
     parser.add_argument(
         "--cpus",
@@ -467,16 +484,16 @@ def fetch_dataset_metadata(dataset_metadata: dict) -> dict | None:
 
 
 def exclude_unwanted_accessions(
-    datasets: list[dict], excluded_accessions_file: Path
-) -> list[dict]:
-    # parsing list of unwanted accessions
-    with open(excluded_accessions_file) as fin:
-        excluded_accessions = fin.read().splitlines()
+    datasets: list[dict], excluded_accessions: list[str]
+) -> tuple[list[dict], list[dict]]:
     datasets_to_keep = []
+    excluded_datasets = []
     for dataset in datasets:
-        if dataset["Accession"] not in excluded_accessions:
+        if dataset["accession"] in excluded_accessions:
+            excluded_datasets.append(dataset)
+        else:
             datasets_to_keep.append(dataset)
-    return datasets_to_keep
+    return datasets_to_keep, excluded_datasets
 
 
 def check_species_issues(parsed_species_list: list, species: str) -> str | None:
@@ -662,6 +679,47 @@ def check_dataset_platforms(
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# RANDOM SAMPLING
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+def sample_experiments_randomly(
+    experiments: list[dict], sampling_size: int, seed: int
+) -> list[str]:
+    random.seed(seed)
+    sampled_experiments = []
+
+    total_nb_samples = 0
+    experiments_left = list(experiments)
+    while experiments_left and total_nb_samples <= sampling_size:
+        # if the min number of samples is greater than the remaining space left, we get out of the loop
+        experiments_left_nb_samples = [exp["nb_samples"] for exp in experiments_left]
+        min_nb_samples = min(experiments_left_nb_samples)
+        if min_nb_samples > sampling_size - total_nb_samples:
+            break
+
+        found_experiment = False
+        test_total_nb_samples = int(total_nb_samples)
+        not_chosen_yet = list(experiments_left)
+        while not_chosen_yet and not found_experiment:
+            experiment = random.choice(not_chosen_yet)
+            not_chosen_yet.remove(experiment)
+            test_total_nb_samples = total_nb_samples + experiment["nb_samples"]
+            if test_total_nb_samples <= sampling_size:
+                found_experiment = True
+
+        # if the last one was not good, it means we reached the limit of samples we can take
+        if not found_experiment:
+            break
+        else:
+            total_nb_samples = test_total_nb_samples
+            experiments_left.remove(experiment)
+            sampled_experiments.append(experiment)
+
+    return [exp["accession"] for exp in sampled_experiments]
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # EXPORT
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -705,6 +763,7 @@ def export_dataset_metadatas(
 
 def main():
     args = parse_args()
+    random_sampling_size = args.random_sampling_size
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # PARSING GEO DATASETS
@@ -723,17 +782,6 @@ def main():
         dev_accessions = args.accessions.split(",")
         datasets = [d for d in datasets if d["Accession"] in dev_accessions]
         logger.info(f"Kept {len(datasets)} datasets for dev / testing purposes")
-
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # EXCLUDING UNWANTED ACCESSIONS
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    if args.excluded_accessions_file:
-        logger.info("Excluding unwanted datasets")
-        datasets = exclude_unwanted_accessions(datasets, args.excluded_accessions_file)
-        logger.info(
-            f"{len(datasets)} datasets remaining after excluding unwanted accessions"
-        )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # PARSING DATASET METADATA
@@ -771,6 +819,41 @@ def main():
             checked_datasets.append(dataset)
 
     logger.info(f"Validated {len(checked_datasets)} datasets")
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # EXCLUDING UNWANTED ACCESSIONS
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    # we exclude unwanted accessions only now
+    # because we want to get the metadata of the excluded datasets
+    # in order to adjust the random sampling size
+    if args.excluded_accessions_file:
+        # parsing list of accessions which were already fetched from Expression Atlas
+        with open(args.excluded_accessions_file) as fin:
+            excluded_accessions = fin.read().splitlines()
+        logger.info("Excluding unwanted datasets")
+        checked_datasets, excluded_datasets = exclude_unwanted_accessions(
+            checked_datasets, excluded_accessions
+        )
+        logger.info(
+            f"{len(checked_datasets)} datasets remaining after excluding unwanted accessions"
+        )
+
+        # adjusting random sampling size by substracting the number of excluded accessions
+        if random_sampling_size:
+            total_nb_excluded_samples = sum(
+                [len(dataset["sample_titles"]) for dataset in excluded_datasets]
+            )
+            logger.info(
+                f"Subtracting {total_nb_excluded_samples} samples from random sampling size"
+            )
+            random_sampling_size -= total_nb_excluded_samples
+            # keeping it positive (just in case)
+            if random_sampling_size < 0:
+                logger.warning(
+                    f"Random sampling size is negative ({random_sampling_size}), setting it to 0"
+                )
+                random_sampling_size = 0
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # GETTING METADATA OF SEQUENCING PLATFORMS
@@ -813,16 +896,51 @@ def main():
         logger.warning(f"{len(rejection_dict)} datasets rejected")
         logger.warning(f"Reasons for rejection: {rejection_dict}")
 
+    selected_accessions = sorted(
+        [dataset["accession"] for dataset in selected_datasets]
+    )
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # RANDOM SAMPLING
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if random_sampling_size is not None and args.random_sampling_seed is not None:
+        selected_accession_to_nb_samples = [
+            {
+                "accession": dataset["accession"],
+                "nb_samples": len(dataset["sample_titles"]),
+            }
+            for dataset in selected_datasets
+        ]
+
+        nb_samples_df = pd.DataFrame.from_dict(selected_accession_to_nb_samples)
+        nb_samples_df.to_csv("selected_accession_to_nb_samples.csv", index=False)
+
+        logger.info("Sampling experiments randomly")
+        selected_accessions = sample_experiments_randomly(
+            selected_accession_to_nb_samples,
+            random_sampling_size,
+            args.random_sampling_seed,
+        )
+        logger.info(
+            f"Kept {len(selected_accessions)} experiments after random sampling"
+        )
+        selected_datasets = [
+            dataset
+            for dataset in selected_datasets
+            if dataset["accession"] in selected_accessions
+        ]
+    else:
+        logger.info(
+            f"No random sampling requested. Kept {len(selected_datasets)} datasets"
+        )
+
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # EXPORTING ACCESSIONS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    logger.info(f"Kept {len(selected_datasets)} datasets")
-    # getting accessions of selected experiments
     # sorting accessions to ensure that outputs are reproducible
-    selected_accessions = sorted(
-        [dataset["accession"] for dataset in selected_datasets]
-    )
+    selected_accessions = sorted(selected_accessions)
     with open(ACCESSION_OUTFILE_NAME, "w") as fout:
         fout.write("\n".join(selected_accessions))
 

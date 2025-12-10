@@ -34,8 +34,14 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     if ( keywords_string != "" ) {
         args += " --keywords $keywords_string"
     }
-    if ( platform != 'none' ) {
+    if ( platform ) {
         args += " --platform $platform"
+    }
+    if ( random_sampling_size ) {
+        args += " --random-sampling-size $random_sampling_size"
+    }
+    if ( random_sampling_seed ) {
+        args += " --random-sampling-seed $random_sampling_seed"
     }
     """
     # the folder where nltk will download data needs to be writable (necessary for singularity)
@@ -43,8 +49,6 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     get_eatlas_accessions.py \\
         $args \\
-        --random-sampling_size $random_sampling_size \\
-        --random-sampling_seed $random_sampling_seed \\
         --cpus ${task.cpus}
     """
 

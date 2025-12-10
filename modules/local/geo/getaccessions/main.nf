@@ -14,6 +14,8 @@ process GEO_GETACCESSIONS {
     val keywords
     val platform
     path excluded_accessions_file
+    val random_sampling_size
+    val random_sampling_seed
 
     output:
     path "accessions.txt",                     optional: true,          emit: accessions
@@ -34,11 +36,17 @@ process GEO_GETACCESSIONS {
     if ( keywords_string != "" ) {
         args += " --keywords $keywords_string"
     }
-    if ( platform != 'none' ) {
+    if ( platform ) {
         args += " --platform $platform"
     }
-    if ( excluded_accessions_file != [] ) {
+    if ( excluded_accessions_file ) {
         args += " --exclude-accessions-in $excluded_accessions_file"
+    }
+    if ( random_sampling_size ) {
+        args += " --random-sampling-size $random_sampling_size"
+    }
+    if ( random_sampling_seed ) {
+        args += " --random-sampling-seed $random_sampling_seed"
     }
     // the folder where nltk will download data needs to be writable (necessary for singularity)
     """
