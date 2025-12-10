@@ -13,6 +13,8 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     val species
     val keywords
     val platform
+    val random_sampling_size
+    val random_sampling_seed
 
     output:
     path "accessions.txt",                    optional: true,                                                         emit: accessions
@@ -41,6 +43,8 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     get_eatlas_accessions.py \\
         $args \\
+        --random-sampling_size $random_sampling_size \\
+        --random-sampling_seed $random_sampling_seed \\
         --cpus ${task.cpus}
     """
 

@@ -41,7 +41,9 @@ workflow GET_PUBLIC_ACCESSIONS {
         EXPRESSION_ATLAS(
             species,
             keywords,
-            platform?: 'none'
+            platform?: 'none',
+            random_sampling_size
+            random_sampling_seed
         )
 
         // removing E-GTEX-* accessions by default because they are too big

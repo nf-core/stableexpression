@@ -4,6 +4,7 @@
 
 import argparse
 import logging
+import random
 from functools import partial
 from multiprocessing import Pool
 
@@ -20,6 +21,8 @@ from tenacity import (
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+ALLOWED_PLATFORMS = ["rnaseq", "microarray"]
 
 ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
 ACCESSION_OUTFILE_NAME = "accessions.txt"
@@ -57,7 +60,21 @@ def parse_args():
         nargs="*",
         help="Keywords to search for in experiment description",
     )
-    parser.add_argument("--platform", type=str, help="Platform type")
+    parser.add_argument(
+        "--platform", type=str, help="Platform type", choices=ALLOWED_PLATFORMS
+    )
+    parser.add_argument(
+        "--random-sampling-size",
+        dest="random_sampling_size",
+        type=int,
+        help="Random sampling size",
+    )
+    parser.add_argument(
+        "--random-sampling-seed",
+        dest="random_sampling_seed",
+        type=int,
+        help="Random sampling seed",
+    )
     return parser.parse_args()
 
 
@@ -197,7 +214,7 @@ def get_eatlas_experiments():
     return data["experiments"]
 
 
-def get_platform_specific_experiments(experiments: list[dict], platform: str):
+def filter_by_platform(experiments: list[dict], platform: str | None):
     """
     Gets all experiments for a given platform from Expression Atlas
     Possible platforms in Expression Atlas are 'rnaseq', 'microarray', 'proteomics'
@@ -221,11 +238,22 @@ def get_platform_specific_experiments(experiments: list[dict], platform: str):
                 if isinstance(technology_type, list)
                 else technology_type
             )
+            # parsed_platform is in ["rnaseq", "microarray", "proteomics", ...]
             parsed_platform = (
                 parsed_technology_type.lower().split(" ")[0].replace("-", "")
             )
-            if platform == parsed_platform:
-                platform_experiments.append(exp_dict)
+
+            if platform is not None:
+                if parsed_platform == platform:
+                    platform_experiments.append(exp_dict)
+            else:
+                if parsed_platform in ALLOWED_PLATFORMS:
+                    platform_experiments.append(exp_dict)
+
+        else:
+            logger.warning(
+                f"Technology type not found for experiment {exp_dict['accession']}"
+            )
     return platform_experiments
 
 
@@ -306,6 +334,42 @@ def get_metadata_for_selected_experiments(
     ]
 
 
+def sample_experiments_randomly(
+    experiments: list[dict], sampling_size: int, seed: int
+) -> list[str]:
+    random.seed(seed)
+    sampled_experiments = []
+
+    total_nb_samples = 0
+    experiments_left = list(experiments)
+    while experiments_left and total_nb_samples <= sampling_size:
+        # if the min number of samples is greater than the remaining space left, we get out of the loop
+        experiments_left_nb_samples = [exp["nb_samples"] for exp in experiments_left]
+        min_nb_samples = min(experiments_left_nb_samples)
+        if min_nb_samples > sampling_size - total_nb_samples:
+            break
+
+        found_experiment = False
+        test_total_nb_samples = int(total_nb_samples)
+        not_chosen_yet = list(experiments_left)
+        while not_chosen_yet and not found_experiment:
+            experiment = random.choice(not_chosen_yet)
+            not_chosen_yet.remove(experiment)
+            test_total_nb_samples = total_nb_samples + experiment["nb_samples"]
+            if test_total_nb_samples <= sampling_size:
+                found_experiment = True
+
+        # if the last one was not good, it means we reached the limit of samples we can take
+        if not found_experiment:
+            break
+        else:
+            total_nb_samples = test_total_nb_samples
+            experiments_left.remove(experiment)
+            sampled_experiments.append(experiment)
+
+    return [exp["accession"] for exp in sampled_experiments]
+
+
 def format_species_name(species: str) -> str:
     return species.replace("_", " ").capitalize().strip()
 
@@ -333,39 +397,55 @@ def main():
     keywords = args.keywords
 
     logger.info(f"Getting experiments corresponding to species {species_name}")
-    all_experiments = get_eatlas_experiments()
+    experiments = get_eatlas_experiments()
 
-    if args.platform:
-        logger.info(f"Getting experiments corresponding to platform {args.platform}")
-        all_experiments = get_platform_specific_experiments(
-            all_experiments, args.platform
-        )
+    logger.info("Filtering on species name")
+    experiments = get_species_experiments(experiments, species_name)
+    logger.info(f"Found {len(experiments)} experiments for species {species_name}")
 
-    species_experiments = get_species_experiments(all_experiments, species_name)
-    logger.info(
-        f"Found {len(species_experiments)} experiments for species {species_name}"
-    )
+    logger.info("Filtering experiments based on platform")
+    experiments = filter_by_platform(experiments, args.platform)
 
     logger.info("Parsing experiments")
     with Pool(processes=args.nb_cpus) as pool:
-        results = pool.map(parse_experiment, species_experiments)
+        results = pool.map(parse_experiment, experiments)
 
     if keywords:
         logger.info(f"Filtering experiments with keywords {keywords}")
         func = partial(filter_experiment_with_keywords, keywords=keywords)
         with Pool(processes=args.nb_cpus) as pool:
             results = [res for res in pool.map(func, results) if res is not None]
-
-    if results:
-        logger.info(f"Kept {len(results)} experiments")
-        # getting accessions of selected experiments
-        selected_accessions = [exp_dict["accession"] for exp_dict in results]
-        # keeping metadata only for selected experiments
-        selected_experiments = get_metadata_for_selected_experiments(
-            species_experiments, results
+        logger.info(
+            f"Found {len(results)} experiments corresponding to keywords {keywords}"
         )
 
-    else:
+    # getting accessions of selected experiments
+    selected_accessions = [exp_dict["accession"] for exp_dict in results]
+
+    selected_accession_to_nb_samples = [
+        {
+            "accession": exp_dict["experimentAccession"],
+            "nb_samples": exp_dict["numberOfAssays"],
+        }
+        for exp_dict in experiments
+        if exp_dict["experimentAccession"] in selected_accessions
+    ]
+
+    nb_samples_df = pd.DataFrame.from_dict(selected_accession_to_nb_samples)
+    nb_samples_df.to_csv("selected_accession_to_nb_samples.csv", index=False)
+
+    logger.info("Sampling experiments randomly")
+    selected_accessions = sample_experiments_randomly(
+        selected_accession_to_nb_samples,
+        args.random_sampling_size,
+        args.random_sampling_seed,
+    )
+    logger.info(f"Kept {len(selected_accessions)} experiments after random sampling")
+
+    # keeping metadata only for selected experiments
+    selected_experiments = get_metadata_for_selected_experiments(experiments, results)
+
+    if not selected_accessions:
         logger.warning(
             f"Could not find experiments for species {species_name} and keywords {keywords}"
         )
@@ -383,7 +463,7 @@ def main():
     logger.info(
         f"Writing metadata of all experiments for species {species_name} to {SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME}"
     )
-    df = pd.DataFrame.from_dict(species_experiments)
+    df = pd.DataFrame.from_dict(experiments)
     df.to_csv(
         SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME, sep="\t", index=False, header=True
     )
@@ -400,7 +480,7 @@ def main():
             header=True,
         )
 
-    if results is not None:
+    if results:
         # exporting list of selected experiments with their keywords
         logger.info(
             f"Writing filtered experiments with keywords to {FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME}"
