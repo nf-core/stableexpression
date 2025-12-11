@@ -17,9 +17,9 @@ process AGGREGATE_RESULTS {
 
     output:
     path 'all_genes_summary.csv',                                                                                     emit: all_genes_summary
-    path 'top_stable_genes_summary.csv',                                                                              emit: top_stable_genes_summary
+    path 'most_stable_genes_summary.csv',                                                                             emit: most_stable_genes_summary
     path 'all_counts_filtered.parquet',                                                                               emit: all_counts_filtered
-    path 'top_stable_genes_transposed_counts_filtered.csv',                                                           emit: top_stable_genes_transposed_counts_filtered
+    path 'most_stable_genes_transposed_counts_filtered.csv',                                                          emit: most_stable_genes_transposed_counts_filtered
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 

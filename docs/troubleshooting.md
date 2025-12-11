@@ -9,7 +9,9 @@ WARN: No dataset found. Please note that for the moment only Microarray count da
 You can check at https://www.ncbi.nlm.nih.gov/gds if there are raw RNA-seq count datasets for this species.
 ```
 
-You may want to check if there are any raw RNA-seq count datasets available for this species on [NCBI GEO](https://www.ncbi.nlm.nih.gov/gds). You can then relaunch the pipeline by providing your own count datasets.
+You may want to check if there are any raw RNA-seq count datasets available for this species on [NCBI GEO](https://www.ncbi.nlm.nih.gov/gds). You can then relaunch the pipeline by providing your own prepared count datasets.
+
+## Not enough memory
 
 ## Java heap space
 

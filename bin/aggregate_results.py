@@ -14,12 +14,14 @@ logger = logging.getLogger(__name__)
 
 # outfile names
 ALL_GENE_SUMMARY_OUTFILENAME = "all_genes_summary.csv"
-TOP_STABLE_GENE_SUMMARY_OUTFILENAME = "top_stable_genes_summary.csv"
+MOST_STABLE_GENE_SUMMARY_OUTFILENAME = "most_stable_genes_summary.csv"
 ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME = "all_counts_filtered.parquet"
-TOP_STABLE_GENES_COUNTS_OUTFILENAME = "top_stable_genes_transposed_counts_filtered.csv"
+MOST_STABLE_GENES_COUNTS_OUTFILENAME = (
+    "most_stable_genes_transposed_counts_filtered.csv"
+)
 
 # nb of top stable genes to select and to display at the end
-NB_TOP_STABLE_GENES = 1000
+NB_MOST_STABLE_GENES = 1000
 # quantile intervals
 NB_QUANTILES = 100
 NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS = 100
@@ -184,7 +186,7 @@ def get_all_genes_summary(
     return stat_summary_df
 
 
-def get_top_stable_genes_counts(
+def get_most_stable_genes_counts(
     log_count_df: pl.DataFrame, stat_summary_df: pl.DataFrame
 ) -> pl.DataFrame:
     # getting list of top stable genes with their order
@@ -210,9 +212,9 @@ def get_top_stable_genes_counts(
 
 def export_data(
     all_genes_summary_df: pl.DataFrame,
-    top_stable_genes_summary_df: pl.DataFrame,
+    most_stable_genes_summary_df: pl.DataFrame,
     all_counts_df: pl.DataFrame,
-    top_stable_genes_counts_df: pl.DataFrame,
+    most_stable_genes_counts_df: pl.DataFrame,
 ):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
@@ -221,20 +223,20 @@ def export_data(
     )
 
     logger.info(
-        f"Exporting statistics of the top stable genes to: {TOP_STABLE_GENE_SUMMARY_OUTFILENAME}"
+        f"Exporting statistics of the top stable genes to: {MOST_STABLE_GENE_SUMMARY_OUTFILENAME}"
     )
-    top_stable_genes_summary_df.write_csv(
-        TOP_STABLE_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
+    most_stable_genes_summary_df.write_csv(
+        MOST_STABLE_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
     )
 
     logger.info(f"Exporting all counts to: {ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME}")
     all_counts_df.write_parquet(ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME)
 
     logger.info(
-        f"Exporting counts of the top stable genes to: {TOP_STABLE_GENES_COUNTS_OUTFILENAME}"
+        f"Exporting counts of the top stable genes to: {MOST_STABLE_GENES_COUNTS_OUTFILENAME}"
     )
-    top_stable_genes_counts_df.write_csv(
-        TOP_STABLE_GENES_COUNTS_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
+    most_stable_genes_counts_df.write_csv(
+        MOST_STABLE_GENES_COUNTS_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
     )
 
     logger.info("Done")
@@ -281,11 +283,11 @@ def main():
         all_genes_stat_summary_df, *additional_data_dfs
     )
 
-    top_stable_stat_summary_df = all_genes_summary_df.head(NB_TOP_STABLE_GENES)
+    top_stable_stat_summary_df = all_genes_summary_df.head(NB_MOST_STABLE_GENES)
 
     # reducing dataframe size (it is only used for plotting by MultiQC)
     count_df = cast_count_columns_to_float(count_df)
-    top_stable_genes_counts_df = get_top_stable_genes_counts(
+    most_stable_genes_counts_df = get_most_stable_genes_counts(
         count_df, top_stable_stat_summary_df
     )
 
@@ -294,7 +296,7 @@ def main():
         all_genes_summary_df,
         top_stable_stat_summary_df,
         count_df,
-        top_stable_genes_counts_df,
+        most_stable_genes_counts_df,
     )
 
 

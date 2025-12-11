@@ -51,7 +51,7 @@ def parse_args():
     parser.add_argument(
         "--nb-top-stable-genes",
         type=int,
-        dest="nb_top_stable_genes",
+        dest="nb_most_stable_genes",
         required=True,
         help="Number of top stable genes to show",
     )
@@ -73,7 +73,9 @@ def parse_stats(file: Path) -> pl.DataFrame:
 
 
 def get_best_candidates(
-    stat_df: pl.DataFrame, candidate_selection_descriptor: str, nb_top_stable_genes: int
+    stat_df: pl.DataFrame,
+    candidate_selection_descriptor: str,
+    nb_most_stable_genes: int,
 ) -> list[str]:
     logger.info("Getting best candidates")
     column_for_sorting = config.SCORING_BASE_TO_STABILITY_SCORE_COLUMN[
@@ -81,7 +83,7 @@ def get_best_candidates(
     ]
     return (
         stat_df.sort(column_for_sorting, descending=False, nulls_last=True)
-        .head(nb_top_stable_genes)
+        .head(nb_most_stable_genes)
         .select(config.GENE_ID_COLNAME)
         .to_series()
         .to_list()
@@ -142,7 +144,7 @@ def main():
 
     # get base candidate genes based on the chosen statistical descriptor (cv, rcvm)
     best_candidates = get_best_candidates(
-        stat_df, args.candidate_selection_descriptor, args.nb_top_stable_genes
+        stat_df, args.candidate_selection_descriptor, args.nb_most_stable_genes
     )
 
     # get counts for candidate genes

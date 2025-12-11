@@ -59,7 +59,7 @@ INPUTS
     </inputs>
     <outputs>
         <data name="multiqc_report" label="MultiQC report" from_work_dir="results/multiqc/multiqc_report.html" format="html" />
-        <data name="top_stable_genes_summary" label="Most stable genes" from_work_dir="results/gene_statistics/top_stable_genes_summary.csv" format="csv" />
+        <data name="most_stable_genes_summary" label="Most stable genes" from_work_dir="results/gene_statistics/most_stable_genes_summary.csv" format="csv" />
         <data name="pipeline_results" label="All outputs" from_work_dir="results.zip" format="zip" />
     </outputs>
     <tests>
@@ -76,7 +76,7 @@ INPUTS
             <section name="expression_atlas_options">
                 <param name="skip_fetch_eatlas_accessions" value="true"/>
             </section>
-            <output name="top_stable_genes_summary">
+            <output name="most_stable_genes_summary">
                 <assert_contents>
                     <has_text text="gene_id" />
                 </assert_contents>
@@ -95,7 +95,7 @@ INPUTS
                 </conditional>
                 <param name="keywords" value="leaf"/>
             </section>
-            <output name="top_stable_genes_summary">
+            <output name="most_stable_genes_summary">
                 <assert_contents>
                     <has_text text="gene_id" />
                 </assert_contents>
@@ -116,7 +116,7 @@ INPUTS
                     <param name="experimental_designs" value="test_data/microarray.normalised.design.csv,test_data/rnaseq.raw.design.csv"/>
                 </conditional>
             </section>
-            <output name="top_stable_genes_summary">
+            <output name="most_stable_genes_summary">
                 <assert_contents>
                     <has_text text="gene_id" />
                 </assert_contents>

@@ -32,7 +32,7 @@ table_cond_formatting_colours:
   - very_high: "#d9534f"
 
 custom_data:
-  ranked_top_stable_genes_summary:
+  ranked_most_stable_genes_summary:
     section_name: "Stable genes ranking"
     file_format: "csv"
     no_violin: true
@@ -301,7 +301,7 @@ custom_data:
         description: |
           Ratio of Microarray samples in which the gene has a zero value.
 
-  expression_distributions_top_stable_genes:
+  expression_distributions_most_stable_genes:
     section_name: "Count distributions"
     file_format: "csv"
     pconfig:
@@ -642,11 +642,11 @@ custom_data:
 log_filesize_limit: 10000000000 # 10GB
 
 sp:
-  ranked_top_stable_genes_summary:
-    fn: "*top_stable_genes_summary.csv"
+  ranked_most_stable_genes_summary:
+    fn: "*most_stable_genes_summary.csv"
     max_filesize: 5000000 # 5MB
-  expression_distributions_top_stable_genes:
-    fn: "*top_stable_genes_transposed_counts*.csv"
+  expression_distributions_most_stable_genes:
+    fn: "*most_stable_genes_transposed_counts*.csv"
     max_filesize: 50000000 # 50MB
   gene_statistics:
     fn: "*all_genes_summary.csv"
