@@ -17,6 +17,10 @@ workflow MULTIQC_WORKFLOW {
     take:
     ch_multiqc_files
     ch_versions
+    multiqc_config
+    multiqc_logo
+    multiqc_methods_description
+    outdir
 
     main:
 
@@ -29,27 +33,29 @@ workflow MULTIQC_WORKFLOW {
                                 name: 'id_mapping_stats.csv',
                                 seed: "Dataset,mapped,unmapped",
                                 newLine: true,
-                                storeDir: "${params.outdir}/statistics/"
+                                storeDir: "${outdir}/statistics/"
                             ) {
                                 item -> "${item[0]},${item[1]},${item[2]}"
                             }
 
-    ch_skewness = channel.topic('skewness')
-                    .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
-                    .collectFile(
-                        name: 'skewness.csv',
-                        newLine: true,
-                        storeDir: "${params.outdir}/statistics/"
-                    )
+    ch_skewness         = channel.topic('skewness')
+                            .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
+                            .collectFile(
+                                name: 'skewness.csv',
+                                newLine: true,
+                                sort: true,
+                                storeDir: "${outdir}/statistics/"
+                            )
 
 
-    ch_ratio_zeros = channel.topic('ratio_zeros')
-                        .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
-                        .collectFile(
-                            name: 'ratio_zeros.csv',
-                            newLine: true,
-                            storeDir: "${params.outdir}/statistics/"
-                        )
+    ch_ratio_zeros      = channel.topic('ratio_zeros')
+                            .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with ratio values
+                            .collectFile(
+                                name: 'ratio_zeros.csv',
+                                newLine: true,
+                                sort: true,
+                                storeDir: "${outdir}/statistics/"
+                                )
 
     COLLECT_STATISTICS(
         ch_skewness.mix( ch_ratio_zeros )
@@ -65,7 +71,7 @@ workflow MULTIQC_WORKFLOW {
                                         name: 'eatlas_failure_reasons.csv',
                                         seed: "Accession,Reason",
                                         newLine: true,
-                                        storeDir: "${params.outdir}/errors/"
+                                        storeDir: "${outdir}/errors/"
                                     ) {
                                         item -> "${item[0]},${item[1]}"
                                     }
@@ -76,7 +82,7 @@ workflow MULTIQC_WORKFLOW {
                                         name: 'eatlas_warning_reasons.csv',
                                         seed: "Accession,Reason",
                                         newLine: true,
-                                        storeDir: "${params.outdir}/warnings/"
+                                        storeDir: "${outdir}/warnings/"
                                     ) {
                                         item -> "${item[0]},${item[1]}"
                                     }
@@ -87,7 +93,7 @@ workflow MULTIQC_WORKFLOW {
                                     name: 'geo_failure_reasons.csv',
                                     seed: "Accession,Reason",
                                     newLine: true,
-                                    storeDir: "${params.outdir}/errors/"
+                                    storeDir: "${outdir}/errors/"
                                 ) {
                                     item -> "${item[0]},${item[1]}"
                                 }
@@ -99,7 +105,7 @@ workflow MULTIQC_WORKFLOW {
                                     name: 'geo_warning_reasons.csv',
                                     seed: "Accession,Reason",
                                     newLine: true,
-                                    storeDir: "${params.outdir}/warnings/"
+                                    storeDir: "${outdir}/warnings/"
                                 ) {
                                     item -> "${item[0]},${item[1]}"
                                 }
@@ -110,7 +116,7 @@ workflow MULTIQC_WORKFLOW {
                                             name: 'id_cleaning_failure_reasons.tsv',
                                             seed: "Dataset\tReason",
                                             newLine: true,
-                                            storeDir: "${params.outdir}/errors/"
+                                            storeDir: "${outdir}/errors/"
                                         ) {
                                             item -> "${item[0]}\t${item[1]}"
                                         }
@@ -121,7 +127,7 @@ workflow MULTIQC_WORKFLOW {
                                             name: 'renaming_warning_reasons.tsv',
                                             seed: "Dataset\tReason",
                                             newLine: true,
-                                            storeDir: "${params.outdir}/warnings/"
+                                            storeDir: "${outdir}/warnings/"
                                         ) {
                                             item -> "${item[0]}\t${item[1]}"
                                         }
@@ -132,7 +138,7 @@ workflow MULTIQC_WORKFLOW {
                                             name: 'renaming_failure_reasons.tsv',
                                             seed: "Dataset\tReason",
                                             newLine: true,
-                                            storeDir: "${params.outdir}/errors/"
+                                            storeDir: "${outdir}/errors/"
                                         ) {
                                             item -> "${item[0]}\t${item[1]}"
                                         }
@@ -143,7 +149,7 @@ workflow MULTIQC_WORKFLOW {
                                                 name: 'normalisation_warning_reasons.tsv',
                                                 seed: "Dataset\tReason",
                                                 newLine: true,
-                                                storeDir: "${params.outdir}/warnings/"
+                                                storeDir: "${outdir}/warnings/"
                                             ) {
                                                 item -> "${item[0]}\t${item[1]}"
                                             }
@@ -154,7 +160,7 @@ workflow MULTIQC_WORKFLOW {
                                                 name: 'normalisation_failure_reasons.tsv',
                                                 seed: "Dataset\tReason",
                                                 newLine: true,
-                                                storeDir: "${params.outdir}/errors/"
+                                                storeDir: "${outdir}/errors/"
                                             ) {
                                                 item -> "${item[0]}\t${item[1]}"
                                             }
@@ -209,7 +215,7 @@ workflow MULTIQC_WORKFLOW {
     ch_collated_versions = softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
                             .mix(topic_versions_string)
                             .collectFile(
-                                storeDir: "${params.outdir}/pipeline_info",
+                                storeDir: "${outdir}/pipeline_info",
                                 name: 'nf_core_'  +  'stableexpression_software_'  + 'mqc_'  + 'versions.yml',
                                 sort: true,
                                 newLine: true
@@ -222,12 +228,12 @@ workflow MULTIQC_WORKFLOW {
     ch_multiqc_config        = channel.fromPath(
         "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
 
-    ch_multiqc_custom_config = params.multiqc_config ?
-        channel.fromPath(params.multiqc_config, checkIfExists: true) :
+    ch_multiqc_custom_config = multiqc_config ?
+        channel.fromPath(multiqc_config, checkIfExists: true) :
         channel.empty()
 
-    ch_multiqc_logo          = params.multiqc_logo ?
-        channel.fromPath(params.multiqc_logo, checkIfExists: true) :
+    ch_multiqc_logo          = multiqc_logo ?
+        channel.fromPath(multiqc_logo, checkIfExists: true) :
         channel.empty()
 
     summary_params      = paramsSummaryMap(
@@ -239,8 +245,8 @@ workflow MULTIQC_WORKFLOW {
     ch_multiqc_files = ch_multiqc_files
         .mix( ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml') )
 
-    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
-        file(params.multiqc_methods_description, checkIfExists: true) :
+    ch_multiqc_custom_methods_description = multiqc_methods_description ?
+        file(multiqc_methods_description, checkIfExists: true) :
         file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
 
     ch_methods_description     = channel.value(

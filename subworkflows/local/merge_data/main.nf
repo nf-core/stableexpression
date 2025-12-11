@@ -16,6 +16,7 @@ workflow MERGE_DATA {
     ch_normalised_counts
     ch_gene_id_mapping
     ch_gene_metadata
+    outdir
 
     main:
 
@@ -80,7 +81,7 @@ workflow MERGE_DATA {
                             seed: "batch,condition,sample",
                             newLine: true,
                             sort: true,
-                            storeDir: "${params.outdir}/merged_datasets/"
+                            storeDir: "${outdir}/merged_datasets/"
                         ) {
                             item -> "${item.batch},${item.condition},${item.sample}"
                         }
@@ -98,7 +99,7 @@ workflow MERGE_DATA {
                                     seed: "original_gene_id,gene_id",
                                     newLine: true,
                                     sort: true,
-                                    storeDir: "${params.outdir}/idmapping/"
+                                    storeDir: "${outdir}/idmapping/"
                                 ) {
                                     item -> "${item.original_gene_id},${item.gene_id}"
                                 }
@@ -117,7 +118,7 @@ workflow MERGE_DATA {
                                     seed: "gene_id,name,description",
                                     newLine: true,
                                     sort: true,
-                                    storeDir: "${params.outdir}/idmapping/"
+                                    storeDir: "${outdir}/idmapping/"
                                 ) {
                                     item -> "${item.gene_id},${item.name},${item.description}"
                                 }

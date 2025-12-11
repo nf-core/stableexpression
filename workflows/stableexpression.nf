@@ -132,7 +132,8 @@ workflow STABLEEXPRESSION {
         MERGE_DATA (
             EXPRESSION_NORMALISATION.out.counts,
             ch_gene_id_mapping,
-            ch_gene_metadata
+            ch_gene_metadata,
+            params.outdir
         )
 
         ch_all_counts   = MERGE_DATA.out.all_counts
@@ -208,7 +209,11 @@ workflow STABLEEXPRESSION {
 
     MULTIQC_WORKFLOW(
         ch_multiqc_files,
-        ch_versions
+        ch_versions,
+        params.multiqc_config,
+        params.multiqc_logo,
+        params.multiqc_methods_description,
+        params.outdir
     )
 
 
