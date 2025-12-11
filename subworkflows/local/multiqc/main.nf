@@ -27,7 +27,7 @@ workflow MULTIQC_WORKFLOW {
     channel.topic('id_mapping_stats')
         .collectFile(
             name: 'id_mapping_stats.csv',
-            seed: "Dataset,Nb mapped,Nb unmapped",
+            seed: "Dataset,mapped,unmapped",
             newLine: true,
             storeDir: "${params.outdir}/statistics/"
         ) {
