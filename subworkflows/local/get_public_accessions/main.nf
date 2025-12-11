@@ -11,9 +11,8 @@ workflow GET_PUBLIC_ACCESSIONS {
 
     take:
     species
-    skip_fetch_public_accessions
     skip_fetch_eatlas_accessions
-    skip_fetch_geo_accessions
+    fetch_geo_accessions
     platform
     keywords
     ch_accessions
@@ -35,7 +34,7 @@ workflow GET_PUBLIC_ACCESSIONS {
     // -----------------------------------------------------------------
 
     // fetching Expression Atlas accessions if applicable
-    if ( !skip_fetch_public_accessions && !skip_fetch_eatlas_accessions ) {
+    if ( !skip_fetch_eatlas_accessions ) {
 
         // getting Expression Atlas accessions given a species name and keywords
         // keywords can be an empty string
@@ -57,7 +56,7 @@ workflow GET_PUBLIC_ACCESSIONS {
     // ------------------------------------------------------------------------------------
 
     // fetching GEO accessions if applicable
-    if ( !skip_fetch_public_accessions && !skip_fetch_geo_accessions ) {
+    if ( fetch_geo_accessions ) {
 
         // all Expression Atlas accessions starting with E-GEOD- are imported from GEO
         // we do not want to collect these GEO data if we already get them from Expression Atlas

@@ -13,6 +13,7 @@ nextflow_pipeline {
                 species = 'beta vulgaris'
                 keywords = "leaf"
                 datasets = "https://raw.githubusercontent.com/nf-core/test-datasets/stableexpression/test_data/input_datasets/input_beta_vulgaris.csv"
+                fetch_geo_accessions = true
                 outdir = "$outputDir"
             }
         }
@@ -38,7 +39,6 @@ nextflow_pipeline {
                 species = 'mus musculus'
                 datasets = "https://raw.githubusercontent.com/nf-core/test-datasets/stableexpression/test_data/input_datasets/input_big.yaml"
                 skip_fetch_eatlas_accessions = true
-                skip_fetch_geo_accessions = true
                 outdir = "$outputDir"
             }
         }
@@ -128,7 +128,6 @@ nextflow_pipeline {
                 species = 'arabidopsis thaliana'
                 eatlas_accessions = "E-GEOD-51720"
                 skip_fetch_eatlas_accessions = true
-                skip_fetch_geo_accessions = true
                 outdir = "$outputDir"
             }
         }
@@ -154,7 +153,6 @@ nextflow_pipeline {
             params {
                 species = 'beta vulgaris'
                 keywords = "leaf"
-                skip_fetch_geo_accessions = true
                 outdir = "$outputDir"
             }
         }
@@ -182,7 +180,6 @@ nextflow_pipeline {
                 datasets = "${projectDir}/tests/test_data/input_datasets/input.csv"
                 skip_id_mapping = true
                 skip_fetch_eatlas_accessions = true
-                skip_fetch_geo_accessions = true
                 outdir = "$outputDir"
             }
         }
@@ -210,7 +207,6 @@ nextflow_pipeline {
                 datasets = "${projectDir}/tests/test_data/input_datasets/input.csv"
                 skip_id_mapping = true
                 skip_fetch_eatlas_accessions = true
-                skip_fetch_geo_accessions = true
                 gene_id_mapping = "${projectDir}/tests/test_data/input_datasets/mapping.csv"
                 gene_metadata = "${projectDir}/tests/test_data/input_datasets/metadata.csv"
                 outdir = "$outputDir"
@@ -262,8 +258,6 @@ nextflow_pipeline {
     }
 
     test("-profile test_gprofiler_target_database_entrez") {
-
-        tag "test"
 
         when {
             params {

@@ -205,7 +205,7 @@ def validateInputParameters(params) {
     check_accession_file( params.accessions_file )
     check_accession_file( params.excluded_accessions_file )
 
-    if ( params.keywords && ( params.skip_fetch_public_accessions || ( params.skip_fetch_eatlas_accessions && params.skip_fetch_geo_accessions ) ) ) {
+    if ( params.keywords && params.skip_fetch_eatlas_accessions && !params.fetch_geo_accessions ) {
         log.warn "Ignoring keywords as accessions will not be fetched from Expression Atlas or GEO"
     }
 

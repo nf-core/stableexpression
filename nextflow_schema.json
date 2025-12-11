@@ -33,7 +33,7 @@
                     "schema": "assets/schema_datasets.json",
                     "pattern": "^\\S+\\.(csv|yaml|yml|dat)$",
                     "description": "Custom datasets (counts + designs)",
-                    "help_text": "Path to CSV / YAML file listing your own count datasets and their related experimental design. This file should be a comma-separated file with 4 columns (`counts`, `design`, `platform` and `normalised`). It must have a header row. Before running the pipeline, and for each count dataset provided by you, a design file with information about the samples in your experiment is required. Combine with both --skip_fetch_eatlas_accessions and --skip_fetch_geo_accessions if you only want to analyse your own count datasets. Otherwise, accessions from Expression Atlas and GEO will be fetched automatically. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. ",
+                    "help_text": "Path to CSV / YAML file listing your own count datasets and their related experimental design. This file should be a comma-separated file with 4 columns (`counts`, `design`, `platform` and `normalised`). It must have a header row. Before running the pipeline, and for each count dataset provided by you, a design file with information about the samples in your experiment is required. Combine with --skip_fetch_eatlas_accessions if you only want to analyse your own count datasets. Otherwise, accessions from Expression Atlas and GEO will be fetched automatically. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. ",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "keywords": {
@@ -41,7 +41,7 @@
                     "description": "Keywords used for selecting specific Expression Atlas / GEO accessions",
                     "fa_icon": "fas fa-font",
                     "pattern": "(([a-zA-Z,]+))?",
-                    "help_text": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas and / or GEO datasets. The pipeline will select all Expression Atlas experiments / GEO datasets that contain the provided keywords in their description of in one of the condition names. Example: `--keywords 'stress,flowering'`. This parameter is unused if both --skip_fetch_eatlas_accessions and --skip_fetch_geo_accessions are set."
+                    "help_text": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas and / or GEO datasets. The pipeline will select all Expression Atlas experiments / GEO datasets that contain the provided keywords in their description of in one of the condition names. Example: `--keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set and --fetch_geo_accessions is not set."
                 },
                 "platform": {
                     "type": "string",
@@ -82,30 +82,24 @@
             "fa_icon": "fas fa-book-atlas",
             "description": "Options for fetching experiment data from Expression Atlas / GEO.",
             "properties": {
-                "skip_fetch_public_accessions": {
-                    "type": "boolean",
-                    "fa_icon": "fas fa-cloud-arrow-down",
-                    "description": "Skip fetching public accessions",
-                    "help_text": "Expression Atlas / GEO accessions are automatically fetched by default. Set this parameter to skip this step. Equivalent to `--skip_fetch_eatlas_accessions --skip_fetch_geo_accessions`"
-                },
                 "skip_fetch_eatlas_accessions": {
                     "type": "boolean",
                     "fa_icon": "fas fa-cloud-arrow-down",
                     "description": "Skip fetching Expression Atlas accessions",
                     "help_text": "Expression Atlas accessions are automatically fetched by default. Set this parameter to skip this step."
                 },
-                "skip_fetch_geo_accessions": {
+                "fetch_geo_accessions": {
                     "type": "boolean",
                     "fa_icon": "fas fa-cloud-arrow-down",
-                    "description": "Skip fetching GEO accessions",
-                    "help_text": "GEO accessions are automatically fetched by default. Set this parameter to skip this step."
+                    "description": "Fetch GEO accessions from NCBI",
+                    "help_text": "Set this parameter to fetch GEO accessions from NCBI. This feature is experimental and may not work as expected. Please report any issues to https://github.com/nf-core/stableexpression."
                 },
                 "accessions": {
                     "type": "string",
                     "pattern": "([A-Z0-9-]+,?)+",
                     "description": "Expression Atlas / GEO accession(s) to include",
                     "fa_icon": "fas fa-address-card",
-                    "help_text": "Provide Expression Atlas / GEO accession(s) that you want to download. The accessions should be comma-separated. Example: `--accessions E-MTAB-552,E-GEOD-61690,GSE8165,GSE8161`. Combine with --skip_fetch_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions."
+                    "help_text": "Provide Expression Atlas / GEO accession(s) that you want to download. The accessions should be comma-separated. Example: `--accessions E-MTAB-552,E-GEOD-61690,GSE8165,GSE8161`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions."
                 },
                 "accessions_file": {
                     "type": "string",

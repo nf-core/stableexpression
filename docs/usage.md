@@ -56,7 +56,6 @@ nextflow run nf-core/stableexpression \
    -profile <PROFILE> \
    --species <SPECIES> \
    --skip_fetch_eatlas_accessions \
-   --skip_fetch_geo_accessions \
    [--eatlas_accessions <ACCESSION(S) (example: "E-MTAB-7711,E-GEOD-51720")>] \
    [--eatlas_accessions_file <FILE>] \
    [--geo_accessions <ACCESSION(S) (example: "GSE262492,GSE305365")>] \
@@ -65,7 +64,7 @@ nextflow run nf-core/stableexpression \
 ```
 
 > [!WARNING]
-> If you want to download only the datasets corresponding to the accessions supplied, you must set the `--skip_fetch_eatlas_accessions` and `--skip_fetch_geo_accessions`.
+> If you want to download only the datasets corresponding to the accessions supplied, you must set the `--skip_fetch_eatlas_accessions` parameter.
 
 > [!NOTE]
 > If you provide accessions through `--eatlas_accessions_file` or `--geo_accessions_file`, there must be one accession per line. The extension of the file does not matter.
@@ -164,12 +163,11 @@ nextflow run nf-core/stableexpression \
    --species <SPECIES> \
    --datasets <CSV / YAML FILE> \
    --skip_fetch_eatlas_accessions \
-   --skip_fetch_geo_accessions \
    --outdir <OUTDIR>
 ```
 
 > [!TIP]
-> The `--skip_fetch_eatlas_accessions` and `--skip_fetch_geo_accessions` parameters are supplied here to show how to analyse **only your own dataset**. You may remove these parameters if you want to mix you dataset(s) with public ones.
+> The `--skip_fetch_eatlas_accessions` parameter is supplied here to show how to analyse **only your own dataset**. You may remove this parameter if you want to mix you dataset(s) with public ones.
 
 > [!IMPORTANT]
 > By default, the pipeline tries to map gene IDs to NCBI Entrez Gene IDs. **All genes that cannot be mapped are discarded from the analysis**. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think that your gene IDs won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, you may supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
@@ -190,7 +188,6 @@ nextflow run nf-core/stableexpression \
    --gene_id_mapping <CSV / TSV FILE> \
    --gene_metadata <CSV / TSV FILE> \
    --skip_fetch_eatlas_accessions \
-   --skip_fetch_geo_accessions \
    --outdir <OUTDIR>
 ```
 

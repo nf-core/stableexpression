@@ -52,9 +52,8 @@ workflow STABLEEXPRESSION {
 
     GET_PUBLIC_ACCESSIONS(
         species,
-        params.skip_fetch_public_accessions,
         params.skip_fetch_eatlas_accessions,
-        params.skip_fetch_geo_accessions,
+        params.fetch_geo_accessions,
         params.platform,
         params.keywords,
         channel.fromList( params.accessions.tokenize(',') ),

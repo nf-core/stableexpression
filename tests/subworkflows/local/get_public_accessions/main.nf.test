@@ -5,15 +5,14 @@ nextflow_workflow {
     workflow "GET_PUBLIC_ACCESSIONS"
 
 
-    test("Fetch public accessions without keywords") {
+    test("Fetch eatlas accessions without keywords") {
 
         when {
 
             params {
                 species = 'beta vulgaris'
-                skip_fetch_public_accessions = false
                 skip_fetch_eatlas_accessions = false
-                skip_fetch_geo_accessions = false
+                fetch_geo_accessions = false
                 platform = null
                 keywords = ""
                 accessions = ""
@@ -28,18 +27,17 @@ nextflow_workflow {
             workflow {
                 """
                 input[0] = channel.value( params.species.split(' ').join('_') )
-                input[1] = params.skip_fetch_public_accessions
-                input[2] = params.skip_fetch_eatlas_accessions
-                input[3] = params.skip_fetch_geo_accessions
-                input[4] = params.platform
-                input[5] = params.keywords
-                input[6] = channel.fromList( params.accessions.tokenize(',') )
-                input[7] = params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty()
-                input[8] = channel.fromList( params.excluded_accessions.tokenize(',') )
-                input[9] = params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty()
-                input[10] = params.random_sampling_size
-                input[11] = params.random_sampling_seed
-                input[12] = params.outdir
+                input[1] = params.skip_fetch_eatlas_accessions
+                input[2] = params.fetch_geo_accessions
+                input[3] = params.platform
+                input[4] = params.keywords
+                input[5] = channel.fromList( params.accessions.tokenize(',') )
+                input[6] = params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty()
+                input[7] = channel.fromList( params.excluded_accessions.tokenize(',') )
+                input[8] = params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty()
+                input[9] = params.random_sampling_size
+                input[10] = params.random_sampling_seed
+                input[11] = params.outdir
                 """
             }
         }
@@ -59,9 +57,8 @@ nextflow_workflow {
 
             params {
                 species = 'beta vulgaris'
-                skip_fetch_public_accessions = false
                 skip_fetch_eatlas_accessions = false
-                skip_fetch_geo_accessions = false
+                fetch_geo_accessions = true
                 platform = null
                 keywords = "leaf"
                 accessions = ""
@@ -76,18 +73,17 @@ nextflow_workflow {
             workflow {
                 """
                 input[0] = channel.value( params.species.split(' ').join('_') )
-                input[1] = params.skip_fetch_public_accessions
-                input[2] = params.skip_fetch_eatlas_accessions
-                input[3] = params.skip_fetch_geo_accessions
-                input[4] = params.platform
-                input[5] = params.keywords
-                input[6] = channel.fromList( params.accessions.tokenize(',') )
-                input[7] = params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty()
-                input[8] = channel.fromList( params.excluded_accessions.tokenize(',') )
-                input[9] = params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty()
-                input[10] = params.random_sampling_size
-                input[11] = params.random_sampling_seed
-                input[12] = params.outdir
+                input[1] = params.skip_fetch_eatlas_accessions
+                input[2] = params.fetch_geo_accessions
+                input[3] = params.platform
+                input[4] = params.keywords
+                input[5] = channel.fromList( params.accessions.tokenize(',') )
+                input[6] = params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty()
+                input[7] = channel.fromList( params.excluded_accessions.tokenize(',') )
+                input[8] = params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty()
+                input[9] = params.random_sampling_size
+                input[10] = params.random_sampling_seed
+                input[11] = params.outdir
                 """
             }
         }
@@ -107,9 +103,8 @@ nextflow_workflow {
 
             params {
                 species = 'beta vulgaris'
-                skip_fetch_public_accessions = false
                 skip_fetch_eatlas_accessions = false
-                skip_fetch_geo_accessions = true
+                fetch_geo_accessions = false
                 platform = null
                 keywords = ""
                 accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
@@ -124,18 +119,17 @@ nextflow_workflow {
             workflow {
                 """
                 input[0] = channel.value( params.species.split(' ').join('_') )
-                input[1] = params.skip_fetch_public_accessions
-                input[2] = params.skip_fetch_eatlas_accessions
-                input[3] = params.skip_fetch_geo_accessions
-                input[4] = params.platform
-                input[5] = params.keywords
-                input[6] = channel.fromList( params.accessions.tokenize(',') )
-                input[7] = params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty()
-                input[8] = channel.fromList( params.excluded_accessions.tokenize(',') )
-                input[9] = params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty()
-                input[10] = params.random_sampling_size
-                input[11] = params.random_sampling_seed
-                input[12] = params.outdir
+                input[1] = params.skip_fetch_eatlas_accessions
+                input[2] = params.fetch_geo_accessions
+                input[3] = params.platform
+                input[4] = params.keywords
+                input[5] = channel.fromList( params.accessions.tokenize(',') )
+                input[6] = params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty()
+                input[7] = channel.fromList( params.excluded_accessions.tokenize(',') )
+                input[8] = params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty()
+                input[9] = params.random_sampling_size
+                input[10] = params.random_sampling_seed
+                input[11] = params.outdir
                 """
             }
         }
@@ -154,9 +148,8 @@ nextflow_workflow {
         when {
             params {
                 species = 'beta vulgaris'
-                skip_fetch_public_accessions = false
                 skip_fetch_eatlas_accessions = false
-                skip_fetch_geo_accessions = true
+                fetch_geo_accessions = false
                 platform = null
                 keywords = ""
                 accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
@@ -171,18 +164,17 @@ nextflow_workflow {
             workflow {
                 """
                 input[0] = channel.value( params.species.split(' ').join('_') )
-                input[1] = params.skip_fetch_public_accessions
-                input[2] = params.skip_fetch_eatlas_accessions
-                input[3] = params.skip_fetch_geo_accessions
-                input[4] = params.platform
-                input[5] = params.keywords
-                input[6] = channel.fromList( params.accessions.tokenize(',') )
-                input[7] = params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty()
-                input[8] = channel.fromList( params.excluded_accessions.tokenize(',') )
-                input[9] = params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty()
-                input[10] = params.random_sampling_size
-                input[11] = params.random_sampling_seed
-                input[12] = params.outdir
+                input[1] = params.skip_fetch_eatlas_accessions
+                input[2] = params.fetch_geo_accessions
+                input[3] = params.platform
+                input[4] = params.keywords
+                input[5] = channel.fromList( params.accessions.tokenize(',') )
+                input[6] = params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty()
+                input[7] = channel.fromList( params.excluded_accessions.tokenize(',') )
+                input[8] = params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty()
+                input[9] = params.random_sampling_size
+                input[10] = params.random_sampling_seed
+                input[11] = params.outdir
                 """
             }
         }
