@@ -34,7 +34,7 @@ workflow STABILITY_SCORING {
         nb_top_gene_candidates,
         min_expr_threshold
     )
-    GET_CANDIDATE_GENES.out.counts.set { ch_candidate_gene_counts }
+    ch_candidate_gene_counts = GET_CANDIDATE_GENES.out.counts
 
     // -----------------------------------------------------------------
     // NORMFINDER
@@ -44,7 +44,6 @@ workflow STABILITY_SCORING {
         ch_candidate_gene_counts.collect(),
         ch_design.collect()
     )
-    NORMFINDER.out.stability_values.set { ch_normfinder_stability }
 
     // -----------------------------------------------------------------
     // GENORM
@@ -52,7 +51,7 @@ workflow STABILITY_SCORING {
 
     if ( run_genorm ) {
         GENORM ( ch_candidate_gene_counts )
-        GENORM.out.m_measures.set { ch_genorm_stability }
+        ch_genorm_stability = GENORM.out.m_measures
     } else {
         ch_genorm_stability = channel.value([])
     }
@@ -64,7 +63,7 @@ workflow STABILITY_SCORING {
     COMPUTE_STABILITY_SCORES (
         ch_stats.collect(),
         stability_score_weights,
-        ch_normfinder_stability,
+        NORMFINDER.out.stability_values,
         ch_genorm_stability
     )
 

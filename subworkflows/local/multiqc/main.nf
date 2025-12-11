@@ -24,149 +24,140 @@ workflow MULTIQC_WORKFLOW {
     // STATS
     // ------------------------------------------------------------------------------------
 
-    channel.topic('id_mapping_stats')
-        .collectFile(
-            name: 'id_mapping_stats.csv',
-            seed: "Dataset,mapped,unmapped",
-            newLine: true,
-            storeDir: "${params.outdir}/statistics/"
-        ) {
-            item -> "${item[0]},${item[1]},${item[2]}"
-        }
-        .set { ch_id_mapping_stats }
+    ch_id_mapping_stats = channel.topic('id_mapping_stats')
+                            .collectFile(
+                                name: 'id_mapping_stats.csv',
+                                seed: "Dataset,mapped,unmapped",
+                                newLine: true,
+                                storeDir: "${params.outdir}/statistics/"
+                            ) {
+                                item -> "${item[0]},${item[1]},${item[2]}"
+                            }
 
-    channel.topic('skewness')
-        .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
-        .collectFile(
-            name: 'skewness.csv',
-            newLine: true,
-            storeDir: "${params.outdir}/statistics/"
-        )
-        .set { ch_skewness }
+    ch_skewness = channel.topic('skewness')
+                    .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
+                    .collectFile(
+                        name: 'skewness.csv',
+                        newLine: true,
+                        storeDir: "${params.outdir}/statistics/"
+                    )
 
-    channel.topic('ratio_zeros')
-        .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
-        .collectFile(
-            name: 'ratio_zeros.csv',
-            newLine: true,
-            storeDir: "${params.outdir}/statistics/"
-        )
-        .set { ch_ratio_zeros }
 
-    ch_to_collect = ch_skewness.mix( ch_ratio_zeros )
-    COLLECT_STATISTICS( ch_to_collect )
+    ch_ratio_zeros = channel.topic('ratio_zeros')
+                        .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
+                        .collectFile(
+                            name: 'ratio_zeros.csv',
+                            newLine: true,
+                            storeDir: "${params.outdir}/statistics/"
+                        )
+
+    COLLECT_STATISTICS(
+        ch_skewness.mix( ch_ratio_zeros )
+    )
 
     // ------------------------------------------------------------------------------------
     // FAILURE / WARNING REPORTS
     // ------------------------------------------------------------------------------------
 
-    channel.topic('eatlas_failure_reason')
-        .map { accession, file -> [ accession, file.readLines()[0] ] }
-        .collectFile(
-            name: 'eatlas_failure_reasons.csv',
-            seed: "Accession,Reason",
-            newLine: true,
-            storeDir: "${params.outdir}/errors/"
-        ) {
-            item -> "${item[0]},${item[1]}"
-        }
-        .set { ch_eatlas_failure_reasons }
+    ch_eatlas_failure_reasons = channel.topic('eatlas_failure_reason')
+                                    .map { accession, file -> [ accession, file.readLines()[0] ] }
+                                    .collectFile(
+                                        name: 'eatlas_failure_reasons.csv',
+                                        seed: "Accession,Reason",
+                                        newLine: true,
+                                        storeDir: "${params.outdir}/errors/"
+                                    ) {
+                                        item -> "${item[0]},${item[1]}"
+                                    }
 
-    channel.topic('eatlas_warning_reason')
-        .map { accession, file -> [ accession, file.readLines()[0] ] }
-        .collectFile(
-            name: 'eatlas_warning_reasons.csv',
-            seed: "Accession,Reason",
-            newLine: true,
-            storeDir: "${params.outdir}/warnings/"
-        ) {
-            item -> "${item[0]},${item[1]}"
-        }
-        .set { ch_eatlas_warning_reasons }
+    ch_eatlas_warning_reasons = channel.topic('eatlas_warning_reason')
+                                    .map { accession, file -> [ accession, file.readLines()[0] ] }
+                                    .collectFile(
+                                        name: 'eatlas_warning_reasons.csv',
+                                        seed: "Accession,Reason",
+                                        newLine: true,
+                                        storeDir: "${params.outdir}/warnings/"
+                                    ) {
+                                        item -> "${item[0]},${item[1]}"
+                                    }
 
-    channel.topic('geo_failure_reason')
-        .map { accession, file -> [ accession, file.readLines()[0] ] }
-        .collectFile(
-            name: 'geo_failure_reasons.csv',
-            seed: "Accession,Reason",
-            newLine: true,
-            storeDir: "${params.outdir}/errors/"
-        ) {
-            item -> "${item[0]},${item[1]}"
-        }
-        .set { ch_geo_failure_reasons }
+    ch_geo_failure_reasons = channel.topic('geo_failure_reason')
+                                .map { accession, file -> [ accession, file.readLines()[0] ] }
+                                .collectFile(
+                                    name: 'geo_failure_reasons.csv',
+                                    seed: "Accession,Reason",
+                                    newLine: true,
+                                    storeDir: "${params.outdir}/errors/"
+                                ) {
+                                    item -> "${item[0]},${item[1]}"
+                                }
 
-    channel.topic('geo_warning_reason')
-        .map { accession, file -> [ accession, file.readLines()[0] ] }
-        .collectFile(
-            name: 'geo_warning_reasons.csv',
-            seed: "Accession,Reason",
-            newLine: true,
-            storeDir: "${params.outdir}/warnings/"
-        ) {
-            item -> "${item[0]},${item[1]}"
-        }
-        .set { ch_geo_warning_reasons }
 
-    channel.topic('id_cleaning_failure_reason')
-        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
-        .collectFile(
-            name: 'id_cleaning_failure_reasons.tsv',
-            seed: "Dataset\tReason",
-            newLine: true,
-            storeDir: "${params.outdir}/errors/"
-        ) {
-            item -> "${item[0]}\t${item[1]}"
-        }
-        .set { ch_id_cleaning_failure_reasons }
+    ch_geo_warning_reasons = channel.topic('geo_warning_reason')
+                                .map { accession, file -> [ accession, file.readLines()[0] ] }
+                                .collectFile(
+                                    name: 'geo_warning_reasons.csv',
+                                    seed: "Accession,Reason",
+                                    newLine: true,
+                                    storeDir: "${params.outdir}/warnings/"
+                                ) {
+                                    item -> "${item[0]},${item[1]}"
+                                }
 
-    channel.topic('renaming_warning_reason')
-        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
-        .collectFile(
-            name: 'renaming_warning_reasons.tsv',
-            seed: "Dataset\tReason",
-            newLine: true,
-            storeDir: "${params.outdir}/warnings/"
-        ) {
-            item -> "${item[0]}\t${item[1]}"
-        }
-        .set { ch_id_mapping_warning_reasons }
+    ch_id_cleaning_failure_reasons = channel.topic('id_cleaning_failure_reason')
+                                        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
+                                        .collectFile(
+                                            name: 'id_cleaning_failure_reasons.tsv',
+                                            seed: "Dataset\tReason",
+                                            newLine: true,
+                                            storeDir: "${params.outdir}/errors/"
+                                        ) {
+                                            item -> "${item[0]}\t${item[1]}"
+                                        }
 
-    channel.topic('renaming_failure_reason')
-        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
-        .collectFile(
-            name: 'renaming_failure_reasons.tsv',
-            seed: "Dataset\tReason",
-            newLine: true,
-            storeDir: "${params.outdir}/errors/"
-        ) {
-            item -> "${item[0]}\t${item[1]}"
-        }
-        .set { ch_id_mapping_failure_reasons }
+    ch_id_mapping_warning_reasons = channel.topic('renaming_warning_reason')
+                                        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
+                                        .collectFile(
+                                            name: 'renaming_warning_reasons.tsv',
+                                            seed: "Dataset\tReason",
+                                            newLine: true,
+                                            storeDir: "${params.outdir}/warnings/"
+                                        ) {
+                                            item -> "${item[0]}\t${item[1]}"
+                                        }
 
-    channel.topic('normalisation_warning_reason')
-        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
-        .collectFile(
-            name: 'normalisation_warning_reasons.tsv',
-            seed: "Dataset\tReason",
-            newLine: true,
-            storeDir: "${params.outdir}/warnings/"
-        ) {
-            item -> "${item[0]}\t${item[1]}"
-        }
-        .set { ch_normalisation_warning_reasons }
+    ch_id_mapping_failure_reasons = channel.topic('renaming_failure_reason')
+                                        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
+                                        .collectFile(
+                                            name: 'renaming_failure_reasons.tsv',
+                                            seed: "Dataset\tReason",
+                                            newLine: true,
+                                            storeDir: "${params.outdir}/errors/"
+                                        ) {
+                                            item -> "${item[0]}\t${item[1]}"
+                                        }
 
-    channel.topic('normalisation_failure_reason')
-        .map { dataset, file -> [ dataset, file.readLines()[0] ] }
-        .collectFile(
-            name: 'normalisation_failure_reasons.tsv',
-            seed: "Dataset\tReason",
-            newLine: true,
-            storeDir: "${params.outdir}/errors/"
-        ) {
-            item -> "${item[0]}\t${item[1]}"
-        }
-        .set { ch_normalisation_failure_reasons }
+    ch_normalisation_warning_reasons = channel.topic('normalisation_warning_reason')
+                                            .map { dataset, file -> [ dataset, file.readLines()[0] ] }
+                                            .collectFile(
+                                                name: 'normalisation_warning_reasons.tsv',
+                                                seed: "Dataset\tReason",
+                                                newLine: true,
+                                                storeDir: "${params.outdir}/warnings/"
+                                            ) {
+                                                item -> "${item[0]}\t${item[1]}"
+                                            }
+
+    ch_normalisation_failure_reasons = channel.topic('normalisation_failure_reason')
+                                            .map { dataset, file -> [ dataset, file.readLines()[0] ] }
+                                            .collectFile(
+                                                name: 'normalisation_failure_reasons.tsv',
+                                                seed: "Dataset\tReason",
+                                                newLine: true,
+                                                storeDir: "${params.outdir}/errors/"
+                                            ) {
+                                                item -> "${item[0]}\t${item[1]}"
+                                            }
 
 
     // ------------------------------------------------------------------------------------
@@ -215,14 +206,14 @@ workflow MULTIQC_WORKFLOW {
             "${process}:\n${tool_versions.join('\n')}"
         }
 
-    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
-        .mix(topic_versions_string)
-        .collectFile(
-            storeDir: "${params.outdir}/pipeline_info",
-            name: 'nf_core_'  +  'stableexpression_software_'  + 'mqc_'  + 'versions.yml',
-            sort: true,
-            newLine: true
-        ).set { ch_collated_versions }
+    ch_collated_versions = softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+                            .mix(topic_versions_string)
+                            .collectFile(
+                                storeDir: "${params.outdir}/pipeline_info",
+                                name: 'nf_core_'  +  'stableexpression_software_'  + 'mqc_'  + 'versions.yml',
+                                sort: true,
+                                newLine: true
+                            )
 
     // ------------------------------------------------------------------------------------
     // CONFIG

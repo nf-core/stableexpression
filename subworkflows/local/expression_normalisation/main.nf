@@ -31,9 +31,7 @@ workflow EXPRESSION_NORMALISATION {
             normalised: meta.normalised == true
         }
 
-    ch_datasets
-        .raw.filter { meta, file -> meta.platform == 'rnaseq' }
-        .set { ch_raw_rnaseq_datasets_to_normalise }
+    ch_raw_rnaseq_datasets_to_normalise = ch_datasets.raw.filter { meta, file -> meta.platform == 'rnaseq' }
 
     if ( normalisation_method == 'tpm' ) {
 
@@ -57,12 +55,8 @@ workflow EXPRESSION_NORMALISATION {
     //
 
     // putting all normalised count datasets together and performing quantile normalisation
-    ch_datasets.normalised
-        .mix( ch_raw_rnaseq_datasets_normalised )
-        .set { quant_norm_input }
-
     QUANTILE_NORMALISATION (
-        quant_norm_input,
+        ch_datasets.normalised.mix( ch_raw_rnaseq_datasets_normalised ),
         quantile_norm_target_distrib
     )
 

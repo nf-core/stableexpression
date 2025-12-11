@@ -26,8 +26,8 @@ workflow GET_PUBLIC_ACCESSIONS {
     main:
 
     ch_fetched_eatlas_accessions = channel.empty()
-    ch_fetched_geo_accessions = channel.empty()
-    ch_sampling_quota = channel.of( "ok" )
+    ch_fetched_geo_accessions    = channel.empty()
+    ch_sampling_quota            = channel.of( "ok" )
 
     // -----------------------------------------------------------------
     // GET EATLAS ACCESSIONS
@@ -47,7 +47,7 @@ workflow GET_PUBLIC_ACCESSIONS {
         )
 
         ch_fetched_eatlas_accessions = EXPRESSION_ATLAS.out.accessions.splitText()
-        ch_sampling_quota = EXPRESSION_ATLAS.out.sampling_quota
+        ch_sampling_quota            = EXPRESSION_ATLAS.out.sampling_quota
 
     }
 
@@ -73,9 +73,9 @@ workflow GET_PUBLIC_ACCESSIONS {
 
         // trick to avoid fetching accessions from GEO when the sampling quota is already exceeded
         ch_species = channel.of( species )
-            .combine( ch_sampling_quota )
-            .filter { species, quota -> quota == "ok" }
-            .map { species, quota -> species }
+                        .combine( ch_sampling_quota )
+                        .filter { species, quota -> quota == "ok" }
+                        .map { species, quota -> species }
 
         // getting GEO accessions given a species name and keywords
         // keywords can be an empty string
@@ -97,41 +97,41 @@ workflow GET_PUBLIC_ACCESSIONS {
 
     // getting accessions to exclude and preparing in the right format
     ch_excluded_accessions = ch_excluded_accessions
-        .mix( ch_excluded_accessions_file.splitText() )
-        .unique()
-        .map { acc -> acc.trim() }
-        .toList()
-        .map { lst -> [lst] } // list of lists : mandatory when combining in the next step
+                                .mix( ch_excluded_accessions_file.splitText() )
+                                .unique()
+                                .map { acc -> acc.trim() }
+                                .toList()
+                                .map { lst -> [lst] } // list of lists : mandatory when combining in the next step
 
     ch_fetched_public_accessions = ch_fetched_eatlas_accessions
-        .mix( ch_fetched_geo_accessions )
-        .map { acc -> acc.trim() }
-        .filter { acc ->
-            (acc.startsWith('E-') || acc.startsWith('GSE')) && !acc.startsWith('E-PROT-')
-        }
-        .combine ( ch_excluded_accessions )
-        .filter { accession, excluded_accessions -> !(accession in excluded_accessions) }
-        .map { accession, excluded_accessions -> accession }
+                                    .mix( ch_fetched_geo_accessions )
+                                    .map { acc -> acc.trim() }
+                                    .filter { acc ->
+                                        (acc.startsWith('E-') || acc.startsWith('GSE')) && !acc.startsWith('E-PROT-')
+                                    }
+                                    .combine ( ch_excluded_accessions )
+                                    .filter { accession, excluded_accessions -> !(accession in excluded_accessions) }
+                                    .map { accession, excluded_accessions -> accession }
 
     // -----------------------------------------------------------------
     // ADDING USER PROVIDED ACCESSIONS
     // -----------------------------------------------------------------
 
     ch_input_accessions = ch_accessions
-        .mix( ch_accessions_file.splitText() )
-        .unique()
-        .map { acc -> acc.trim() }
+                            .mix( ch_accessions_file.splitText() )
+                            .unique()
+                            .map { acc -> acc.trim() }
 
     // appending to accessions provided by the user
     // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
     // removing E-PROT- accessions because they are not supported in subsequent steps
     // removing excluded accessions
-    ch_accessions = ch_input_accessions
-        .mix( ch_fetched_public_accessions )
-        .unique()
-        .map { acc -> acc.trim() }
+    ch_all_accessions = ch_input_accessions
+                        .mix( ch_fetched_public_accessions )
+                        .unique()
+                        .map { acc -> acc.trim() }
 
     emit:
-    accessions          = ch_accessions
+    accessions          = ch_all_accessions
 
 }

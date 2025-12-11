@@ -40,9 +40,9 @@ workflow STABLEEXPRESSION {
     ch_versions = channel.empty()
     ch_multiqc_files = channel.empty()
 
-    ch_top_stable_genes_summary = channel.empty()
+    ch_most_stable_genes_summary = channel.empty()
     ch_all_genes_statistics = channel.empty()
-    ch_top_stable_genes_transposed_counts = channel.empty()
+    ch_most_stable_genes_transposed_counts = channel.empty()
 
     def species = params.species.split(' ').join('_').toLowerCase()
 
@@ -80,13 +80,13 @@ workflow STABLEEXPRESSION {
 
     }
 
-    ch_counts = ch_input_datasets.mix( ch_downloaded_datasets )
-    // store nb of genes and nb f samples at this stage in the meta maps
-    ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
-    // returns an error with a message if no dataset was found
-    checkCounts( ch_counts )
-
     if ( !params.accessions_only && !params.download_only ) {
+
+        ch_counts = ch_input_datasets.mix( ch_downloaded_datasets )
+        // store nb of genes and nb of samples at this stage in the meta maps
+        ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
+        // returns an error with a message if no dataset was found
+        checkCounts( ch_counts )
 
         // -----------------------------------------------------------------
         // IDMAPPING
@@ -102,9 +102,9 @@ workflow STABLEEXPRESSION {
             params.gene_metadata,
             params.outdir
         )
-        ID_MAPPING.out.counts.set { ch_counts }
-        ID_MAPPING.out.mapping.set { ch_gene_id_mapping }
-        ID_MAPPING.out.metadata.set { ch_gene_metadata }
+        ch_counts          = ID_MAPPING.out.counts
+        ch_gene_id_mapping = ID_MAPPING.out.mapping
+        ch_gene_metadata   = ID_MAPPING.out.metadata
 
         ch_counts = storeDatasetSize( ch_counts, "nb_genes_after_idmapping", "nb_samples_after_idmapping" )
 
@@ -135,8 +135,8 @@ workflow STABLEEXPRESSION {
             ch_gene_metadata
         )
 
-        MERGE_DATA.out.all_counts.set { ch_all_counts }
-        MERGE_DATA.out.whole_design.set { ch_whole_design }
+        ch_all_counts   = MERGE_DATA.out.all_counts
+        ch_whole_design = MERGE_DATA.out.whole_design
 
         // -----------------------------------------------------------------
         // COMPUTE BASE STATISTICS FOR ALL GENES
@@ -148,7 +148,7 @@ workflow STABLEEXPRESSION {
             MERGE_DATA.out.microarray_counts
         )
 
-        BASE_STATISTICS.out.stats.set { ch_all_datasets_stats }
+        ch_all_datasets_stats = BASE_STATISTICS.out.stats
 
         // -----------------------------------------------------------------
         // GET CANDIDATES AS REFERENCE GENE AND COMPUTES VARIOUS STABILITY VALUES
@@ -165,7 +165,7 @@ workflow STABLEEXPRESSION {
             params.stability_score_weights
         )
 
-        STABILITY_SCORING.out.summary_statistics.set { ch_stats_all_genes_with_scores }
+        ch_stats_all_genes_with_scores = STABILITY_SCORING.out.summary_statistics
 
         // -----------------------------------------------------------------
         // AGGREGATE ALL RESULTS FOR MULTIQC
@@ -180,9 +180,9 @@ workflow STABLEEXPRESSION {
             MERGE_DATA.out.whole_gene_id_mapping.collect()
         )
 
-        AGGREGATE_RESULTS.out.all_genes_summary.set { ch_all_genes_summary }
-        AGGREGATE_RESULTS.out.top_stable_genes_summary.set { ch_top_stable_genes_summary }
-        AGGREGATE_RESULTS.out.top_stable_genes_transposed_counts_filtered.set { ch_top_stable_genes_transposed_counts }
+        ch_all_genes_summary                   = AGGREGATE_RESULTS.out.all_genes_summary
+        ch_most_stable_genes_summary           = AGGREGATE_RESULTS.out.most_stable_genes_summary
+        ch_most_stable_genes_transposed_counts = AGGREGATE_RESULTS.out.most_stable_genes_transposed_counts_filtered
 
         // -----------------------------------------------------------------
         // DASH APPLICATION
@@ -195,11 +195,10 @@ workflow STABLEEXPRESSION {
         )
         ch_versions = ch_versions.mix ( DASH_APP.out.versions )
 
-        ch_multiqc_files
-            .mix( ch_top_stable_genes_summary.collect() )
-            .mix( ch_all_genes_summary.collect() )
-            .mix( ch_top_stable_genes_transposed_counts.collect() )
-            .set { ch_multiqc_files }
+        ch_multiqc_files = ch_multiqc_files
+                            .mix( ch_most_stable_genes_summary.collect() )
+                            .mix( ch_all_genes_summary.collect() )
+                            .mix( ch_most_stable_genes_transposed_counts.collect() )
 
     }
 
@@ -214,7 +213,8 @@ workflow STABLEEXPRESSION {
 
 
     emit:
-    multiqc_report = MULTIQC_WORKFLOW.out.report.toList()
+    multiqc_report            = MULTIQC_WORKFLOW.out.report.toList()
+    most_stable_genes_summary = ch_most_stable_genes_summary
 
 }
 
