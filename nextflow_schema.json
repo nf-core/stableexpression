@@ -255,10 +255,10 @@
             "properties": {
                 "random_sampling_size": {
                     "type": "integer",
-                    "description": "Number of public dataset accessions (Expression Atlas + GEO) to sample randomly before downloading.",
+                    "description": "Number of public dataset samples to choose randomly before downloading.",
                     "fa_icon": "fas fa-sort-numeric-up-alt",
                     "minimum": 1,
-                    "help_text": "When dealing with species for which there is a large number (eg. >1000) of public datasets, users may encounter RAM issues (eg. errors with `137` exit codes). In such cases, it is recommended to sample a random subset of these datasets to reduce the computational load. The subsampling is performed after getting proper accessions from Expression Atlas and GEO, AFTER excluding unwanted accessions (obtained through `--excluded_accessions` or `--excluded_accession_file`) but BEFORE including user provided accessions (obtained through `--accessions` or `--accession_file`)."
+                    "help_text": "When dealing with species for which there is a large number (eg. >10000) of samples considering all the downloaded datasets, users may encounter RAM issues (eg. errors with `137` exit codes). In such cases, it is recommended to sample a random subset of these datasets to reduce the computational load. A first subsampling is performedduring the search for Expression Atlas accessions. In case there is still room for datasets and if the `--fetch_geo_accessions` flag was set, a second ssubsampling is performed during the search for NCBI GEO accessions."
                 },
                 "random_sampling_seed": {
                     "type": "integer",

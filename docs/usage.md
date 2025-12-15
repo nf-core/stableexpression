@@ -16,7 +16,6 @@ This pipeline fetches Expression Atlas and GEO accessions for the provided speci
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -r dev \
    -profile <PROFILE (examples: docker / apptainer / conda / micromamba)> \
    --species <SPECIES (examples: arabidopsis_thaliana / "drosophila melanogaster")> \
    --outdir <OUTDIR (example: ./results)>
@@ -31,7 +30,6 @@ You can provide keywords to restrict downloaded datasets to specific conditions.
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -r dev \
    -profile <PROFILE> \
    --species <SPECIES> \
    --keywords <KEYWORDS (examples: "leaf" / "flower,stress")>
@@ -52,7 +50,6 @@ In this case, you can provide them directly to the pipeline.
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -r dev \
    -profile <PROFILE> \
    --species <SPECIES> \
    --skip_fetch_eatlas_accessions \
@@ -73,7 +70,6 @@ In case you do not know which accessions you want but you would like to control 
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -r dev \
    -profile <PROFILE> \
    --species <SPECIES> \
    --accessions_only \
@@ -158,7 +154,6 @@ Now run the pipeline with:
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -r dev \
    -profile <PROFILE> \
    --species <SPECIES> \
    --datasets <CSV / YAML FILE> \
@@ -170,7 +165,7 @@ nextflow run nf-core/stableexpression \
 > The `--skip_fetch_eatlas_accessions` parameter is supplied here to show how to analyse **only your own dataset**. You may remove this parameter if you want to mix you dataset(s) with public ones.
 
 > [!IMPORTANT]
-> By default, the pipeline tries to map gene IDs to NCBI Entrez Gene IDs. **All genes that cannot be mapped are discarded from the analysis**. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think that your gene IDs won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, you may supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
+> By default, the pipeline tries to map gene IDs to NCBI Entrez Gene IDs. **All genes that cannot be mapped are discarded from the analysis**. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think on the contrary that your gene IDs just won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, you may supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
 
 > [!TIP]
 > You can check if your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
@@ -181,7 +176,6 @@ You can supply your own gene id mapping file and optionally gene metadata with:
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -r dev \
    -profile <PROFILE> \
    --species <SPECIES> \
    --datasets <CSV / YAML FILE> \

@@ -296,8 +296,8 @@ nextflow_pipeline {
         }
     }
 
-    test("-profile test_full") {
-        tag "test_full"
+    test("-profile test_bigger_with_genorm") {
+        tag "test_bigger_with_genorm"
 
         when {
             params {

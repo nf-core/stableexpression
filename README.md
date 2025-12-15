@@ -33,7 +33,7 @@ It takes as main inputs :
 **Use cases**:
 
 - **find the most suitable genes as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
-- download all Expression Atlas and NCBI GEO datasets for a species
+- download all Expression Atlas and / or NCBI GEO datasets for a species (and optionally keywords)
 
 ## Basic usage
 
@@ -44,7 +44,6 @@ To search the most stable genes in a species considering all public datasets, si
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -r dev \
    -profile <PROFILE (examples: docker / apptainer / conda / micromamba)> \
    --species <SPECIES (examples: arabidopsis_thaliana / "drosophila melanogaster")> \
    --outdir <OUTDIR (example: ./results)>

@@ -32,13 +32,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 4. Data normalisation
 
-- Normalize RNAseq raw data using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) or [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)
+- Normalize RNAseq raw data using TPM (necessitates downloading the corresponding genome and computing transcript lengths) or CPM.
 - Perform quantile normalisation on each dataset separately using [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html)
-
-5. Data cleaning
-
-- Get statistics for each sample in each dataset
-- Remove samples that diverge too much from the expected normalised profile
 
 6. Merge all data
 7. Compute base statistics for each gene, platform-wide and for each platform (RNAseq and microarray)
