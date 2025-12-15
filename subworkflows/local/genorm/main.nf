@@ -40,7 +40,7 @@ workflow GENORM {
 
     COMPUTE_M_MEASURE(
         ch_counts,
-        RATIO_STANDARD_VARIATION.out.data.collect()
+        RATIO_STANDARD_VARIATION.out.data.collect( sort: true )
     )
 
     emit:

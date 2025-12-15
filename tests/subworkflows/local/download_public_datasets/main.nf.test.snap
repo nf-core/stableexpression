@@ -23,27 +23,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-04T10:36:40.174934839"
-    },
-    "No accessions": {
-        "content": [
-            {
-                "0": [
-                    
-                ],
-                "datasets": [
-                    
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2025-12-04T10:36:44.555546839"
+        "timestamp": "2025-12-15T21:46:42.719832457"
     },
     "Beta vulgaris - Eatlas + GEO - all accessions": {
         "content": [
@@ -52,14 +35,18 @@
                     [
                         {
                             "dataset": "E_MTAB_8187_rnaseq",
-                            "design": "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf"
+                            "design": "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
+                            "normalised": false,
+                            "platform": "rnaseq"
                         },
                         "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1"
                     ],
                     [
                         {
                             "dataset": "GSE55951_GPL18429",
-                            "design": "GSE55951_GPL18429.microarray.normalised.design.csv:md5,f4872dff0edbe441d1600ffe2b67a25d"
+                            "design": "GSE55951_GPL18429.microarray.normalised.design.csv:md5,f4872dff0edbe441d1600ffe2b67a25d",
+                            "normalised": true,
+                            "platform": "microarray"
                         },
                         "GSE55951_GPL18429.microarray.normalised.counts.csv:md5,18fd2d728ad2ec5cb78f994f73375144"
                     ]
@@ -68,14 +55,18 @@
                     [
                         {
                             "dataset": "E_MTAB_8187_rnaseq",
-                            "design": "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf"
+                            "design": "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
+                            "normalised": false,
+                            "platform": "rnaseq"
                         },
                         "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1"
                     ],
                     [
                         {
                             "dataset": "GSE55951_GPL18429",
-                            "design": "GSE55951_GPL18429.microarray.normalised.design.csv:md5,f4872dff0edbe441d1600ffe2b67a25d"
+                            "design": "GSE55951_GPL18429.microarray.normalised.design.csv:md5,f4872dff0edbe441d1600ffe2b67a25d",
+                            "normalised": true,
+                            "platform": "microarray"
                         },
                         "GSE55951_GPL18429.microarray.normalised.counts.csv:md5,18fd2d728ad2ec5cb78f994f73375144"
                     ]
@@ -83,9 +74,9 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-04T13:05:11.570641957"
+        "timestamp": "2025-12-15T21:46:26.386631545"
     }
 }

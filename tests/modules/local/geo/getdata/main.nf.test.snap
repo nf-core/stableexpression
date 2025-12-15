@@ -43,14 +43,17 @@
                 ],
                 "design": [
                     
+                ],
+                "rejected": [
+                    
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-11-17T11:28:08.073509318"
+        "timestamp": "2025-12-11T15:57:14.702700023"
     },
     "Drosophila simulans - No data found": {
         "content": [
@@ -96,14 +99,17 @@
                 ],
                 "design": [
                     
+                ],
+                "rejected": [
+                    
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-11-17T11:27:41.033275401"
+        "timestamp": "2025-12-11T15:56:37.133179219"
     },
     "Drosophila simulans - Mismatch in suppl data colnames / design": {
         "content": [
@@ -149,14 +155,17 @@
                 ],
                 "design": [
                     
+                ],
+                "rejected": [
+                    
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-03T18:57:21.960035842"
+        "timestamp": "2025-12-11T15:57:39.828336686"
     },
     "Accession does not exist": {
         "content": [
@@ -202,14 +211,17 @@
                 ],
                 "design": [
                     
+                ],
+                "rejected": [
+                    
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-11-17T11:27:24.164943756"
+        "timestamp": "2025-12-11T15:56:24.827278212"
     },
     "Drosophila simulans - Expression profiling by array": {
         "content": [
@@ -255,14 +267,17 @@
                 ],
                 "design": [
                     
+                ],
+                "rejected": [
+                    
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-11-17T11:27:49.459757662"
+        "timestamp": "2025-12-11T15:56:49.691858912"
     },
     "Drosophila simulans - Expression profiling by high throughput sequencing / Some raw counts found": {
         "content": [
@@ -308,14 +323,17 @@
                 ],
                 "design": [
                     
+                ],
+                "rejected": [
+                    
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-11-17T11:27:58.80892872"
+        "timestamp": "2025-12-11T15:57:02.033741199"
     },
     "Drosophila simulans - Only series suppl data but multiple species": {
         "content": [
@@ -361,14 +379,17 @@
                 ],
                 "design": [
                     
+                ],
+                "rejected": [
+                    
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-03T18:57:10.8714341"
+        "timestamp": "2025-12-11T15:57:27.287712988"
     },
     "Beta vulgaris - Small RNA of sugar beet in response to drought stress": {
         "content": [
@@ -414,13 +435,16 @@
                 ],
                 "design": [
                     
+                ],
+                "rejected": [
+                    
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-11-17T11:27:16.009504875"
+        "timestamp": "2025-12-11T15:56:12.348217731"
     }
 }

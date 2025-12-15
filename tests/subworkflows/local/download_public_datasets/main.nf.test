@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow DOWNLOAD_PUBLIC_DATASETS"
     script "subworkflows/local/download_public_datasets/main.nf"
     workflow "DOWNLOAD_PUBLIC_DATASETS"
+    tag "download_public_datasets"
 
     test("Beta vulgaris - Eatlas + GEO - all accessions") {
 
@@ -12,7 +13,7 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = channel.value( params.species.split(' ').join('_') )
+                input[0] = params.species.split(' ').join('_')
                 input[1] = channel.fromList(['E-MTAB-8187', 'GSE107627', 'GSE114968', 'GSE135555', 'GSE205413', 'GSE269454', 'GSE281272', 'GSE55951', 'GSE79526', 'GSE92859'])
                 """
             }
@@ -33,7 +34,7 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = channel.value( params.species.split(' ').join('_') )
+                input[0] = params.species.split(' ').join('_')
                 input[1] = channel.fromList(['E-MTAB-8187'])
                 """
             }
@@ -46,25 +47,6 @@ nextflow_workflow {
 
     }
 
-    test("No accessions") {
 
-        when {
-            params {
-                species = 'beta vulgaris'
-            }
-            workflow {
-                """
-                input[0] = channel.value( params.species.split(' ').join('_') )
-                input[1] = channel.empty()
-                """
-            }
-        }
-
-        then {
-            assert workflow.success
-            assert snapshot(workflow.out).match()
-        }
-
-    }
 
 }

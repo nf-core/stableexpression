@@ -3,7 +3,7 @@ nextflow_workflow {
     name "Test Workflow GET_PUBLIC_ACCESSIONS"
     script "subworkflows/local/get_public_accessions/main.nf"
     workflow "GET_PUBLIC_ACCESSIONS"
-
+    tag "get_public_accessions"
 
     test("Fetch eatlas accessions without keywords") {
 
@@ -26,7 +26,7 @@ nextflow_workflow {
 
             workflow {
                 """
-                input[0] = channel.value( params.species.split(' ').join('_') )
+                input[0] = params.species.split(' ').join('_')
                 input[1] = params.skip_fetch_eatlas_accessions
                 input[2] = params.fetch_geo_accessions
                 input[3] = params.platform
@@ -72,7 +72,7 @@ nextflow_workflow {
 
             workflow {
                 """
-                input[0] = channel.value( params.species.split(' ').join('_') )
+                input[0] = params.species.split(' ').join('_')
                 input[1] = params.skip_fetch_eatlas_accessions
                 input[2] = params.fetch_geo_accessions
                 input[3] = params.platform
@@ -118,7 +118,7 @@ nextflow_workflow {
 
             workflow {
                 """
-                input[0] = channel.value( params.species.split(' ').join('_') )
+                input[0] = params.species.split(' ').join('_')
                 input[1] = params.skip_fetch_eatlas_accessions
                 input[2] = params.fetch_geo_accessions
                 input[3] = params.platform
@@ -163,7 +163,7 @@ nextflow_workflow {
 
             workflow {
                 """
-                input[0] = channel.value( params.species.split(' ').join('_') )
+                input[0] = params.species.split(' ').join('_')
                 input[1] = params.skip_fetch_eatlas_accessions
                 input[2] = params.fetch_geo_accessions
                 input[3] = params.platform

@@ -26,10 +26,10 @@
                 "all_genes_summary": [
                     
                 ],
-                "top_stable_genes_summary": [
+                "most_stable_genes_summary": [
                     
                 ],
-                "top_stable_genes_transposed_counts_filtered": [
+                "most_stable_genes_transposed_counts_filtered": [
                     
                 ]
             }
@@ -67,10 +67,10 @@
                 "all_genes_summary": [
                     
                 ],
-                "top_stable_genes_summary": [
+                "most_stable_genes_summary": [
                     
                 ],
-                "top_stable_genes_transposed_counts_filtered": [
+                "most_stable_genes_transposed_counts_filtered": [
                     
                 ]
             }

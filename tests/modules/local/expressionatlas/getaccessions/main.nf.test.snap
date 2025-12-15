@@ -1,4 +1,68 @@
 {
+    "Solanum tuberosum two keywords - microarray": {
+        "content": [
+            {
+                "0": [
+                    "accessions.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "1": [
+                    "ok"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    "species_experiments.metadata.tsv:md5,68b329da9893e34099c7d8ad5cb9c940"
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "python",
+                        "3.13.5"
+                    ]
+                ],
+                "5": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "requests",
+                        "2.32.4"
+                    ]
+                ],
+                "6": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "nltk",
+                        "3.9.1"
+                    ]
+                ],
+                "7": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "pyyaml",
+                        "6.0.2"
+                    ]
+                ],
+                "8": [
+                    [
+                        "EXPRESSIONATLAS_GETACCESSIONS",
+                        "pandas",
+                        "2.3.0"
+                    ]
+                ],
+                "accessions": [
+                    "accessions.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "sampling_quota": [
+                    "ok"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2025-12-11T10:59:26.647904855"
+    },
     "Solanum tuberosum no keyword": {
         "content": [
             {
@@ -6,40 +70,43 @@
                     "accessions.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                 ],
                 "1": [
-                    
+                    "ok"
                 ],
                 "2": [
-                    "species_experiments.metadata.tsv:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    
                 ],
                 "3": [
+                    "species_experiments.metadata.tsv:md5,68b329da9893e34099c7d8ad5cb9c940"
+                ],
+                "4": [
                     [
                         "EXPRESSIONATLAS_GETACCESSIONS",
                         "python",
                         "3.13.5"
                     ]
                 ],
-                "4": [
+                "5": [
                     [
                         "EXPRESSIONATLAS_GETACCESSIONS",
                         "requests",
                         "2.32.4"
                     ]
                 ],
-                "5": [
+                "6": [
                     [
                         "EXPRESSIONATLAS_GETACCESSIONS",
                         "nltk",
                         "3.9.1"
                     ]
                 ],
-                "6": [
+                "7": [
                     [
                         "EXPRESSIONATLAS_GETACCESSIONS",
                         "pyyaml",
                         "6.0.2"
                     ]
                 ],
-                "7": [
+                "8": [
                     [
                         "EXPRESSIONATLAS_GETACCESSIONS",
                         "pandas",
@@ -48,71 +115,16 @@
                 ],
                 "accessions": [
                     "accessions.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "sampling_quota": [
+                    "ok"
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-11-08T12:14:53.220718399"
-    },
-    "Solanum tuberosum two keywords": {
-        "content": [
-            {
-                "0": [
-                    "accessions.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
-                ],
-                "1": [
-                    
-                ],
-                "2": [
-                    "species_experiments.metadata.tsv:md5,68b329da9893e34099c7d8ad5cb9c940"
-                ],
-                "3": [
-                    [
-                        "EXPRESSIONATLAS_GETACCESSIONS",
-                        "python",
-                        "3.13.5"
-                    ]
-                ],
-                "4": [
-                    [
-                        "EXPRESSIONATLAS_GETACCESSIONS",
-                        "requests",
-                        "2.32.4"
-                    ]
-                ],
-                "5": [
-                    [
-                        "EXPRESSIONATLAS_GETACCESSIONS",
-                        "nltk",
-                        "3.9.1"
-                    ]
-                ],
-                "6": [
-                    [
-                        "EXPRESSIONATLAS_GETACCESSIONS",
-                        "pyyaml",
-                        "6.0.2"
-                    ]
-                ],
-                "7": [
-                    [
-                        "EXPRESSIONATLAS_GETACCESSIONS",
-                        "pandas",
-                        "2.3.0"
-                    ]
-                ],
-                "accessions": [
-                    "accessions.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2025-11-08T12:14:45.907461526"
+        "timestamp": "2025-12-11T10:59:38.871741855"
     }
 }

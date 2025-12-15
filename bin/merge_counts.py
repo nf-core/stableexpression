@@ -5,6 +5,7 @@
 import argparse
 import logging
 from functools import reduce
+from operator import attrgetter
 from pathlib import Path
 
 import config
@@ -134,7 +135,11 @@ def export_data(count_df: pl.DataFrame):
 
 def main():
     args = parse_args()
+
+    # parsing count files
     count_files = [Path(file) for file in args.count_files.split(" ")]
+    # sorting them by file name to ensure consistent order between runs
+    count_files.sort(key=attrgetter("name"))
     logger.info(f"Merging {len(count_files)} count files")
 
     # putting all counts into a single dataframe

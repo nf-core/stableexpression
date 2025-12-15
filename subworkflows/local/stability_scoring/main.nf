@@ -28,8 +28,8 @@ workflow STABILITY_SCORING {
     // -----------------------------------------------------------------
 
     GET_CANDIDATE_GENES(
-        ch_counts.collect(),
-        ch_stats.collect(),
+        ch_counts.collect(), // single item
+        ch_stats.collect(), // single item
         candidate_selection_descriptor,
         nb_top_gene_candidates,
         min_expr_threshold
@@ -41,8 +41,8 @@ workflow STABILITY_SCORING {
     // -----------------------------------------------------------------
 
     NORMFINDER (
-        ch_candidate_gene_counts.collect(),
-        ch_design.collect()
+        ch_candidate_gene_counts.collect(), // single item
+        ch_design.collect() // single item
     )
 
     // -----------------------------------------------------------------
@@ -61,7 +61,7 @@ workflow STABILITY_SCORING {
     // -----------------------------------------------------------------
 
     COMPUTE_STABILITY_SCORES (
-        ch_stats.collect(),
+        ch_stats.collect(), // single item
         stability_score_weights,
         NORMFINDER.out.stability_values,
         ch_genorm_stability

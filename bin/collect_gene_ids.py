@@ -54,8 +54,9 @@ def main():
         df = parse_table(count_file)
         all_gene_ids.update(list(df.index))
 
+    # sorting IDs in order to have a consistent output
     with open(ALL_GENE_IDS_OUTFILE, "w") as f:
-        f.write("\n".join([str(gene_id) for gene_id in all_gene_ids]))
+        f.write("\n".join(sorted([str(gene_id) for gene_id in all_gene_ids])))
 
 
 if __name__ == "__main__":

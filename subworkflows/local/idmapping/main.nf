@@ -54,7 +54,8 @@ workflow ID_MAPPING {
                         .unique()
                         .collectFile(
                             name: 'original_gene_ids.txt',
-                            storeDir: "${outdir}/idmapping/"
+                            storeDir: "${outdir}/idmapping/",
+                            sort: true
                         )
 
         // -----------------------------------------------------------------
@@ -86,7 +87,8 @@ workflow ID_MAPPING {
                                         name: 'global_gene_id_mapping.csv',
                                         seed: "original_gene_id,gene_id",
                                         newLine: true,
-                                        storeDir: "${outdir}/idmapping/"
+                                        storeDir: "${outdir}/idmapping/",
+                                        sort: true
                                     ) {
                                         item -> "${item["original_gene_id"]},${item["gene_id"]}"
                                     }
@@ -103,7 +105,8 @@ workflow ID_MAPPING {
                                     name: 'global_gene_metadata.csv',
                                     seed: "gene_id,name,description",
                                     newLine: true,
-                                    storeDir: "${outdir}/idmapping/"
+                                    storeDir: "${outdir}/idmapping/",
+                                    sort: true
                                 ) {
                                     item -> "${item["gene_id"]},${item["name"]},${item["description"]}"
                                 }

@@ -71,7 +71,8 @@ workflow MULTIQC_WORKFLOW {
                                         name: 'eatlas_failure_reasons.csv',
                                         seed: "Accession,Reason",
                                         newLine: true,
-                                        storeDir: "${outdir}/errors/"
+                                        sort: true,
+                                        storeDir: "${outdir}/errors/",
                                     ) {
                                         item -> "${item[0]},${item[1]}"
                                     }
@@ -82,6 +83,7 @@ workflow MULTIQC_WORKFLOW {
                                         name: 'eatlas_warning_reasons.csv',
                                         seed: "Accession,Reason",
                                         newLine: true,
+                                        sort: true,
                                         storeDir: "${outdir}/warnings/"
                                     ) {
                                         item -> "${item[0]},${item[1]}"
@@ -93,6 +95,7 @@ workflow MULTIQC_WORKFLOW {
                                     name: 'geo_failure_reasons.csv',
                                     seed: "Accession,Reason",
                                     newLine: true,
+                                    sort: true,
                                     storeDir: "${outdir}/errors/"
                                 ) {
                                     item -> "${item[0]},${item[1]}"
@@ -105,6 +108,7 @@ workflow MULTIQC_WORKFLOW {
                                     name: 'geo_warning_reasons.csv',
                                     seed: "Accession,Reason",
                                     newLine: true,
+                                    sort: true,
                                     storeDir: "${outdir}/warnings/"
                                 ) {
                                     item -> "${item[0]},${item[1]}"
@@ -116,6 +120,7 @@ workflow MULTIQC_WORKFLOW {
                                             name: 'id_cleaning_failure_reasons.tsv',
                                             seed: "Dataset\tReason",
                                             newLine: true,
+                                            sort: true,
                                             storeDir: "${outdir}/errors/"
                                         ) {
                                             item -> "${item[0]}\t${item[1]}"
@@ -127,6 +132,7 @@ workflow MULTIQC_WORKFLOW {
                                             name: 'renaming_warning_reasons.tsv',
                                             seed: "Dataset\tReason",
                                             newLine: true,
+                                            sort: true,
                                             storeDir: "${outdir}/warnings/"
                                         ) {
                                             item -> "${item[0]}\t${item[1]}"
@@ -138,6 +144,7 @@ workflow MULTIQC_WORKFLOW {
                                             name: 'renaming_failure_reasons.tsv',
                                             seed: "Dataset\tReason",
                                             newLine: true,
+                                            sort: true,
                                             storeDir: "${outdir}/errors/"
                                         ) {
                                             item -> "${item[0]}\t${item[1]}"
@@ -149,6 +156,7 @@ workflow MULTIQC_WORKFLOW {
                                                 name: 'normalisation_warning_reasons.tsv',
                                                 seed: "Dataset\tReason",
                                                 newLine: true,
+                                                sort: true,
                                                 storeDir: "${outdir}/warnings/"
                                             ) {
                                                 item -> "${item[0]}\t${item[1]}"
@@ -160,6 +168,7 @@ workflow MULTIQC_WORKFLOW {
                                                 name: 'normalisation_failure_reasons.tsv',
                                                 seed: "Dataset\tReason",
                                                 newLine: true,
+                                                sort: true,
                                                 storeDir: "${outdir}/errors/"
                                             ) {
                                                 item -> "${item[0]}\t${item[1]}"
@@ -171,11 +180,11 @@ workflow MULTIQC_WORKFLOW {
     // ------------------------------------------------------------------------------------
 
     ch_multiqc_files
-        .mix( channel.topic('eatlas_all_datasets').collect() )
-        .mix( channel.topic('eatlas_selected_datasets').collect() )
-        .mix( channel.topic('geo_all_datasets').collect() )
-        .mix( channel.topic('geo_selected_datasets').collect() )
-        .mix( channel.topic('geo_rejected_datasets').collect() )
+        .mix( channel.topic('eatlas_all_datasets').collect() ) // single item
+        .mix( channel.topic('eatlas_selected_datasets').collect() ) // single item
+        .mix( channel.topic('geo_all_datasets').collect() ) // single item
+        .mix( channel.topic('geo_selected_datasets').collect() ) // single item
+        .mix( channel.topic('geo_rejected_datasets').collect() ) // single item
         .mix( COLLECT_STATISTICS.out.csv )
         .mix( ch_id_mapping_stats )
         .mix( ch_eatlas_failure_reasons )
