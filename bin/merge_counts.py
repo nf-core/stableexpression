@@ -3,6 +3,8 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
+import hashlib
+import json
 import logging
 from functools import reduce
 from operator import attrgetter
@@ -89,6 +91,30 @@ def get_count_columns(df: pl.DataFrame) -> list[str]:
     return df.select(pl.exclude(config.GENE_ID_COLNAME)).columns
 
 
+def reproducible_hash(tpl: tuple[str]) -> str:
+    """
+    Return a deterministic MD5 hash for the given tuple.
+
+    Steps:
+    1. Convert the tuple (and any nested structures) to a canonical JSON string.
+       - `sort_keys=True` guarantees that dictionaries are ordered consistently.
+       - `separators=(',', ':')` removes unnecessary whitespace.
+    2. Encode the string as UTF‑8 bytes.
+    3. Feed the bytes to hashlib.md5 and return the hex digest.
+
+    The result is a 64‑character hexadecimal string that will be identical
+    across Python runs, machines, and even different Python versions
+    (provided the data types are JSON‑compatible).
+    """
+    # Canonical JSON representation
+    canonical_str = json.dumps(tpl, sort_keys=True, separators=(",", ":"))
+    # Encode to bytes
+    data_bytes = canonical_str.encode("utf-8")
+    # Compute MD5
+    hash_obj = hashlib.md5(data_bytes)
+    return hash_obj.hexdigest()
+
+
 def get_counts(files: list[Path]) -> pl.DataFrame:
     """Get all count data from a list of files.
 
@@ -97,6 +123,11 @@ def get_counts(files: list[Path]) -> pl.DataFrame:
     """
     logger.info("Parsing counts")
     dfs = get_valid_dfs(files)
+
+    # sorting dataframes by a hash on column names
+    # this is crucial for consistent output of the script
+    # in case multiple files have the same name
+    dfs.sort(key=lambda df: reproducible_hash(tuple(df.columns)))
 
     # joining all count files
     logger.info(
@@ -108,7 +139,7 @@ def get_counts(files: list[Path]) -> pl.DataFrame:
     # casting count columns to Float64
     # casting gene id column to Stringcount_files
     # casting nans to nulls
-    logger.info("Cleaning mergeed dataframe")
+    logger.info("Cleaning merged dataframe")
     return merged_df.select(
         [pl.col(config.GENE_ID_COLNAME).cast(pl.String)]
         + [pl.col(column).cast(pl.Float64) for column in count_columns]

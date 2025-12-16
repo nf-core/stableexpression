@@ -58,7 +58,7 @@ workflow DOWNLOAD_PUBLIC_DATASETS {
     ch_datasets = groupFilesByDatasetId( ch_design, ch_counts )
 
     // adding normalisation state in the meta
-    augmentMetadata( ch_datasets )
+    ch_datasets = augmentMetadata( ch_datasets )
 
     emit:
     datasets = ch_datasets

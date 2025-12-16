@@ -1,5 +1,4 @@
 process GPROFILER_IDMAPPING {
-
     label 'process_medium'
 
     tag "${species} IDs to ${gprofiler_target_db}"
@@ -7,7 +6,7 @@ process GPROFILER_IDMAPPING {
     errorStrategy = {
         if (task.exitStatus == 100 ) {
             log.error("Could not map gene IDs to ${gprofiler_target_db} database.")
-            'finish'
+            'terminate'
         } else if (task.exitStatus in ((130..145) + 104 + 175) && task.attempt <= 10) { // OOM & related errors; should be retried as long as memory does not fit
             sleep(Math.pow(2, task.attempt) * 200 as long)
             'retry'
@@ -38,7 +37,6 @@ process GPROFILER_IDMAPPING {
 
     script:
     """
-    # intercepting exit code 100
     gprofiler_map_ids.py \\
         --gene-ids $gene_id_file \\
         --species "$species" \\

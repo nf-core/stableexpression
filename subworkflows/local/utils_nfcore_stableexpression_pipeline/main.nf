@@ -378,14 +378,16 @@ def augmentMetadata( ch_files ) {
                 meta, file ->
                     def norm_state = getNthPartFromEnd(file.name, 3)
                     if ( norm_state == 'raw' ) {
-                        meta.normalised = false
+                        normalised = false
                     } else if ( norm_state == 'normalised' ) {
-                        meta.normalised = true
+                        normalised = true
                     } else {
                         error("Invalid normalisation state: ${norm_state}")
                     }
-                    meta.platform = getNthPartFromEnd(file.name, 4)
-                    [meta, file]
+
+                    platform = getNthPartFromEnd(file.name, 4)
+                    new_meta = meta + [normalised: normalised, platform: platform]
+                    [new_meta, file]
             }
 }
 

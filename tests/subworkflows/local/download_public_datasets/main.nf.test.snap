@@ -6,7 +6,9 @@
                     [
                         {
                             "dataset": "E_MTAB_8187_rnaseq",
-                            "design": "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf"
+                            "design": "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
+                            "normalised": false,
+                            "platform": "rnaseq"
                         },
                         "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1"
                     ]
@@ -15,7 +17,9 @@
                     [
                         {
                             "dataset": "E_MTAB_8187_rnaseq",
-                            "design": "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf"
+                            "design": "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
+                            "normalised": false,
+                            "platform": "rnaseq"
                         },
                         "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1"
                     ]
@@ -26,7 +30,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-15T21:46:42.719832457"
+        "timestamp": "2025-12-16T15:18:21.726044151"
     },
     "Beta vulgaris - Eatlas + GEO - all accessions": {
         "content": [
@@ -77,6 +81,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-15T21:46:26.386631545"
+        "timestamp": "2025-12-16T15:18:08.622422246"
     }
 }
