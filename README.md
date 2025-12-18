@@ -24,6 +24,10 @@
 
 **nf-core/stableexpression** is a bioinformatics pipeline aiming to aggregate multiple count datasets (public / provided by the user) for a specific species and find the most stable genes.
 
+<p align="center">
+    <img title="Stableexpression Workflow" src="docs/images/nf_core_stableexpression.metromap.png" width=100%>
+</p>
+
 It takes as main inputs :
 
 - a species name (mandatory)
