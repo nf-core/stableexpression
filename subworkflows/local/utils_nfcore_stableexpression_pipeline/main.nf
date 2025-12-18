@@ -421,17 +421,25 @@ def storeDatasetSize( ch_counts, nb_genes_key, nb_samples_key ) {
 */
 
 def checkCounts(ch_counts) {
-    // display a warning if no datasets are found
-    def msg = [
-        "Could not find any readily usable public dataset.",
-        "You can check directly on NCBI GEO if there are datasets for this species that you can prepare yourself:",
-        "https://www.ncbi.nlm.nih.gov/gds",
-        "Once you have prepared your own data, you can relaunch the pipeline and provided your prepared count datasets using the --datasets parameter. ",
-        "For more information, see the online documentation at https://nf-co.re/stableexpression."
-    ].join("\n").trim()
 
     ch_counts.count().map { n ->
         if( n == 0 ) {
+            // display a warning if no datasets are found
+            if ( !params.fetch_geo_accessions ) {
+                msg_lst = [
+                    "Could not find any readily usable public dataset.",
+                    "Please set the --fetch_geo_accessions flag and run again."
+                ]
+            } else {
+                msg_lst = [
+                    "Could not find any readily usable public dataset.",
+                    "You can check directly on NCBI GEO if there are datasets for this species that you can prepare yourself:",
+                    "https://www.ncbi.nlm.nih.gov/gds",
+                    "Once you have prepared your own data, you can relaunch the pipeline and provided your prepared count datasets using the --datasets parameter. ",
+                    "For more information, see the online documentation at https://nf-co.re/stableexpression."
+                ]
+            }
+            def msg = msg_lst.join("\n").trim()
             error(msg)
         }
     }
