@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/assets/schema_gene_metadata.json",
     "title": "nf-core/stableexpression pipeline - custom mappings schema",
-    "description": "Schema for the file provided with in the design column of the params.gene_metadata CSV file",
+    "description": "Schema for the file provided with the params.gene_metadata CSV / TSV file",
     "type": "array",
     "items": {
         "type": "object",

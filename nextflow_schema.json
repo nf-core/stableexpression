@@ -152,7 +152,7 @@
                     "exists": true,
                     "schema": "assets/schema_gene_id_mapping.json",
                     "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.(csv|tsv|dat)$",
+                    "pattern": "^\\S+\\.(csv|dat)$",
                     "description": "Custom gene id mapping file",
                     "help_text": "Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to a prefered gene ID. The mapping file should be a comma-separated file with 2 columns (original_gene_id and gene_id) and a header row.",
                     "fa_icon": "fas fa-file"
@@ -163,7 +163,7 @@
                     "exists": true,
                     "schema": "assets/schema_gene_metadata.json",
                     "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.(csv|tsv|dat)$",
+                    "pattern": "^\\S+\\.(csv|dat)$",
                     "description": "Custom gene metadata file",
                     "help_text": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (gene_id, name and description) and a header row.",
                     "fa_icon": "fas fa-file"
@@ -184,6 +184,17 @@
                     "default": "tpm",
                     "help_text": "Raw RNAseq data must be normalised before further processing. `tmp offers a more accurate representation of gene expression levels as it is unbiased toward gene length. However, you can choose `cpm` if you do not have access to a genome annotation."
                 },
+                "gene_length": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_gene_length.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.(csv|dat)$",
+                    "description": "Gene length file",
+                    "help_text": "Path to comma-separated file containing gene lengths. Each row represents a gene and gives the length of its longest transcript. The file should be a comma-separated file with 2 columns (gene_id and length) and a header row.",
+                    "fa_icon": "fas fa-file"
+                },
                 "quantile_norm_target_distrib": {
                     "type": "string",
                     "description": "Target distribution for quantile normalisation",
@@ -191,14 +202,6 @@
                     "enum": ["uniform", "normal"],
                     "default": "uniform",
                     "help_text": "In order to compare counts between samples and different datasets, all normalised counts are quantile normalised and mapped to a specific distribution. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
-                },
-                "ks_pvalue_threshold": {
-                    "type": "number",
-                    "description": "Threshold for KS p-value for considering samples counts as a uniform distribution",
-                    "fa_icon": "fas fa-battery-three-quarters",
-                    "maximum": 1,
-                    "default": -1,
-                    "help_text": "P-value threshold for the Kolmogorov-Smirnov test of samples counts against a uniform distribution. Samples showing a p-value equal or below this threshold are considered not uniform and will therefore not be considered for computation of the stability score. Examples: `0`, `'0.05'`, `'1E-27'`. Provide a negative value to disable this filter. By default, all samples showing a pvalue of 0 will be discarded."
                 },
                 "min_expr_threshold": {
                     "type": "number",
