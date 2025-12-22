@@ -53,11 +53,18 @@ nextflow run nf-core/stableexpression \
    --outdir <OUTDIR (example: ./results)>
 ```
 
-> [!IMPORTANT]
-> For more specific scenarios, **like fetching only specific conditions or using your own expression dataset(s)**, please refer to the [usage documentation](https://nf-co.re/stableexpression/usage).
+## More advanced usage
 
-> [!NOTE]
-> See [here](https://nf-co.re/stableexpression/usage#profiles) for more information about profiles.
+For more specific scenarios, like:
+
+- **fetching only specific conditions**
+- **using your own expression dataset(s)**
+
+please refer to the [usage documentation](https://nf-co.re/stableexpression/usage).
+
+## Profiles
+
+See [here](https://nf-co.re/stableexpression/usage#profiles) for more information about profiles.
 
 ## Pipeline output
 

@@ -90,7 +90,7 @@ You can of course provide your own counts datasets / experimental designs.
 > [!WARNING]
 > Microarray data must be already normalised. When mixing your own datasets with public ones in a single run, you should use the `RMA` method to be compliant with Expression Atlas and GEO datasets.
 
-First, prepare a samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
+First, prepare a CSV samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
 
 | Column       | Description                                                                               |
 | ------------ | ----------------------------------------------------------------------------------------- |
@@ -170,17 +170,28 @@ nextflow run nf-core/stableexpression \
 > [!TIP]
 > You can check if your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
 
-### 5. Custom gene ID mapping and metadata
+### 5. Custom gene ID mapping / metadata / length
 
-You can supply your own gene id mapping file and optionally gene metadata with:
+You can supply your own:
+
+- gene id mapping file
+- gene metadata file
+- gene length file
+
+The gene ID mapping file is used to map gene IDs in count table(s) (local or downloaded) to more generic IDs that will be used as basis fore subsequent steps.
+
+The gene metadata file provides additional information about the genes, such as their common name and description.
+
+The gene length file provides the length of each gene, which is used to compute the TPM values during gene expression normalisation.
 
 ```bash
 nextflow run nf-core/stableexpression \
    -profile <PROFILE> \
    --species <SPECIES> \
    --datasets <CSV / YAML FILE> \
-   --gene_id_mapping <CSV / TSV FILE> \
-   --gene_metadata <CSV / TSV FILE> \
+   --gene_id_mapping <CSV FILE> \
+   --gene_metadata <CSV FILE> \
+   --gene_length <CSV FILE> \
    --skip_fetch_eatlas_accessions \
    --outdir <OUTDIR>
 ```
@@ -192,7 +203,7 @@ Structure of the gene id mapping file:
 | `original_gene_id` | Gene ID used in the provided count dataset(s) |
 | `gene_id`          | Mapped gene ID                                |
 
-It should look as follows:
+Example:
 
 ```csv title=gene_id_mapping.csv
 original_gene_id,gene_id
@@ -208,13 +219,27 @@ Structure of the gene metadata file:
 | `name`        | Gene common name |
 | `description` | Gene description |
 
-It should look as follows:
+Example:
 
 ```csv title=gene_metadata.csv
 gene_id,name,description
 ENSG1234567890,Gene A,Description of gene A
 OTHERmappedgeneID,My OTHER Gene,Another description
 ```
+
+Structure of the gene length file:
+
+| Column    | Description                      |
+| --------- | -------------------------------- |
+| `gene_id` | Mapped gene ID                   |
+| `length`  | Gene length (longest transcript) |
+
+Example:
+
+````csv title=gene_length.csv
+gene_id,length
+ENSG1234567890,1000
+OTHERmappedgeneID,2000
 
 ### 6. More advanced scenarios
 
@@ -229,7 +254,7 @@ work                # Directory containing the nextflow working files
 <OUTDIR>            # Finished results in specified location (defined with --outdir)
 .nextflow_log       # Log file from Nextflow
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
-```
+````
 
 For a detailed description of the output files, please consult the [nf-core stableexpression output directory structure](https://nf-co.re/stableexpression/output).
 

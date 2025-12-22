@@ -49,9 +49,9 @@ To reduce the RAM overhead, the pipeline selects randomly a certain number of da
 
 > A seed is also set in order to make the runs reproducible. You can change the subset of chosen datasets by changing the `--random_sampling_seed`.
 
-## The pipeline fails because it does not find a genome for the specified species
+## The pipeline failed to find a genome annotation for the specified species
 
-If you are working on a species for which there is no genome assembly available on Ensembl, you cannot (for now) perform TPM normalisation. A fallback is to use CPM normalisation by setting `--normalisation_method cpm`. It will introduce a small bias towards long genes, but this should not result in big changes.
+If you know the length of the longest cDNA for each gene, you can provide gene lengths yourself with the `--gene_length` flag (see [Custom gene ID mapping / metadata / length](docs/usage.md#5-custom-gene-id-mapping-and-metadata)). In case you do not have access to gene length, TPM normalisation cannot be formed. A fallback is to use CPM normalisation by setting `--normalisation_method cpm`. It will introduce a small bias towards long genes, but this should not result in big changes.
 
 ## Java heap space
 
