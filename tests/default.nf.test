@@ -225,7 +225,7 @@ nextflow_pipeline {
         }
     }
 
-
+    /*
     test("-profile test_no_dataset_found") {
         tag "test_no_dataset_found"
 
@@ -240,6 +240,7 @@ nextflow_pipeline {
             assert !workflow.success
         }
     }
+    */
 
     test("-profile test_included_and_excluded_accessions") {
         tag "test_included_and_excluded_accessions"

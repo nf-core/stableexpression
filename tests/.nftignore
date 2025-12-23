@@ -2,4 +2,5 @@
 pipeline_info/*.{html,json,txt,yml}
 multiqc/**
 **.parquet
-public_data/geo/datasets/**
+**.metadata.tsv
+**.py

@@ -83,6 +83,57 @@
         },
         "timestamp": "2025-12-03T18:34:48.109732612"
     },
+    "TPM Normalisation with gene length": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.tpm.quant_norm.parquet:md5,0a12a61db30db8c70e609270d32bc33d"
+                    ],
+                    [
+                        {
+                            "normalised": true,
+                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
+                            "dataset": "microarray_normalised",
+                            "platform": "microarray"
+                        },
+                        "microarray.normalised.quant_norm.parquet:md5,b32fba01e39c2e54458f3b6d1b5fafc1"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.tpm.quant_norm.parquet:md5,0a12a61db30db8c70e609270d32bc33d"
+                    ],
+                    [
+                        {
+                            "normalised": true,
+                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
+                            "dataset": "microarray_normalised",
+                            "platform": "microarray"
+                        },
+                        "microarray.normalised.quant_norm.parquet:md5,b32fba01e39c2e54458f3b6d1b5fafc1"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2025-12-23T09:56:09.269591811"
+    },
     "TPM Normalisation": {
         "content": [
             {
