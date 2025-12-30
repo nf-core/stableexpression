@@ -470,7 +470,7 @@ custom_data:
       sort_samples: true
       tt_decimals: 0
       cpswitch: true # show the 'Counts / Percentages' switch
-      cpswitch_c_active: false # show percentages
+      cpswitch_c_active: true # show counts per default
       stacking: "relative"
     description: |
       Statistics of gene ID mapping, dataset per dataset

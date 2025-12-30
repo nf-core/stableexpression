@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 OUTFILE_SUFFIX = ".filtered.csv"
 
-MAX_RATIO_ZEROS = 0.9
+MAX_RATIO_ZEROS = 0.75
 
 
 #####################################################
@@ -76,7 +76,7 @@ def main():
             f"Filtered out {count_df.shape[1] - valid_count_df.shape[1]} columns"
         )
         outfile = args.count_file.with_suffix(OUTFILE_SUFFIX)
-        export_data(count_df, outfile)
+        export_data(valid_count_df, outfile)
 
 
 if __name__ == "__main__":
