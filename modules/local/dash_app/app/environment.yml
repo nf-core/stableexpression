@@ -6,6 +6,7 @@ channels:
 dependencies:
   - conda-forge::pandas==2.3.3
   - conda-forge::polars==1.35.2
+  - conda-forge::pyarrow==22.0.0
   - conda-forge::scipy==1.16.3
   - conda-forge::dash==3.3.0
   - conda-forge::dash-mantine-components==2.4.0
