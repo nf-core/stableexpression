@@ -21,7 +21,7 @@ process COMPUTE_DATASET_STATISTICS {
     script:
     def prefix = task.ext.prefix ?: "${meta.dataset}"
     """
-    compute_dataset_statistics.py \
+    compute_dataset_statistics.py \\
         --counts $count_file
     """
 

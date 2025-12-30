@@ -7,6 +7,7 @@
 include { GET_PUBLIC_ACCESSIONS                  } from '../subworkflows/local/get_public_accessions'
 include { DOWNLOAD_PUBLIC_DATASETS               } from '../subworkflows/local/download_public_datasets'
 include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
+include { FILTER_DATASETS                        } from '../subworkflows/local/filter_datasets'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
 include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
 include { BASE_STATISTICS                        } from '../subworkflows/local/base_statistics'
@@ -106,7 +107,13 @@ workflow STABLEEXPRESSION {
         ch_gene_id_mapping = ID_MAPPING.out.mapping
         ch_gene_metadata   = ID_MAPPING.out.metadata
 
-        ch_counts = storeDatasetSize( ch_counts, "nb_genes_after_idmapping", "nb_samples_after_idmapping" )
+        ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
+
+        // -----------------------------------------------------------------
+        // FILTER OUT SAMPLES NOT VALID
+        // -----------------------------------------------------------------
+
+        FILTER_DATASETS ( ch_counts )
 
         // -----------------------------------------------------------------
         // NORMALISATION OF RAW COUNT DATASETS (INCLUDING RNA-SEQ DATASETS)
@@ -114,7 +121,7 @@ workflow STABLEEXPRESSION {
 
         EXPRESSION_NORMALISATION(
             species,
-            ch_counts,
+            FILTER_DATASETS.out.counts,
             params.normalisation_method,
             params.quantile_norm_target_distrib,
             params.gene_length
