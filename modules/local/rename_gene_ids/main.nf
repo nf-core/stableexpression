@@ -17,7 +17,7 @@ process RENAME_GENE_IDS {
     tuple val(meta), path('*.renamed.csv'),                 optional: true,                                           emit: counts
     tuple val(meta.dataset), path("failure_reason.txt"),    optional: true,                                           topic: renaming_failure_reason
     tuple val(meta.dataset), path("warning_reason.txt"),    optional: true,                                           topic: renaming_warning_reason
-    tuple val(meta.dataset), env("NB_MAPPED"), env("NB_UNMAPPED"),                                                    topic: id_mapping_stats
+    tuple val(meta.dataset), env("NB_FINAL"), env("NB_MERGED"), env("NB_UNMAPPED"),                                   topic: id_mapping_stats
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
@@ -35,8 +35,9 @@ process RENAME_GENE_IDS {
         --count-file "$count_file" \\
         $mapping_arg
 
-    NB_MAPPED=\$(cat mapped.txt)
     NB_UNMAPPED=\$(cat unmapped.txt)
+    NB_MERGED=\$(cat merged.txt)
+    NB_FINAL=\$(cat final.txt)
     """
 
 

@@ -31,11 +31,11 @@ workflow MULTIQC_WORKFLOW {
     ch_id_mapping_stats = channel.topic('id_mapping_stats')
                             .collectFile(
                                 name: 'id_mapping_stats.csv',
-                                seed: "Dataset,mapped,unmapped",
+                                seed: "dataset,final,merged,unmapped",
                                 newLine: true,
                                 storeDir: "${outdir}/statistics/"
                             ) {
-                                item -> "${item[0]},${item[1]},${item[2]}"
+                                item -> "${item[0]},${item[1]},${item[2]},${item[3]}"
                             }
 
     ch_skewness         = channel.topic('skewness')
@@ -179,24 +179,23 @@ workflow MULTIQC_WORKFLOW {
     // MULTIQC FILES
     // ------------------------------------------------------------------------------------
 
-    ch_multiqc_files
-        .mix( channel.topic('eatlas_all_datasets').collect() ) // single item
-        .mix( channel.topic('eatlas_selected_datasets').collect() ) // single item
-        .mix( channel.topic('geo_all_datasets').collect() ) // single item
-        .mix( channel.topic('geo_selected_datasets').collect() ) // single item
-        .mix( channel.topic('geo_rejected_datasets').collect() ) // single item
-        .mix( COLLECT_STATISTICS.out.csv )
-        .mix( ch_id_mapping_stats )
-        .mix( ch_eatlas_failure_reasons )
-        .mix( ch_eatlas_warning_reasons )
-        .mix( ch_geo_failure_reasons )
-        .mix( ch_geo_warning_reasons )
-        .mix( ch_id_cleaning_failure_reasons )
-        .mix( ch_id_mapping_warning_reasons )
-        .mix( ch_id_mapping_failure_reasons )
-        .mix( ch_normalisation_failure_reasons )
-        .mix( ch_normalisation_warning_reasons )
-        .set { ch_multiqc_files }
+    ch_multiqc_files = ch_multiqc_files
+                        .mix( channel.topic('eatlas_all_datasets').collect() ) // single item
+                        .mix( channel.topic('eatlas_selected_datasets').collect() ) // single item
+                        .mix( channel.topic('geo_all_datasets').collect() ) // single item
+                        .mix( channel.topic('geo_selected_datasets').collect() ) // single item
+                        .mix( channel.topic('geo_rejected_datasets').collect() ) // single item
+                        .mix( COLLECT_STATISTICS.out.csv )
+                        .mix( ch_id_mapping_stats )
+                        .mix( ch_eatlas_failure_reasons )
+                        .mix( ch_eatlas_warning_reasons )
+                        .mix( ch_geo_failure_reasons )
+                        .mix( ch_geo_warning_reasons )
+                        .mix( ch_id_cleaning_failure_reasons )
+                        .mix( ch_id_mapping_warning_reasons )
+                        .mix( ch_id_mapping_failure_reasons )
+                        .mix( ch_normalisation_failure_reasons )
+                        .mix( ch_normalisation_warning_reasons )
 
     // ------------------------------------------------------------------------------------
     // VERSIONS

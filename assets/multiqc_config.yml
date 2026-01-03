@@ -475,11 +475,14 @@ custom_data:
     description: |
       Statistics of gene ID mapping, dataset per dataset
     categories:
-      mapped:
-        name: "Mapped gene IDs"
-        color: "#10C995"
+      final:
+        name: "Nb final gene IDs"
+        color: "#2ABF96"
+      merged:
+        name: "Nb gene IDs merged with other IDs"
+        color: "#38B4F2"
       unmapped:
-        name: "Unmapped gene IDs"
+        name: "Nb unmapped gene IDs"
         color: "#E3224A"
     plot_type: "barplot"
 

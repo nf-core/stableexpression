@@ -26,8 +26,9 @@ MAPPING_FILE_SUFFIX = ".mapping.csv"
 WARNING_REASON_FILE = "warning_reason.txt"
 FAILURE_REASON_FILE = "failure_reason.txt"
 
-MAPPED_FILE_SUFFIX = "mapped.txt"
 UNMAPPED_FILE_SUFFIX = "unmapped.txt"
+MERGED_FILE_SUFFIX = "merged.txt"
+FINAL_FILE_SUFFIX = "final.txt"
 
 ##################################################################
 # FUNCTIONS
@@ -104,6 +105,7 @@ def main():
     # IMPORTANT: KEEPING ONLY GENES THAT HAVE BEEN CONVERTED
     # filtering the DataFrame to keep only the rows where the index can be mapped
     original_nb_genes = len(df)
+
     rejected_df = df.filter(~pl.col(config.GENE_ID_COLNAME).is_in(mapping_dict.keys()))
     nb_unmapped_genes = len(rejected_df)
 
@@ -111,17 +113,24 @@ def main():
     df = df.filter(pl.col(config.GENE_ID_COLNAME).is_in(mapping_dict.keys()))
     nb_mapped_genes = len(df)
 
-    with open(MAPPED_FILE_SUFFIX, "w") as f:
-        f.write(str(nb_mapped_genes))
-
     with open(UNMAPPED_FILE_SUFFIX, "w") as f:
         f.write(str(nb_unmapped_genes))
 
     if df.is_empty():
-        msg = "NO GENES WERE MAPPED"
+        sample_size = min(5, nb_unmapped_genes)
+        example_rejected_genes = (
+            rejected_df[config.GENE_ID_COLNAME].head(sample_size).to_list()
+        )
+        msg = f"NO GENES WERE MAPPED. EXAMPLE OF GENE IDS: {example_rejected_genes}"
         logger.error(msg)
         with open(FAILURE_REASON_FILE, "w") as f:
             f.write(msg)
+
+        with open(MERGED_FILE_SUFFIX, "w") as f:
+            f.write("0")
+        with open(FINAL_FILE_SUFFIX, "w") as f:
+            f.write("0")
+
         sys.exit(0)
 
     if len(df) < original_nb_genes:
@@ -164,6 +173,12 @@ def main():
     df = df.group_by(config.GENE_ID_COLNAME, maintain_order=True).agg(
         pl.exclude(config.GENE_ID_COLNAME).mean()
     )
+
+    nb_merged = nb_mapped_genes - len(df)
+    with open(MERGED_FILE_SUFFIX, "w") as f:
+        f.write(str(nb_merged))
+    with open(FINAL_FILE_SUFFIX, "w") as f:
+        f.write(str(len(df)))
 
     #############################################################
     # WRITING OUTFILES
