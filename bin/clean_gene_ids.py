@@ -8,8 +8,8 @@ import sys
 from pathlib import Path
 
 import config
-import pandas as pd
 import polars as pl
+from common import parse_count_table
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,7 +19,8 @@ logger = logging.getLogger(__name__)
 # CONSTANTS
 ##################################################################
 
-CLEANED_FILE_SUFFIX = ".cleaned.csv"
+CLEANED_COUNTS_SUFFIX = ".cleaned.parquet"
+CLEANED_GENE_IDS_SUFFIX = ".cleaned_gene_ids.txt"
 
 FAILURE_REASON_FILE = "failure_reason.txt"
 
@@ -34,22 +35,6 @@ def parse_args():
         "--count-file", type=Path, required=True, help="Input file containing counts"
     )
     return parser.parse_args()
-
-
-def parse_table(file: Path):
-    if file.suffix == ".csv":
-        return pd.read_csv(file, header=0, index_col=0)
-    else:  # .tsv
-        return pd.read_csv(file, header=0, sep="\t", index_col=0)
-
-
-def parse_count_table(file: Path):
-    # transitting to pandas dataframe helps to avoid parsing errors
-    df = parse_table(file)
-    # whatever the name of the first col, rename it to "gene_id"
-    df.index.rename(config.GENE_ID_COLNAME, inplace=True)
-    df.index = df.index.astype(str)
-    return pl.from_pandas(df.reset_index())
 
 
 def clean_ensembl_gene_id_versioning(df: pl.DataFrame):
@@ -111,13 +96,27 @@ def main():
         sys.exit(0)
 
     #############################################################
-    # WRITING OUTFILE
+    # WRITING RESULTS
     #############################################################
-    # writing to output file
 
-    logger.info("Writing output file")
-    outfile = args.count_file.with_name(args.count_file.stem + CLEANED_FILE_SUFFIX)
-    df.write_csv(outfile)
+    logger.info("Writing cleaned IDs")
+    gene_ids_outfile = args.count_file.with_name(
+        args.count_file.stem + CLEANED_GENE_IDS_SUFFIX
+    )
+    gene_ids = (
+        df.select(config.GENE_ID_COLNAME)
+        .sort(config.GENE_ID_COLNAME)
+        .to_series()
+        .to_list()
+    )
+    with open(gene_ids_outfile, "w") as fout:
+        fout.write("\n".join(gene_ids))
+
+    logger.info("Writing count file with cleaned IDs")
+    count_outfile = args.count_file.with_name(
+        args.count_file.stem + CLEANED_COUNTS_SUFFIX
+    )
+    df.write_parquet(count_outfile)
 
 
 if __name__ == "__main__":

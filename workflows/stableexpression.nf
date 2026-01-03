@@ -101,6 +101,7 @@ workflow STABLEEXPRESSION {
             params.gprofiler_target_db,
             params.gene_id_mapping,
             params.gene_metadata,
+            params.min_freq_occurrence,
             params.outdir
         )
         ch_counts          = ID_MAPPING.out.counts

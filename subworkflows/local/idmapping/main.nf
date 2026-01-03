@@ -1,6 +1,7 @@
 include { CLEAN_GENE_IDS                         } from '../../../modules/local/clean_gene_ids'
 include { COLLECT_GENE_IDS                       } from '../../../modules/local/collect_gene_ids'
 include { GPROFILER_IDMAPPING                    } from '../../../modules/local/gprofiler/idmapping'
+include { FILTER_OUT_RARE_GENES                  } from '../../../modules/local/filter_out_rare_genes'
 include { RENAME_GENE_IDS                        } from '../../../modules/local/rename_gene_ids'
 
 /*
@@ -18,57 +19,57 @@ workflow ID_MAPPING {
     gprofiler_target_db
     custom_gene_id_mapping
     custom_gene_metadata
+    min_freq_occurrence
     outdir
 
     main:
 
     ch_gene_id_mapping      = channel.empty()
     ch_gene_metadata        = channel.empty()
+    ch_valid_gene_ids       = channel.empty()
 
     if ( !skip_id_mapping ) {
 
         // -----------------------------------------------------------------
-        // COLLECTING ALL GENE IDS FROM ALL DATASETS
+        // CLEANING GENE IDS
         // -----------------------------------------------------------------
 
-        // here we cannot use directly COLLECT_GENE_IDS for runs comprising a huge number of files (eg. human)
-        // so that we proceed by chunks, and perform a final merging step using the Java VM
-
         CLEAN_GENE_IDS ( ch_counts )
-        ch_counts = CLEAN_GENE_IDS.out.counts
+        ch_counts           = CLEAN_GENE_IDS.out.counts
+        ch_cleaned_gene_ids = CLEAN_GENE_IDS.out.gene_ids
 
-        // TRICK:
-        // the buffer operator creates non-deterministic chunks
-        // which prevents resuming the pipeline
-        // so we sort the list of files before buffering them
-        ch_chunk_counts = ch_counts
-                            .map{ meta, file -> file }
-                            .collect( sort: true ) // get all files and sort them
-                            .flatten() // needed to convert the list back to individual channel items
-                            .buffer( size: 100, remainder: true )
+        // -----------------------------------------------------------------
+        // COLLECTING ALL CLEANED GENE IDS FROM ALL DATASETS
+        // -----------------------------------------------------------------
 
-        COLLECT_GENE_IDS( ch_chunk_counts )
-
-        ch_gene_ids = COLLECT_GENE_IDS.out.gene_ids
-                        .splitText()
-                        .unique()
-                        .collectFile(
-                            name: 'original_gene_ids.txt',
-                            storeDir: "${outdir}/idmapping/",
-                            sort: true
-                        )
+        // sorting files in order to have a consistent input and be able to retry
+        COLLECT_GENE_IDS(
+            ch_cleaned_gene_ids.toSortedList()
+        )
 
         // -----------------------------------------------------------------
         // MAPPING THESE GENE IDS TO THE CHOSEN TARGET DB
         // -----------------------------------------------------------------
 
         GPROFILER_IDMAPPING(
-            ch_gene_ids,
+            COLLECT_GENE_IDS.out.unique_gene_ids,
             species,
             gprofiler_target_db
         )
         ch_gene_id_mapping      = GPROFILER_IDMAPPING.out.mapping
         ch_gene_metadata        = GPROFILER_IDMAPPING.out.metadata
+
+        // -----------------------------------------------------------------
+        // FILTERING OUT GENE IDS THAT DO NOT HAVE ENOUGH OCCURRENCES
+        // -----------------------------------------------------------------
+
+        FILTER_OUT_RARE_GENES(
+            ch_gene_id_mapping,
+            COLLECT_GENE_IDS.out.gene_id_occurrences,
+            ch_counts.count(),
+            min_freq_occurrence
+        )
+        ch_valid_gene_ids = FILTER_OUT_RARE_GENES.out.valid_gene_ids
     }
 
     // -----------------------------------------------------------------
@@ -119,7 +120,8 @@ workflow ID_MAPPING {
 
         RENAME_GENE_IDS(
             ch_counts,
-            ch_global_gene_id_mapping.first()
+            ch_global_gene_id_mapping.first(),
+            ch_valid_gene_ids.collect()
         )
         ch_counts = RENAME_GENE_IDS.out.counts
 

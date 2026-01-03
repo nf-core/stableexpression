@@ -8,8 +8,8 @@ import sys
 from pathlib import Path
 
 import config
-import pandas as pd
 import polars as pl
+from common import parse_count_table, parse_table
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -27,6 +27,7 @@ WARNING_REASON_FILE = "warning_reason.txt"
 FAILURE_REASON_FILE = "failure_reason.txt"
 
 UNMAPPED_FILE_SUFFIX = "unmapped.txt"
+NOT_VALID_FILE_SUFFIX = "not_valid.txt"
 MERGED_FILE_SUFFIX = "merged.txt"
 FINAL_FILE_SUFFIX = "final.txt"
 
@@ -43,27 +44,16 @@ def parse_args():
     parser.add_argument(
         "--mappings",
         type=Path,
-        required=True,
         dest="mapping_file",
         help="Mapping file containing gene IDs",
     )
+    parser.add_argument(
+        "--valid-gene-ids",
+        type=Path,
+        dest="valid_gene_ids_file",
+        help="File containing valid gene IDs",
+    )
     return parser.parse_args()
-
-
-def parse_table(file: Path, **kwargs):
-    if file.suffix == ".csv":
-        return pd.read_csv(file, header=0, **kwargs)
-    else:  # .tsv
-        return pd.read_csv(file, header=0, sep="\t", **kwargs)
-
-
-def parse_count_table(file: Path):
-    # transitting to pandas dataframe helps to avoid parsing errors
-    df = parse_table(file, index_col=0)
-    # whatever the name of the first col, rename it to "gene_id"
-    df.index.rename(config.GENE_ID_COLNAME, inplace=True)
-    df.index = df.index.astype(str)
-    return pl.from_pandas(df.reset_index())
 
 
 ##################################################################
@@ -94,9 +84,12 @@ def main():
     #############################################################
 
     mapping_df = parse_table(args.mapping_file)
-    mapping_dict = mapping_df.set_index(config.ORIGINAL_GENE_ID_COLNAME)[
-        config.GENE_ID_COLNAME
-    ].to_dict()
+    mapping_dict = dict(
+        zip(
+            mapping_df[config.ORIGINAL_GENE_ID_COLNAME],
+            mapping_df[config.GENE_ID_COLNAME],
+        )
+    )
 
     #############################################################
     # MAPPING GENE IDS IN DATAFRAME
@@ -126,6 +119,8 @@ def main():
         with open(FAILURE_REASON_FILE, "w") as f:
             f.write(msg)
 
+        with open(NOT_VALID_FILE_SUFFIX, "w") as f:
+            f.write("0")
         with open(MERGED_FILE_SUFFIX, "w") as f:
             f.write("0")
         with open(FINAL_FILE_SUFFIX, "w") as f:
@@ -158,9 +153,38 @@ def main():
         .alias(config.GENE_ID_COLNAME)
     )
 
-    # TODO: check is there is another way to avoid duplicate gene names
-    # sometimes different gene names have the same Gene ID
-    # for now, we just get the mean of values, but this is not ideal
+    #############################################################
+    # GETTING VALID GENE IDS
+    #############################################################
+
+    logger.info("Keeping only genes with sufficient occurrence over datasets")
+    nb_genes_before_validation = len(df)
+
+    with open(args.valid_gene_ids_file, "r") as fin:
+        valid_gene_ids = [line.strip() for line in fin.readlines()]
+
+    df = df.filter(pl.col(config.GENE_ID_COLNAME).is_in(valid_gene_ids))
+
+    nb_not_valid_genes = nb_genes_before_validation - len(df)
+    logger.info(
+        f"{nb_not_valid_genes} ({nb_not_valid_genes / nb_genes_before_validation:.2%}) genes were not valid"
+    )
+
+    with open(NOT_VALID_FILE_SUFFIX, "w") as f:
+        f.write(str(nb_not_valid_genes))
+
+    if df.is_empty():
+        msg = "NO GENES LEFT AFTER REMOVING RARE GENE IDS"
+        logger.error(msg)
+        with open(FAILURE_REASON_FILE, "w") as f:
+            f.write(msg)
+
+        with open(MERGED_FILE_SUFFIX, "w") as f:
+            f.write("0")
+        with open(FINAL_FILE_SUFFIX, "w") as f:
+            f.write("0")
+
+        sys.exit(0)
 
     #############################################################
     # GENE COUNT HANDLING
@@ -169,10 +193,19 @@ def main():
     # handling cases where multiple genes have the same Gene ID
     # since subsequent steps in the pipeline require integer values,
     # we need to ensure that the resulting DataFrame has integer values
+
+    # TODO: check is there is another way to avoid duplicate gene names
+    # sometimes different gene names have the same Gene ID
+    # for now, we just get the mean of values, but this is not ideal
+
     logger.info("Computing mean counts for genes with duplicate IDs")
     df = df.group_by(config.GENE_ID_COLNAME, maintain_order=True).agg(
         pl.exclude(config.GENE_ID_COLNAME).mean()
     )
+
+    #############################################################
+    # WRITING OUTFILES
+    #############################################################
 
     nb_merged = nb_mapped_genes - len(df)
     with open(MERGED_FILE_SUFFIX, "w") as f:
@@ -180,28 +213,9 @@ def main():
     with open(FINAL_FILE_SUFFIX, "w") as f:
         f.write(str(len(df)))
 
-    #############################################################
-    # WRITING OUTFILES
-    #############################################################
-    # writing to output file
-
     logger.info("Writing output file")
     outfile = args.count_file.with_name(args.count_file.stem + RENAMED_FILE_SUFFIX)
     df.write_csv(outfile)
-
-    # making dataframe for mapping (only two columns: original and new)
-    mapping_df = (
-        pd.DataFrame(mapping_dict, index=[0])
-        .T.reset_index()  # transpose: setting keys as indexes instead of columns
-        .rename(
-            columns={
-                "index": config.ORIGINAL_GENE_ID_COLNAME,
-                0: config.GENE_ID_COLNAME,
-            }
-        )
-    )
-    mapping_file = args.count_file.with_name(args.count_file.stem + MAPPING_FILE_SUFFIX)
-    mapping_df.to_csv(mapping_file, index=False, header=True)
 
 
 if __name__ == "__main__":

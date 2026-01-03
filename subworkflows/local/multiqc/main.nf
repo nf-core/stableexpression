@@ -31,11 +31,11 @@ workflow MULTIQC_WORKFLOW {
     ch_id_mapping_stats = channel.topic('id_mapping_stats')
                             .collectFile(
                                 name: 'id_mapping_stats.csv',
-                                seed: "dataset,final,merged,unmapped",
+                                seed: "dataset,final,merged,not_valid,unmapped",
                                 newLine: true,
                                 storeDir: "${outdir}/statistics/"
                             ) {
-                                item -> "${item[0]},${item[1]},${item[2]},${item[3]}"
+                                item -> "${item[0]},${item[1]},${item[2]},${item[3]},${item[4]}"
                             }
 
     ch_skewness         = channel.topic('skewness')

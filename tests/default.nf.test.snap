@@ -91,6 +91,10 @@
                     "python": "3.12.8",
                     "scikit-learn": "1.6.1"
                 },
+                "REMOVE_SAMPLES_NOT_VALID": {
+                    "pandas": "2.3.3",
+                    "python": "3.13.7"
+                },
                 "RENAME_GENE_IDS": {
                     "pandas": "2.3.3",
                     "polars": "1.35.2",
@@ -201,9 +205,9 @@
                 "normalised",
                 "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay",
                 "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/quantile_normalised",
-                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/quantile_normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/quantile_normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/tpm",
-                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/tpm/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.tpm.csv",
+                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/tpm/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.filtered.tpm.csv",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "statistics",
@@ -220,7 +224,7 @@
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
                 "all_genes_summary.csv:md5,54b96cbfb5e464ec086c7e1308701e02",
                 "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
-                "environment.yml:md5,3c87bfa06bbb068bcfb6ed4ebc608949",
+                "environment.yml:md5,4d32e46adf0ff32a3c65a24b68483fa7",
                 "all_gene_ids.txt:md5,6b2ece983fd9da133e719914216852b0",
                 "global_gene_id_mapping.csv:md5,78934d2ac5fe7d863f114c5703f57a06",
                 "global_gene_metadata.csv:md5,bd76860b422e45eca7cd583212a977d2",
@@ -232,7 +236,7 @@
                 "whole_gene_id_mapping.csv:md5,78934d2ac5fe7d863f114c5703f57a06",
                 "whole_gene_metadata.csv:md5,bd76860b422e45eca7cd583212a977d2",
                 "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
-                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.tpm.csv:md5,5b517b410a643c4e6fbffb55dc1cd1a7",
+                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.filtered.tpm.csv:md5,5b517b410a643c4e6fbffb55dc1cd1a7",
                 "id_mapping_stats.csv:md5,14cdb53685228e5e5393cf9404856b41",
                 "ratio_zeros.csv:md5,5a667d505cbd2cc7057ee47b70536c2e",
                 "skewness.csv:md5,582683980eadf84d32853a21f9dce230",
@@ -243,7 +247,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:18:28.957913038"
+        "timestamp": "2026-01-03T11:26:35.453920775"
     },
     "-profile test_eatlas_only_with_keywords": {
         "content": [
@@ -1042,14 +1046,14 @@
                 "normalised",
                 "normalised/E_MTAB_8187_rnaseq",
                 "normalised/E_MTAB_8187_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_8187_rnaseq/quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_MTAB_8187_rnaseq/quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_MTAB_8187_rnaseq/tpm",
-                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.csv",
                 "normalised/beta_vulgaris.rnaseq.raw.counts",
                 "normalised/beta_vulgaris.rnaseq.raw.counts/quantile_normalised",
-                "normalised/beta_vulgaris.rnaseq.raw.counts/quantile_normalised/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/beta_vulgaris.rnaseq.raw.counts/quantile_normalised/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/beta_vulgaris.rnaseq.raw.counts/tpm",
-                "normalised/beta_vulgaris.rnaseq.raw.counts/tpm/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/beta_vulgaris.rnaseq.raw.counts/tpm/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.csv",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -1083,7 +1087,7 @@
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
                 "all_genes_summary.csv:md5,ec52af6957845539143919c0e6eec89c",
                 "whole_design.csv:md5,3c1e14c9bd7ad250326b070a0dd4d81f",
-                "environment.yml:md5,3c87bfa06bbb068bcfb6ed4ebc608949",
+                "environment.yml:md5,4d32e46adf0ff32a3c65a24b68483fa7",
                 "all_gene_ids.txt:md5,ba79f5609df755c0f75de41357319c84",
                 "global_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
@@ -1095,8 +1099,8 @@
                 "whole_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "whole_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "whole_design.csv:md5,3c1e14c9bd7ad250326b070a0dd4d81f",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,b407990bb10106de943f9e93cda6323e",
-                "beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,2c326f3e419341f955bb757fc8bf4357",
+                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.csv:md5,b407990bb10106de943f9e93cda6323e",
+                "beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.csv:md5,2c326f3e419341f955bb757fc8bf4357",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1",
@@ -1112,7 +1116,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:10:41.648442347"
+        "timestamp": "2026-01-03T11:24:55.793642391"
     },
     "-profile test_dataset_custom_mapping_and_gene_length": {
         "content": [

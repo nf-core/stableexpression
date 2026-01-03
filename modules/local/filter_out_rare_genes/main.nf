@@ -1,8 +1,6 @@
-process CLEAN_GENE_IDS {
+process FILTER_OUT_RARE_GENES {
 
     label 'process_low'
-
-    tag "${meta.dataset}"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
@@ -10,12 +8,13 @@ process CLEAN_GENE_IDS {
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    tuple val(meta), path(count_file)
+    path(gene_id_mapping_file)
+    path(gene_id_occurrences_file)
+    val nb_datasets
+    val(min_freq_occurrence)
 
     output:
-    tuple val(meta), path('*.cleaned.parquet'),             optional: true,                                           emit: counts
-    path('*.cleaned_gene_ids.txt'),                         optional: true,                                           emit: gene_ids
-    tuple val(meta.dataset), path("failure_reason.txt"),    optional: true,                                           topic: id_cleaning_failure_reason
+    path('valid_gene_ids.txt'), optional: true,                                                                     emit: valid_gene_ids
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
@@ -27,14 +26,17 @@ process CLEAN_GENE_IDS {
         export POLARS_MAX_THREADS=${task.cpus}
     fi
 
-    clean_gene_ids.py \\
-        --count-file "$count_file"
+    get_genes_with_good_occurrence.py \\
+        --occurrences $gene_id_occurrences_file \\
+        --mappings $gene_id_mapping_file \\
+        --nb-datasets $nb_datasets \\
+        --min-freq-occurrence $min_freq_occurrence
     """
 
 
     stub:
     """
-    touch fake.cleaned.csv
+    touch fake.validated_genes.txt
     """
 
 }

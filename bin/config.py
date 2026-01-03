@@ -1,5 +1,6 @@
 # general column names
 GENE_ID_COLNAME = "gene_id"
+GENE_ID_COUNT_COLNAME = "count"
 CDNA_LENGTH_COLNAME = "length"
 RANK_COLNAME = "rank"
 

@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+
+# Written by Olivier Coen. Released under the MIT license.
+
+import logging
+from pathlib import Path
+
+import config
+import polars as pl
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def parse_header(file: Path, sep: str):
+    with open(file, "r") as fin:
+        header = fin.readline().strip().split(sep)
+        first_row = fin.readline().strip().split(sep)
+    if len(header) == len(first_row):
+        return header
+    elif len(header) == len(first_row) - 1:
+        return [config.GENE_ID_COLNAME] + header
+    else:
+        raise ValueError(
+            f"Header has length: {len(header)} while first row has length: {len(first_row)}"
+        )
+
+
+def parse_table(file: Path):
+    # parsing header first
+    if file.suffix in [".csv", ".tsv"]:
+        # parsing header manually
+        sep = "," if file.suffix == ".csv" else "\t"
+        header = parse_header(file, sep)
+        return pl.read_csv(
+            file, separator=sep, has_header=False, skip_rows=1, new_columns=header
+        )
+    elif file.suffix == ".parquet":
+        return pl.read_parquet(file)
+    else:
+        raise ValueError(f"Unsupported file format: {file.suffix}")
+
+
+def parse_count_table(file: Path):
+    df = parse_table(file)
+    print(df)
+    first_col = df.columns[0]
+    # whatever the name of the first col, rename it to "gene_id"
+    return df.rename({first_col: config.GENE_ID_COLNAME}).select(
+        pl.col(config.GENE_ID_COLNAME).cast(pl.String()),
+        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64()),
+    )

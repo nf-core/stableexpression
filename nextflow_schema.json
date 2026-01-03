@@ -167,6 +167,15 @@
                     "description": "Custom gene metadata file",
                     "help_text": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (gene_id, name and description) and a header row.",
                     "fa_icon": "fas fa-file"
+                },
+                "min_freq_occurrence": {
+                    "type": "number",
+                    "description": "Minimum frequency of occurrence",
+                    "fa_icon": "fas fa-battery-three-quarters",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.1,
+                    "help_text": "To avoid genes that are rarely observed, a threshold is set up. Such genes may cause unnecessary overhead."
                 }
             }
         },

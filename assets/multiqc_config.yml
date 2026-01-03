@@ -481,6 +481,9 @@ custom_data:
       merged:
         name: "Nb gene IDs merged with other IDs"
         color: "#38B4F2"
+      not_valid:
+        name: "Nb rare gene IDs removed"
+        color: "#38B4F2"
       unmapped:
         name: "Nb unmapped gene IDs"
         color: "#E3224A"

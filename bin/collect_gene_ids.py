@@ -4,15 +4,17 @@
 
 import argparse
 import logging
+from collections import Counter
 from pathlib import Path
 
-import pandas as pd
+import config
 from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-ALL_GENE_IDS_OUTFILE = "all_gene_ids.txt"
+UNIQUE_GENE_IDS_OUTFILE = "unique_gene_ids.txt"
+GENE_ID_OCCURRENCES_OUTFILE = "gene_id_occurrences.csv"
 
 
 #####################################################
@@ -25,7 +27,7 @@ ALL_GENE_IDS_OUTFILE = "all_gene_ids.txt"
 def parse_args():
     parser = argparse.ArgumentParser(description="Collect gene IDs from count files")
     parser.add_argument(
-        "--counts", type=str, dest="count_files", required=True, help="Count files"
+        "--ids", type=str, dest="gene_id_files", required=True, help="Gene ID files"
     )
     return parser.parse_args()
 
@@ -37,26 +39,29 @@ def parse_args():
 #####################################################
 
 
-def parse_table(file: Path):
-    if file.suffix == ".csv":
-        return pd.read_csv(file, header=0, index_col=0)
-    else:  # .tsv
-        return pd.read_csv(file, header=0, index_col=0, sep="\t")
-
-
 def main():
     args = parse_args()
-    count_files = [Path(file) for file in args.count_files.split(" ")]
-    logger.info(f"Getting gene IDs from {len(count_files)} count files")
 
-    all_gene_ids = set()
-    for count_file in tqdm(count_files):
-        df = parse_table(count_file)
-        all_gene_ids.update(list(df.index))
+    gene_id_files = [Path(file) for file in args.gene_id_files.split(" ")]
+    logger.info(f"Getting gene IDs from {len(gene_id_files)} files")
 
-    # sorting IDs in order to have a consistent output
-    with open(ALL_GENE_IDS_OUTFILE, "w") as f:
-        f.write("\n".join(sorted([str(gene_id) for gene_id in all_gene_ids])))
+    unique_gene_ids = set()
+    counter = Counter()
+    for gene_id_file in tqdm(gene_id_files):
+        with open(gene_id_file, "r") as fin:
+            gene_ids = [line.strip() for line in fin]
+            unique_gene_ids.update(gene_ids)
+            counter.update(gene_ids)
+
+    with open(UNIQUE_GENE_IDS_OUTFILE, "w") as fout:
+        fout.write("\n".join([str(gene_id) for gene_id in unique_gene_ids]))
+
+    with open(GENE_ID_OCCURRENCES_OUTFILE, "w") as fout:
+        fout.write(
+            f"{config.ORIGINAL_GENE_ID_COLNAME},{config.GENE_ID_COUNT_COLNAME}\n"
+        )
+        for gene_id, count in counter.items():
+            fout.write(f"{gene_id},{count}\n")
 
 
 if __name__ == "__main__":
