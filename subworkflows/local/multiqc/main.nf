@@ -187,6 +187,7 @@ workflow MULTIQC_WORKFLOW {
                         .mix( channel.topic('geo_rejected_datasets').collect() ) // single item
                         .mix( COLLECT_STATISTICS.out.csv )
                         .mix( ch_id_mapping_stats )
+                        .mix( channel.topic('total_gene_id_occurrence_quantiles').collect() ) // single item
                         .mix( ch_eatlas_failure_reasons )
                         .mix( ch_eatlas_warning_reasons )
                         .mix( ch_geo_failure_reasons )

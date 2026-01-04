@@ -19,7 +19,8 @@ workflow ID_MAPPING {
     gprofiler_target_db
     custom_gene_id_mapping
     custom_gene_metadata
-    min_freq_occurrence
+    min_occurrence_freq
+    min_occurrence_quantile
     outdir
 
     main:
@@ -67,7 +68,8 @@ workflow ID_MAPPING {
             ch_gene_id_mapping,
             COLLECT_GENE_IDS.out.gene_id_occurrences,
             ch_counts.count(),
-            min_freq_occurrence
+            min_occurrence_freq,
+            min_occurrence_quantile
         )
         ch_valid_gene_ids = FILTER_OUT_RARE_GENES.out.valid_gene_ids
     }

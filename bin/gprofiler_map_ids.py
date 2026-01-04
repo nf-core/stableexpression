@@ -63,7 +63,7 @@ def main():
     args = parse_args()
 
     with open(args.gene_id_file, "r") as fin:
-        gene_ids = [line.strip() for line in fin]
+        gene_ids = list(set([line.strip() for line in fin]))
 
     logger.info(f"Converting {len(gene_ids)} IDs for species {args.species} ")
 

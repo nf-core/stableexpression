@@ -168,14 +168,23 @@
                     "help_text": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (gene_id, name and description) and a header row.",
                     "fa_icon": "fas fa-file"
                 },
-                "min_freq_occurrence": {
+                "min_occurrence_quantile": {
                     "type": "number",
-                    "description": "Minimum frequency of occurrence",
+                    "description": "Minimum quantile for the frequency of occurrence",
                     "fa_icon": "fas fa-battery-three-quarters",
                     "minimum": 0,
                     "maximum": 1,
                     "default": 0.1,
-                    "help_text": "To avoid genes that are rarely observed, a threshold is set up. Such genes may cause unnecessary overhead."
+                    "help_text": "To avoid genes that are rarely observed, genes less represented than the specified quantile will be filtered out. For example, value of 0.2 means that the 20% less represented will be filtered out. This filter is applied before using the absolute filter `--min_occurrence_freq`."
+                },
+                "min_occurrence_freq": {
+                    "type": "number",
+                    "description": "Minimum frequency of occurrence among all datasets",
+                    "fa_icon": "fas fa-battery-three-quarters",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.1,
+                    "help_text": "To avoid genes that are rarely observed, genes showing a frequency of occurrence below this threshold will be filtered out."
                 }
             }
         },

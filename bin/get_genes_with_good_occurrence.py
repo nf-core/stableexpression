@@ -13,7 +13,8 @@ from common import parse_table
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-OUTFILE = "valid_gene_ids.txt"
+VALID_GENE_IDS_OUTFILE = "valid_gene_ids.txt"
+TOTAL_OCCURRENCES_OUTFILE = "total_gene_id_occurrence_quantiles.csv"
 
 ##################################################################
 # FUNCTIONS
@@ -44,10 +45,17 @@ def parse_args():
         help="Number of datasets",
     )
     parser.add_argument(
-        "--min-freq-occurrence",
+        "--min-occurrence-frequency",
         type=float,
         required=True,
-        dest="min_freq_occurrence",
+        dest="min_occurrence_frequency",
+        help="Minimum frequency of occurrences for a gene among all datasets",
+    )
+    parser.add_argument(
+        "--min-occurrence-quantile",
+        type=float,
+        required=True,
+        dest="min_occurrence_quantile",
         help="Minimum frequency of occurrences for a gene among all datasets",
     )
     return parser.parse_args()
@@ -61,12 +69,6 @@ def parse_args():
 def main():
     args = parse_args()
 
-    # taking lower bound of threshold
-    occurrence_threshold = int(args.nb_datasets * args.min_freq_occurrence)
-    logger.info(
-        f"Occurrence threshold: at least {occurrence_threshold} occurrence(s) among {args.nb_datasets} dataset(s)"
-    )
-
     original_gene_id_occurrence_df = parse_table(args.gene_id_occurrence_file)
     mapping_df = parse_table(args.mapping_file)
     nb_mapped_genes = len(mapping_df)
@@ -77,17 +79,33 @@ def main():
     )
 
     total_gene_id_occurrence_df = df.group_by(config.GENE_ID_COLNAME).agg(
-        pl.col(config.GENE_ID_COUNT_COLNAME).sum().alias("total")
+        pl.col(config.GENE_ID_COUNT_COLNAME).sum().alias("total_occurrences")
     )
 
     df = df.join(
         total_gene_id_occurrence_df,
         on=config.GENE_ID_COLNAME,
-    ).filter(pl.col("total") >= occurrence_threshold)
+    ).with_columns(
+        (
+            pl.col("total_occurrences").rank(method="max")
+            / pl.col("total_occurrences").count()
+        ).alias("total_occurrences_quantile")
+    )
+
+    # writing total occurrences in a csv before filtering
+    df.select([config.GENE_ID_COLNAME, "total_occurrences_quantile"]).sort(
+        "total_occurrences_quantile", descending=True
+    ).write_csv(TOTAL_OCCURRENCES_OUTFILE)
+
+    # filtering genes
+    min_total_occurrence = args.nb_datasets * args.min_occurrence_frequency
+    df = df.filter(
+        pl.col("total_occurrences_quantile") >= args.min_occurrence_quantile
+    ).filter(pl.col("total_occurrences") >= min_total_occurrence)
 
     valid_gene_ids = df.select(config.GENE_ID_COLNAME).unique().to_series().to_list()
 
-    with open(OUTFILE, "w") as f:
+    with open(VALID_GENE_IDS_OUTFILE, "w") as f:
         f.write("\n".join(valid_gene_ids))
 
     nb_valid_genes = len(valid_gene_ids)

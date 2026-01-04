@@ -10,11 +10,13 @@ process FILTER_OUT_RARE_GENES {
     input:
     path(gene_id_mapping_file)
     path(gene_id_occurrences_file)
-    val nb_datasets
-    val(min_freq_occurrence)
+    val(nb_datasets)
+    val(min_occurrence_frequency)
+    val(min_occurrence_quantile)
 
     output:
-    path('valid_gene_ids.txt'), optional: true,                                                                     emit: valid_gene_ids
+    path('valid_gene_ids.txt'),                                                                                       emit: valid_gene_ids
+    path('total_gene_id_occurrence_quantiles.csv'),                                                                   topic: total_gene_id_occurrence_quantiles
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
@@ -30,7 +32,9 @@ process FILTER_OUT_RARE_GENES {
         --occurrences $gene_id_occurrences_file \\
         --mappings $gene_id_mapping_file \\
         --nb-datasets $nb_datasets \\
-        --min-freq-occurrence $min_freq_occurrence
+        --min-occurrence-frequency $min_occurrence_frequency \\
+        --min-occurrence-quantile $min_occurrence_quantile
+
     """
 
 

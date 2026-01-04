@@ -11,7 +11,7 @@ report_section_order:
   "nf-core-stableexpression-summary":
     order: -1002
 
-export_plots: true
+export_plots: false
 
 run_modules:
   - custom_content
@@ -483,11 +483,33 @@ custom_data:
         color: "#38B4F2"
       not_valid:
         name: "Nb rare gene IDs removed"
-        color: "#38B4F2"
+        color: "#F2C038"
       unmapped:
         name: "Nb unmapped gene IDs"
         color: "#E3224A"
     plot_type: "barplot"
+
+  total_gene_id_occurrence_quantiles:
+    section_name: "Distribution of gene ID occurrence quantiles"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "csv"
+    pconfig:
+      categories: true
+    #ymax: 1.1
+    #ymin: -0.1
+    #y_lines:
+    #  - value: 1
+    #    color: "#ff0000"
+    #    width: 2
+    #   dash: "dash"
+    #   label: "Threshold"
+    description: |
+      Quantiles of the total number of occurrences of gene IDs across all datasets. Quantile values were sorted from greatest to least.
+    plot_type: "linegraph"
+    helptext: |
+      Gene IDs can be present or absent in the datasets. For each gene ID, the total number of occurrences across all datasets was calculated and quantile values were computed from these totals.
 
   eatlas_selected_experiments_metadata:
     section_name: "Selected"
@@ -659,6 +681,8 @@ sp:
     max_filesize: 50000000 # 50MB
   id_mapping_stats:
     fn: "*id_mapping_stats.csv"
+  total_gene_id_occurrence_quantiles:
+    fn: "*total_gene_id_occurrence_quantiles.csv"
   skewness:
     fn: "*skewness.transposed.csv"
   ratio_zeros:
