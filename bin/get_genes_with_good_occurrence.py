@@ -82,14 +82,28 @@ def main():
         pl.col(config.GENE_ID_COUNT_COLNAME).sum().alias("total_occurrences")
     )
 
-    df = df.join(
-        total_gene_id_occurrence_df,
-        on=config.GENE_ID_COLNAME,
-    ).with_columns(
-        (
-            pl.col("total_occurrences").rank(method="max")
-            / pl.col("total_occurrences").count()
-        ).alias("total_occurrences_quantile")
+    df = (
+        df.join(
+            total_gene_id_occurrence_df,
+            on=config.GENE_ID_COLNAME,
+        )
+        .with_columns(
+            total_occurrences_quantile=(
+                pl.col("total_occurrences").rank(method="max")
+                / pl.col("total_occurrences").count()
+            ),
+            total_occurrences_frequency=(
+                pl.col("total_occurrences") / args.nb_datasets
+            ),
+        )
+        .select(
+            [
+                config.GENE_ID_COLNAME,
+                "total_occurrences_frequency",
+                "total_occurrences_quantile",
+            ]
+        )
+        .unique()
     )
 
     # writing total occurrences in a csv before filtering
@@ -98,12 +112,14 @@ def main():
     ).write_csv(TOTAL_OCCURRENCES_OUTFILE)
 
     # filtering genes
-    min_total_occurrence = args.nb_datasets * args.min_occurrence_frequency
-    df = df.filter(
-        pl.col("total_occurrences_quantile") >= args.min_occurrence_quantile
-    ).filter(pl.col("total_occurrences") >= min_total_occurrence)
-
-    valid_gene_ids = df.select(config.GENE_ID_COLNAME).unique().to_series().to_list()
+    valid_gene_ids = (
+        df.filter(pl.col("total_occurrences_quantile") >= args.min_occurrence_quantile)
+        .filter(pl.col("total_occurrences_frequency") >= args.min_occurrence_frequency)
+        .select(config.GENE_ID_COLNAME)
+        .unique()
+        .to_series()
+        .to_list()
+    )
 
     with open(VALID_GENE_IDS_OUTFILE, "w") as f:
         f.write("\n".join(valid_gene_ids))

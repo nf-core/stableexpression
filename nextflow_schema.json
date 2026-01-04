@@ -174,7 +174,7 @@
                     "fa_icon": "fas fa-battery-three-quarters",
                     "minimum": 0,
                     "maximum": 1,
-                    "default": 0.1,
+                    "default": 0.2,
                     "help_text": "To avoid genes that are rarely observed, genes less represented than the specified quantile will be filtered out. For example, value of 0.2 means that the 20% less represented will be filtered out. This filter is applied before using the absolute filter `--min_occurrence_freq`."
                 },
                 "min_occurrence_freq": {
