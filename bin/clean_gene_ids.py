@@ -44,7 +44,7 @@ def clean_ensembl_gene_id_versioning(df: pl.DataFrame):
     """
     return df.with_columns(
         pl.when(pl.col(config.GENE_ID_COLNAME).str.starts_with("ENSG"))
-        .then(pl.col(config.GENE_ID_COLNAME).str.extract(r"^(ENSG\d+)", 1))
+        .then(pl.col(config.GENE_ID_COLNAME).str.extract(r"^(ENSG[a-zA-Z0-9]+)", 1))
         .otherwise(pl.col(config.GENE_ID_COLNAME))
         .alias(config.GENE_ID_COLNAME)
     )
@@ -109,6 +109,7 @@ def main():
         .to_series()
         .to_list()
     )
+
     with open(gene_ids_outfile, "w") as fout:
         fout.write("\n".join(gene_ids))
 

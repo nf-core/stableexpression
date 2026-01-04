@@ -43,7 +43,6 @@ def parse_table(file: Path):
 
 def parse_count_table(file: Path):
     df = parse_table(file)
-    print(df)
     first_col = df.columns[0]
     # whatever the name of the first col, rename it to "gene_id"
     return df.rename({first_col: config.GENE_ID_COLNAME}).select(
