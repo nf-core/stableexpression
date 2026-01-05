@@ -4,6 +4,5 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - conda-forge::pandas==2.3.3
-  - conda-forge::scikit-learn==1.7.2
-  - conda-forge::pyarrow==22.0.0
+  - conda-forge::polars==1.36.1
+  - conda-forge::scikit-learn==1.8.0

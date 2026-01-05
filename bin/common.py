@@ -59,3 +59,9 @@ def compute_log2(df: pl.DataFrame) -> pl.DataFrame:
         pl.col(config.GENE_ID_COLNAME),
         (pl.exclude(config.GENE_ID_COLNAME) + 1).log(base=2),
     )
+
+
+def export_parquet(df: pl.DataFrame, count_file: Path, suffix: str):
+    outfilename = count_file.with_suffix(suffix).name
+    logger.info(f"Exporting processed counts to: {outfilename}")
+    df.write_parquet(outfilename)

@@ -7,13 +7,14 @@ import logging
 from pathlib import Path
 
 import config
-import pandas as pd
-from sklearn.preprocessing import QuantileTransformer
+import polars as pl
+from common import export_parquet, parse_count_table
+from sklearn.preprocessing import quantile_transform
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-QUANT_NORM_SUFFIX = ".quant_norm.parquet"
+OUTFILE_SUFFIX = ".quant_norm.parquet"
 
 N_QUANTILES = 1000
 
@@ -45,28 +46,19 @@ def parse_args():
     return parser.parse_args()
 
 
-def quantile_normalise(data: pd.DataFrame, target_distribution: str):
+def quantile_normalise(df: pl.DataFrame, target_distribution: str):
     """
-    Quantile normalize a data matrix based on a target distribution.
+    Quantile normalize a dataframe; column by column, based on a target distribution.
     """
-    transformer = QuantileTransformer(
+    kwargs = dict(
         n_quantiles=N_QUANTILES, output_distribution=target_distribution, subsample=None
     )
-
-    normalised_data = pd.DataFrame(index=data.index, columns=data.columns)
-    for col in data.columns:
-        normalised_data[col] = transformer.fit_transform(data[col].to_frame())
-
-    return normalised_data
-
-
-def export_count_data(count_df: pd.DataFrame, count_file: Path):
-    """Export gene expression data to CSV files."""
-    outfilename = count_file.name.replace(".csv", QUANT_NORM_SUFFIX)
-    logger.info(f"Exporting quantile normalised counts to: {outfilename}")
-    count_df.reset_index(inplace=True)
-    count_df[config.GENE_ID_COLNAME] = count_df[config.GENE_ID_COLNAME].astype(str)
-    count_df.to_parquet(outfilename)
+    return df.select(
+        pl.exclude(config.GENE_ID_COLNAME).map_batches(
+            lambda x: quantile_transform(x.to_frame(), **kwargs).flatten(),
+            return_dtype=pl.Float64,
+        )
+    )
 
 
 #####################################################
@@ -80,15 +72,13 @@ def main():
     args = parse_args()
     count_file = args.count_file
 
-    logger.info(f"Quantile normalising {count_file.name}")
-    # count_df = pd.read_parquet(count_file)
-    # count_df.set_index(config.GENE_ID_COLNAME, inplace=True)
-    count_df = pd.read_csv(count_file, index_col=0)
-    count_df.index.name = config.GENE_ID_COLNAME
+    logger.info(f"Parsing {count_file.name}")
+    count_df = parse_count_table(count_file)
 
+    logger.info(f"Quantile normalising {count_file.name}")
     quantile_normalized_counts = quantile_normalise(count_df, args.target_distribution)
 
-    export_count_data(quantile_normalized_counts, count_file)
+    export_parquet(quantile_normalized_counts, count_file, OUTFILE_SUFFIX)
 
 
 if __name__ == "__main__":
