@@ -6,8 +6,8 @@ process COMPUTE_DATASET_STATISTICS {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/3d/3d7126100b0eb7cb53dfb50291707ea8dda3b9738b76551ab73605d0acbe114b/data':
-        'community.wave.seqera.io/library/pandas:2.3.3--5a902bf824a79745' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f8a5d02e7b31980c887253a9f118da0ef91ead1c7b158caf855199e5c5d5473/data':
+        'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
     tuple val(meta), path(count_file)
@@ -16,7 +16,7 @@ process COMPUTE_DATASET_STATISTICS {
     tuple val(meta.dataset), path("skewness.txt"),                                                                      topic: skewness
     tuple val(meta.dataset), path("ratio_zeros.txt"),                                                                   topic: ratio_zeros
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                       topic: versions
-    tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),       topic: versions
+    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),       topic: versions
 
     script:
     def prefix = task.ext.prefix ?: "${meta.dataset}"

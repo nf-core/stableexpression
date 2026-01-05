@@ -6,15 +6,14 @@ import argparse
 import logging
 from pathlib import Path
 
-import pandas as pd
+import config
+import polars as pl
+from common import parse_count_table
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-COL_TO_OUTFILE = {"skewness": "skewness.txt", "ratio_zeros": "ratio_zeros.txt"}
-
-
-# ALLOWED_TARGET_DISTRIBUTIONS = ["normal", "uniform"]
+KEY_TO_OUTFILE = {"skewness": "skewness.txt", "ratio_zeros": "ratio_zeros.txt"}
 
 
 #####################################################
@@ -34,22 +33,25 @@ def parse_args():
     return parser.parse_args()
 
 
-def compute_dataset_statistics(count_df: pd.DataFrame) -> pd.DataFrame:
-    skewness = count_df.skew()
-    ratio_zeros = (count_df == 0).sum() / len(count_df)
-    return pd.DataFrame({"skewness": skewness, "ratio_zeros": ratio_zeros}).T
+def compute_dataset_statistics(df: pl.DataFrame) -> dict:
+    # sample count skewness
+    skewness = df.select(pl.exclude(config.GENE_ID_COLNAME).skew()).row(0)
+    # sample count ratio of zeros
+    ratio_zeros = df.select(
+        pl.exclude(config.GENE_ID_COLNAME).eq(pl.lit(0)).sum() / len(df)
+    ).row(0)
+    return dict(skewness=list(skewness), ratio_zeros=list(ratio_zeros))
 
 
-def export_count_data(dataset_stats_df: pd.DataFrame):
+def export_count_data(stats: dict):
     """
     Export dataset statistics to CSV files.
     Write each statistic to a separate file, on a single row
     """
-    for col, outfile_name in COL_TO_OUTFILE.items():
-        logger.info(f"Exporting dataset statistics {col} to: {outfile_name}")
-        pd.DataFrame(dataset_stats_df.loc[col]).T.to_csv(
-            outfile_name, index=False, header=False, float_format="%.4f"
-        )
+    for key, outfile_name in KEY_TO_OUTFILE.items():
+        logger.info(f"Exporting dataset statistics {key} to: {outfile_name}")
+        with open(outfile_name, "w") as outfile:
+            outfile.write(",".join([str(val) for val in stats[key]]))
 
 
 #####################################################
@@ -64,11 +66,11 @@ def main():
     count_file = args.count_file
 
     logger.info(f"Computing dataset statistics for {count_file.name}")
-    count_df = pd.read_csv(count_file, index_col=0, header=0)
+    count_df = parse_count_table(count_file)
 
-    dataset_stats_df = compute_dataset_statistics(count_df)
+    stat_dict = compute_dataset_statistics(count_df)
 
-    export_count_data(dataset_stats_df)
+    export_count_data(stat_dict)
 
 
 if __name__ == "__main__":
