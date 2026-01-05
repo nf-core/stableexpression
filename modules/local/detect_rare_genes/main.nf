@@ -1,4 +1,4 @@
-process FILTER_OUT_RARE_GENES {
+process DETECT_RARE_GENES {
 
     label 'process_low'
 
@@ -28,7 +28,7 @@ process FILTER_OUT_RARE_GENES {
         export POLARS_MAX_THREADS=${task.cpus}
     fi
 
-    get_genes_with_good_occurrence.py \\
+    detect_rare_genes.py \\
         --occurrences $gene_id_occurrences_file \\
         --mappings $gene_id_mapping_file \\
         --nb-datasets $nb_datasets \\

@@ -1,6 +1,5 @@
+include { MERGE_COUNTS as MERGE_PLATFORM_COUNTS         } from '../../../modules/local/merge_counts'
 include { MERGE_COUNTS as MERGE_ALL_COUNTS              } from '../../../modules/local/merge_counts'
-include { MERGE_COUNTS as MERGE_RNASEQ_COUNTS           } from '../../../modules/local/merge_counts'
-include { MERGE_COUNTS as MERGE_MICROARRAY_COUNTS       } from '../../../modules/local/merge_counts'
 
 include { getWholeDatasetSize                           } from '../../../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
@@ -28,36 +27,46 @@ workflow MERGE_DATA {
     ch_normalised_rnaseq_counts = ch_normalised_counts.filter { meta, file -> meta.platform == "rnaseq" }
     ch_whole_rnaseq_size        = getWholeDatasetSize ( ch_normalised_rnaseq_counts )
 
-    MERGE_RNASEQ_COUNTS (
-        ch_normalised_rnaseq_counts.map { meta, file -> file }.collect( sort: true ),
-        ch_whole_rnaseq_size.collect() // single item
-    )
-
     // MICROARRAY
     ch_normalised_microarray_counts = ch_normalised_counts.filter { meta, file -> meta.platform == "microarray" }
     ch_whole_microarray_size        = getWholeDatasetSize ( ch_normalised_microarray_counts )
 
-    MERGE_MICROARRAY_COUNTS (
-        ch_normalised_microarray_counts.map { meta, file -> file }.collect( sort: true ),
-        ch_whole_microarray_size.collect() // single item
+    ch_collected_rnaseq_counts = ch_normalised_rnaseq_counts
+                                    .map { meta, file -> file }
+                                    .collect( sort: true )
+                                    .map { files -> [ files ] }
+                                    .combine( ch_whole_rnaseq_size )
+                                    .map { files, size -> [ [ platform: "rnaseq", dataset_size: size ], files ] }
+
+    ch_collected_microarray_counts = ch_normalised_microarray_counts
+                                        .map { meta, file -> file }
+                                        .collect( sort: true )
+                                        .map { files -> [ files ] }
+                                        .combine( ch_whole_microarray_size )
+                                        .map { files, size -> [ [ platform: "microarray", dataset_size: size ], files ] }
+
+    MERGE_PLATFORM_COUNTS (
+        ch_collected_rnaseq_counts.concat( ch_collected_microarray_counts )
     )
+
+    ch_platform_counts = MERGE_PLATFORM_COUNTS.out.counts
 
     // -----------------------------------------------------------------
     // MERGE ALL COUNTS
     // -----------------------------------------------------------------
 
-    ch_merged_rnaseq_counts         = MERGE_RNASEQ_COUNTS.out.counts
-    ch_merged_microarray_counts     = MERGE_MICROARRAY_COUNTS.out.counts
-    ch_platform_counts              = ch_merged_rnaseq_counts.mix ( ch_merged_microarray_counts )
-
     ch_whole_size = ch_whole_rnaseq_size
                     .mix(ch_whole_microarray_size)
                     .reduce { rnaseq_size, microarray_size -> rnaseq_size + microarray_size }
 
-    MERGE_ALL_COUNTS(
-        ch_platform_counts.collect( sort: true ),
-        ch_whole_size.collect() // single item
-    )
+    ch_collected_merged_counts = ch_platform_counts
+                                    .map { meta, file -> file }
+                                    .collect( sort: true )
+                                    .map { files -> [ files ] }
+                                    .combine( ch_whole_size )
+                                    .map { files, size -> [ [ platform: "all", dataset_size: size ], files ] }
+
+    MERGE_ALL_COUNTS( ch_collected_merged_counts )
 
     // -----------------------------------------------------------------
     // MERGE ALL DESIGNS IN A SINGLE TABLE
@@ -126,8 +135,7 @@ workflow MERGE_DATA {
 
     emit:
     all_counts                             = MERGE_ALL_COUNTS.out.counts
-    rnaseq_counts                          = ch_merged_rnaseq_counts
-    microarray_counts                      = ch_merged_microarray_counts
+    platform_counts                        = ch_platform_counts
     whole_design                           = ch_whole_design
     whole_gene_id_mapping                  = ch_whole_gene_id_mapping
     whole_gene_metadata                    = ch_whole_gene_metadata

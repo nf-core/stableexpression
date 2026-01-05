@@ -1,8 +1,8 @@
 include { CLEAN_GENE_IDS                         } from '../../../modules/local/clean_gene_ids'
 include { COLLECT_GENE_IDS                       } from '../../../modules/local/collect_gene_ids'
 include { GPROFILER_IDMAPPING                    } from '../../../modules/local/gprofiler/idmapping'
-include { FILTER_OUT_RARE_GENES                  } from '../../../modules/local/filter_out_rare_genes'
-include { RENAME_GENE_IDS                        } from '../../../modules/local/rename_gene_ids'
+include { DETECT_RARE_GENES                      } from '../../../modules/local/detect_rare_genes'
+include { FILTER_AND_RENAME_GENES                } from '../../../modules/local/filter_and_rename_genes'
 
 /*
 ========================================================================================
@@ -64,14 +64,14 @@ workflow ID_MAPPING {
         // FILTERING OUT GENE IDS THAT DO NOT HAVE ENOUGH OCCURRENCES
         // -----------------------------------------------------------------
 
-        FILTER_OUT_RARE_GENES(
+        DETECT_RARE_GENES(
             ch_gene_id_mapping,
             COLLECT_GENE_IDS.out.gene_id_occurrences,
             ch_counts.count(),
             min_occurrence_freq,
             min_occurrence_quantile
         )
-        ch_valid_gene_ids = FILTER_OUT_RARE_GENES.out.valid_gene_ids
+        ch_valid_gene_ids = DETECT_RARE_GENES.out.valid_gene_ids
     }
 
     // -----------------------------------------------------------------
@@ -120,12 +120,12 @@ workflow ID_MAPPING {
 
     if ( !skip_id_mapping || custom_gene_id_mapping ) {
 
-        RENAME_GENE_IDS(
+        FILTER_AND_RENAME_GENES(
             ch_counts,
             ch_global_gene_id_mapping.first(),
             ch_valid_gene_ids.collect()
         )
-        ch_counts = RENAME_GENE_IDS.out.counts
+        ch_counts = FILTER_AND_RENAME_GENES.out.counts
 
     }
 

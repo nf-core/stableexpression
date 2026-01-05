@@ -208,7 +208,7 @@
                     "exists": true,
                     "schema": "assets/schema_gene_length.json",
                     "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.(csv|dat)$",
+                    "pattern": "^\\S+\\.(csv|tsv|dat)$",
                     "description": "Gene length file",
                     "help_text": "Path to comma-separated file containing gene lengths. Each row represents a gene and gives the length of its longest transcript. The file should be a comma-separated file with 2 columns (gene_id and length) and a header row.",
                     "fa_icon": "fas fa-file"

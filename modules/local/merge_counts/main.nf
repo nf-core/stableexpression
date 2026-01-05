@@ -1,8 +1,11 @@
 process MERGE_COUNTS {
 
+    tag "${meta.platform}"
     label "process_high"
 
-    memory { def calc = (dataset_size / 50000).toInteger()
+    maxForks 1
+
+    memory { def calc = (meta.dataset_size / 50000).toInteger()
         def result = Math.max(1, calc)  // Ensure at least 1 MB
         def multiplicator = 1 + 0.2 * task.attempt // increase memory usage with each attempt by 20%
         return 1.MB * result * multiplicator
@@ -14,11 +17,10 @@ process MERGE_COUNTS {
         'community.wave.seqera.io/library/polars_tqdm:54b124dde91d1bf3' }"
 
     input:
-    path count_files, stageAs: "?/*"
-    val dataset_size
+    tuple val(meta), path(count_files, stageAs: "?/*")
 
     output:
-    path 'all_counts.parquet',                                                                                        emit: counts
+    tuple val(meta), path('all_counts.parquet'),                                                                      emit: counts
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
     tuple val("${task.process}"), val('tqdm'),     eval('python3 -c "import tqdm; print(tqdm.__version__)"'),         topic: versions

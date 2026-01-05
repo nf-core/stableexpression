@@ -10,8 +10,7 @@ process AGGREGATE_RESULTS {
     input:
     path count_file
     path stat_file
-    path rnaseq_dataset_stat_file
-    path microarray_dataset_stat_file
+    path platform_stat_files, stageAs: "?/*"
     path metadata_files
     path mapping_files
 
@@ -26,8 +25,6 @@ process AGGREGATE_RESULTS {
     script:
     def mapping_files_arg = mapping_files ? "--mappings " + "$mapping_files" : ""
     def metadata_files_arg = metadata_files ? "--metadata " + "$metadata_files" : ""
-    def rnaseq_dataset_stat_file_arg = rnaseq_dataset_stat_file ? "--rnaseq $rnaseq_dataset_stat_file" : ""
-    def microarray_dataset_stat_file_arg = microarray_dataset_stat_file ? "--microarray $microarray_dataset_stat_file" : ""
     def is_using_containers = workflow.containerEngine ? true : false
     """
     # limiting number of threads when using conda / micromamba
@@ -38,10 +35,9 @@ process AGGREGATE_RESULTS {
     aggregate_results.py \\
         --counts $count_file \\
         --stats $stat_file \\
+        --platform-stats $platform_stat_files \\
         $mapping_files_arg \\
-        $metadata_files_arg \\
-        $rnaseq_dataset_stat_file_arg \\
-        $microarray_dataset_stat_file_arg
+        $metadata_files_arg
     """
 
 }

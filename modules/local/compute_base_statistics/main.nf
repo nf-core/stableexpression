@@ -1,8 +1,9 @@
 process COMPUTE_BASE_STATISTICS {
 
+    tag "${meta.platform}"
     label 'process_high'
 
-    memory { def calc = (dataset_size / 50000).toInteger()
+    memory { def calc = (meta.dataset_size / 50000).toInteger()
         def result = Math.max(1, calc)  // Ensure at least 1 MB
         def multiplicator = 1 + 0.2 * task.attempt // increase memory usage with each attempt by 20%
         return 1.MB * result * multiplicator
@@ -14,8 +15,7 @@ process COMPUTE_BASE_STATISTICS {
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    path count_file
-    val platform
+    tuple val(meta), path(count_file)
 
     output:
     path '*stats_all_genes.csv',                                                                                      emit: stats
@@ -24,8 +24,8 @@ process COMPUTE_BASE_STATISTICS {
 
     script:
     def args = task.ext.args ?: ''
-    if ( platform != [] ) {
-        args += " --platform $platform"
+    if ( meta.platform != "all" ) {
+        args += " --platform $meta.platform"
     }
     def is_using_containers = workflow.containerEngine ? true : false
     """

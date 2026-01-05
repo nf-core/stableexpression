@@ -194,11 +194,12 @@ def main():
 
     # TODO: check is there is another way to avoid duplicate gene names
     # sometimes different gene names have the same Gene ID
-    # for now, we just get the mean of values, but this is not ideal
+    # for now, we just get the max of values, but this is not ideal
+    # we do not take the mean because if counts are integers, we want to keep them as integers
 
-    logger.info("Computing mean counts for genes with duplicate IDs")
+    logger.info("Computing max counts for genes with duplicate IDs")
     df = df.group_by(config.GENE_ID_COLNAME, maintain_order=True).agg(
-        pl.exclude(config.GENE_ID_COLNAME).mean()
+        pl.exclude(config.GENE_ID_COLNAME).max()
     )
 
     #############################################################

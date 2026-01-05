@@ -3,7 +3,7 @@ process GPROFILER_IDMAPPING {
 
     tag "${species} IDs to ${gprofiler_target_db}"
 
-    errorStrategy = {
+    errorStrategy {
         if (task.exitStatus == 100 ) {
             log.error("Could not map gene IDs to ${gprofiler_target_db} database.")
             'terminate'

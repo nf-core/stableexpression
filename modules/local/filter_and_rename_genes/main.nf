@@ -1,4 +1,4 @@
-process RENAME_GENE_IDS {
+process FILTER_AND_RENAME_GENES {
 
     label 'process_low'
 
@@ -32,7 +32,7 @@ process RENAME_GENE_IDS {
         export POLARS_MAX_THREADS=${task.cpus}
     fi
 
-    rename_gene_ids.py \\
+    filter_and_rename_genes.py \\
         --count-file "$count_file" \\
         $mapping_arg \\
         $valid_ids_arg

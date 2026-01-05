@@ -9,7 +9,7 @@ from pathlib import Path
 
 import config
 import polars as pl
-from common import compute_log2, parse_count_table, parse_table
+from common import compute_log2, export_parquet, parse_count_table, parse_table
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -153,9 +153,7 @@ def main():
         logger.info("Computing log2 values")
         count_df = compute_log2(count_df)
 
-        outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
-        logger.info(f"Exporting TPM normalised counts to: {outfilename}")
-        count_df.write_parquet(outfilename)
+        export_parquet(count_df, args.count_file, OUTFILE_SUFFIX)
 
     except Exception as e:
         logger.error(f"Error occurred while normalising data: {e}")

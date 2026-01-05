@@ -109,8 +109,6 @@ workflow STABLEEXPRESSION {
         ch_gene_id_mapping = ID_MAPPING.out.mapping
         ch_gene_metadata   = ID_MAPPING.out.metadata
 
-        ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
-
         // -----------------------------------------------------------------
         // FILTER OUT SAMPLES NOT VALID
         // -----------------------------------------------------------------
@@ -155,8 +153,7 @@ workflow STABLEEXPRESSION {
 
         BASE_STATISTICS (
             ch_all_counts,
-            MERGE_DATA.out.rnaseq_counts,
-            MERGE_DATA.out.microarray_counts
+            MERGE_DATA.out.platform_counts
         )
 
         ch_all_datasets_stats = BASE_STATISTICS.out.stats
@@ -166,7 +163,7 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         STABILITY_SCORING (
-            ch_all_counts,
+            ch_all_counts.map{ meta, file -> file },
             ch_whole_design,
             ch_all_datasets_stats,
             params.candidate_selection_descriptor,
@@ -183,10 +180,9 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         AGGREGATE_RESULTS (
-            ch_all_counts.collect(),
+            ch_all_counts.map{ meta, file -> file }.collect(),
             ch_stats_all_genes_with_scores.collect(),
-            BASE_STATISTICS.out.rnaseq_stats.ifEmpty( [] ),
-            BASE_STATISTICS.out.microarray_stats.ifEmpty( [] ),
+            BASE_STATISTICS.out.platform_stats.collect(),
             MERGE_DATA.out.whole_gene_metadata.collect(),
             MERGE_DATA.out.whole_gene_id_mapping.collect()
         )
@@ -200,7 +196,7 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         DASH_APP(
-            ch_all_counts.collect(),
+            ch_all_counts.map{ meta, file -> file }.collect(),
             ch_whole_design.collect(),
             ch_all_genes_summary.collect()
         )

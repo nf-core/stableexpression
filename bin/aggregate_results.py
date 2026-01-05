@@ -48,16 +48,11 @@ def parse_args():
         help="File containing statistics for all genes and stability scores by candidate genes",
     )
     parser.add_argument(
-        "--rnaseq",
+        "--platform-stats",
         type=Path,
-        dest="rnaseq_dataset_stat_file",
-        help="File containing base statistics for all genes and for all RNAseq datasets",
-    )
-    parser.add_argument(
-        "--microarray",
-        type=Path,
-        dest="microarray_dataset_stat_file",
-        help="File containing base statistics for all genes and for all Microarray datasets",
+        dest="platform_stat_files",
+        nargs="+",
+        help="File containing base statistics for all genes and for all datasets for a specific platform",
     )
     parser.add_argument(
         "--metadata",
@@ -269,9 +264,7 @@ def main():
     all_genes_stat_summary_df = parse_stat_file(args.stat_file)
 
     platform_datasets_stat_dfs = [
-        parse_stat_file(file)
-        for file in [args.rnaseq_dataset_stat_file, args.microarray_dataset_stat_file]
-        if file is not None
+        parse_stat_file(file) for file in args.platform_stat_files if file is not None
     ]
 
     metadata_df = get_metadata(metadata_files)

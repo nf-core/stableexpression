@@ -1,6 +1,5 @@
-include { COMPUTE_BASE_STATISTICS                                                   } from '../../../modules/local/compute_base_statistics'
-include { COMPUTE_BASE_STATISTICS as COMPUTE_BASE_STATISTICS_FOR_RNASEQ             } from '../../../modules/local/compute_base_statistics'
-include { COMPUTE_BASE_STATISTICS as COMPUTE_BASE_STATISTICS_FOR_MICROARRAY         } from '../../../modules/local/compute_base_statistics'
+include { COMPUTE_BASE_STATISTICS as COMPUTE_GLOBAL_STATISTICS             } from '../../../modules/local/compute_base_statistics'
+include { COMPUTE_BASE_STATISTICS as COMPUTE_PLATFORM_STATISTICS           } from '../../../modules/local/compute_base_statistics'
 
 /*
 ========================================================================================
@@ -11,9 +10,8 @@ include { COMPUTE_BASE_STATISTICS as COMPUTE_BASE_STATISTICS_FOR_MICROARRAY     
 workflow BASE_STATISTICS {
 
     take:
-    ch_all_counts
-    ch_rnaseq_counts
-    ch_microarray_counts
+    ch_all_counts      // [ [ platform: platform, dataset_size: size], file ]
+    ch_platform_counts // [ [ platform: platform, dataset_size: size], file ]
 
     main:
 
@@ -21,28 +19,17 @@ workflow BASE_STATISTICS {
     // PLATFORM-SPECIFIC STATISTICS
     // -----------------------------------------------------------------
 
-    COMPUTE_BASE_STATISTICS_FOR_RNASEQ(
-        ch_rnaseq_counts.collect(), // single item
-        "rnaseq"
-    )
+    COMPUTE_PLATFORM_STATISTICS( ch_platform_counts )
 
-    COMPUTE_BASE_STATISTICS_FOR_MICROARRAY(
-        ch_microarray_counts.collect(), // single item
-        "microarray"
-    )
 
     // -----------------------------------------------------------------
     // ALL DATA
     // -----------------------------------------------------------------
 
-    COMPUTE_BASE_STATISTICS (
-        ch_all_counts.collect(), // single item
-        []
-    )
+    COMPUTE_GLOBAL_STATISTICS( ch_all_counts )
 
     emit:
-    stats                           = COMPUTE_BASE_STATISTICS.out.stats
-    rnaseq_stats                    = COMPUTE_BASE_STATISTICS_FOR_RNASEQ.out.stats
-    microarray_stats                = COMPUTE_BASE_STATISTICS_FOR_MICROARRAY.out.stats
+    stats                           = COMPUTE_GLOBAL_STATISTICS.out.stats
+    platform_stats                  = COMPUTE_PLATFORM_STATISTICS.out.stats
 
 }

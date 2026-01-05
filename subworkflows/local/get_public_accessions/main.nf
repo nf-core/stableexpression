@@ -74,8 +74,8 @@ workflow GET_PUBLIC_ACCESSIONS {
         // trick to avoid fetching accessions from GEO when the sampling quota is already exceeded
         ch_species = channel.of( species )
                         .combine( ch_sampling_quota )
-                        .filter { species, quota -> quota == "ok" }
-                        .map { species, quota -> species }
+                        .filter { species_name, quota -> quota == "ok" }
+                        .map { species_name, quota -> species_name }
 
         // getting GEO accessions given a species name and keywords
         // keywords can be an empty string

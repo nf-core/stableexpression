@@ -53,7 +53,7 @@ def quantile_normalise(df: pl.DataFrame, target_distribution: str):
     kwargs = dict(
         n_quantiles=N_QUANTILES, output_distribution=target_distribution, subsample=None
     )
-    return df.select(
+    return df.with_columns(
         pl.exclude(config.GENE_ID_COLNAME).map_batches(
             lambda x: quantile_transform(x.to_frame(), **kwargs).flatten(),
             return_dtype=pl.Float64,
