@@ -8,13 +8,14 @@ import sys
 from pathlib import Path
 
 import config
-import pandas as pd
+import polars as pl
+from common import compute_log2, parse_count_table
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-CPM_NORM_SUFFIX = ".cpm.csv"
+OUTFILE_SUFFIX = ".cpm.parquet"
 
 WARNING_REASON_FILE = "warning_reason.txt"
 FAILURE_REASON_FILE = "failure_reason.txt"
@@ -35,14 +36,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def parse_counts(file: Path):
-    if file.suffix == ".csv":
-        return pd.read_csv(file, header=0, index_col=0)
-    else:  # .tsv
-        return pd.read_csv(file, header=0, sep="\t", index_col=0)
-
-
-def calculate_cpm(counts_df: pd.DataFrame):
+def calculate_cpm(df: pl.DataFrame) -> pl.DataFrame:
     """
     Calculate CPM (Counts Per Million) from raw count data.
 
@@ -57,20 +51,14 @@ def calculate_cpm(counts_df: pd.DataFrame):
         DataFrame with CPM values
     """
     # Calculate total counts per sample (column sums)
-    total_counts = counts_df.sum(axis=0)
+    sums = df.select(pl.exclude(config.GENE_ID_COLNAME).sum())
 
     # Calculate CPM: (count / total_counts) * 1,000,000
-    cpm_df = (counts_df / total_counts) * 1e6
-
-    return cpm_df
-
-
-def export_normalised_data(count_df: pd.DataFrame, count_file: Path):
-    """Export gene expression data to CSV."""
-    # replace .csv / .tsv by .tpm.csv
-    outfilename = ".".join(count_file.name.split(".")[:-1]) + CPM_NORM_SUFFIX
-    logger.info(f"Exporting CPM normalised counts to: {outfilename}")
-    count_df.to_csv(outfilename, index=True, header=True)
+    count_columns = df.select(pl.exclude(config.GENE_ID_COLNAME)).columns
+    return df.select(
+        [pl.col(config.GENE_ID_COLNAME)]
+        + [(pl.col(col) / sums[col][0] * 1e6).alias(col) for col in count_columns]
+    )
 
 
 #####################################################
@@ -86,14 +74,17 @@ def main():
     logger.info("Parsing data")
 
     try:
-        count_df = parse_counts(args.count_file)
-        count_df.index.name = config.GENE_ID_COLNAME
+        count_df = parse_count_table(args.count_file)
 
         logger.info(f"Normalising {args.count_file.name}")
-
         count_df = calculate_cpm(count_df)
 
-        export_normalised_data(count_df, args.count_file)
+        logger.info("Computing log2 values")
+        count_df = compute_log2(count_df)
+
+        outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
+        logger.info(f"Exporting TPM normalised counts to: {outfilename}")
+        count_df.write_parquet(outfilename)
 
     except Exception as e:
         logger.error(f"Error occurred while normalising data: {e}")

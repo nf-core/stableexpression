@@ -49,3 +49,13 @@ def parse_count_table(file: Path):
         pl.col(config.GENE_ID_COLNAME).cast(pl.String()),
         pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64()),
     )
+
+
+def compute_log2(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    Compute log2 values.
+    """
+    return df.select(
+        pl.col(config.GENE_ID_COLNAME),
+        (pl.exclude(config.GENE_ID_COLNAME) + 1).log(base=2),
+    )
