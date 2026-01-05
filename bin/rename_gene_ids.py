@@ -19,9 +19,7 @@ logger = logging.getLogger(__name__)
 # CONSTANTS
 ##################################################################
 
-RENAMED_FILE_SUFFIX = ".renamed.csv"
-METADATA_FILE_SUFFIX = ".metadata.csv"
-MAPPING_FILE_SUFFIX = ".mapping.csv"
+RENAMED_FILE_SUFFIX = ".renamed.parquet"
 
 WARNING_REASON_FILE = "warning_reason.txt"
 FAILURE_REASON_FILE = "failure_reason.txt"
@@ -214,8 +212,8 @@ def main():
         f.write(str(len(df)))
 
     logger.info("Writing output file")
-    outfile = args.count_file.with_name(args.count_file.stem + RENAMED_FILE_SUFFIX)
-    df.write_csv(outfile)
+    outfilename = args.count_file.with_suffix(RENAMED_FILE_SUFFIX).name
+    df.write_parquet(outfilename)
 
 
 if __name__ == "__main__":

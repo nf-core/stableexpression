@@ -15,7 +15,7 @@ process RENAME_GENE_IDS {
     path valid_gene_ids_file
 
     output:
-    tuple val(meta), path('*.renamed.csv'),                 optional: true,                                           emit: counts
+    tuple val(meta), path('*.renamed.parquet'),                 optional: true,                                           emit: counts
     tuple val(meta.dataset), path("failure_reason.txt"),    optional: true,                                           topic: renaming_failure_reason
     tuple val(meta.dataset), path("warning_reason.txt"),    optional: true,                                           topic: renaming_warning_reason
     tuple val(meta.dataset), env("NB_FINAL"), env("NB_MERGED"), env("NB_NOT_VALID"), env("NB_UNMAPPED"),              topic: id_mapping_stats
