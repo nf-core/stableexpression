@@ -10,8 +10,10 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = []
+                input[0] = [
+                    [ platform: 'all' ],
+                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                ]
                 """
             }
         }
@@ -30,8 +32,10 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = 'rnaseq'
+                input[0] = [
+                    [ platform: 'rnaseq' ],
+                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                ]
                 """
             }
         }

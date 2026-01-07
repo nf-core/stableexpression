@@ -4,5 +4,6 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
+  - conda-forge::python=3.13.5
   - conda-forge::requests==2.32.5
   - conda-forge::tenacity==9.1.2

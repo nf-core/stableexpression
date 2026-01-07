@@ -1,8 +1,6 @@
 include { MERGE_COUNTS as MERGE_PLATFORM_COUNTS         } from '../../../modules/local/merge_counts'
 include { MERGE_COUNTS as MERGE_ALL_COUNTS              } from '../../../modules/local/merge_counts'
 
-include { getWholeDatasetSize                           } from '../../../subworkflows/local/utils_nfcore_stableexpression_pipeline'
-
 /*
 ========================================================================================
     SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
@@ -23,27 +21,19 @@ workflow MERGE_DATA {
     // MERGE COUNTS FOR EACH PLATFORM SEPARATELY
     // -----------------------------------------------------------------
 
-    // RNASEQ
-    ch_normalised_rnaseq_counts = ch_normalised_counts.filter { meta, file -> meta.platform == "rnaseq" }
-    ch_whole_rnaseq_size        = getWholeDatasetSize ( ch_normalised_rnaseq_counts )
 
-    // MICROARRAY
+    ch_normalised_rnaseq_counts = ch_normalised_counts.filter { meta, file -> meta.platform == "rnaseq" }
     ch_normalised_microarray_counts = ch_normalised_counts.filter { meta, file -> meta.platform == "microarray" }
-    ch_whole_microarray_size        = getWholeDatasetSize ( ch_normalised_microarray_counts )
 
     ch_collected_rnaseq_counts = ch_normalised_rnaseq_counts
                                     .map { meta, file -> file }
                                     .collect( sort: true )
-                                    .map { files -> [ files ] }
-                                    .combine( ch_whole_rnaseq_size )
-                                    .map { files, size -> [ [ platform: "rnaseq", dataset_size: size ], files ] }
+                                    .map { files -> [ [ platform: "rnaseq" ], files ] }
 
     ch_collected_microarray_counts = ch_normalised_microarray_counts
                                         .map { meta, file -> file }
                                         .collect( sort: true )
-                                        .map { files -> [ files ] }
-                                        .combine( ch_whole_microarray_size )
-                                        .map { files, size -> [ [ platform: "microarray", dataset_size: size ], files ] }
+                                        .map { files -> [ [ platform: "microarray" ], files ] }
 
     MERGE_PLATFORM_COUNTS (
         ch_collected_rnaseq_counts.concat( ch_collected_microarray_counts )
@@ -55,16 +45,10 @@ workflow MERGE_DATA {
     // MERGE ALL COUNTS
     // -----------------------------------------------------------------
 
-    ch_whole_size = ch_whole_rnaseq_size
-                    .mix(ch_whole_microarray_size)
-                    .reduce { rnaseq_size, microarray_size -> rnaseq_size + microarray_size }
-
     ch_collected_merged_counts = ch_platform_counts
                                     .map { meta, file -> file }
                                     .collect( sort: true )
-                                    .map { files -> [ files ] }
-                                    .combine( ch_whole_size )
-                                    .map { files, size -> [ [ platform: "all", dataset_size: size ], files ] }
+                                    .map { files -> [ [ platform: "all" ], files ] }
 
     MERGE_ALL_COUNTS( ch_collected_merged_counts )
 

@@ -3,23 +3,41 @@
         "content": [
             {
                 "0": [
-                    
+                    [
+                        [
+                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                        ],
+                        "skewness.txt:md5,3f2c6b786ec7344d8d21444cfd3714c5"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        [
+                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                        ],
+                        "ratio_zeros.txt:md5,2fc93fe393cf18725bbc6d575e3d2d89"
+                    ]
                 ],
                 "2": [
-                    
+                    [
+                        "COMPUTE_DATASET_STATISTICS",
+                        "python",
+                        "3.12.8"
+                    ]
                 ],
                 "3": [
-                    
+                    [
+                        "COMPUTE_DATASET_STATISTICS",
+                        "polars",
+                        "1.17.1"
+                    ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-04T11:55:04.60917467"
+        "timestamp": "2026-01-06T17:37:06.331244835"
     }
 }

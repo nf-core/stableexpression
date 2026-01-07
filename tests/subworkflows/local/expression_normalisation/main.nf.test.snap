@@ -10,7 +10,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.cpm.quant_norm.parquet:md5,a9143f3a40dfb90d839c44af73d16f44"
+                        "rnaseq.raw.cpm.quant_norm.parquet:md5,447d804d600b61f0bc86326d3e0972cc"
                     ],
                     [
                         {
@@ -19,7 +19,7 @@
                             "dataset": "microarray_normalised",
                             "platform": "microarray"
                         },
-                        "microarray.normalised.quant_norm.parquet:md5,b32fba01e39c2e54458f3b6d1b5fafc1"
+                        "microarray.normalised.quant_norm.parquet:md5,9c3aec01cdb7ac94b0c28acd711a12a0"
                     ]
                 ],
                 "counts": [
@@ -30,7 +30,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.cpm.quant_norm.parquet:md5,a9143f3a40dfb90d839c44af73d16f44"
+                        "rnaseq.raw.cpm.quant_norm.parquet:md5,447d804d600b61f0bc86326d3e0972cc"
                     ],
                     [
                         {
@@ -39,16 +39,16 @@
                             "dataset": "microarray_normalised",
                             "platform": "microarray"
                         },
-                        "microarray.normalised.quant_norm.parquet:md5,b32fba01e39c2e54458f3b6d1b5fafc1"
+                        "microarray.normalised.quant_norm.parquet:md5,9c3aec01cdb7ac94b0c28acd711a12a0"
                     ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-03T18:31:21.419202123"
+        "timestamp": "2026-01-06T17:50:09.532650251"
     },
     "No rnaseq normalisation": {
         "content": [
@@ -61,7 +61,7 @@
                             "dataset": "microarray_normalised",
                             "platform": "microarray"
                         },
-                        "microarray.normalised.quant_norm.parquet:md5,b32fba01e39c2e54458f3b6d1b5fafc1"
+                        "microarray.normalised.quant_norm.parquet:md5,9c3aec01cdb7ac94b0c28acd711a12a0"
                     ]
                 ],
                 "counts": [
@@ -72,16 +72,16 @@
                             "dataset": "microarray_normalised",
                             "platform": "microarray"
                         },
-                        "microarray.normalised.quant_norm.parquet:md5,b32fba01e39c2e54458f3b6d1b5fafc1"
+                        "microarray.normalised.quant_norm.parquet:md5,9c3aec01cdb7ac94b0c28acd711a12a0"
                     ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-03T18:34:48.109732612"
+        "timestamp": "2026-01-06T17:50:21.467295296"
     },
     "TPM Normalisation with gene length": {
         "content": [
@@ -94,7 +94,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.tpm.quant_norm.parquet:md5,0a12a61db30db8c70e609270d32bc33d"
+                        "rnaseq.raw.tpm.quant_norm.parquet:md5,f7e75c14dde78849897a89f6e2d6ef65"
                     ],
                     [
                         {
@@ -103,7 +103,7 @@
                             "dataset": "microarray_normalised",
                             "platform": "microarray"
                         },
-                        "microarray.normalised.quant_norm.parquet:md5,b32fba01e39c2e54458f3b6d1b5fafc1"
+                        "microarray.normalised.quant_norm.parquet:md5,9c3aec01cdb7ac94b0c28acd711a12a0"
                     ]
                 ],
                 "counts": [
@@ -114,7 +114,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.tpm.quant_norm.parquet:md5,0a12a61db30db8c70e609270d32bc33d"
+                        "rnaseq.raw.tpm.quant_norm.parquet:md5,f7e75c14dde78849897a89f6e2d6ef65"
                     ],
                     [
                         {
@@ -123,7 +123,7 @@
                             "dataset": "microarray_normalised",
                             "platform": "microarray"
                         },
-                        "microarray.normalised.quant_norm.parquet:md5,b32fba01e39c2e54458f3b6d1b5fafc1"
+                        "microarray.normalised.quant_norm.parquet:md5,9c3aec01cdb7ac94b0c28acd711a12a0"
                     ]
                 ]
             }
@@ -132,7 +132,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T09:56:09.269591811"
+        "timestamp": "2026-01-06T17:49:56.051333397"
     },
     "TPM Normalisation": {
         "content": [
@@ -145,7 +145,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.tpm.quant_norm.parquet:md5,0a12a61db30db8c70e609270d32bc33d"
+                        "rnaseq.raw.tpm.quant_norm.parquet:md5,f7e75c14dde78849897a89f6e2d6ef65"
                     ],
                     [
                         {
@@ -154,7 +154,7 @@
                             "dataset": "microarray_normalised",
                             "platform": "microarray"
                         },
-                        "microarray.normalised.quant_norm.parquet:md5,b32fba01e39c2e54458f3b6d1b5fafc1"
+                        "microarray.normalised.quant_norm.parquet:md5,9c3aec01cdb7ac94b0c28acd711a12a0"
                     ]
                 ],
                 "counts": [
@@ -165,7 +165,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.tpm.quant_norm.parquet:md5,0a12a61db30db8c70e609270d32bc33d"
+                        "rnaseq.raw.tpm.quant_norm.parquet:md5,f7e75c14dde78849897a89f6e2d6ef65"
                     ],
                     [
                         {
@@ -174,15 +174,15 @@
                             "dataset": "microarray_normalised",
                             "platform": "microarray"
                         },
-                        "microarray.normalised.quant_norm.parquet:md5,b32fba01e39c2e54458f3b6d1b5fafc1"
+                        "microarray.normalised.quant_norm.parquet:md5,9c3aec01cdb7ac94b0c28acd711a12a0"
                     ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-03T18:31:12.441977406"
+        "timestamp": "2026-01-06T17:49:33.232295092"
     }
 }

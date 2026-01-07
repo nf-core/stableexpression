@@ -377,39 +377,18 @@ def augmentMetadata( ch_files ) {
             .map {
                 meta, file ->
                     def norm_state = getNthPartFromEnd(file.name, 3)
-                    if ( norm_state == 'raw' ) {
-                        normalised = false
-                    } else if ( norm_state == 'normalised' ) {
+                    def normalised = false
+                    if ( norm_state == 'normalised' ) {
                         normalised = true
+                    } else if ( norm_state == 'raw' ) {
+                        normalised = false
                     } else {
                         error("Invalid normalisation state: ${norm_state}")
                     }
 
-                    platform = getNthPartFromEnd(file.name, 4)
-                    new_meta = meta + [normalised: normalised, platform: platform]
+                    def platform = getNthPartFromEnd(file.name, 4)
+                    def new_meta = meta + [normalised: normalised, platform: platform]
                     [new_meta, file]
-            }
-}
-
-
-/*
-========================================================================================
-    FUNCTIONS FOR CALCULATING SIZE OF DATA
-========================================================================================
-*/
-
-def storeDatasetSize( ch_counts, nb_genes_key, nb_samples_key ) {
-    // adding nb genes and nb samples in the meta map under keys provided as parameters
-    return ch_counts
-            .map { meta, count_file ->
-                def header = count_file.withReader { reader -> reader.readLine() }
-                def columns = header.contains(',') ? header.split(',') :
-                              header.contains('\t') ? header.split('\t') :
-                              [header]
-                def content = count_file.splitCsv( header: false, skip: 1 )
-                meta[nb_genes_key] = content.size()
-                meta[nb_samples_key] = columns.size() - 1 // removing index column
-                [ meta, count_file ]
             }
 }
 
@@ -425,6 +404,7 @@ def checkCounts(ch_counts) {
     ch_counts.count().map { n ->
         if( n == 0 ) {
             // display a warning if no datasets are found
+            def msg_lst = []
             if ( !params.fetch_geo_accessions ) {
                 msg_lst = [
                     "Could not find any readily usable public dataset.",
@@ -443,17 +423,4 @@ def checkCounts(ch_counts) {
             error(msg)
         }
     }
-}
-
-
-def getWholeDatasetSize( ch_counts ) {
-    return ch_counts
-            .filter { meta, file ->
-                meta.nb_genes > 0 && meta.nb_samples > 0
-            }
-            .map { meta, file ->
-                meta.nb_genes * meta.nb_samples
-            }
-            .reduce { size_1, size_2 -> size_1 + size_2 }
-            .flatten()
 }

@@ -7,42 +7,40 @@
                     "python": "3.12.8"
                 },
                 "CLEAN_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COLLECT_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "python": "3.14.0",
+                    "python": "3.14.2",
                     "tqdm": "4.67.1"
                 },
                 "COLLECT_STATISTICS": {
                     "pandas": "2.3.3",
                     "python": "3.13.7"
                 },
-                "COMPUTE_BASE_STATISTICS": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "COMPUTE_BASE_STATISTICS_FOR_RNASEQ": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
                 "COMPUTE_DATASET_STATISTICS": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COMPUTE_GENE_TRANSCRIPT_LENGTHS": {
                     "pandas": "2.3.3",
                     "python": "3.13.7"
+                },
+                "COMPUTE_GLOBAL_STATISTICS": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
+                },
+                "COMPUTE_PLATFORM_STATISTICS": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COMPUTE_STABILITY_SCORES": {
                     "polars": "1.17.1",
                     "python": "3.12.8"
                 },
                 "COMPUTE_TPM": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "DASH_APP": {
                     "python": "3.13.8",
@@ -55,12 +53,20 @@
                     "pyarrow": "22.0.0",
                     "scipy": "1.16.3"
                 },
+                "DETECT_RARE_GENES": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
+                },
                 "DOWNLOAD_ENSEMBL_ANNOTATION": {
                     "bs4": "4.14.2",
                     "pandas": "2.3.3",
                     "python": "3.14.0",
                     "requests": "2.32.5",
                     "tqdm": "4.67.1"
+                },
+                "FILTER_AND_RENAME_GENES": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "GET_CANDIDATE_GENES": {
                     "polars": "1.17.1",
@@ -76,7 +82,7 @@
                     "python": "3.14.0",
                     "tqdm": "4.67.1"
                 },
-                "MERGE_RNASEQ_COUNTS": {
+                "MERGE_PLATFORM_COUNTS": {
                     "polars": "1.34.0",
                     "python": "3.14.0",
                     "tqdm": "4.67.1"
@@ -86,19 +92,13 @@
                     "python": "3.13.7"
                 },
                 "QUANTILE_NORMALISATION": {
-                    "pandas": "2.2.3",
-                    "pyarrow": "19.0.0",
-                    "python": "3.12.8",
-                    "scikit-learn": "1.6.1"
+                    "polars": "1.36.1",
+                    "python": "3.14.2",
+                    "scikit-learn": "1.8.0"
                 },
                 "REMOVE_SAMPLES_NOT_VALID": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
-                },
-                "RENAME_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.0dev"
@@ -142,16 +142,13 @@
                 "errors",
                 "idmapping",
                 "idmapping/collected_gene_ids",
-                "idmapping/collected_gene_ids/all_gene_ids.txt",
+                "idmapping/collected_gene_ids/gene_id_occurrences.csv",
+                "idmapping/collected_gene_ids/unique_gene_ids.txt",
                 "idmapping/global_gene_id_mapping.csv",
                 "idmapping/global_gene_metadata.csv",
                 "idmapping/gprofiler",
                 "idmapping/gprofiler/gene_metadata.csv",
                 "idmapping/gprofiler/mapped_gene_ids.csv",
-                "idmapping/original_gene_ids.txt",
-                "idmapping/renamed",
-                "idmapping/renamed/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.csv",
-                "idmapping/renamed/warning_reason.txt",
                 "idmapping/whole_gene_id_mapping.csv",
                 "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
@@ -172,6 +169,7 @@
                 "multiqc/multiqc_data/multiqc_skewness.txt",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_total_gene_id_occurrence_quantiles.txt",
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/pdf",
                 "multiqc/multiqc_plots/pdf/expression_distributions_most_stable_genes.pdf",
@@ -182,6 +180,7 @@
                 "multiqc/multiqc_plots/pdf/ratio_zeros.pdf",
                 "multiqc/multiqc_plots/pdf/renaming_warning_reasons.pdf",
                 "multiqc/multiqc_plots/pdf/skewness.pdf",
+                "multiqc/multiqc_plots/pdf/total_gene_id_occurrence_quantiles.pdf",
                 "multiqc/multiqc_plots/png",
                 "multiqc/multiqc_plots/png/expression_distributions_most_stable_genes.png",
                 "multiqc/multiqc_plots/png/gene_statistics.png",
@@ -191,6 +190,7 @@
                 "multiqc/multiqc_plots/png/ratio_zeros.png",
                 "multiqc/multiqc_plots/png/renaming_warning_reasons.png",
                 "multiqc/multiqc_plots/png/skewness.png",
+                "multiqc/multiqc_plots/png/total_gene_id_occurrence_quantiles.png",
                 "multiqc/multiqc_plots/svg",
                 "multiqc/multiqc_plots/svg/expression_distributions_most_stable_genes.svg",
                 "multiqc/multiqc_plots/svg/gene_statistics.svg",
@@ -200,6 +200,7 @@
                 "multiqc/multiqc_plots/svg/ratio_zeros.svg",
                 "multiqc/multiqc_plots/svg/renaming_warning_reasons.svg",
                 "multiqc/multiqc_plots/svg/skewness.svg",
+                "multiqc/multiqc_plots/svg/total_gene_id_occurrence_quantiles.svg",
                 "multiqc/multiqc_report.html",
                 "multiqc/versions.yml",
                 "normalised",
@@ -207,7 +208,7 @@
                 "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/quantile_normalised",
                 "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/quantile_normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/tpm",
-                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/tpm/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.filtered.tpm.csv",
+                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/tpm/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "statistics",
@@ -218,28 +219,25 @@
                 "warnings/renaming_warning_reasons.tsv"
             ],
             [
-                "all_genes_summary.csv:md5,54b96cbfb5e464ec086c7e1308701e02",
-                "most_stable_genes_summary.csv:md5,54b96cbfb5e464ec086c7e1308701e02",
-                "most_stable_genes_transposed_counts_filtered.csv:md5,af21e36c540965846b73245678b74f36",
+                "all_genes_summary.csv:md5,09c1c8807fbb69ae7baf5c4a7772c8d2",
+                "most_stable_genes_summary.csv:md5,09c1c8807fbb69ae7baf5c4a7772c8d2",
+                "most_stable_genes_transposed_counts_filtered.csv:md5,68fa221be589ee1a5970ae1461a743ac",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_genes_summary.csv:md5,54b96cbfb5e464ec086c7e1308701e02",
+                "all_genes_summary.csv:md5,09c1c8807fbb69ae7baf5c4a7772c8d2",
                 "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
-                "environment.yml:md5,4d32e46adf0ff32a3c65a24b68483fa7",
-                "all_gene_ids.txt:md5,6b2ece983fd9da133e719914216852b0",
+                "environment.yml:md5,f9b192ef98a67f2084ad2fed6da01bc1",
+                "gene_id_occurrences.csv:md5,72c8f7ffe8413be06419c10ae66c35e5",
+                "unique_gene_ids.txt:md5,6b2ece983fd9da133e719914216852b0",
                 "global_gene_id_mapping.csv:md5,78934d2ac5fe7d863f114c5703f57a06",
                 "global_gene_metadata.csv:md5,bd76860b422e45eca7cd583212a977d2",
                 "gene_metadata.csv:md5,bd76860b422e45eca7cd583212a977d2",
                 "mapped_gene_ids.csv:md5,78934d2ac5fe7d863f114c5703f57a06",
-                "original_gene_ids.txt:md5,0c6b71845bdf783b426294fa7993da94",
-                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.csv:md5,c855d1848a74842378c812556ddd2e1f",
-                "warning_reason.txt:md5,b13d82afc1a3752e78dd796fb1c53d52",
                 "whole_gene_id_mapping.csv:md5,78934d2ac5fe7d863f114c5703f57a06",
                 "whole_gene_metadata.csv:md5,bd76860b422e45eca7cd583212a977d2",
                 "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
-                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.filtered.tpm.csv:md5,5b517b410a643c4e6fbffb55dc1cd1a7",
-                "id_mapping_stats.csv:md5,14cdb53685228e5e5393cf9404856b41",
-                "ratio_zeros.csv:md5,5a667d505cbd2cc7057ee47b70536c2e",
-                "skewness.csv:md5,582683980eadf84d32853a21f9dce230",
+                "id_mapping_stats.csv:md5,b47d6ebd34e3fb11a40665b0a38db3da",
+                "ratio_zeros.csv:md5,2272ebcf58ac8bb283d238f87d508b96",
+                "skewness.csv:md5,2ef6f5a2aa5834110fda06e705adcbf8",
                 "renaming_warning_reasons.tsv:md5,0a11a59b5b547a39ab7a0e4dac622173"
             ]
         ],
@@ -247,7 +245,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2026-01-03T11:26:35.453920775"
+        "timestamp": "2026-01-13T13:10:38.553975658"
     },
     "-profile test_eatlas_only_with_keywords": {
         "content": [
@@ -257,42 +255,40 @@
                     "python": "3.12.8"
                 },
                 "CLEAN_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COLLECT_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "python": "3.14.0",
+                    "python": "3.14.2",
                     "tqdm": "4.67.1"
                 },
                 "COLLECT_STATISTICS": {
                     "pandas": "2.3.3",
                     "python": "3.13.7"
                 },
-                "COMPUTE_BASE_STATISTICS": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "COMPUTE_BASE_STATISTICS_FOR_RNASEQ": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
                 "COMPUTE_DATASET_STATISTICS": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COMPUTE_GENE_TRANSCRIPT_LENGTHS": {
                     "pandas": "2.3.3",
                     "python": "3.13.7"
+                },
+                "COMPUTE_GLOBAL_STATISTICS": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
+                },
+                "COMPUTE_PLATFORM_STATISTICS": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COMPUTE_STABILITY_SCORES": {
                     "polars": "1.17.1",
                     "python": "3.12.8"
                 },
                 "COMPUTE_TPM": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "DASH_APP": {
                     "python": "3.13.8",
@@ -304,6 +300,10 @@
                     "pandas": "2.3.3",
                     "pyarrow": "22.0.0",
                     "scipy": "1.16.3"
+                },
+                "DETECT_RARE_GENES": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "DOWNLOAD_ENSEMBL_ANNOTATION": {
                     "bs4": "4.14.2",
@@ -321,6 +321,10 @@
                     "pyyaml": "6.0.2",
                     "requests": "2.32.4"
                 },
+                "FILTER_AND_RENAME_GENES": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
+                },
                 "GET_CANDIDATE_GENES": {
                     "polars": "1.17.1",
                     "python": "3.12.8"
@@ -335,7 +339,7 @@
                     "python": "3.14.0",
                     "tqdm": "4.67.1"
                 },
-                "MERGE_RNASEQ_COUNTS": {
+                "MERGE_PLATFORM_COUNTS": {
                     "polars": "1.34.0",
                     "python": "3.14.0",
                     "tqdm": "4.67.1"
@@ -345,15 +349,13 @@
                     "python": "3.13.7"
                 },
                 "QUANTILE_NORMALISATION": {
-                    "pandas": "2.2.3",
-                    "pyarrow": "19.0.0",
-                    "python": "3.12.8",
-                    "scikit-learn": "1.6.1"
+                    "polars": "1.36.1",
+                    "python": "3.14.2",
+                    "scikit-learn": "1.8.0"
                 },
-                "RENAME_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
+                "REMOVE_SAMPLES_NOT_VALID": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.0dev"
@@ -397,15 +399,13 @@
                 "errors",
                 "idmapping",
                 "idmapping/collected_gene_ids",
-                "idmapping/collected_gene_ids/all_gene_ids.txt",
+                "idmapping/collected_gene_ids/gene_id_occurrences.csv",
+                "idmapping/collected_gene_ids/unique_gene_ids.txt",
                 "idmapping/global_gene_id_mapping.csv",
                 "idmapping/global_gene_metadata.csv",
                 "idmapping/gprofiler",
                 "idmapping/gprofiler/gene_metadata.csv",
                 "idmapping/gprofiler/mapped_gene_ids.csv",
-                "idmapping/original_gene_ids.txt",
-                "idmapping/renamed",
-                "idmapping/renamed/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
                 "idmapping/whole_gene_id_mapping.csv",
                 "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
@@ -427,6 +427,7 @@
                 "multiqc/multiqc_data/multiqc_skewness.txt",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_total_gene_id_occurrence_quantiles.txt",
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/pdf",
                 "multiqc/multiqc_plots/pdf/eatlas_all_experiments_metadata.pdf",
@@ -438,6 +439,7 @@
                 "multiqc/multiqc_plots/pdf/ranked_most_stable_genes_summary.pdf",
                 "multiqc/multiqc_plots/pdf/ratio_zeros.pdf",
                 "multiqc/multiqc_plots/pdf/skewness.pdf",
+                "multiqc/multiqc_plots/pdf/total_gene_id_occurrence_quantiles.pdf",
                 "multiqc/multiqc_plots/png",
                 "multiqc/multiqc_plots/png/eatlas_all_experiments_metadata.png",
                 "multiqc/multiqc_plots/png/eatlas_selected_experiments_metadata.png",
@@ -448,6 +450,7 @@
                 "multiqc/multiqc_plots/png/ranked_most_stable_genes_summary.png",
                 "multiqc/multiqc_plots/png/ratio_zeros.png",
                 "multiqc/multiqc_plots/png/skewness.png",
+                "multiqc/multiqc_plots/png/total_gene_id_occurrence_quantiles.png",
                 "multiqc/multiqc_plots/svg",
                 "multiqc/multiqc_plots/svg/eatlas_all_experiments_metadata.svg",
                 "multiqc/multiqc_plots/svg/eatlas_selected_experiments_metadata.svg",
@@ -458,14 +461,15 @@
                 "multiqc/multiqc_plots/svg/ranked_most_stable_genes_summary.svg",
                 "multiqc/multiqc_plots/svg/ratio_zeros.svg",
                 "multiqc/multiqc_plots/svg/skewness.svg",
+                "multiqc/multiqc_plots/svg/total_gene_id_occurrence_quantiles.svg",
                 "multiqc/multiqc_report.html",
                 "multiqc/versions.yml",
                 "normalised",
                 "normalised/E_MTAB_8187_rnaseq",
                 "normalised/E_MTAB_8187_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_8187_rnaseq/quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_MTAB_8187_rnaseq/quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_MTAB_8187_rnaseq/tpm",
-                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -484,37 +488,35 @@
                 "warnings"
             ],
             [
-                "all_genes_summary.csv:md5,32be3aeed5cd2715847ccc2fd45c09a0",
-                "most_stable_genes_summary.csv:md5,2e34161e2beb2f1e0921dbf6c0ce55ba",
-                "most_stable_genes_transposed_counts_filtered.csv:md5,5083c04020d1c504c86689e14f731ef7",
+                "all_genes_summary.csv:md5,829fd6221705fc1588a11bfdb1a37210",
+                "most_stable_genes_summary.csv:md5,73cbb4d6462e01ed7778f076726613fd",
+                "most_stable_genes_transposed_counts_filtered.csv:md5,4f50fafaa96ffd7a7b0d98d9c8d6beb4",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_genes_summary.csv:md5,32be3aeed5cd2715847ccc2fd45c09a0",
+                "all_genes_summary.csv:md5,829fd6221705fc1588a11bfdb1a37210",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
-                "environment.yml:md5,3c87bfa06bbb068bcfb6ed4ebc608949",
-                "all_gene_ids.txt:md5,ba79f5609df755c0f75de41357319c84",
+                "environment.yml:md5,f9b192ef98a67f2084ad2fed6da01bc1",
+                "gene_id_occurrences.csv:md5,b3ee7b1c575f83d247c5bce88382fb2b",
+                "unique_gene_ids.txt:md5,ba79f5609df755c0f75de41357319c84",
                 "global_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "mapped_gene_ids.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "original_gene_ids.txt:md5,60a0406c1d56424cfc394c438de50c99",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,ed1600e42df05fc885a16a66b77324a1",
                 "whole_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "whole_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,b407990bb10106de943f9e93cda6323e",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1",
-                "id_mapping_stats.csv:md5,6189d2a346cce55f182e00769e3fea5f",
-                "ratio_zeros.csv:md5,d3b518709a097d9e41a05142b524f03c",
-                "skewness.csv:md5,b38aabc94d60d93b979c3cef3a922299"
+                "id_mapping_stats.csv:md5,17ccaa8e70c67c7d0de4ec3c630c2e5b",
+                "ratio_zeros.csv:md5,32889cf6de2af6413c42b8810a99a2df",
+                "skewness.csv:md5,178449bbd2361aa1e804e3f18e092ef1"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:25:51.249379198"
+        "timestamp": "2026-01-13T13:14:45.841673917"
     },
     "-profile test_included_and_excluded_accessions": {
         "content": [
@@ -524,42 +526,40 @@
                     "python": "3.12.8"
                 },
                 "CLEAN_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COLLECT_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "python": "3.14.0",
+                    "python": "3.14.2",
                     "tqdm": "4.67.1"
                 },
                 "COLLECT_STATISTICS": {
                     "pandas": "2.3.3",
                     "python": "3.13.7"
                 },
-                "COMPUTE_BASE_STATISTICS": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "COMPUTE_BASE_STATISTICS_FOR_RNASEQ": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
                 "COMPUTE_DATASET_STATISTICS": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COMPUTE_GENE_TRANSCRIPT_LENGTHS": {
                     "pandas": "2.3.3",
                     "python": "3.13.7"
+                },
+                "COMPUTE_GLOBAL_STATISTICS": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
+                },
+                "COMPUTE_PLATFORM_STATISTICS": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COMPUTE_STABILITY_SCORES": {
                     "polars": "1.17.1",
                     "python": "3.12.8"
                 },
                 "COMPUTE_TPM": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "DASH_APP": {
                     "python": "3.13.8",
@@ -571,6 +571,10 @@
                     "pandas": "2.3.3",
                     "pyarrow": "22.0.0",
                     "scipy": "1.16.3"
+                },
+                "DETECT_RARE_GENES": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "DOWNLOAD_ENSEMBL_ANNOTATION": {
                     "bs4": "4.14.2",
@@ -588,6 +592,10 @@
                     "pyyaml": "6.0.2",
                     "requests": "2.32.4"
                 },
+                "FILTER_AND_RENAME_GENES": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
+                },
                 "GET_CANDIDATE_GENES": {
                     "polars": "1.17.1",
                     "python": "3.12.8"
@@ -602,7 +610,7 @@
                     "python": "3.14.0",
                     "tqdm": "4.67.1"
                 },
-                "MERGE_RNASEQ_COUNTS": {
+                "MERGE_PLATFORM_COUNTS": {
                     "polars": "1.34.0",
                     "python": "3.14.0",
                     "tqdm": "4.67.1"
@@ -612,15 +620,13 @@
                     "python": "3.13.7"
                 },
                 "QUANTILE_NORMALISATION": {
-                    "pandas": "2.2.3",
-                    "pyarrow": "19.0.0",
-                    "python": "3.12.8",
-                    "scikit-learn": "1.6.1"
+                    "polars": "1.36.1",
+                    "python": "3.14.2",
+                    "scikit-learn": "1.8.0"
                 },
-                "RENAME_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
+                "REMOVE_SAMPLES_NOT_VALID": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.0dev"
@@ -666,21 +672,13 @@
                 "errors/renaming_failure_reasons.tsv",
                 "idmapping",
                 "idmapping/collected_gene_ids",
-                "idmapping/collected_gene_ids/all_gene_ids.txt",
+                "idmapping/collected_gene_ids/gene_id_occurrences.csv",
+                "idmapping/collected_gene_ids/unique_gene_ids.txt",
                 "idmapping/global_gene_id_mapping.csv",
                 "idmapping/global_gene_metadata.csv",
                 "idmapping/gprofiler",
                 "idmapping/gprofiler/gene_metadata.csv",
                 "idmapping/gprofiler/mapped_gene_ids.csv",
-                "idmapping/original_gene_ids.txt",
-                "idmapping/renamed",
-                "idmapping/renamed/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
-                "idmapping/renamed/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
-                "idmapping/renamed/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
-                "idmapping/renamed/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
-                "idmapping/renamed/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
-                "idmapping/renamed/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
-                "idmapping/renamed/failure_reason.txt",
                 "idmapping/whole_gene_id_mapping.csv",
                 "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
@@ -704,6 +702,7 @@
                 "multiqc/multiqc_data/multiqc_skewness.txt",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_total_gene_id_occurrence_quantiles.txt",
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/pdf",
                 "multiqc/multiqc_plots/pdf/eatlas_all_experiments_metadata.pdf",
@@ -717,6 +716,7 @@
                 "multiqc/multiqc_plots/pdf/ratio_zeros.pdf",
                 "multiqc/multiqc_plots/pdf/renaming_failure_reasons.pdf",
                 "multiqc/multiqc_plots/pdf/skewness.pdf",
+                "multiqc/multiqc_plots/pdf/total_gene_id_occurrence_quantiles.pdf",
                 "multiqc/multiqc_plots/png",
                 "multiqc/multiqc_plots/png/eatlas_all_experiments_metadata.png",
                 "multiqc/multiqc_plots/png/eatlas_failure_reasons.png",
@@ -729,6 +729,7 @@
                 "multiqc/multiqc_plots/png/ratio_zeros.png",
                 "multiqc/multiqc_plots/png/renaming_failure_reasons.png",
                 "multiqc/multiqc_plots/png/skewness.png",
+                "multiqc/multiqc_plots/png/total_gene_id_occurrence_quantiles.png",
                 "multiqc/multiqc_plots/svg",
                 "multiqc/multiqc_plots/svg/eatlas_all_experiments_metadata.svg",
                 "multiqc/multiqc_plots/svg/eatlas_failure_reasons.svg",
@@ -741,39 +742,40 @@
                 "multiqc/multiqc_plots/svg/ratio_zeros.svg",
                 "multiqc/multiqc_plots/svg/renaming_failure_reasons.svg",
                 "multiqc/multiqc_plots/svg/skewness.svg",
+                "multiqc/multiqc_plots/svg/total_gene_id_occurrence_quantiles.svg",
                 "multiqc/multiqc_report.html",
                 "multiqc/versions.yml",
                 "normalised",
                 "normalised/E_GEOD_61690_rnaseq",
                 "normalised/E_GEOD_61690_rnaseq/quantile_normalised",
-                "normalised/E_GEOD_61690_rnaseq/quantile_normalised/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_GEOD_61690_rnaseq/quantile_normalised/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_GEOD_61690_rnaseq/tpm",
-                "normalised/E_GEOD_61690_rnaseq/tpm/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_GEOD_61690_rnaseq/tpm/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "normalised/E_GEOD_77826_rnaseq",
                 "normalised/E_GEOD_77826_rnaseq/quantile_normalised",
-                "normalised/E_GEOD_77826_rnaseq/quantile_normalised/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_GEOD_77826_rnaseq/quantile_normalised/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_GEOD_77826_rnaseq/tpm",
-                "normalised/E_GEOD_77826_rnaseq/tpm/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_GEOD_77826_rnaseq/tpm/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "normalised/E_MTAB_5038_rnaseq",
                 "normalised/E_MTAB_5038_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_5038_rnaseq/quantile_normalised/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_MTAB_5038_rnaseq/quantile_normalised/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_MTAB_5038_rnaseq/tpm",
-                "normalised/E_MTAB_5038_rnaseq/tpm/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_MTAB_5038_rnaseq/tpm/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "normalised/E_MTAB_5215_rnaseq",
                 "normalised/E_MTAB_5215_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_5215_rnaseq/quantile_normalised/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_MTAB_5215_rnaseq/quantile_normalised/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_MTAB_5215_rnaseq/tpm",
-                "normalised/E_MTAB_5215_rnaseq/tpm/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_MTAB_5215_rnaseq/tpm/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "normalised/E_MTAB_552_rnaseq",
                 "normalised/E_MTAB_552_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_552_rnaseq/quantile_normalised/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_MTAB_552_rnaseq/quantile_normalised/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_MTAB_552_rnaseq/tpm",
-                "normalised/E_MTAB_552_rnaseq/tpm/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_MTAB_552_rnaseq/tpm/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "normalised/E_MTAB_7711_rnaseq",
                 "normalised/E_MTAB_7711_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_7711_rnaseq/quantile_normalised/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_MTAB_7711_rnaseq/quantile_normalised/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_MTAB_7711_rnaseq/tpm",
-                "normalised/E_MTAB_7711_rnaseq/tpm/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_MTAB_7711_rnaseq/tpm/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -805,37 +807,24 @@
                 "warnings"
             ],
             [
-                "all_genes_summary.csv:md5,22e424fe9e669c8c38997f1f44fc43ac",
-                "most_stable_genes_summary.csv:md5,049a1fae30bafa22cd91fa906bb33164",
-                "most_stable_genes_transposed_counts_filtered.csv:md5,7f70c275cedb0ec9ca9775b14c051105",
+                "all_genes_summary.csv:md5,b8661916743026427c8df986722c38ea",
+                "most_stable_genes_summary.csv:md5,e281330972fdc9cce06be4e079af8913",
+                "most_stable_genes_transposed_counts_filtered.csv:md5,be29a5a60aa6785bcfe06d93cef0cdf8",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_genes_summary.csv:md5,22e424fe9e669c8c38997f1f44fc43ac",
+                "all_genes_summary.csv:md5,b8661916743026427c8df986722c38ea",
                 "whole_design.csv:md5,cc24405dce8d22b93b9999a2287113ef",
-                "environment.yml:md5,3c87bfa06bbb068bcfb6ed4ebc608949",
+                "environment.yml:md5,f9b192ef98a67f2084ad2fed6da01bc1",
                 "eatlas_failure_reasons.csv:md5,2a8cd0ed795e82647d19c484a79acde6",
-                "renaming_failure_reasons.tsv:md5,3d83b7001eb0554a7e988f770f06d2b1",
-                "all_gene_ids.txt:md5,e9681582a09fe58f5258977db1d9da3f",
+                "renaming_failure_reasons.tsv:md5,af783264770a861c263480141fdd8bf6",
+                "gene_id_occurrences.csv:md5,5f07f7504156cf5dd6db26f230eb73a2",
+                "unique_gene_ids.txt:md5,e9681582a09fe58f5258977db1d9da3f",
                 "global_gene_id_mapping.csv:md5,a86823539deb80c0aa44378d3078969d",
                 "global_gene_metadata.csv:md5,e33e0ed63a3dec26bc95fe422f02844c",
                 "gene_metadata.csv:md5,e33e0ed63a3dec26bc95fe422f02844c",
                 "mapped_gene_ids.csv:md5,a86823539deb80c0aa44378d3078969d",
-                "original_gene_ids.txt:md5,ce844044e326975477db11703390d406",
-                "E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,dd3367748f4d9b8f92daf0d3dd2fb141",
-                "E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,9b143e768316f992efe1762359bcb3a9",
-                "E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,e5e5bf37be6c1689b9be6579d18e7eba",
-                "E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,e4b3b8b84f5a2ea80d9efda6a8e5a271",
-                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,b243dfc62677733049d4c579f265d016",
-                "E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,2e4aa7a16e060ee5dd4092d8419913cb",
-                "failure_reason.txt:md5,32e95a7ef5c9e4d026676aadcba8e8b8",
                 "whole_gene_id_mapping.csv:md5,a86823539deb80c0aa44378d3078969d",
                 "whole_gene_metadata.csv:md5,e33e0ed63a3dec26bc95fe422f02844c",
                 "whole_design.csv:md5,cc24405dce8d22b93b9999a2287113ef",
-                "E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,b1f6d3392501f1670c0afed437c9d6c2",
-                "E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,b736359148994197d258de62585fa6ff",
-                "E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,856f32fa3c5a3a92578474de586e08e0",
-                "E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,c235eed546c50a6b335e45bd238de940",
-                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,256158add9a0ee0cfcc800104dcaeeae",
-                "E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,8731c38eeb16bbbb6fb87f5a80665efd",
                 "accessions.txt:md5,e38a0aaf5191ba5f94cb7a96b8d30aa7",
                 "E_GEOD_61690_rnaseq.design.csv:md5,ba807caf74e0b55f5c3fe23810a89560",
                 "E_GEOD_61690_rnaseq.rnaseq.raw.counts.csv:md5,2e3f1a125b3d41d622e2d24447620eb3",
@@ -852,16 +841,16 @@
                 "E_MTAB_7711_rnaseq.design.csv:md5,3e7748b54a0c25c008d9bd2ddbf1bf00",
                 "E_MTAB_7711_rnaseq.rnaseq.raw.counts.csv:md5,3c02cf432c29d3751c978439539df388",
                 "failure_reason.txt:md5,bf97c58555bcb575f0e36df513e1e4c4",
-                "id_mapping_stats.csv:md5,61a42a2fe5ca0ace6ced97dfa9082e97",
-                "ratio_zeros.csv:md5,febc5ccc4635c814492b2234cbb167f1",
-                "skewness.csv:md5,0b7016ec048e578addf7bb669f405b67"
+                "id_mapping_stats.csv:md5,ca5e05936cbc8a1e8ea7c942752c883a",
+                "ratio_zeros.csv:md5,b02e3ef082c377aa69dafb8dc894f754",
+                "skewness.csv:md5,b7bf553b6c85f5d09612fe2630c06aa9"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:32:33.899496741"
+        "timestamp": "2026-01-13T13:18:59.960782988"
     },
     "-profile test_skip_id_mapping": {
         "content": [
@@ -896,12 +885,12 @@
                 "normalised",
                 "normalised/microarray.normalised",
                 "normalised/microarray.normalised/quantile_normalised",
-                "normalised/microarray.normalised/quantile_normalised/microarray.normalised.quant_norm.parquet",
+                "normalised/microarray.normalised/quantile_normalised/microarray.normalised.filtered.quant_norm.parquet",
                 "normalised/rnaseq.raw",
                 "normalised/rnaseq.raw/quantile_normalised",
-                "normalised/rnaseq.raw/quantile_normalised/rnaseq.raw.tpm.quant_norm.parquet",
+                "normalised/rnaseq.raw/quantile_normalised/rnaseq.raw.filtered.tpm.quant_norm.parquet",
                 "normalised/rnaseq.raw/tpm",
-                "normalised/rnaseq.raw/tpm/rnaseq.raw.tpm.csv",
+                "normalised/rnaseq.raw/tpm/rnaseq.raw.filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "statistics",
@@ -911,16 +900,15 @@
             ],
             [
                 "whole_design.csv:md5,70d6c2673e619ca52d2774fb3e368382",
-                "rnaseq.raw.tpm.csv:md5,3938c48a7d3e5b33de0d16db7e786c78",
-                "ratio_zeros.csv:md5,d206e45c16e6bd13de75ea6d20bbd30d",
-                "skewness.csv:md5,9917b39dfe5ee6e680fa1783f8a096c4"
+                "ratio_zeros.csv:md5,3d3fca62a7d1067f0ae0980c8ff570b9",
+                "skewness.csv:md5,3380ed4915bdbb1be1e5354c6cd99e8c"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:26:45.717138449"
+        "timestamp": "2026-01-13T13:15:27.393976699"
     },
     "-profile test": {
         "content": [
@@ -963,16 +951,13 @@
                 "geo",
                 "idmapping",
                 "idmapping/collected_gene_ids",
-                "idmapping/collected_gene_ids/all_gene_ids.txt",
+                "idmapping/collected_gene_ids/gene_id_occurrences.csv",
+                "idmapping/collected_gene_ids/unique_gene_ids.txt",
                 "idmapping/global_gene_id_mapping.csv",
                 "idmapping/global_gene_metadata.csv",
                 "idmapping/gprofiler",
                 "idmapping/gprofiler/gene_metadata.csv",
                 "idmapping/gprofiler/mapped_gene_ids.csv",
-                "idmapping/original_gene_ids.txt",
-                "idmapping/renamed",
-                "idmapping/renamed/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
-                "idmapping/renamed/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.csv",
                 "idmapping/whole_gene_id_mapping.csv",
                 "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
@@ -998,6 +983,7 @@
                 "multiqc/multiqc_data/multiqc_skewness.txt",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_total_gene_id_occurrence_quantiles.txt",
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/pdf",
                 "multiqc/multiqc_plots/pdf/eatlas_all_experiments_metadata.pdf",
@@ -1013,6 +999,7 @@
                 "multiqc/multiqc_plots/pdf/ranked_most_stable_genes_summary.pdf",
                 "multiqc/multiqc_plots/pdf/ratio_zeros.pdf",
                 "multiqc/multiqc_plots/pdf/skewness.pdf",
+                "multiqc/multiqc_plots/pdf/total_gene_id_occurrence_quantiles.pdf",
                 "multiqc/multiqc_plots/png",
                 "multiqc/multiqc_plots/png/eatlas_all_experiments_metadata.png",
                 "multiqc/multiqc_plots/png/eatlas_selected_experiments_metadata.png",
@@ -1027,6 +1014,7 @@
                 "multiqc/multiqc_plots/png/ranked_most_stable_genes_summary.png",
                 "multiqc/multiqc_plots/png/ratio_zeros.png",
                 "multiqc/multiqc_plots/png/skewness.png",
+                "multiqc/multiqc_plots/png/total_gene_id_occurrence_quantiles.png",
                 "multiqc/multiqc_plots/svg",
                 "multiqc/multiqc_plots/svg/eatlas_all_experiments_metadata.svg",
                 "multiqc/multiqc_plots/svg/eatlas_selected_experiments_metadata.svg",
@@ -1041,6 +1029,7 @@
                 "multiqc/multiqc_plots/svg/ranked_most_stable_genes_summary.svg",
                 "multiqc/multiqc_plots/svg/ratio_zeros.svg",
                 "multiqc/multiqc_plots/svg/skewness.svg",
+                "multiqc/multiqc_plots/svg/total_gene_id_occurrence_quantiles.svg",
                 "multiqc/multiqc_report.html",
                 "multiqc/versions.yml",
                 "normalised",
@@ -1048,12 +1037,12 @@
                 "normalised/E_MTAB_8187_rnaseq/quantile_normalised",
                 "normalised/E_MTAB_8187_rnaseq/quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_MTAB_8187_rnaseq/tpm",
-                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.csv",
+                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "normalised/beta_vulgaris.rnaseq.raw.counts",
                 "normalised/beta_vulgaris.rnaseq.raw.counts/quantile_normalised",
                 "normalised/beta_vulgaris.rnaseq.raw.counts/quantile_normalised/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/beta_vulgaris.rnaseq.raw.counts/tpm",
-                "normalised/beta_vulgaris.rnaseq.raw.counts/tpm/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.csv",
+                "normalised/beta_vulgaris.rnaseq.raw.counts/tpm/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -1081,34 +1070,30 @@
                 "warnings/geo_warning_reasons.csv"
             ],
             [
-                "all_genes_summary.csv:md5,ec52af6957845539143919c0e6eec89c",
-                "most_stable_genes_summary.csv:md5,81d590008d5582658d307bf8c101e60a",
-                "most_stable_genes_transposed_counts_filtered.csv:md5,9b52b81241cb4f57be781e29afe52cdc",
+                "all_genes_summary.csv:md5,bea9d7cee88136a4a64812558d3b3119",
+                "most_stable_genes_summary.csv:md5,9d5b15d996ab2d9064174bfdfeb8d256",
+                "most_stable_genes_transposed_counts_filtered.csv:md5,70412588c290cac3cd85b189cdee2db6",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_genes_summary.csv:md5,ec52af6957845539143919c0e6eec89c",
+                "all_genes_summary.csv:md5,bea9d7cee88136a4a64812558d3b3119",
                 "whole_design.csv:md5,3c1e14c9bd7ad250326b070a0dd4d81f",
-                "environment.yml:md5,4d32e46adf0ff32a3c65a24b68483fa7",
-                "all_gene_ids.txt:md5,ba79f5609df755c0f75de41357319c84",
+                "environment.yml:md5,f9b192ef98a67f2084ad2fed6da01bc1",
+                "gene_id_occurrences.csv:md5,fab6c66d7793c245f67b0cd6d5053cdd",
+                "unique_gene_ids.txt:md5,ba79f5609df755c0f75de41357319c84",
                 "global_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "mapped_gene_ids.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "original_gene_ids.txt:md5,60a0406c1d56424cfc394c438de50c99",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,ed1600e42df05fc885a16a66b77324a1",
-                "beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.csv:md5,d90b7475356d812ed289bc9fb3cb1acd",
                 "whole_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "whole_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "whole_design.csv:md5,3c1e14c9bd7ad250326b070a0dd4d81f",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.csv:md5,b407990bb10106de943f9e93cda6323e",
-                "beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.csv:md5,2c326f3e419341f955bb757fc8bf4357",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1",
                 "accessions.txt:md5,63a651d9df354aef24400cebe56dd5ec",
                 "warning_reason.txt:md5,603e30b732b7a6b501b59adf9d0e8837",
-                "id_mapping_stats.csv:md5,7c20b1e561989fcd2ce038c4a061caa5",
-                "ratio_zeros.csv:md5,9794647ae1d7c87ec212c0c12b658d4e",
-                "skewness.csv:md5,7e1ecb86c9c51394a0dacfdaca05899b",
+                "id_mapping_stats.csv:md5,dc2d9d7f34e570411c8cf5885b447719",
+                "ratio_zeros.csv:md5,a6ca9ce8ab585102df150ae182af68b6",
+                "skewness.csv:md5,3fecd4b1fa61e11361d6d871763c8e48",
                 "geo_warning_reasons.csv:md5,0a77f9268abb1084fde8cb4c5cc96eca"
             ]
         ],
@@ -1116,138 +1101,23 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2026-01-03T11:24:55.793642391"
+        "timestamp": "2026-01-13T13:09:19.670861344"
     },
     "-profile test_dataset_custom_mapping_and_gene_length": {
         "content": [
             {
-                "AGGREGATE_RESULTS": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "COLLECT_STATISTICS": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
-                },
-                "COMPUTE_BASE_STATISTICS": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "COMPUTE_BASE_STATISTICS_FOR_MICROARRAY": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "COMPUTE_BASE_STATISTICS_FOR_RNASEQ": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "COMPUTE_DATASET_STATISTICS": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
-                },
-                "COMPUTE_STABILITY_SCORES": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "COMPUTE_TPM": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
-                },
-                "DASH_APP": {
-                    "python": "3.13.8",
-                    "dash": "3.2.0",
-                    "dash-extensions": "2.0.4",
-                    "dash-mantine-components": "2.3.0",
-                    "dash-ag-grid": "32.3.2",
-                    "polars": "1.35.0",
-                    "pandas": "2.3.3",
-                    "pyarrow": "22.0.0",
-                    "scipy": "1.16.3"
-                },
-                "GET_CANDIDATE_GENES": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "MERGE_ALL_COUNTS": {
-                    "polars": "1.34.0",
-                    "python": "3.14.0",
-                    "tqdm": "4.67.1"
-                },
-                "MERGE_MICROARRAY_COUNTS": {
-                    "polars": "1.34.0",
-                    "python": "3.14.0",
-                    "tqdm": "4.67.1"
-                },
-                "MERGE_RNASEQ_COUNTS": {
-                    "polars": "1.34.0",
-                    "python": "3.14.0",
-                    "tqdm": "4.67.1"
-                },
-                "NORMFINDER": {
-                    "polars": "1.33.1",
-                    "python": "3.13.7"
-                },
-                "QUANTILE_NORMALISATION": {
-                    "pandas": "2.2.3",
-                    "pyarrow": "19.0.0",
-                    "python": "3.12.8",
-                    "scikit-learn": "1.6.1"
-                },
-                "RENAME_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
-                },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.0dev"
                 }
             },
             [
-                "aggregated",
-                "aggregated/all_counts_filtered.parquet",
-                "aggregated/all_genes_summary.csv",
-                "aggregated/most_stable_genes_summary.csv",
-                "aggregated/most_stable_genes_transposed_counts_filtered.csv",
-                "dash_app",
-                "dash_app/app.py",
-                "dash_app/assets",
-                "dash_app/assets/style.css",
-                "dash_app/data",
-                "dash_app/data/all_counts.parquet",
-                "dash_app/data/all_genes_summary.csv",
-                "dash_app/data/whole_design.csv",
-                "dash_app/environment.yml",
-                "dash_app/src",
-                "dash_app/src/callbacks",
-                "dash_app/src/callbacks/common.py",
-                "dash_app/src/callbacks/genes.py",
-                "dash_app/src/callbacks/samples.py",
-                "dash_app/src/components",
-                "dash_app/src/components/graphs.py",
-                "dash_app/src/components/icons.py",
-                "dash_app/src/components/right_sidebar.py",
-                "dash_app/src/components/settings",
-                "dash_app/src/components/settings/genes.py",
-                "dash_app/src/components/settings/samples.py",
-                "dash_app/src/components/stores.py",
-                "dash_app/src/components/tables.py",
-                "dash_app/src/components/tooltips.py",
-                "dash_app/src/components/top.py",
-                "dash_app/src/utils",
-                "dash_app/src/utils/config.py",
-                "dash_app/src/utils/data_management.py",
-                "dash_app/src/utils/style.py",
                 "errors",
                 "idmapping",
                 "idmapping/global_gene_id_mapping.csv",
                 "idmapping/global_gene_metadata.csv",
-                "idmapping/renamed",
-                "idmapping/renamed/microarray.normalised.renamed.csv",
-                "idmapping/renamed/rnaseq.raw.renamed.csv",
                 "idmapping/whole_gene_id_mapping.csv",
                 "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
-                "merged_datasets/whole_design.csv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/llms-full.txt",
@@ -1255,84 +1125,27 @@
                 "multiqc/multiqc_data/multiqc.parquet",
                 "multiqc/multiqc_data/multiqc_citations.txt",
                 "multiqc/multiqc_data/multiqc_data.json",
-                "multiqc/multiqc_data/multiqc_expression_distributions_most_stable_genes.txt",
-                "multiqc/multiqc_data/multiqc_gene_statistics.txt",
-                "multiqc/multiqc_data/multiqc_id_mapping_stats.txt",
-                "multiqc/multiqc_data/multiqc_ranked_most_stable_genes_summary.txt",
-                "multiqc/multiqc_data/multiqc_ratio_zeros.txt",
-                "multiqc/multiqc_data/multiqc_skewness.txt",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
-                "multiqc/multiqc_plots",
-                "multiqc/multiqc_plots/pdf",
-                "multiqc/multiqc_plots/pdf/expression_distributions_most_stable_genes.pdf",
-                "multiqc/multiqc_plots/pdf/gene_statistics.pdf",
-                "multiqc/multiqc_plots/pdf/id_mapping_stats-cnt.pdf",
-                "multiqc/multiqc_plots/pdf/id_mapping_stats-pct.pdf",
-                "multiqc/multiqc_plots/pdf/ranked_most_stable_genes_summary.pdf",
-                "multiqc/multiqc_plots/pdf/ratio_zeros.pdf",
-                "multiqc/multiqc_plots/pdf/skewness.pdf",
-                "multiqc/multiqc_plots/png",
-                "multiqc/multiqc_plots/png/expression_distributions_most_stable_genes.png",
-                "multiqc/multiqc_plots/png/gene_statistics.png",
-                "multiqc/multiqc_plots/png/id_mapping_stats-cnt.png",
-                "multiqc/multiqc_plots/png/id_mapping_stats-pct.png",
-                "multiqc/multiqc_plots/png/ranked_most_stable_genes_summary.png",
-                "multiqc/multiqc_plots/png/ratio_zeros.png",
-                "multiqc/multiqc_plots/png/skewness.png",
-                "multiqc/multiqc_plots/svg",
-                "multiqc/multiqc_plots/svg/expression_distributions_most_stable_genes.svg",
-                "multiqc/multiqc_plots/svg/gene_statistics.svg",
-                "multiqc/multiqc_plots/svg/id_mapping_stats-cnt.svg",
-                "multiqc/multiqc_plots/svg/id_mapping_stats-pct.svg",
-                "multiqc/multiqc_plots/svg/ranked_most_stable_genes_summary.svg",
-                "multiqc/multiqc_plots/svg/ratio_zeros.svg",
-                "multiqc/multiqc_plots/svg/skewness.svg",
                 "multiqc/multiqc_report.html",
                 "multiqc/versions.yml",
-                "normalised",
-                "normalised/microarray.normalised",
-                "normalised/microarray.normalised/quantile_normalised",
-                "normalised/microarray.normalised/quantile_normalised/microarray.normalised.renamed.quant_norm.parquet",
-                "normalised/rnaseq.raw",
-                "normalised/rnaseq.raw/quantile_normalised",
-                "normalised/rnaseq.raw/quantile_normalised/rnaseq.raw.renamed.tpm.quant_norm.parquet",
-                "normalised/rnaseq.raw/tpm",
-                "normalised/rnaseq.raw/tpm/rnaseq.raw.renamed.tpm.csv",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "statistics",
-                "statistics/id_mapping_stats.csv",
-                "statistics/ratio_zeros.csv",
-                "statistics/skewness.csv",
                 "warnings"
             ],
             [
-                "all_genes_summary.csv:md5,03b370a040cac715b58c31865e7c8557",
-                "most_stable_genes_summary.csv:md5,03b370a040cac715b58c31865e7c8557",
-                "most_stable_genes_transposed_counts_filtered.csv:md5,9ee131e180ccaa879342af5873cdcf19",
-                "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_genes_summary.csv:md5,03b370a040cac715b58c31865e7c8557",
-                "whole_design.csv:md5,70d6c2673e619ca52d2774fb3e368382",
-                "environment.yml:md5,3c87bfa06bbb068bcfb6ed4ebc608949",
                 "global_gene_id_mapping.csv:md5,187a86074197044846bb8565e122eb8e",
                 "global_gene_metadata.csv:md5,5ae2d701ca0cb6384d9e1e08a345e452",
-                "microarray.normalised.renamed.csv:md5,6adb74d67379a5a3d3309b10a0c4bec5",
-                "rnaseq.raw.renamed.csv:md5,aa22384ba73d180629add4e174c7f37d",
                 "whole_gene_id_mapping.csv:md5,187a86074197044846bb8565e122eb8e",
-                "whole_gene_metadata.csv:md5,5ae2d701ca0cb6384d9e1e08a345e452",
-                "whole_design.csv:md5,70d6c2673e619ca52d2774fb3e368382",
-                "rnaseq.raw.renamed.tpm.csv:md5,dde1d8ea5d271c4e0486c7ba0936a972",
-                "id_mapping_stats.csv:md5,ee400af7734b2226406fc7ba986dccfa",
-                "ratio_zeros.csv:md5,d206e45c16e6bd13de75ea6d20bbd30d",
-                "skewness.csv:md5,9917b39dfe5ee6e680fa1783f8a096c4"
+                "whole_gene_metadata.csv:md5,5ae2d701ca0cb6384d9e1e08a345e452"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:28:01.788499112"
+        "timestamp": "2026-01-06T17:24:45.471369388"
     },
     "-profile test_accessions_only": {
         "content": [
@@ -1392,63 +1205,46 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:18:58.308749506"
+        "timestamp": "2026-01-13T13:11:02.671079693"
     },
     "-profile test_one_accession_low_gene_count": {
         "content": [
             {
-                "AGGREGATE_RESULTS": {
+                "CLEAN_GENE_IDS": {
                     "polars": "1.17.1",
                     "python": "3.12.8"
                 },
-                "CLEAN_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
-                },
                 "COLLECT_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "python": "3.14.0",
+                    "python": "3.14.2",
                     "tqdm": "4.67.1"
                 },
                 "COLLECT_STATISTICS": {
                     "pandas": "2.3.3",
                     "python": "3.13.7"
                 },
-                "COMPUTE_BASE_STATISTICS": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "COMPUTE_BASE_STATISTICS_FOR_RNASEQ": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
                 "COMPUTE_DATASET_STATISTICS": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COMPUTE_GENE_TRANSCRIPT_LENGTHS": {
                     "pandas": "2.3.3",
                     "python": "3.13.7"
                 },
-                "COMPUTE_STABILITY_SCORES": {
+                "COMPUTE_GLOBAL_STATISTICS": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
+                },
+                "COMPUTE_PLATFORM_STATISTICS": {
                     "polars": "1.17.1",
                     "python": "3.12.8"
                 },
                 "COMPUTE_TPM": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
-                "DASH_APP": {
-                    "python": "3.13.8",
-                    "dash": "3.2.0",
-                    "dash-extensions": "2.0.4",
-                    "dash-mantine-components": "2.3.0",
-                    "dash-ag-grid": "32.3.2",
-                    "polars": "1.35.0",
-                    "pandas": "2.3.3",
-                    "pyarrow": "22.0.0",
-                    "scipy": "1.16.3"
+                "DETECT_RARE_GENES": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "DOWNLOAD_ENSEMBL_ANNOTATION": {
                     "bs4": "4.14.2",
@@ -1460,6 +1256,10 @@
                 "EXPRESSION_ATLAS": {
                     "ExpressionAtlas": "1.30.0",
                     "R": "4.3.3 (2024-02-29)"
+                },
+                "FILTER_AND_RENAME_GENES": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "GET_CANDIDATE_GENES": {
                     "polars": "1.17.1",
@@ -1475,7 +1275,7 @@
                     "python": "3.14.0",
                     "tqdm": "4.67.1"
                 },
-                "MERGE_RNASEQ_COUNTS": {
+                "MERGE_PLATFORM_COUNTS": {
                     "polars": "1.34.0",
                     "python": "3.14.0",
                     "tqdm": "4.67.1"
@@ -1485,67 +1285,29 @@
                     "python": "3.13.7"
                 },
                 "QUANTILE_NORMALISATION": {
-                    "pandas": "2.2.3",
-                    "pyarrow": "19.0.0",
-                    "python": "3.12.8",
-                    "scikit-learn": "1.6.1"
+                    "polars": "1.36.1",
+                    "python": "3.14.2",
+                    "scikit-learn": "1.8.0"
                 },
-                "RENAME_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
+                "REMOVE_SAMPLES_NOT_VALID": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.0dev"
                 }
             },
             [
-                "aggregated",
-                "aggregated/all_counts_filtered.parquet",
-                "aggregated/all_genes_summary.csv",
-                "aggregated/most_stable_genes_summary.csv",
-                "aggregated/most_stable_genes_transposed_counts_filtered.csv",
-                "dash_app",
-                "dash_app/app.py",
-                "dash_app/assets",
-                "dash_app/assets/style.css",
-                "dash_app/data",
-                "dash_app/data/all_counts.parquet",
-                "dash_app/data/all_genes_summary.csv",
-                "dash_app/data/whole_design.csv",
-                "dash_app/environment.yml",
-                "dash_app/src",
-                "dash_app/src/callbacks",
-                "dash_app/src/callbacks/common.py",
-                "dash_app/src/callbacks/genes.py",
-                "dash_app/src/callbacks/samples.py",
-                "dash_app/src/components",
-                "dash_app/src/components/graphs.py",
-                "dash_app/src/components/icons.py",
-                "dash_app/src/components/right_sidebar.py",
-                "dash_app/src/components/settings",
-                "dash_app/src/components/settings/genes.py",
-                "dash_app/src/components/settings/samples.py",
-                "dash_app/src/components/stores.py",
-                "dash_app/src/components/tables.py",
-                "dash_app/src/components/tooltips.py",
-                "dash_app/src/components/top.py",
-                "dash_app/src/utils",
-                "dash_app/src/utils/config.py",
-                "dash_app/src/utils/data_management.py",
-                "dash_app/src/utils/style.py",
                 "errors",
                 "idmapping",
                 "idmapping/collected_gene_ids",
-                "idmapping/collected_gene_ids/all_gene_ids.txt",
+                "idmapping/collected_gene_ids/gene_id_occurrences.csv",
+                "idmapping/collected_gene_ids/unique_gene_ids.txt",
                 "idmapping/global_gene_id_mapping.csv",
                 "idmapping/global_gene_metadata.csv",
                 "idmapping/gprofiler",
                 "idmapping/gprofiler/gene_metadata.csv",
                 "idmapping/gprofiler/mapped_gene_ids.csv",
-                "idmapping/original_gene_ids.txt",
-                "idmapping/renamed",
-                "idmapping/renamed/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
                 "idmapping/whole_gene_id_mapping.csv",
                 "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
@@ -1557,47 +1319,39 @@
                 "multiqc/multiqc_data/multiqc.parquet",
                 "multiqc/multiqc_data/multiqc_citations.txt",
                 "multiqc/multiqc_data/multiqc_data.json",
-                "multiqc/multiqc_data/multiqc_expression_distributions_most_stable_genes.txt",
-                "multiqc/multiqc_data/multiqc_gene_statistics.txt",
                 "multiqc/multiqc_data/multiqc_id_mapping_stats.txt",
-                "multiqc/multiqc_data/multiqc_ranked_most_stable_genes_summary.txt",
                 "multiqc/multiqc_data/multiqc_ratio_zeros.txt",
                 "multiqc/multiqc_data/multiqc_skewness.txt",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_total_gene_id_occurrence_quantiles.txt",
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/pdf",
-                "multiqc/multiqc_plots/pdf/expression_distributions_most_stable_genes.pdf",
-                "multiqc/multiqc_plots/pdf/gene_statistics.pdf",
                 "multiqc/multiqc_plots/pdf/id_mapping_stats-cnt.pdf",
                 "multiqc/multiqc_plots/pdf/id_mapping_stats-pct.pdf",
-                "multiqc/multiqc_plots/pdf/ranked_most_stable_genes_summary.pdf",
                 "multiqc/multiqc_plots/pdf/ratio_zeros.pdf",
                 "multiqc/multiqc_plots/pdf/skewness.pdf",
+                "multiqc/multiqc_plots/pdf/total_gene_id_occurrence_quantiles.pdf",
                 "multiqc/multiqc_plots/png",
-                "multiqc/multiqc_plots/png/expression_distributions_most_stable_genes.png",
-                "multiqc/multiqc_plots/png/gene_statistics.png",
                 "multiqc/multiqc_plots/png/id_mapping_stats-cnt.png",
                 "multiqc/multiqc_plots/png/id_mapping_stats-pct.png",
-                "multiqc/multiqc_plots/png/ranked_most_stable_genes_summary.png",
                 "multiqc/multiqc_plots/png/ratio_zeros.png",
                 "multiqc/multiqc_plots/png/skewness.png",
+                "multiqc/multiqc_plots/png/total_gene_id_occurrence_quantiles.png",
                 "multiqc/multiqc_plots/svg",
-                "multiqc/multiqc_plots/svg/expression_distributions_most_stable_genes.svg",
-                "multiqc/multiqc_plots/svg/gene_statistics.svg",
                 "multiqc/multiqc_plots/svg/id_mapping_stats-cnt.svg",
                 "multiqc/multiqc_plots/svg/id_mapping_stats-pct.svg",
-                "multiqc/multiqc_plots/svg/ranked_most_stable_genes_summary.svg",
                 "multiqc/multiqc_plots/svg/ratio_zeros.svg",
                 "multiqc/multiqc_plots/svg/skewness.svg",
+                "multiqc/multiqc_plots/svg/total_gene_id_occurrence_quantiles.svg",
                 "multiqc/multiqc_report.html",
                 "multiqc/versions.yml",
                 "normalised",
                 "normalised/E_GEOD_51720_rnaseq",
                 "normalised/E_GEOD_51720_rnaseq/quantile_normalised",
-                "normalised/E_GEOD_51720_rnaseq/quantile_normalised/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_GEOD_51720_rnaseq/quantile_normalised/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_GEOD_51720_rnaseq/tpm",
-                "normalised/E_GEOD_51720_rnaseq/tpm/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_GEOD_51720_rnaseq/tpm/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -1612,36 +1366,27 @@
                 "warnings"
             ],
             [
-                "all_genes_summary.csv:md5,8308c2f930f305e3db913d992a6acf36",
-                "most_stable_genes_summary.csv:md5,bd5c71953b259d05d024f68eb4b62942",
-                "most_stable_genes_transposed_counts_filtered.csv:md5,d6a99e3a8a422af722dea852d84bdc94",
-                "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_genes_summary.csv:md5,8308c2f930f305e3db913d992a6acf36",
-                "whole_design.csv:md5,d3aa542c4ad07d0051a84482fe6cd81c",
-                "environment.yml:md5,3c87bfa06bbb068bcfb6ed4ebc608949",
-                "all_gene_ids.txt:md5,9c463e6c1754d4f4c7ea684578aa6849",
+                "gene_id_occurrences.csv:md5,279e38e052661017d28451c348f39f21",
+                "unique_gene_ids.txt:md5,9c463e6c1754d4f4c7ea684578aa6849",
                 "global_gene_id_mapping.csv:md5,42491ef436cce231258c0358e1af5745",
                 "global_gene_metadata.csv:md5,b35e20500269d4e6787ef1a3468f16bc",
-                "gene_metadata.csv:md5,bb7db05964749de50bee10afdded87b0",
+                "gene_metadata.csv:md5,b35e20500269d4e6787ef1a3468f16bc",
                 "mapped_gene_ids.csv:md5,42491ef436cce231258c0358e1af5745",
-                "original_gene_ids.txt:md5,31c068e2e8b054ea4d696dec754caed4",
-                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,6f3c401caaf89e534cc13db8976b296c",
                 "whole_gene_id_mapping.csv:md5,42491ef436cce231258c0358e1af5745",
                 "whole_gene_metadata.csv:md5,b35e20500269d4e6787ef1a3468f16bc",
                 "whole_design.csv:md5,d3aa542c4ad07d0051a84482fe6cd81c",
-                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,281e8c83c27ad9d6c732a7c013e627cf",
                 "E_GEOD_51720_rnaseq.design.csv:md5,80805afb29837b6fbb73a6aa6f3a461b",
                 "E_GEOD_51720_rnaseq.rnaseq.raw.counts.csv:md5,07cd448196fc2fea4663bd9705da2b98",
-                "id_mapping_stats.csv:md5,c5d20cc6298f0863617b1139f41a2da4",
-                "ratio_zeros.csv:md5,2cff16880a965af8acc438786b9fb110",
-                "skewness.csv:md5,bdbc6ee3d4c19b907a71d02ad9cac149"
+                "id_mapping_stats.csv:md5,cd17a5d4afa6b86a48adb03868d3073f",
+                "ratio_zeros.csv:md5,57f747774c59abc441a353544b7c11be",
+                "skewness.csv:md5,14ee7163a228d70c26097fa0f9a793ec"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:22:56.224515953"
+        "timestamp": "2026-01-13T13:12:38.322522517"
     },
     "-profile test_bigger_with_genorm": {
         "content": [
@@ -1651,36 +1396,34 @@
                     "python": "3.12.8"
                 },
                 "CLEAN_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COLLECT_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "python": "3.14.0",
+                    "python": "3.14.2",
                     "tqdm": "4.67.1"
                 },
                 "COLLECT_STATISTICS": {
                     "pandas": "2.3.3",
                     "python": "3.13.7"
                 },
-                "COMPUTE_BASE_STATISTICS": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
-                "COMPUTE_BASE_STATISTICS_FOR_RNASEQ": {
-                    "polars": "1.17.1",
-                    "python": "3.12.8"
-                },
                 "COMPUTE_DATASET_STATISTICS": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "COMPUTE_GENE_TRANSCRIPT_LENGTHS": {
                     "pandas": "2.3.3",
                     "python": "3.13.7"
                 },
+                "COMPUTE_GLOBAL_STATISTICS": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
+                },
                 "COMPUTE_M_MEASURE": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
+                },
+                "COMPUTE_PLATFORM_STATISTICS": {
                     "polars": "1.17.1",
                     "python": "3.12.8"
                 },
@@ -1689,8 +1432,8 @@
                     "python": "3.12.8"
                 },
                 "COMPUTE_TPM": {
-                    "pandas": "2.3.3",
-                    "python": "3.13.7"
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "CROSS_JOIN": {
                     "polars": "1.17.1",
@@ -1706,6 +1449,10 @@
                     "pandas": "2.3.3",
                     "pyarrow": "22.0.0",
                     "scipy": "1.16.3"
+                },
+                "DETECT_RARE_GENES": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "DOWNLOAD_ENSEMBL_ANNOTATION": {
                     "bs4": "4.14.2",
@@ -1727,6 +1474,10 @@
                     "polars": "1.17.1",
                     "python": "3.12.8"
                 },
+                "FILTER_AND_RENAME_GENES": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
+                },
                 "GET_CANDIDATE_GENES": {
                     "polars": "1.17.1",
                     "python": "3.12.8"
@@ -1745,7 +1496,7 @@
                     "python": "3.14.0",
                     "tqdm": "4.67.1"
                 },
-                "MERGE_RNASEQ_COUNTS": {
+                "MERGE_PLATFORM_COUNTS": {
                     "polars": "1.34.0",
                     "python": "3.14.0",
                     "tqdm": "4.67.1"
@@ -1755,19 +1506,17 @@
                     "python": "3.13.7"
                 },
                 "QUANTILE_NORMALISATION": {
-                    "pandas": "2.2.3",
-                    "pyarrow": "19.0.0",
-                    "python": "3.12.8",
-                    "scikit-learn": "1.6.1"
+                    "polars": "1.36.1",
+                    "python": "3.14.2",
+                    "scikit-learn": "1.8.0"
                 },
                 "RATIO_STANDARD_VARIATION": {
                     "polars": "1.17.1",
                     "python": "3.12.8"
                 },
-                "RENAME_GENE_IDS": {
-                    "pandas": "2.3.3",
-                    "polars": "1.35.2",
-                    "python": "3.14.0"
+                "REMOVE_SAMPLES_NOT_VALID": {
+                    "polars": "1.17.1",
+                    "python": "3.12.8"
                 },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.0dev"
@@ -1811,15 +1560,13 @@
                 "errors",
                 "idmapping",
                 "idmapping/collected_gene_ids",
-                "idmapping/collected_gene_ids/all_gene_ids.txt",
+                "idmapping/collected_gene_ids/gene_id_occurrences.csv",
+                "idmapping/collected_gene_ids/unique_gene_ids.txt",
                 "idmapping/global_gene_id_mapping.csv",
                 "idmapping/global_gene_metadata.csv",
                 "idmapping/gprofiler",
                 "idmapping/gprofiler/gene_metadata.csv",
                 "idmapping/gprofiler/mapped_gene_ids.csv",
-                "idmapping/original_gene_ids.txt",
-                "idmapping/renamed",
-                "idmapping/renamed/E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
                 "idmapping/whole_gene_id_mapping.csv",
                 "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
@@ -1841,6 +1588,7 @@
                 "multiqc/multiqc_data/multiqc_skewness.txt",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_total_gene_id_occurrence_quantiles.txt",
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/pdf",
                 "multiqc/multiqc_plots/pdf/eatlas_all_experiments_metadata.pdf",
@@ -1852,6 +1600,7 @@
                 "multiqc/multiqc_plots/pdf/ranked_most_stable_genes_summary.pdf",
                 "multiqc/multiqc_plots/pdf/ratio_zeros.pdf",
                 "multiqc/multiqc_plots/pdf/skewness.pdf",
+                "multiqc/multiqc_plots/pdf/total_gene_id_occurrence_quantiles.pdf",
                 "multiqc/multiqc_plots/png",
                 "multiqc/multiqc_plots/png/eatlas_all_experiments_metadata.png",
                 "multiqc/multiqc_plots/png/eatlas_selected_experiments_metadata.png",
@@ -1862,6 +1611,7 @@
                 "multiqc/multiqc_plots/png/ranked_most_stable_genes_summary.png",
                 "multiqc/multiqc_plots/png/ratio_zeros.png",
                 "multiqc/multiqc_plots/png/skewness.png",
+                "multiqc/multiqc_plots/png/total_gene_id_occurrence_quantiles.png",
                 "multiqc/multiqc_plots/svg",
                 "multiqc/multiqc_plots/svg/eatlas_all_experiments_metadata.svg",
                 "multiqc/multiqc_plots/svg/eatlas_selected_experiments_metadata.svg",
@@ -1872,14 +1622,15 @@
                 "multiqc/multiqc_plots/svg/ranked_most_stable_genes_summary.svg",
                 "multiqc/multiqc_plots/svg/ratio_zeros.svg",
                 "multiqc/multiqc_plots/svg/skewness.svg",
+                "multiqc/multiqc_plots/svg/total_gene_id_occurrence_quantiles.svg",
                 "multiqc/multiqc_report.html",
                 "multiqc/versions.yml",
                 "normalised",
                 "normalised/E_MTAB_5072_rnaseq",
                 "normalised/E_MTAB_5072_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_5072_rnaseq/quantile_normalised/E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_MTAB_5072_rnaseq/quantile_normalised/E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_MTAB_5072_rnaseq/tpm",
-                "normalised/E_MTAB_5072_rnaseq/tpm/E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_MTAB_5072_rnaseq/tpm/E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -1898,37 +1649,35 @@
                 "warnings"
             ],
             [
-                "all_genes_summary.csv:md5,d4b5d36061b8fd31ba27edc55f738a01",
-                "most_stable_genes_summary.csv:md5,b47891fe0414abd0a4b7c9137d53fc1d",
-                "most_stable_genes_transposed_counts_filtered.csv:md5,46d96c944cc9ca3dd83e16da52c528f2",
+                "all_genes_summary.csv:md5,a0d04bcad1ead65f551d466b23a5a6fb",
+                "most_stable_genes_summary.csv:md5,de1cfd50d23435117f6643c86f922c47",
+                "most_stable_genes_transposed_counts_filtered.csv:md5,5ebf832e94abb4e1bac0b9fad41c6dbb",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_genes_summary.csv:md5,d4b5d36061b8fd31ba27edc55f738a01",
+                "all_genes_summary.csv:md5,a0d04bcad1ead65f551d466b23a5a6fb",
                 "whole_design.csv:md5,c9bfd7bc8ca365222e03e67eb24b9a76",
-                "environment.yml:md5,3c87bfa06bbb068bcfb6ed4ebc608949",
-                "all_gene_ids.txt:md5,13ae1b52833134f8ed6d982c00487927",
+                "environment.yml:md5,f9b192ef98a67f2084ad2fed6da01bc1",
+                "gene_id_occurrences.csv:md5,631317db987951a12f15e1c3e76068cd",
+                "unique_gene_ids.txt:md5,13ae1b52833134f8ed6d982c00487927",
                 "global_gene_id_mapping.csv:md5,efc95a8e276be1eb0af9639f72e48145",
                 "global_gene_metadata.csv:md5,1d342577587bc48c1eff077a594929fa",
                 "gene_metadata.csv:md5,1d342577587bc48c1eff077a594929fa",
                 "mapped_gene_ids.csv:md5,efc95a8e276be1eb0af9639f72e48145",
-                "original_gene_ids.txt:md5,5b88757be20075a2458a257221703f2a",
-                "E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,6244da0761b4437a6de5cff49e4d2687",
                 "whole_gene_id_mapping.csv:md5,efc95a8e276be1eb0af9639f72e48145",
                 "whole_gene_metadata.csv:md5,1d342577587bc48c1eff077a594929fa",
                 "whole_design.csv:md5,c9bfd7bc8ca365222e03e67eb24b9a76",
-                "E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,4a2aa87d0bd2990c13e088f0117cc682",
                 "accessions.txt:md5,561a967c16b2ef6c29fb643cd4002947",
                 "E_MTAB_5072_rnaseq.design.csv:md5,a1f33d126dde387a2d542381c44bc1f3",
                 "E_MTAB_5072_rnaseq.rnaseq.raw.counts.csv:md5,c41c84899a380515d759b99eeccfe43e",
-                "id_mapping_stats.csv:md5,6a84babdbb434ffd5975fc771ec2db44",
-                "ratio_zeros.csv:md5,15eb210c4ffff8a826e0c9f45d0ab4bd",
-                "skewness.csv:md5,6dbe4934961471c31fc6a1671577a8fc"
+                "id_mapping_stats.csv:md5,70d0c1eacf06cd1312caaefb2f614811",
+                "ratio_zeros.csv:md5,b541c01e58e21cc28707534147aff80d",
+                "skewness.csv:md5,74dd30b70c807032d6bacdb669908dc1"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:41:00.400997562"
+        "timestamp": "2026-01-13T13:25:48.350670705"
     },
     "-profile test_download_only": {
         "content": [
@@ -1995,7 +1744,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:19:38.305186676"
+        "timestamp": "2026-01-13T13:11:30.403331158"
     },
     "-profile test_gprofiler_target_database_entrez": {
         "content": [
@@ -2037,15 +1786,13 @@
                 "errors",
                 "idmapping",
                 "idmapping/collected_gene_ids",
-                "idmapping/collected_gene_ids/all_gene_ids.txt",
+                "idmapping/collected_gene_ids/gene_id_occurrences.csv",
+                "idmapping/collected_gene_ids/unique_gene_ids.txt",
                 "idmapping/global_gene_id_mapping.csv",
                 "idmapping/global_gene_metadata.csv",
                 "idmapping/gprofiler",
                 "idmapping/gprofiler/gene_metadata.csv",
                 "idmapping/gprofiler/mapped_gene_ids.csv",
-                "idmapping/original_gene_ids.txt",
-                "idmapping/renamed",
-                "idmapping/renamed/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv",
                 "idmapping/whole_gene_id_mapping.csv",
                 "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
@@ -2067,6 +1814,7 @@
                 "multiqc/multiqc_data/multiqc_skewness.txt",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_total_gene_id_occurrence_quantiles.txt",
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/pdf",
                 "multiqc/multiqc_plots/pdf/eatlas_all_experiments_metadata.pdf",
@@ -2078,6 +1826,7 @@
                 "multiqc/multiqc_plots/pdf/ranked_most_stable_genes_summary.pdf",
                 "multiqc/multiqc_plots/pdf/ratio_zeros.pdf",
                 "multiqc/multiqc_plots/pdf/skewness.pdf",
+                "multiqc/multiqc_plots/pdf/total_gene_id_occurrence_quantiles.pdf",
                 "multiqc/multiqc_plots/png",
                 "multiqc/multiqc_plots/png/eatlas_all_experiments_metadata.png",
                 "multiqc/multiqc_plots/png/eatlas_selected_experiments_metadata.png",
@@ -2088,6 +1837,7 @@
                 "multiqc/multiqc_plots/png/ranked_most_stable_genes_summary.png",
                 "multiqc/multiqc_plots/png/ratio_zeros.png",
                 "multiqc/multiqc_plots/png/skewness.png",
+                "multiqc/multiqc_plots/png/total_gene_id_occurrence_quantiles.png",
                 "multiqc/multiqc_plots/svg",
                 "multiqc/multiqc_plots/svg/eatlas_all_experiments_metadata.svg",
                 "multiqc/multiqc_plots/svg/eatlas_selected_experiments_metadata.svg",
@@ -2098,14 +1848,15 @@
                 "multiqc/multiqc_plots/svg/ranked_most_stable_genes_summary.svg",
                 "multiqc/multiqc_plots/svg/ratio_zeros.svg",
                 "multiqc/multiqc_plots/svg/skewness.svg",
+                "multiqc/multiqc_plots/svg/total_gene_id_occurrence_quantiles.svg",
                 "multiqc/multiqc_report.html",
                 "multiqc/versions.yml",
                 "normalised",
                 "normalised/E_MTAB_8187_rnaseq",
                 "normalised/E_MTAB_8187_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_8187_rnaseq/quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.quant_norm.parquet",
+                "normalised/E_MTAB_8187_rnaseq/quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.quant_norm.parquet",
                 "normalised/E_MTAB_8187_rnaseq/tpm",
-                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv",
+                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -2124,36 +1875,34 @@
                 "warnings"
             ],
             [
-                "all_genes_summary.csv:md5,32be3aeed5cd2715847ccc2fd45c09a0",
-                "most_stable_genes_summary.csv:md5,2e34161e2beb2f1e0921dbf6c0ce55ba",
-                "most_stable_genes_transposed_counts_filtered.csv:md5,5083c04020d1c504c86689e14f731ef7",
+                "all_genes_summary.csv:md5,829fd6221705fc1588a11bfdb1a37210",
+                "most_stable_genes_summary.csv:md5,73cbb4d6462e01ed7778f076726613fd",
+                "most_stable_genes_transposed_counts_filtered.csv:md5,4f50fafaa96ffd7a7b0d98d9c8d6beb4",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_genes_summary.csv:md5,32be3aeed5cd2715847ccc2fd45c09a0",
+                "all_genes_summary.csv:md5,829fd6221705fc1588a11bfdb1a37210",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
-                "environment.yml:md5,3c87bfa06bbb068bcfb6ed4ebc608949",
-                "all_gene_ids.txt:md5,ba79f5609df755c0f75de41357319c84",
+                "environment.yml:md5,f9b192ef98a67f2084ad2fed6da01bc1",
+                "gene_id_occurrences.csv:md5,b3ee7b1c575f83d247c5bce88382fb2b",
+                "unique_gene_ids.txt:md5,ba79f5609df755c0f75de41357319c84",
                 "global_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "mapped_gene_ids.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "original_gene_ids.txt:md5,60a0406c1d56424cfc394c438de50c99",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.csv:md5,ed1600e42df05fc885a16a66b77324a1",
                 "whole_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "whole_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.tpm.csv:md5,b407990bb10106de943f9e93cda6323e",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1",
-                "id_mapping_stats.csv:md5,6189d2a346cce55f182e00769e3fea5f",
-                "ratio_zeros.csv:md5,d3b518709a097d9e41a05142b524f03c",
-                "skewness.csv:md5,b38aabc94d60d93b979c3cef3a922299"
+                "id_mapping_stats.csv:md5,17ccaa8e70c67c7d0de4ec3c630c2e5b",
+                "ratio_zeros.csv:md5,32889cf6de2af6413c42b8810a99a2df",
+                "skewness.csv:md5,178449bbd2361aa1e804e3f18e092ef1"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-23T12:35:29.173977298"
+        "timestamp": "2026-01-13T13:20:59.702133972"
     }
 }

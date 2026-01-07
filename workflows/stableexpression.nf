@@ -18,7 +18,6 @@ include { COMPUTE_DATASET_STATISTICS             } from '../modules/local/comput
 include { AGGREGATE_RESULTS                      } from '../modules/local/aggregate_results'
 include { DASH_APP                               } from '../modules/local/dash_app'
 
-include { storeDatasetSize                       } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { checkCounts                            } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
 /*
@@ -84,8 +83,6 @@ workflow STABLEEXPRESSION {
     if ( !params.accessions_only && !params.download_only ) {
 
         ch_counts = ch_input_datasets.mix( ch_downloaded_datasets )
-        // store nb of genes and nb of samples at this stage in the meta maps
-        ch_counts = storeDatasetSize( ch_counts, "nb_genes", "nb_samples" )
         // returns an error with a message if no dataset was found
         checkCounts( ch_counts )
 

@@ -1,9 +1,9 @@
 nextflow_process {
 
-    name "Test Process RENAME_GENE_IDS"
-    script "modules/local/rename_gene_ids/main.nf"
-    process "RENAME_GENE_IDS"
-    tag "rename_gene_ids"
+    name "Test Process FILTER_AND_RENAME_GENES"
+    script "modules/local/filter_and_rename_genes/main.nf"
+    process "FILTER_AND_RENAME_GENES"
+    tag "filter_and_rename_genes"
 
     test("Map Ensembl IDs") {
 
@@ -17,6 +17,33 @@ nextflow_process {
                     ]
                 )
                 input[1] = file("$projectDir/tests/test_data/idmapping/mapped/mapped_gene_ids.csv", checkIfExists: true)
+                input[2] = file("$projectDir/tests/test_data/idmapping/mapped/valid_gene_ids.txt", checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("No valid gene") {
+
+        when {
+            process {
+                """
+                input[0] = channel.of(
+                    [
+                        [ dataset: "test" ],
+                        file("$projectDir/tests/test_data/idmapping/base/counts.ensembl_ids.csv", checkIfExists: true)
+                    ]
+                )
+                input[1] = file("$projectDir/tests/test_data/idmapping/mapped/mapped_gene_ids.csv", checkIfExists: true)
+                input[2] = file("$projectDir/tests/test_data/idmapping/mapped/no_valid_gene_id.txt", checkIfExists: true)
                 """
             }
         }
@@ -44,6 +71,7 @@ nextflow_process {
                     ]
                 )
                 input[1] = file( "$projectDir/tests/test_data/idmapping/tsv/mapping.tsv", checkIfExists: true)
+                input[2] = file("$projectDir/tests/test_data/idmapping/tsv/valid_gene_ids.txt", checkIfExists: true)
                 """
             }
         }

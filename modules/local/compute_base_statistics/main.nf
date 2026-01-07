@@ -3,12 +3,6 @@ process COMPUTE_BASE_STATISTICS {
     tag "${meta.platform}"
     label 'process_high'
 
-    memory { def calc = (meta.dataset_size / 50000).toInteger()
-        def result = Math.max(1, calc)  // Ensure at least 1 MB
-        def multiplicator = 1 + 0.2 * task.attempt // increase memory usage with each attempt by 20%
-        return 1.MB * result * multiplicator
-    }
-
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f8a5d02e7b31980c887253a9f118da0ef91ead1c7b158caf855199e5c5d5473/data':

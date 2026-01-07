@@ -1,0 +1,170 @@
+{
+    "Custom mapping - TSV": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    [
+                        [
+                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                        ],
+                        "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e"
+                    ]
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        [
+                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                        ],
+                        "0",
+                        "0",
+                        "3",
+                        "0"
+                    ]
+                ],
+                "4": [
+                    [
+                        "FILTER_AND_RENAME_GENES",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "5": [
+                    [
+                        "FILTER_AND_RENAME_GENES",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "counts": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2026-01-06T19:01:46.153372095"
+    },
+    "Map Ensembl IDs": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
+                        },
+                        "counts.ensembl_ids.renamed.parquet:md5,dcdec4c4a0bdcc5802a6d4c3c24d0af6"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        [
+                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                        ],
+                        "2",
+                        "1",
+                        "1",
+                        "0"
+                    ]
+                ],
+                "4": [
+                    [
+                        "FILTER_AND_RENAME_GENES",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "5": [
+                    [
+                        "FILTER_AND_RENAME_GENES",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
+                        },
+                        "counts.ensembl_ids.renamed.parquet:md5,dcdec4c4a0bdcc5802a6d4c3c24d0af6"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2026-01-06T19:00:32.790897635"
+    },
+    "No valid gene": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    [
+                        [
+                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                        ],
+                        "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e"
+                    ]
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        [
+                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                        ],
+                        "0",
+                        "0",
+                        "3",
+                        "0"
+                    ]
+                ],
+                "4": [
+                    [
+                        "FILTER_AND_RENAME_GENES",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "5": [
+                    [
+                        "FILTER_AND_RENAME_GENES",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "counts": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2026-01-06T19:00:41.34477175"
+    }
+}

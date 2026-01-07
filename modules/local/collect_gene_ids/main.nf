@@ -4,8 +4,8 @@ process COLLECT_GENE_IDS {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/80/80143d9f5e0bfe1364e7bf621ca8bb45f707fd48aa1ba3712158fc441d7873b0/data':
-        'community.wave.seqera.io/library/tqdm:4.67.1--c1e9fac535191e31' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/70/70c17cde84896904c0620d614cba74ff029f1255db64e66416e63c91b7c959a2/data':
+        'community.wave.seqera.io/library/python_tqdm:4e039400f75bdad0' }"
 
     input:
     path count_files, stageAs: "?/*"

@@ -5,9 +5,11 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
                         },
-                        "counts.tpm.csv:md5,2c9efc0a2ca95cfc4b626e5cbf3c6dbe"
+                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
                     ]
                 ],
                 "1": [
@@ -20,31 +22,33 @@
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "python",
-                        "3.13.7"
+                        "3.12.8"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_TPM",
-                        "pandas",
-                        "2.3.3"
+                        "polars",
+                        "1.17.1"
                     ]
                 ],
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
                         },
-                        "counts.tpm.csv:md5,2c9efc0a2ca95cfc4b626e5cbf3c6dbe"
+                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
                     ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-04T11:31:38.651488715"
+        "timestamp": "2026-01-06T17:46:55.157210607"
     },
     "One group": {
         "content": [
@@ -52,9 +56,11 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
                         },
-                        "counts.tpm.csv:md5,4a0b42acaeb45f435f97b7bc9c99f36e"
+                        "counts.tpm.parquet:md5,7cc642e81f82432bf38690f105e5d2de"
                     ]
                 ],
                 "1": [
@@ -67,31 +73,33 @@
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "python",
-                        "3.13.7"
+                        "3.12.8"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_TPM",
-                        "pandas",
-                        "2.3.3"
+                        "polars",
+                        "1.17.1"
                     ]
                 ],
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
                         },
-                        "counts.tpm.csv:md5,4a0b42acaeb45f435f97b7bc9c99f36e"
+                        "counts.tpm.parquet:md5,7cc642e81f82432bf38690f105e5d2de"
                     ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-04T11:32:01.357798876"
+        "timestamp": "2026-01-06T17:47:12.492274549"
     },
     "TSV files": {
         "content": [
@@ -99,9 +107,11 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
                         },
-                        "counts.tpm.csv:md5,2c9efc0a2ca95cfc4b626e5cbf3c6dbe"
+                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
                     ]
                 ],
                 "1": [
@@ -114,31 +124,33 @@
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "python",
-                        "3.13.7"
+                        "3.12.8"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_TPM",
-                        "pandas",
-                        "2.3.3"
+                        "polars",
+                        "1.17.1"
                     ]
                 ],
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
                         },
-                        "counts.tpm.csv:md5,2c9efc0a2ca95cfc4b626e5cbf3c6dbe"
+                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
                     ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-04T11:32:12.08145428"
+        "timestamp": "2026-01-06T17:47:20.896198862"
     },
     "Rows with many zeros": {
         "content": [
@@ -146,9 +158,11 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
                         },
-                        "counts.tpm.csv:md5,7cdca05fb62e5216a79e46286e0466b7"
+                        "counts.tpm.parquet:md5,72d0424d7465443a882963b3a77a2162"
                     ]
                 ],
                 "1": [
@@ -161,30 +175,32 @@
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "python",
-                        "3.13.7"
+                        "3.12.8"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_TPM",
-                        "pandas",
-                        "2.3.3"
+                        "polars",
+                        "1.17.1"
                     ]
                 ],
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
                         },
-                        "counts.tpm.csv:md5,7cdca05fb62e5216a79e46286e0466b7"
+                        "counts.tpm.parquet:md5,72d0424d7465443a882963b3a77a2162"
                     ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-04T11:31:50.194232905"
+        "timestamp": "2026-01-06T17:47:03.903930502"
     }
 }

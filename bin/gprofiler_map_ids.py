@@ -101,6 +101,7 @@ def main():
                 0: config.GENE_ID_COLNAME,
             }
         )
+        .sort_values(by=config.ORIGINAL_GENE_ID_COLNAME)
     )
     mapping_df.to_csv(MAPPED_GENE_IDS_OUTFILE, index=False, header=True)
 
@@ -111,9 +112,10 @@ def main():
     gene_metadata_df = pd.concat(gene_metadata_dfs, ignore_index=True)
     # dropping duplicates and keeping the first occurence
     gene_metadata_df.drop_duplicates(
-        inplace=True, subset=[config.GENE_ID_COLNAME], keep="first"
+        subset=[config.GENE_ID_COLNAME], keep="first"
+    ).sort_values(by=config.GENE_ID_COLNAME).to_csv(
+        METADATA_OUTFILE, index=False, header=True
     )
-    gene_metadata_df.to_csv(METADATA_OUTFILE, index=False, header=True)
 
 
 if __name__ == "__main__":

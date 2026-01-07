@@ -12,10 +12,12 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    file("$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true),
-                    file( "$projectDir/tests/test_data/dataset_statistics/input/count2.raw.cpm.quant_norm.parquet", checkIfExists: true)
+                    [ platform: 'rnaseq' ],
+                    [
+                        file("$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true),
+                        file( "$projectDir/tests/test_data/dataset_statistics/input/count2.raw.cpm.quant_norm.parquet", checkIfExists: true)
+                    ]
                 ]
-                input[1] = 100
                 """
             }
         }
@@ -36,10 +38,12 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    file("$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true),
-                    file( "$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true)
+                    [ platform: 'rnaseq' ],
+                    [
+                        file("$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true),
+                        file( "$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true)
+                    ]
                 ]
-                input[1] = 100
                 """
             }
         }
@@ -60,9 +64,11 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    file("$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true)
+                    [ platform: 'microarray' ],
+                    [
+                        file("$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true)
+                    ]
                 ]
-                input[1] = 100
                 """
             }
         }

@@ -3,7 +3,12 @@
         "content": [
             {
                 "0": [
-                    "all_counts.parquet:md5,ea386983967ba07c233245b530c3edd0"
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "all_counts.parquet:md5,ea386983967ba07c233245b530c3edd0"
+                    ]
                 ],
                 "1": [
                     [
@@ -27,21 +32,31 @@
                     ]
                 ],
                 "counts": [
-                    "all_counts.parquet:md5,ea386983967ba07c233245b530c3edd0"
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "all_counts.parquet:md5,ea386983967ba07c233245b530c3edd0"
+                    ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-03T18:58:05.174305853"
+        "timestamp": "2026-01-06T18:55:36.577938151"
     },
     "2 identical files": {
         "content": [
             {
                 "0": [
-                    "all_counts.parquet:md5,a83c94a90be32af4fc3bcc4909f6f1d2"
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "all_counts.parquet:md5,a83c94a90be32af4fc3bcc4909f6f1d2"
+                    ]
                 ],
                 "1": [
                     [
@@ -65,21 +80,31 @@
                     ]
                 ],
                 "counts": [
-                    "all_counts.parquet:md5,a83c94a90be32af4fc3bcc4909f6f1d2"
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "all_counts.parquet:md5,a83c94a90be32af4fc3bcc4909f6f1d2"
+                    ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-03T18:58:11.980577512"
+        "timestamp": "2026-01-06T18:55:45.369797346"
     },
     "1 file": {
         "content": [
             {
                 "0": [
-                    "all_counts.parquet:md5,57629ccf12df0e16a39281dfe02df4bc"
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "all_counts.parquet:md5,57629ccf12df0e16a39281dfe02df4bc"
+                    ]
                 ],
                 "1": [
                     [
@@ -103,14 +128,19 @@
                     ]
                 ],
                 "counts": [
-                    "all_counts.parquet:md5,57629ccf12df0e16a39281dfe02df4bc"
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "all_counts.parquet:md5,57629ccf12df0e16a39281dfe02df4bc"
+                    ]
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-03T18:58:18.896026558"
+        "timestamp": "2026-01-06T18:55:54.187807965"
     }
 }

@@ -54,13 +54,13 @@ def main():
             counter.update(gene_ids)
 
     with open(UNIQUE_GENE_IDS_OUTFILE, "w") as fout:
-        fout.write("\n".join([str(gene_id) for gene_id in unique_gene_ids]))
+        fout.write("\n".join([str(gene_id) for gene_id in sorted(unique_gene_ids)]))
 
     with open(GENE_ID_OCCURRENCES_OUTFILE, "w") as fout:
         fout.write(
             f"{config.ORIGINAL_GENE_ID_COLNAME},{config.GENE_ID_COUNT_COLNAME}\n"
         )
-        for gene_id, count in counter.items():
+        for gene_id, count in sorted(counter.items()):
             fout.write(f"{gene_id},{count}\n")
 
 
