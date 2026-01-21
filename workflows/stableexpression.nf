@@ -180,8 +180,8 @@ workflow STABLEEXPRESSION {
             ch_all_counts.map{ meta, file -> file }.collect(),
             ch_stats_all_genes_with_scores.collect(),
             BASE_STATISTICS.out.platform_stats.collect(),
-            MERGE_DATA.out.whole_gene_metadata.collect(),
-            MERGE_DATA.out.whole_gene_id_mapping.collect()
+            MERGE_DATA.out.whole_gene_metadata.collect().ifEmpty([]), // handle case where there are no mappings
+            MERGE_DATA.out.whole_gene_id_mapping.collect().ifEmpty([]) // handle case where there are no mappings
         )
 
         ch_all_genes_summary                   = AGGREGATE_RESULTS.out.all_genes_summary

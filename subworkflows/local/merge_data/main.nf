@@ -96,7 +96,6 @@ workflow MERGE_DATA {
                                 ) {
                                     item -> "${item.original_gene_id},${item.gene_id}"
                                 }
-                                .ifEmpty([]) // handle case where there are no mappings
 
     // -----------------------------------------------------------------
     // MERGE ALL GENE METADATA
@@ -115,7 +114,6 @@ workflow MERGE_DATA {
                                 ) {
                                     item -> "${item.gene_id},${item.name},${item.description}"
                                 }
-                                .ifEmpty([]) // handle case where there are no mappings
 
     emit:
     all_counts                             = MERGE_ALL_COUNTS.out.counts
