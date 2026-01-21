@@ -1,17 +1,8 @@
-//
-// Subworkflow with functionality specific to the nf-core/stableexpression pipeline
-//
+include { NORMALISATION_COMPUTE_CPM as COMPUTE_CPM   } from '../../../modules/local/normalisation/compute_cpm'
+include { NORMALISATION_COMPUTE_TPM as COMPUTE_TPM   } from '../../../modules/local/normalisation/compute_tpm'
+include { QUANTILE_NORMALISATION                     } from '../../../modules/local/quantile_normalisation'
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-include { DESEQ2_NORMALISE                     } from '../../../modules/local/deseq2/normalise/main'
-include { EDGER_NORMALISE                      } from '../../../modules/local/edger/normalise/main'
-include { QUANTILE_NORMALISE                   } from '../../../modules/local/quantile_normalisation/main'
-include { DATASET_STATISTICS                   } from '../../../modules/local/dataset_statistics/main'
+include { GET_TRANSCRIPT_LENGTHS                     } from '../../../subworkflows/local/get_transcript_lengths'
 
 /*
 ========================================================================================
@@ -22,9 +13,11 @@ include { DATASET_STATISTICS                   } from '../../../modules/local/da
 workflow EXPRESSION_NORMALISATION {
 
     take:
+    species
     ch_datasets
     normalisation_method
-
+    quantile_norm_target_distrib
+    gene_length
 
     main:
 
@@ -39,15 +32,34 @@ workflow EXPRESSION_NORMALISATION {
             normalised: meta.normalised == true
         }
 
-    ch_raw_rnaseq_datasets = ch_datasets.raw.filter { meta, file -> meta.platform == 'rnaseq' }
+    ch_raw_rnaseq_datasets_to_normalise = ch_datasets.raw.filter { meta, file -> meta.platform == 'rnaseq' }
 
-    if ( normalisation_method == 'deseq2' ) {
-        DESEQ2_NORMALISE( ch_raw_rnaseq_datasets )
-        ch_raw_rnaseq_datasets_normalised = DESEQ2_NORMALISE.out.cpm
+    if ( normalisation_method == 'tpm' ) {
 
-    } else { // 'edger'
-        EDGER_NORMALISE( ch_raw_rnaseq_datasets )
-        ch_raw_rnaseq_datasets_normalised = EDGER_NORMALISE.out.cpm
+        if ( params.gene_length ) {
+
+            ch_gene_length_file = channel.fromPath( params.gene_length, checkIfExists: true )
+
+        } else {
+
+            // download genome annotation
+            // and computing length of the longest transcript gene per gene
+            GET_TRANSCRIPT_LENGTHS (species)
+            ch_gene_length_file = GET_TRANSCRIPT_LENGTHS.out.csv
+
+        }
+
+        COMPUTE_TPM(
+            ch_raw_rnaseq_datasets_to_normalise,
+            ch_gene_length_file
+        )
+        ch_raw_rnaseq_datasets_normalised = COMPUTE_TPM.out.counts
+
+    } else { // 'cpm'
+
+        COMPUTE_CPM( ch_raw_rnaseq_datasets_to_normalise )
+        ch_raw_rnaseq_datasets_normalised = COMPUTE_CPM.out.counts
+
     }
 
     //
@@ -55,21 +67,13 @@ workflow EXPRESSION_NORMALISATION {
     //
 
     // putting all normalised count datasets together and performing quantile normalisation
-    ch_datasets.normalised.concat( ch_raw_rnaseq_datasets_normalised ) | QUANTILE_NORMALISE
-    ch_quantile_normalised_datasets = QUANTILE_NORMALISE.out.counts
+    QUANTILE_NORMALISATION (
+        ch_datasets.normalised.mix( ch_raw_rnaseq_datasets_normalised ),
+        quantile_norm_target_distrib
+    )
 
-    //
-    // MODULE: Dataset statistics
-    //
-
-    DATASET_STATISTICS( ch_quantile_normalised_datasets )
 
     emit:
-    normalised_counts = ch_quantile_normalised_datasets
-    dataset_statistics = DATASET_STATISTICS.out.stats
+    counts                   = QUANTILE_NORMALISATION.out.counts
 
 }
-
-
-
-

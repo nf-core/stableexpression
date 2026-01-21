@@ -6,22 +6,30 @@ nextflow_workflow {
     tag "subworkflow_expression_normalisation"
     tag "subworkflow"
 
-    test("DESeq2 Normalisation") {
+    test("TPM Normalisation") {
 
         when {
             workflow {
                 """
-                rnaseq_raw_file = file( '$projectDir/tests/test_data/custom_datasets/rnaseq.raw.csv', checkIfExists: true )
-                rnaseq_raw_design_file = file( '$projectDir/tests/test_data/custom_datasets/rnaseq.raw.design.csv', checkIfExists: true )
-                microarray_normalised_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.csv', checkIfExists: true )
-                microarray_normalised_design_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.design.csv', checkIfExists: true )
-                ch_datasets = Channel.of(
-                    [ [normalised: false, design: rnaseq_raw_design_file, dataset: "rnaseq_raw", platform: "rnaseq"], rnaseq_raw_file],
-                    [ [normalised: true, design: microarray_normalised_design_file, dataset: "microarray_normalised", platform: "microarray"], microarray_normalised_file ]
+                rnaseq_raw_file = file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.csv', checkIfExists: true )
+                rnaseq_raw_design_file = file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.design.csv', checkIfExists: true )
+                microarray_normalised_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                microarray_normalised_design_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true )
+                ch_datasets = channel.of(
+                    [
+                        [normalised: false, design: rnaseq_raw_design_file, dataset: "rnaseq_raw", platform: "rnaseq"],
+                        rnaseq_raw_file
+                    ],
+                    [
+                        [normalised: true, design: microarray_normalised_design_file, dataset: "microarray_normalised", platform: "microarray"],
+                        microarray_normalised_file
+                    ]
                 )
-                normalisation_method = "deseq2"
-                input[0] = ch_datasets
-                input[1] = normalisation_method
+                input[0] = "solanum_tuberosum"
+                input[1] = ch_datasets
+                input[2] = "tpm"
+                input[3] = "uniform"
+                input[4] = null
                 """
             }
         }
@@ -35,22 +43,68 @@ nextflow_workflow {
 
     }
 
-    test("EdgeR Normalisation") {
+    test("TPM Normalisation with gene length") {
 
         when {
             workflow {
                 """
-                rnaseq_raw_file = file( '$projectDir/tests/test_data/custom_datasets/rnaseq.raw.csv', checkIfExists: true )
-                rnaseq_raw_design_file = file( '$projectDir/tests/test_data/custom_datasets/rnaseq.raw.design.csv', checkIfExists: true )
-                microarray_normalised_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.csv', checkIfExists: true )
-                microarray_normalised_design_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.design.csv', checkIfExists: true )
-                ch_datasets = Channel.of(
-                    [ [normalised: false, design: rnaseq_raw_design_file, dataset: "rnaseq_raw", platform: "rnaseq"], rnaseq_raw_file],
-                    [ [normalised: true, design: microarray_normalised_design_file, dataset: "microarray_normalised", platform: "microarray"], microarray_normalised_file ]
+                rnaseq_raw_file = file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.csv', checkIfExists: true )
+                rnaseq_raw_design_file = file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.design.csv', checkIfExists: true )
+                microarray_normalised_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                microarray_normalised_design_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true )
+                gene_length_file = file( '$projectDir/tests/test_data/input_datasets/gene_lengths.csv', checkIfExists: true )
+                ch_datasets = channel.of(
+                    [
+                        [normalised: false, design: rnaseq_raw_design_file, dataset: "rnaseq_raw", platform: "rnaseq"],
+                        rnaseq_raw_file
+                    ],
+                    [
+                        [normalised: true, design: microarray_normalised_design_file, dataset: "microarray_normalised", platform: "microarray"],
+                        microarray_normalised_file
+                    ]
                 )
-                normalisation_method = "edger"
-                input[0] = ch_datasets
-                input[1] = normalisation_method
+                input[0] = "solanum_tuberosum"
+                input[1] = ch_datasets
+                input[2] = "tpm"
+                input[3] = "uniform"
+                input[4] = gene_length_file
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("CPM Normalisation") {
+
+        when {
+            workflow {
+                """
+                rnaseq_raw_file = file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.csv', checkIfExists: true )
+                rnaseq_raw_design_file = file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.design.csv', checkIfExists: true )
+                microarray_normalised_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                microarray_normalised_design_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true )
+                ch_datasets = channel.of(
+                    [
+                        [normalised: false, design: rnaseq_raw_design_file, dataset: "rnaseq_raw", platform: "rnaseq"],
+                        rnaseq_raw_file
+                    ],
+                    [
+                        [normalised: true, design: microarray_normalised_design_file, dataset: "microarray_normalised", platform: "microarray"],
+                        microarray_normalised_file
+                    ]
+                )
+                input[0] = "solanum_tuberosum"
+                input[1] = ch_datasets
+                input[2] = "cpm"
+                input[3] = "uniform"
+                input[4] = null
                 """
             }
         }
@@ -69,14 +123,19 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                microarray_normalised_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.csv', checkIfExists: true )
-                microarray_normalised_design_file = file( '$projectDir/tests/test_data/custom_datasets/microarray.normalised.design.csv', checkIfExists: true )
-                ch_datasets = Channel.of(
-                    [ [normalised: true, design: microarray_normalised_design_file, dataset: "microarray_normalised", platform: "microarray"], microarray_normalised_file ]
+                microarray_normalised_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                microarray_normalised_design_file = file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true )
+                ch_datasets = channel.of(
+                    [
+                        [normalised: true, design: microarray_normalised_design_file, dataset: "microarray_normalised", platform: "microarray"],
+                        microarray_normalised_file
+                    ]
                 )
-                normalisation_method = "deseq2"
-                input[0] = ch_datasets
-                input[1] = normalisation_method
+                input[0] = "solanum_tuberosum"
+                input[1] = ch_datasets
+                input[2] = "tpm "
+                input[3] = "uniform"
+                input[4] = null
                 """
             }
         }

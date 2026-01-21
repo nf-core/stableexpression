@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+galaxy_dir="$(dirname $(readlink -f "$0"))"
+tool_dir="${galaxy_dir}/tool_shed/tool"
+
+planemo serve \
+    $tool_dir
+
+# add --no_cleanup to keep the pipelines workdirs after a run
+# very useful for debugging

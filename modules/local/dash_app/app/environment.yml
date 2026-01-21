@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - conda-forge::python=3.13.8
+  - conda-forge::pandas==2.3.3
+  - conda-forge::polars==1.35.2
+  - conda-forge::pyarrow==22.0.0
+  - conda-forge::scipy==1.16.3
+  - conda-forge::dash==3.3.0
+  - conda-forge::dash-mantine-components==2.4.0
+  - conda-forge::dash-extensions==2.0.4
+  - conda-forge::dash-iconify==0.1.2
+  - conda-forge::dash-ag-grid==32.3.2

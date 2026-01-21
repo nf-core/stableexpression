@@ -1,0 +1,53 @@
+<tool id="nf_core_PIPELINE_NAME" name="nf-core/PIPELINE_NAME" version="PIPELINE_VERSION">
+    <description>DESCRIPTION</description>
+    <requirements>
+        <requirement type="package" version="NEXTFLOW_VERSION">nextflow</requirement>
+        <requirement type="package" version="APPTAINER_VERSION">apptainer</requirement>
+        <requirement type="package" version="OPENJDK_VERSION">openjdk</requirement>
+    </requirements>
+    <version_command><![CDATA[
+VERSION="PIPELINE_VERSION"; echo "$VERSION"
+    ]]></version_command>
+    <command detect_errors="exit_code"><![CDATA[
+
+        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ## Running pipeline
+        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        nextflow drop -f nf-core/PIPELINE_NAME
+        && nextflow run nf-core/PIPELINE_NAME
+            -r dev -latest
+            -profile apptainer
+            -ansi-log false
+            --outdir ./results
+PARAMETERS
+
+        && zip -r results.zip results
+
+    ]]>
+    </command>
+    <inputs>
+INPUTS
+    </inputs>
+    <outputs>
+        <data name="multiqc_report" label="MultiQC report" from_work_dir="results/multiqc/multiqc_report.html" format="html" />
+        <data name="pipeline_results" label="All outputs" from_work_dir="results.zip" format="zip" />
+    </outputs>
+    <help><![CDATA[
+
+See https://nf-co.re/PIPELINE_NAME/ for detailed documentation
+
+     ]]></help>
+    <citations>
+        <citation type="bibtex">
+            @misc{nf-core/PIPELINE_NAME,
+              author = {},
+              year = {},
+              title = {nf-core/PIPELINE_NAME},
+              publisher = {GitHub},
+              journal = {GitHub repository},
+              url = {https://github.com/nf-core/PIPELINE_NAME},
+            }
+        </citation>
+    </citations>
+</tool>

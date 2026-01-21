@@ -11,14 +11,15 @@
                 "type": "string",
                 "format": "file-path",
                 "exists": true,
-                "pattern": "^\\S+\\.csv$",
+                "pattern": "^\\S+\\.(csv|tsv|dat)$",
                 "errorMessage": "You must provide a count dataset file"
             },
             "design": {
                 "type": "string",
                 "format": "file-path",
+                "schema": "assets/schema_design.json",
                 "exists": true,
-                "pattern": "^\\S+\\.csv$",
+                "pattern": "^\\S+\\.(csv|tsv|dat)$",
                 "errorMessage": "You must provide a design file",
                 "meta": ["design"]
             },

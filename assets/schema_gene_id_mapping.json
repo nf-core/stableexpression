@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/assets/schema_gene_id_mapping.json",
     "title": "nf-core/stableexpression pipeline - custom mappings schema",
-    "description": "Schema for the file provided with in the design column of the params.gene_id_mapping CSV file",
+    "description": "Schema for the file provided with the params.gene_id_mapping CSV / TSV file",
     "type": "array",
     "items": {
         "type": "object",
@@ -12,12 +12,12 @@
                 "pattern": "^\\S+$",
                 "errorMessage": "You must provide a column for original gene IDs."
             },
-            "ensembl_gene_id": {
+            "gene_id": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "You must provide a column for mapped IDs (ensembl gene IDs)."
+                "errorMessage": "You must provide a column for mapped IDs."
             }
         },
-        "required": ["original_gene_id", "ensembl_gene_id"]
+        "required": ["original_gene_id", "gene_id"]
     }
 }

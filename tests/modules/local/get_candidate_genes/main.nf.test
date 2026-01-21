@@ -1,0 +1,56 @@
+nextflow_process {
+
+    name "Test Process GET_CANDIDATE_GENES"
+    script "modules/local/get_candidate_genes/main.nf"
+    process "GET_CANDIDATE_GENES"
+    tag "get_candidate_genes"
+
+    test("With coefficient of variation") {
+
+        when {
+
+            process {
+                """
+                input[0] = file('$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[1] = file('$projectDir/tests/test_data/base_statistics/output/stats_all_genes.csv', checkIfExists: true)
+                input[2] = "cv"
+                input[3] = 10
+                input[4] = 0.2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("With RCVm and no filter on expression level") {
+
+        when {
+
+            process {
+                """
+                input[0] = file('$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[1] = file('$projectDir/tests/test_data/base_statistics/output/stats_all_genes.csv', checkIfExists: true)
+                input[2] = "rcvm"
+                input[3] = 10
+                input[4] = 0
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

@@ -1,0 +1,52 @@
+nextflow_process {
+
+    name "Test Process COMPUTE_BASE_STATISTICS"
+    script "modules/local/compute_base_statistics/main.nf"
+    process "COMPUTE_BASE_STATISTICS"
+    tag "base_stats"
+
+    test("No platform") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ platform: 'all' ],
+                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("RNAseq platform") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ platform: 'rnaseq' ],
+                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

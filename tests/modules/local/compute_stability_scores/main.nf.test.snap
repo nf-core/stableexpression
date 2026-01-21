@@ -1,0 +1,64 @@
+{
+    "With Genorm": {
+        "content": [
+            {
+                "0": [
+                    "stats_with_scores.csv:md5,d1e74b628b6dd02635e07dec414fded0"
+                ],
+                "1": [
+                    [
+                        "COMPUTE_STABILITY_SCORES",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_STABILITY_SCORES",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "stats_with_stability_scores": [
+                    "stats_with_scores.csv:md5,d1e74b628b6dd02635e07dec414fded0"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-12-03T18:52:21.178734391"
+    },
+    "Without Genorm": {
+        "content": [
+            {
+                "0": [
+                    "stats_with_scores.csv:md5,bf305bce944291ce723ef41b68bac0fc"
+                ],
+                "1": [
+                    [
+                        "COMPUTE_STABILITY_SCORES",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_STABILITY_SCORES",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "stats_with_stability_scores": [
+                    "stats_with_scores.csv:md5,bf305bce944291ce723ef41b68bac0fc"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-12-03T18:52:14.104078273"
+    }
+}

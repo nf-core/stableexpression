@@ -1,0 +1,49 @@
+nextflow_workflow {
+
+    name "Test Workflow genorm"
+    script "subworkflows/local/genorm/main.nf"
+    workflow "GENORM"
+    tag "subworkflow_genorm"
+    tag "subworkflow"
+
+    test("10 genes") {
+
+        tag "subworkflow_genorm_10_genes"
+
+        when {
+            workflow {
+                """
+                ch_counts = channel.fromPath( '$projectDir/tests/test_data/genorm/make_chunks/input/counts.head.parquet', checkIfExists: true)
+                input[0] = ch_counts
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+
+    }
+
+    test("1000 genes") {
+
+        tag "subworkflow_genorm_1000_genes"
+
+        when {
+            workflow {
+                """
+                ch_counts = channel.fromPath( '$projectDir/tests/test_data/genorm/make_chunks/input/counts.parquet', checkIfExists: true)
+                input[0] = ch_counts
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            // assert snapshot(workflow.out).match()
+        }
+
+    }
+
+}

@@ -1,9 +1,12 @@
-name: eatlas_get_accessions
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
 channels:
   - conda-forge
+  - bioconda
 dependencies:
-  - conda-forge::python==3.12.8
-  - conda-forge::requests==2.32.3
-  - conda-forge::nltk==3.9.1
-  - conda-forge::tenacity==9.0.0
-  - conda-forge::pandas==2.2.3
+  - conda-forge::python=3.13.5
+  - conda-forge::pandas==2.3.3
+  - conda-forge::requests==2.32.5
+  - conda-forge::tenacity==9.1.2
+  - conda-forge::pyyaml==6.0.3
+  - conda-forge::nltk==3.9.2

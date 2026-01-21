@@ -1,0 +1,206 @@
+{
+    "Very small dataset": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
+                        },
+                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_COMPUTE_TPM",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_COMPUTE_TPM",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
+                        },
+                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2026-01-06T17:46:55.157210607"
+    },
+    "One group": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
+                        },
+                        "counts.tpm.parquet:md5,7cc642e81f82432bf38690f105e5d2de"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_COMPUTE_TPM",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_COMPUTE_TPM",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
+                        },
+                        "counts.tpm.parquet:md5,7cc642e81f82432bf38690f105e5d2de"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2026-01-06T17:47:12.492274549"
+    },
+    "TSV files": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
+                        },
+                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_COMPUTE_TPM",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_COMPUTE_TPM",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
+                        },
+                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2026-01-06T17:47:20.896198862"
+    },
+    "Rows with many zeros": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
+                        },
+                        "counts.tpm.parquet:md5,72d0424d7465443a882963b3a77a2162"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_COMPUTE_TPM",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_COMPUTE_TPM",
+                        "polars",
+                        "1.17.1"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": [
+                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
+                            ]
+                        },
+                        "counts.tpm.parquet:md5,72d0424d7465443a882963b3a77a2162"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2026-01-06T17:47:03.903930502"
+    }
+}

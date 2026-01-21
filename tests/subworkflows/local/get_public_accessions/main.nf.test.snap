@@ -1,0 +1,78 @@
+{
+    "Accessions file + Excluded accessions file": {
+        "content": [
+            {
+                "0": [
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-PROT-138"
+                ],
+                "accessions": [
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-PROT-138"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2025-12-11T11:13:39.15754592"
+    },
+    "No GEO + accessions provided": {
+        "content": [
+            {
+                "0": [
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-PROT-138"
+                ],
+                "accessions": [
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-PROT-138"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2025-12-11T11:13:13.734553188"
+    },
+    "Fetch eatlas accessions without keywords": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "accessions": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2025-12-11T11:12:37.434155203"
+    },
+    "Fetch public accessions with keywords": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "accessions": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2025-12-11T14:12:14.94130631"
+    }
+}

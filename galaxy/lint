@@ -1,0 +1,8 @@
+#!/bin/bash
+
+galaxy_dir="$(dirname $(readlink -f "$0"))"
+tool_file="${galaxy_dir}/tool_shed/tool/nf_core_stableexpression.xml"
+
+planemo lint $tool_file
+
+planemo shed_lint tool_shed/tool --tools
