@@ -24,7 +24,6 @@ process EXPRESSIONATLAS_GETDATA {
 
     script:
     """
-    which python
     download_eatlas_data.R --accession $accession
     """
 
