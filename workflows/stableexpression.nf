@@ -10,6 +10,7 @@ include { ID_MAPPING                             } from '../subworkflows/local/i
 include { FILTER_DATASETS                        } from '../subworkflows/local/filter_datasets'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
 include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
+include { TAG_SAMPLES                            } from '../subworkflows/local/tag_samples'
 include { BASE_STATISTICS                        } from '../subworkflows/local/base_statistics'
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { MULTIQC_WORKFLOW                       } from '../subworkflows/local/multiqc'
@@ -131,7 +132,7 @@ workflow STABLEEXPRESSION {
         COMPUTE_DATASET_STATISTICS ( ch_counts )
 
         // -----------------------------------------------------------------
-        // MERGE DATA
+        // MERGE ALL DATASETS INTO ONE SINGLE DATASET
         // -----------------------------------------------------------------
 
         MERGE_DATA (
@@ -143,6 +144,14 @@ workflow STABLEEXPRESSION {
 
         ch_all_counts   = MERGE_DATA.out.all_counts
         ch_whole_design = MERGE_DATA.out.whole_design
+        ch_platform_counts = MERGE_DATA.out.platform_counts
+
+        // -----------------------------------------------------------------
+        // TAG SAMPLES
+        // -----------------------------------------------------------------
+
+        TAG_SAMPLES( ch_all_counts )
+        ch_nb_nulls_per_samples = TAG_SAMPLES.out.nb_nulls
 
         // -----------------------------------------------------------------
         // COMPUTE BASE STATISTICS FOR ALL GENES
@@ -150,7 +159,8 @@ workflow STABLEEXPRESSION {
 
         BASE_STATISTICS (
             ch_all_counts,
-            MERGE_DATA.out.platform_counts
+            ch_platform_counts,
+            ch_nb_nulls_per_samples
         )
 
         ch_all_datasets_stats = BASE_STATISTICS.out.stats

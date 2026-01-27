@@ -1,6 +1,5 @@
 process MERGE_COUNTS {
 
-    tag "${meta.platform}"
     label "process_high"
 
     conda "${moduleDir}/environment.yml"

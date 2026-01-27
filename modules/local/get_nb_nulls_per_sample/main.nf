@@ -1,4 +1,4 @@
-process COMPUTE_BASE_STATISTICS {
+process GET_NB_NULLS_PER_SAMPLE {
 
     label 'process_high'
 
@@ -9,18 +9,14 @@ process COMPUTE_BASE_STATISTICS {
 
     input:
     tuple val(meta), path(count_file)
-    path ch_nb_nulls_per_samples
 
     output:
-    path '*stats_all_genes.csv',                                                                                      emit: stats
-    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
-    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
+    path 'nb_null_values.csv',                                                                                    emit: nb_nulls
+    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     def args = task.ext.args ?: ''
-    if ( meta.platform != "all" ) {
-        args += " --platform $meta.platform"
-    }
     def is_using_containers = workflow.containerEngine ? true : false
     """
     # limiting number of threads when using conda / micromamba
@@ -28,10 +24,8 @@ process COMPUTE_BASE_STATISTICS {
         export POLARS_MAX_THREADS=${task.cpus}
     fi
 
-    compute_base_statistics.py \\
-        --counts $count_file \\
-        --nb-nulls-per-sample $ch_nb_nulls_per_samples \\
-        $args
+    get_nb_nulls_per_sample.py \\
+        --counts $count_file
     """
 
 }

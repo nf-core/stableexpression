@@ -6,7 +6,6 @@ import argparse
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import ClassVar
 
 import config
 import polars as pl
@@ -18,6 +17,11 @@ logger = logging.getLogger(__name__)
 ALL_GENES_RESULT_OUTFILE_SUFFIX = "stats_all_genes.csv"
 
 RCV_MULTIFILER = 1.4826  # see https://pmc.ncbi.nlm.nih.gov/articles/PMC9196089/
+
+# we want to select samples that show a particularly low nb of genes
+MIN_RATIO_GENE_COUNT_TO_MEAN = 0.75  # experimentally chosen
+# quantile intervals
+NB_QUANTILES = 100
 
 
 ############################################################################
@@ -58,12 +62,8 @@ class StatsExtension:
 
 @dataclass
 class GeneStatistician:
-    # we want to select samples that show a particularly low nb of genes
-    MIN_RATIO_GENE_COUNT_TO_MEAN: ClassVar[float] = 0.75  # experimentally chosen
-    # quantile intervals
-    NB_QUANTILES: ClassVar[int] = 100
-
     count_df: pl.DataFrame
+    nb_nulls_per_samples_df: pl.DataFrame
     platform: str | None = field(default=None)
 
     gene_count_per_sample_df: pl.DataFrame = field(init=False)
@@ -72,7 +72,6 @@ class GeneStatistician:
     samples_with_low_gene_count: list[str] = field(init=False)
 
     def __post_init__(self):
-        self.gene_count_per_sample_df = self.get_gene_counts_per_sample()
         self.samples = [
             col for col in self.count_df.columns if col != config.GENE_ID_COLNAME
         ]
@@ -84,30 +83,15 @@ class GeneStatistician:
     def get_valid_counts(self) -> pl.DataFrame:
         return self.count_df.select(pl.exclude(config.GENE_ID_COLNAME))
 
-    def get_gene_counts_per_sample(self) -> pl.DataFrame:
-        """
-        Get the number of non-null values per sample.
-        :return:
-        A polars dataframe containing 2 columns:
-            - sample: name of the sample
-            - nb_not_nulls: number of non-null values
-        """
-        return (
-            self.count_df.select(pl.exclude(config.GENE_ID_COLNAME))
-            .count()
-            .transpose(
-                include_header=True, header_name="sample", column_names=["count"]
-            )
-        )
-
     def get_samples_with_low_gene_count(self) -> list[str]:
-        mean_gene_count = self.gene_count_per_sample_df[
-            config.GENE_COUNT_COLNAME
-        ].mean()
+        nb_nulls_per_samples_df = self.nb_nulls_per_samples_df.filter(
+            pl.col(config.SAMPLE_COLNAME).is_in(self.samples)
+        )
+        mean_gene_count = nb_nulls_per_samples_df[config.GENE_COUNT_COLNAME].mean()
         return (
-            self.gene_count_per_sample_df.filter(
+            nb_nulls_per_samples_df.filter(
                 (pl.col(config.GENE_COUNT_COLNAME) / mean_gene_count)
-                < self.MIN_RATIO_GENE_COUNT_TO_MEAN
+                >= MIN_RATIO_GENE_COUNT_TO_MEAN
             )
             .select(config.SAMPLE_COLNAME)
             .to_series()
@@ -152,9 +136,13 @@ class GeneStatistician:
         nb_nulls = self.count_df.select(
             pl.exclude(config.GENE_ID_COLNAME).is_null()
         ).sum_horizontal()
-        nb_nulls_valid_samples = self.count_df.select(
-            pl.col(valid_samples).is_null()
-        ).sum_horizontal()
+
+        if valid_samples:
+            nb_nulls_valid_samples = self.count_df.select(
+                pl.col(valid_samples).is_null()
+            ).sum_horizontal()
+        else:
+            nb_nulls_valid_samples = nb_nulls
 
         self.stat_df = self.stat_df.with_columns(
             (nb_nulls / len(self.samples)).alias(
@@ -185,16 +173,12 @@ class GeneStatistician:
         logger.info("Getting cpm quantiles")
         mean_colname = self.get_colname(config.MEAN_COLNAME)
         self.stat_df = self.stat_df.with_columns(
-            (
-                pl.col(mean_colname).rank()
-                / pl.col(mean_colname).count()
-                * self.NB_QUANTILES
-            )
+            (pl.col(mean_colname).rank() / pl.col(mean_colname).count() * NB_QUANTILES)
             .floor()
             .cast(pl.Int8)
             # we want the only value = NB_QUANTILES to be NB_QUANTILES - 1
             # because the last quantile interval is [NB_QUANTILES - 1, NB_QUANTILES]
-            .replace({self.NB_QUANTILES: self.NB_QUANTILES - 1})
+            .replace({NB_QUANTILES: NB_QUANTILES - 1})
             .alias(self.get_colname(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME))
         )
 
@@ -224,6 +208,13 @@ def parse_args():
     )
     parser.add_argument(
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
+    )
+    parser.add_argument(
+        "--nb-nulls-per-sample",
+        type=Path,
+        dest="nb_nulls_per_samples",
+        required=True,
+        help="Table of number of null values per sample",
     )
     parser.add_argument("--platform", type=str, help="Platform name")
     return parser.parse_args()
@@ -263,8 +254,10 @@ def main():
         f"Loaded count data with {count_df.shape[0]} rows and {count_df.shape[1]} columns"
     )
 
+    nb_nulls_per_samples_df = pl.read_csv(args.nb_nulls_per_samples)
+
     # computing statistics (mean, standard deviation, coefficient of variation, quantiles)
-    gene_stat = GeneStatistician(count_df, args.platform)
+    gene_stat = GeneStatistician(count_df, nb_nulls_per_samples_df, args.platform)
     stat_df = gene_stat.compute_statistics()
 
     # exporting computed data

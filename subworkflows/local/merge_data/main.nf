@@ -50,7 +50,7 @@ workflow MERGE_DATA {
                                     .collect( sort: true )
                                     .map { files -> [ [ platform: "all" ], files ] }
 
-    MERGE_ALL_COUNTS( ch_collected_merged_counts )
+    MERGE_ALL_COUNTS( ch_collected_merged_counts.collect() )
 
     // -----------------------------------------------------------------
     // MERGE ALL DESIGNS IN A SINGLE TABLE
