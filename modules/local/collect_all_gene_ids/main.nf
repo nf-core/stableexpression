@@ -1,4 +1,4 @@
-process COLLECT_GENE_IDS {
+process COLLECT_ALL_GENE_IDS {
 
     label "process_high"
 

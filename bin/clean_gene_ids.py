@@ -20,7 +20,6 @@ logger = logging.getLogger(__name__)
 ##################################################################
 
 CLEANED_COUNTS_SUFFIX = ".cleaned.parquet"
-CLEANED_GENE_IDS_SUFFIX = ".cleaned_gene_ids.txt"
 
 FAILURE_REASON_FILE = "failure_reason.txt"
 
@@ -96,22 +95,8 @@ def main():
         sys.exit(0)
 
     #############################################################
-    # WRITING RESULTS
+    # WRITING CLEANED COUNTS
     #############################################################
-
-    logger.info("Writing cleaned IDs")
-    gene_ids_outfile = args.count_file.with_name(
-        args.count_file.stem + CLEANED_GENE_IDS_SUFFIX
-    )
-    gene_ids = (
-        df.select(config.GENE_ID_COLNAME)
-        .sort(config.GENE_ID_COLNAME)
-        .to_series()
-        .to_list()
-    )
-
-    with open(gene_ids_outfile, "w") as fout:
-        fout.write("\n".join(gene_ids))
 
     logger.info("Writing count file with cleaned IDs")
     count_outfile = args.count_file.with_name(

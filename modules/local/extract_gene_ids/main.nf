@@ -1,4 +1,4 @@
-process CLEAN_GENE_IDS {
+process EXTRACT_GENE_IDS {
 
     label 'process_low'
 
@@ -13,8 +13,7 @@ process CLEAN_GENE_IDS {
     tuple val(meta), path(count_file)
 
     output:
-    tuple val(meta), path('*.cleaned.parquet'),             optional: true,                                           emit: counts
-    tuple val(meta.dataset), path("failure_reason.txt"),    optional: true,                                           topic: id_cleaning_failure_reason
+    path('*.gene_ids.txt'), optional: true,                                                                           emit: gene_ids
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
@@ -26,8 +25,7 @@ process CLEAN_GENE_IDS {
         export POLARS_MAX_THREADS=${task.cpus}
     fi
 
-    clean_gene_ids.py \\
+    extract_gene_ids.py \\
         --count-file "$count_file"
     """
-
 }
