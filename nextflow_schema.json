@@ -138,6 +138,12 @@
                     "fa_icon": "fas fa-ban",
                     "help": "If you don't want to map gene IDs with g:Profiler, you can skip this step by providing `--skip_id_mapping`. It can be in particular useful if the g:Profiler is down and if you already have a custom mapping file."
                 },
+                "skip_cleaning_gene_ids": {
+                    "type": "boolean",
+                    "description": "Skip cleaning gene IDs step",
+                    "fa_icon": "fas fa-ban",
+                    "help": "If you don't want to clean gene IDs, you can skip this step by providing `--skip_cleaning_gene_ids`. Note that gene ID cleaning is automatically disabled with `--skip_id_mapping`."
+                },
                 "gprofiler_target_db": {
                     "type": "string",
                     "description": "Target database for g:Profiler",

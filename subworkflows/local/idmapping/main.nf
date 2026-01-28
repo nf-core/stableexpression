@@ -17,6 +17,7 @@ workflow ID_MAPPING {
     ch_counts
     species
     skip_id_mapping
+    skip_cleaning_gene_ids
     gprofiler_target_db
     custom_gene_id_mapping
     custom_gene_metadata
@@ -34,7 +35,7 @@ workflow ID_MAPPING {
     // IN CASE OF ID MAPPING, CLEANING GENE IDS BEFOREHAND
     // -----------------------------------------------------------------
 
-    if ( !skip_id_mapping ) {
+    if ( !skip_id_mapping && !skip_cleaning_gene_ids ) {
 
         // ensuring that all gene ids are valid before mapping
         CLEAN_GENE_IDS ( ch_counts )
@@ -76,7 +77,7 @@ workflow ID_MAPPING {
 
         // sorting files in order to have a consistent input and be able to retry
         COLLECT_ALL_GENE_IDS(
-            ch_cleaned_gene_ids.toSortedList()
+            ch_gene_ids.toSortedList()
         )
 
         // -----------------------------------------------------------------

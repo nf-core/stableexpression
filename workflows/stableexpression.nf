@@ -96,6 +96,7 @@ workflow STABLEEXPRESSION {
             ch_counts,
             species,
             params.skip_id_mapping,
+            params.skip_cleaning_gene_ids,
             params.gprofiler_target_db,
             params.gene_id_mapping,
             params.gene_metadata,
