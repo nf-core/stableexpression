@@ -12,7 +12,7 @@ workflow BASE_STATISTICS {
     take:
     ch_all_counts      // [ [ platform: platform, dataset_size: size], file ]
     ch_platform_counts // [ [ platform: platform, dataset_size: size], file ]
-    ch_nb_nulls_per_samples
+    ch_nb_nulls_per_sample_file
 
     main:
 
@@ -22,7 +22,7 @@ workflow BASE_STATISTICS {
 
     COMPUTE_PLATFORM_STATISTICS(
         ch_platform_counts,
-        ch_nb_nulls_per_samples
+        ch_nb_nulls_per_sample_file.collect()
     )
 
 
@@ -32,7 +32,7 @@ workflow BASE_STATISTICS {
 
     COMPUTE_GLOBAL_STATISTICS(
         ch_all_counts.collect(),
-        ch_nb_nulls_per_samples
+        ch_nb_nulls_per_sample_file.collect()
     )
 
     emit:

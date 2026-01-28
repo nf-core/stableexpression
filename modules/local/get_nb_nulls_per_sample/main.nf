@@ -1,6 +1,7 @@
 process GET_NB_NULLS_PER_SAMPLE {
 
-    label 'process_high'
+    tag "${meta.dataset}"
+    label 'process_low'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
@@ -9,6 +10,7 @@ process GET_NB_NULLS_PER_SAMPLE {
 
     input:
     tuple val(meta), path(count_file)
+    path valid_gene_ids
 
     output:
     path 'nb_null_values.csv',                                                                                    emit: nb_nulls
@@ -25,7 +27,8 @@ process GET_NB_NULLS_PER_SAMPLE {
     fi
 
     get_nb_nulls_per_sample.py \\
-        --counts $count_file
+        --counts $count_file \\
+        --valid-gene-ids $valid_gene_ids
     """
 
 }

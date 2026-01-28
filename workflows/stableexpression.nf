@@ -9,13 +9,13 @@ include { DOWNLOAD_PUBLIC_DATASETS               } from '../subworkflows/local/d
 include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
 include { FILTER_DATASETS                        } from '../subworkflows/local/filter_datasets'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
+include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
 include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
-include { TAG_SAMPLES                            } from '../subworkflows/local/tag_samples'
 include { BASE_STATISTICS                        } from '../subworkflows/local/base_statistics'
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { MULTIQC_WORKFLOW                       } from '../subworkflows/local/multiqc'
 
-include { COMPUTE_DATASET_STATISTICS             } from '../modules/local/compute_dataset_statistics'
+
 include { AGGREGATE_RESULTS                      } from '../modules/local/aggregate_results'
 include { DASH_APP                               } from '../modules/local/dash_app'
 
@@ -107,6 +107,7 @@ workflow STABLEEXPRESSION {
         ch_counts          = ID_MAPPING.out.counts
         ch_gene_id_mapping = ID_MAPPING.out.mapping
         ch_gene_metadata   = ID_MAPPING.out.metadata
+        ch_valid_gene_ids  = ID_MAPPING.out.valid_gene_ids
 
         // -----------------------------------------------------------------
         // FILTER OUT SAMPLES NOT VALID
@@ -125,19 +126,25 @@ workflow STABLEEXPRESSION {
             params.quantile_norm_target_distrib,
             params.gene_length
         )
+        ch_normalised_counts = EXPRESSION_NORMALISATION.out.counts
 
         // -----------------------------------------------------------------
-        // COMPUTE VARIOUS STATISTICS AT THE SAMPLE LEVEL
+        // ANALYSIS OF NORMALISED DATASETS
         // -----------------------------------------------------------------
 
-        COMPUTE_DATASET_STATISTICS ( ch_counts )
+        DATASET_ANALYSIS(
+            ch_normalised_counts,
+            ch_valid_gene_ids,
+            params.outdir
+        )
+        ch_nb_nulls_per_sample_file = DATASET_ANALYSIS.out.nb_nulls_per_sample_file
 
         // -----------------------------------------------------------------
         // MERGE ALL DATASETS INTO ONE SINGLE DATASET
         // -----------------------------------------------------------------
 
         MERGE_DATA (
-            EXPRESSION_NORMALISATION.out.counts,
+            ch_normalised_counts,
             ch_gene_id_mapping,
             ch_gene_metadata,
             params.outdir
@@ -148,20 +155,13 @@ workflow STABLEEXPRESSION {
         ch_platform_counts = MERGE_DATA.out.platform_counts
 
         // -----------------------------------------------------------------
-        // TAG SAMPLES
-        // -----------------------------------------------------------------
-
-        TAG_SAMPLES( ch_all_counts )
-        ch_nb_nulls_per_samples = TAG_SAMPLES.out.nb_nulls
-
-        // -----------------------------------------------------------------
         // COMPUTE BASE STATISTICS FOR ALL GENES
         // -----------------------------------------------------------------
 
         BASE_STATISTICS (
             ch_all_counts,
             ch_platform_counts,
-            ch_nb_nulls_per_samples
+            ch_nb_nulls_per_sample_file
         )
 
         ch_all_datasets_stats = BASE_STATISTICS.out.stats

@@ -9,7 +9,7 @@ process COMPUTE_BASE_STATISTICS {
 
     input:
     tuple val(meta), path(count_file)
-    path ch_nb_nulls_per_samples
+    path nb_nulls_per_samples
 
     output:
     path '*stats_all_genes.csv',                                                                                      emit: stats
@@ -30,7 +30,7 @@ process COMPUTE_BASE_STATISTICS {
 
     compute_base_statistics.py \\
         --counts $count_file \\
-        --nb-nulls-per-sample $ch_nb_nulls_per_samples \\
+        --nb-nulls-per-sample $nb_nulls_per_samples \\
         $args
     """
 
