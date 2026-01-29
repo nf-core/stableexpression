@@ -33,7 +33,12 @@ def parse_table(file: Path):
         sep = "," if file.suffix == ".csv" else "\t"
         header = parse_header(file, sep)
         return pl.read_csv(
-            file, separator=sep, has_header=False, skip_rows=1, new_columns=header
+            file,
+            separator=sep,
+            has_header=False,
+            skip_rows=1,
+            new_columns=header,
+            null_values=["NA", "N/A", "na", "n/a"],
         )
     elif file.suffix == ".parquet":
         return pl.read_parquet(file)
