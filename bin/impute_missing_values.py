@@ -93,6 +93,9 @@ def apply_iterative_imputer(df: pl.DataFrame):
         n_nearest_features=N_NEAREST_FEATURES,
         random_state=0,
         initial_strategy="mean",
+        min_value=0,
+        max_value=1,
+        imputation_order="random",
     )
     # Convert to numpy, impute, then convert back
     count_matrix = df.select(get_count_columns(df)).to_numpy()
