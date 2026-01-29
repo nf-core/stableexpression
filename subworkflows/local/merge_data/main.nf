@@ -1,5 +1,6 @@
 include { MERGE_COUNTS as MERGE_PLATFORM_COUNTS         } from '../../../modules/local/merge_counts'
 include { MERGE_COUNTS as MERGE_ALL_COUNTS              } from '../../../modules/local/merge_counts'
+include { IMPUTE_MISSING_VALUES                         } from '../../../modules/local/impute_missing_values'
 
 /*
 ========================================================================================
@@ -13,6 +14,7 @@ workflow MERGE_DATA {
     ch_normalised_counts
     ch_gene_id_mapping
     ch_gene_metadata
+    missing_value_imputer
     outdir
 
     main:
@@ -51,6 +53,15 @@ workflow MERGE_DATA {
                                     .map { files -> [ [ platform: "all" ], files ] }
 
     MERGE_ALL_COUNTS( ch_collected_merged_counts.collect() )
+
+    // -----------------------------------------------------------------
+    // IMPUTE MISSING VALUES
+    // -----------------------------------------------------------------
+
+    IMPUTE_MISSING_VALUES(
+        MERGE_ALL_COUNTS.out.counts.collect(),
+        missing_value_imputer
+    )
 
     // -----------------------------------------------------------------
     // MERGE ALL DESIGNS IN A SINGLE TABLE
@@ -116,7 +127,7 @@ workflow MERGE_DATA {
                                 }
 
     emit:
-    all_counts                             = MERGE_ALL_COUNTS.out.counts
+    all_counts                             = IMPUTE_MISSING_VALUES.out.counts
     platform_counts                        = ch_platform_counts
     whole_design                           = ch_whole_design
     whole_gene_id_mapping                  = ch_whole_gene_id_mapping

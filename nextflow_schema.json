@@ -235,6 +235,14 @@
                     "maximum": 1,
                     "default": 0.2,
                     "help_text": "To avoid genes with low expression levels from being considered for stability scoring, a threshold is set up. For example, a value of 0.2 means that the pipeline will reject genes showing an average expression level in the bottom 20% of all genes."
+                },
+                "missing_value_imputer": {
+                    "type": "string",
+                    "description": "Type of imputation method to use for missing values",
+                    "fa_icon": "fas fa-battery-three-quarters",
+                    "enum": ["iterative", "knn", "gene_mean"],
+                    "default": "uniform",
+                    "help_text": "The pipeline provides three options for imputing missing values: iterative, k-nearest neighbors, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Gene mean imputation is a very basic method that replaces missing values with the mean expression level of the gene across all samples."
                 }
             }
         },

@@ -147,6 +147,7 @@ workflow STABLEEXPRESSION {
             ch_normalised_counts,
             ch_gene_id_mapping,
             ch_gene_metadata,
+            params.missing_value_imputer,
             params.outdir
         )
 
