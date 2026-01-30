@@ -194,6 +194,32 @@
                 }
             }
         },
+        "sample_filtering_options": {
+            "title": "Sample filtering options",
+            "type": "object",
+            "fa_icon": "fas fa-chart-line",
+            "description": "Options for filtering samples based on their expression levels.",
+            "properties": {
+                "max_zero_ratio": {
+                    "type": "number",
+                    "description": "Maximum ratio of zero counts to total counts",
+                    "fa_icon": "fas fa-divide",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.75,
+                    "help_text": "A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
+                },
+                "max_null_ratio": {
+                    "type": "number",
+                    "description": "Maximum ratio of null values",
+                    "fa_icon": "fas fa-divide",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.75,
+                    "help_text": "A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
+                }
+            }
+        },
         "statistical_options": {
             "title": "Statistics options",
             "type": "object",
@@ -471,6 +497,9 @@
         },
         {
             "$ref": "#/$defs/idmapping_options"
+        },
+        {
+            "$ref": "#/$defs/sample_filtering_options"
         },
         {
             "$ref": "#/$defs/statistical_options"

@@ -1,4 +1,4 @@
-process REMOVE_SAMPLES_NOT_VALID {
+process FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS {
 
     label 'process_single'
 
@@ -11,6 +11,7 @@ process REMOVE_SAMPLES_NOT_VALID {
 
     input:
     tuple val(meta), path(count_file)
+    val(max_zero_ratio)
 
     output:
     tuple val(meta), path("*.filtered.parquet"), optional: true,                                                      emit: counts
@@ -19,8 +20,9 @@ process REMOVE_SAMPLES_NOT_VALID {
 
     script:
     """
-    remove_samples_not_valid.py \\
-        --counts $count_file
+    filter_out_samples_with_too_many_zeros.py \\
+        --counts $count_file \\
+        --max-zero-ratio $max_zero_ratio
     """
 
 }
