@@ -80,18 +80,6 @@ custom_data:
           Final stability score : the lower, the better
         format: "{:,.6f}"
         scale: "RdYlGn-rev"
-      coefficient_of_variation_normalised:
-        title: "Normalised CV"
-        description: |
-          Quantile normalised (among candidate genes) coefficient of variation ( std(expression) / mean(expression) ) across all samples.
-        format: "{:,.6f}"
-        scale: "PRGn-rev"
-      robust_coefficient_of_variation_median_normalised:
-        title: "Normalised RCVm"
-        description: |
-          Quantile normalised (among candidate genes) robust coefficient of variation on median of the expression across all samples.
-        format: "{:,.4f}"
-        scale: "PRGn-rev"
       normfinder_stability_value_normalised:
         title: "Normalised Normfinder score"
         description: |
@@ -103,6 +91,18 @@ custom_data:
         description: |
           Quantile normalised (among candidate genes) M-measure as computed by Genorm
         format: "{:,.6f}"
+        scale: "PRGn-rev"
+      coefficient_of_variation_normalised:
+        title: "Normalised CV"
+        description: |
+          Quantile normalised (among candidate genes) coefficient of variation ( std(expression) / mean(expression) ) across all samples.
+        format: "{:,.6f}"
+        scale: "PRGn-rev"
+      robust_coefficient_of_variation_median_normalised:
+        title: "Normalised RCVm"
+        description: |
+          Quantile normalised (among candidate genes) robust coefficient of variation on median of the expression across all samples.
+        format: "{:,.4f}"
         scale: "PRGn-rev"
       coefficient_of_variation:
         title: "CV"

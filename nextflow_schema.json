@@ -302,11 +302,11 @@
                     "minimum": 1,
                     "help_text": "Number of candidate genes to keep in the final list. These candidates genes are chosen as the ones showing the least standard variation."
                 },
-                "run_genorm": {
+                "skip_genorm": {
                     "type": "boolean",
                     "description": "Run Genorm",
                     "fa_icon": "fas fa-check",
-                    "help": "Genorm is not run by default. To run and get additional information about gene stability, set this parameter to true. Moreover, you can integrate the Genorm M-measure in the stability score by modifying the score weights with --stability_score_weights."
+                    "help": "Skip Genorm by setting this parameter to true. In this case, by default, only Normfinder will participate in the stability score."
                 },
                 "stability_score_weights": {
                     "type": "string",

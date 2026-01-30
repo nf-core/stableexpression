@@ -183,7 +183,7 @@ workflow STABLEEXPRESSION {
             params.candidate_selection_descriptor,
             params.nb_top_gene_candidates,
             params.min_expr_threshold,
-            params.run_genorm,
+            params.skip_genorm,
             params.stability_score_weights
         )
 

@@ -18,7 +18,7 @@ workflow STABILITY_SCORING {
     candidate_selection_descriptor
     nb_top_gene_candidates
     min_expr_threshold
-    run_genorm
+    skip_genorm
     stability_score_weights
 
     main:
@@ -49,7 +49,7 @@ workflow STABILITY_SCORING {
     // GENORM
     // -----------------------------------------------------------------
 
-    if ( run_genorm ) {
+    if ( !skip_genorm ) {
         GENORM ( ch_candidate_gene_counts )
         ch_genorm_stability = GENORM.out.m_measures
     } else {
