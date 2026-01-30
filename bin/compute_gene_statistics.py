@@ -18,8 +18,6 @@ ALL_GENES_RESULT_OUTFILE_SUFFIX = "stats_all_genes.csv"
 
 RCV_MULTIFILER = 1.4826  # see https://pmc.ncbi.nlm.nih.gov/articles/PMC9196089/
 
-# we want to select samples that show a particularly low nb of genes
-MIN_RATIO_GENE_COUNT_TO_MEAN = 0.75  # experimentally chosen
 # quantile intervals
 NB_QUANTILES = 100
 
@@ -64,6 +62,7 @@ class StatsExtension:
 class GeneStatistician:
     count_df: pl.DataFrame
     nb_nulls_per_samples_df: pl.DataFrame
+    max_ratio_null_valid_sample: float
     platform: str | None = field(default=None)
 
     gene_count_per_sample_df: pl.DataFrame = field(init=False)
@@ -84,15 +83,11 @@ class GeneStatistician:
         return self.count_df.select(pl.exclude(config.GENE_ID_COLNAME))
 
     def get_samples_with_low_gene_count(self) -> list[str]:
-        nb_nulls_per_samples_df = self.nb_nulls_per_samples_df.filter(
-            pl.col(config.SAMPLE_COLNAME).is_in(self.samples)
-        )
-        mean_gene_count = nb_nulls_per_samples_df[config.GENE_COUNT_COLNAME].mean()
         return (
-            nb_nulls_per_samples_df.filter(
-                (pl.col(config.GENE_COUNT_COLNAME) / mean_gene_count)
-                >= MIN_RATIO_GENE_COUNT_TO_MEAN
+            self.nb_nulls_per_samples_df.filter(
+                pl.col(config.SAMPLE_COLNAME).is_in(self.samples)
             )
+            .filter(pl.col(config.RATIO_COLNAME) > self.max_ratio_null_valid_sample)
             .select(config.SAMPLE_COLNAME)
             .to_series()
             .to_list()
@@ -210,11 +205,18 @@ def parse_args():
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
     parser.add_argument(
-        "--nb-nulls-per-sample",
+        "--ratio-nulls-per-sample",
         type=Path,
-        dest="nb_nulls_per_samples",
+        dest="ratio_nulls_per_samples",
         required=True,
-        help="Table of number of null values per sample",
+        help="Ratio of null values per sample",
+    )
+    parser.add_argument(
+        "--max-ratio-null-valid-sample",
+        type=float,
+        dest="max_ratio_null_valid_sample",
+        required=True,
+        help="Maximum ratio of null values for a sample to be considered valid",
     )
     parser.add_argument("--platform", type=str, help="Platform name")
     return parser.parse_args()
@@ -254,10 +256,15 @@ def main():
         f"Loaded count data with {count_df.shape[0]} rows and {count_df.shape[1]} columns"
     )
 
-    nb_nulls_per_samples_df = pl.read_csv(args.nb_nulls_per_samples)
+    ratio_nulls_per_samples_df = pl.read_csv(args.ratio_nulls_per_samples)
 
     # computing statistics (mean, standard deviation, coefficient of variation, quantiles)
-    gene_stat = GeneStatistician(count_df, nb_nulls_per_samples_df, args.platform)
+    gene_stat = GeneStatistician(
+        count_df,
+        ratio_nulls_per_samples_df,
+        args.max_ratio_null_valid_sample,
+        args.platform,
+    )
     stat_df = gene_stat.compute_statistics()
 
     # exporting computed data

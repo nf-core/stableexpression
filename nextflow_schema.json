@@ -206,7 +206,7 @@
                     "fa_icon": "fas fa-divide",
                     "minimum": 0,
                     "maximum": 1,
-                    "default": 0.75,
+                    "default": 0.9,
                     "help_text": "A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
                 },
                 "max_null_ratio": {
@@ -215,8 +215,17 @@
                     "fa_icon": "fas fa-divide",
                     "minimum": 0,
                     "maximum": 1,
-                    "default": 0.75,
+                    "default": 0.9,
                     "help_text": "A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
+                },
+                "max_null_ratio_valid_sample": {
+                    "type": "number",
+                    "description": "Maximum ratio of null values in a sample for it to be considered in the computation of the null value malus",
+                    "fa_icon": "fas fa-divide",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.75,
+                    "help_text": "After filtering out samples with a very high proportion of zero counts (via `--max_null_ratio`), a second filter is set up to avoid samples that contain a substantial proportion of null values to be considered in the malus of null values comprised in the stability score."
                 }
             }
         },
@@ -303,7 +312,7 @@
                     "type": "string",
                     "description": "Weights for stability score calculation",
                     "fa_icon": "fas fa-balance-scale",
-                    "help_text": "Weights for Coefficient of Variation / Robust Coefficient of Variation on Median / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.8,0.1,0.1,0",
+                    "help_text": "Weights for Normfinder / Genorm / Coefficient of Variation (CV) / Robust Coefficient of Variation on Median (RCVM) respectively. Must be a comma-separated string. Example: 0.5,0.5,0.0,0",
                     "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$"
                 }
             }

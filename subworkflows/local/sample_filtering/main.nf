@@ -42,21 +42,21 @@ workflow SAMPLE_FILTERING {
     // GET NUMBER OF NULLS PER SAMPLE
     // -----------------------------------------------------------------
 
-    ch_nb_nulls_per_sample_file = TOO_MANY_MISSING_VALUES.out.nb_nulls_per_sample
+    ch_ratio_nulls_per_sample_file = TOO_MANY_MISSING_VALUES.out.ratio_nulls_per_sample
                                     .splitCsv( header: true )
                                     .collectFile(
-                                        name: 'nb_nulls_per_sample.csv',
-                                        seed: "sample,count",
+                                        name: 'ratio_nulls_per_sample.csv',
+                                        seed: "sample,ratio",
                                         newLine: true,
                                         storeDir: "${outdir}/statistics/",
                                         sort: true
                                     )
                                     {
-                                        item -> "${item["sample"]},${item["count"]}"
+                                        item -> "${item["sample"]},${item["ratio"]}"
                                     }
 
     emit:
-    counts                      = TOO_MANY_MISSING_VALUES.out.counts
-    nb_nulls_per_sample_file    = ch_nb_nulls_per_sample_file
+    counts                         = TOO_MANY_MISSING_VALUES.out.counts
+    ratio_nulls_per_sample_file    = ch_ratio_nulls_per_sample_file
 
 }

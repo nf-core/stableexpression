@@ -9,7 +9,8 @@ process COMPUTE_GENE_STATISTICS {
 
     input:
     tuple val(meta), path(count_file)
-    path nb_nulls_per_samples
+    path ratio_nulls_per_samples
+    val max_null_ratio_valid_sample
 
     output:
     path '*stats_all_genes.csv',                                                                                      emit: stats
@@ -30,7 +31,8 @@ process COMPUTE_GENE_STATISTICS {
 
     compute_gene_statistics.py \\
         --counts $count_file \\
-        --nb-nulls-per-sample $nb_nulls_per_samples \\
+        --ratio-nulls-per-sample $ratio_nulls_per_samples \\
+        --max-ratio-null-valid-sample $max_null_ratio_valid_sample \\
         $args
     """
 

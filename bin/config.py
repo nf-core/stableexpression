@@ -27,6 +27,7 @@ KS_TEST_COLNAME = "kolmogorov_smirnov_pvalue"
 # count dataframe
 GENE_COUNT_COLNAME = "count"
 SAMPLE_COLNAME = "sample"
+RATIO_COLNAME = "ratio"
 
 # gene metadata
 ORIGINAL_GENE_ID_COLNAME = "original_gene_id"

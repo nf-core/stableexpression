@@ -120,7 +120,7 @@ workflow STABLEEXPRESSION {
             params.max_null_ratio,
             params.outdir
         )
-        ch_nb_nulls_per_sample_file = SAMPLE_FILTERING.out.nb_nulls_per_sample_file
+        ch_ratio_nulls_per_sample_file = SAMPLE_FILTERING.out.ratio_nulls_per_sample_file
 
         // -----------------------------------------------------------------
         // NORMALISATION OF RAW COUNT DATASETS (INCLUDING RNA-SEQ DATASETS)
@@ -166,7 +166,8 @@ workflow STABLEEXPRESSION {
         GENE_STATISTICS (
             ch_all_counts,
             ch_platform_counts,
-            ch_nb_nulls_per_sample_file
+            ch_ratio_nulls_per_sample_file,
+            params.max_null_ratio_valid_sample
         )
 
         ch_all_datasets_stats = GENE_STATISTICS.out.stats

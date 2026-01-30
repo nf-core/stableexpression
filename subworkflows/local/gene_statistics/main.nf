@@ -12,7 +12,8 @@ workflow GENE_STATISTICS {
     take:
     ch_all_counts      // [ [ platform: platform, dataset_size: size], file ]
     ch_platform_counts // [ [ platform: platform, dataset_size: size], file ]
-    ch_nb_nulls_per_sample_file
+    ch_ratio_nulls_per_sample_file
+    max_null_ratio_valid_sample
 
     main:
 
@@ -22,7 +23,8 @@ workflow GENE_STATISTICS {
 
     PLATFORM(
         ch_platform_counts,
-        ch_nb_nulls_per_sample_file.collect()
+        ch_ratio_nulls_per_sample_file.collect(),
+        max_null_ratio_valid_sample
     )
 
 
@@ -32,7 +34,8 @@ workflow GENE_STATISTICS {
 
     GLOBAL(
         ch_all_counts.collect(),
-        ch_nb_nulls_per_sample_file.collect()
+        ch_ratio_nulls_per_sample_file.collect(),
+        max_null_ratio_valid_sample
     )
 
     emit:
