@@ -50,7 +50,8 @@ def parse_args():
 
 
 def get_nb_valid_genes(valid_gene_ids_file: Path) -> int:
-    return len(pl.read_csv(valid_gene_ids_file).to_series())
+    with open(valid_gene_ids_file, "r") as fin:
+        return len(fin.readlines())
 
 
 def get_nb_internal_nulls(df: pl.DataFrame) -> pl.DataFrame:
@@ -71,11 +72,12 @@ def get_nb_internal_nulls(df: pl.DataFrame) -> pl.DataFrame:
 def get_total_nb_nulls(
     df: pl.DataFrame, nb_missing_genes: int, nb_valid_genes: int
 ) -> pl.DataFrame:
-    return df.with_columns(
+    return df.select(
+        pl.col(config.SAMPLE_COLNAME),
         (
             (pl.col(config.GENE_COUNT_COLNAME) + pl.lit(nb_missing_genes))
             / nb_valid_genes
-        ).alias(config.GENE_COUNT_COLNAME)
+        ).alias(config.RATIO_COLNAME),
     )
 
 
@@ -121,7 +123,7 @@ def main():
     )
 
     valid_samples = (
-        ratio_values_df.filter(pl.col(config.GENE_COUNT_COLNAME) <= args.max_null_ratio)
+        ratio_values_df.filter(pl.col(config.RATIO_COLNAME) <= args.max_null_ratio)
         .select(pl.col(config.SAMPLE_COLNAME))
         .to_series()
         .to_list()
@@ -136,9 +138,7 @@ def main():
         logger.error("No valid columns remaining")
 
     # collect all ratio values for export
-    ratio_values = (
-        ratio_values_df.select(config.GENE_COUNT_COLNAME).to_series().to_list()
-    )
+    ratio_values = ratio_values_df.select(config.RATIO_COLNAME).to_series().to_list()
     with open(RATIO_NULL_VALUES_OUTFILE, "w") as outfile:
         outfile.write(",".join([str(val) for val in ratio_values]))
 
