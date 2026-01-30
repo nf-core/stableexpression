@@ -17,7 +17,8 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_MISSING_VALUES {
     output:
     tuple val(meta), path("*.nulls_filtered.parquet"), optional: true,                                            emit: counts
     path("ratio_null_values_per_sample.csv"),                                                                     emit: nb_nulls_per_sample
-    tuple val(meta.dataset), env("NB_KEPT_SAMPLES"), env("NB_REJECTED_SAMPLES"),                                  topic: stats_missing_values_filter
+    tuple val(meta), path("ratio_null_values.csv"),                                                               topic: ratio_nulls
+    tuple val(meta.dataset), env("NB_KEPT_SAMPLES"), env("NB_REJECTED_SAMPLES"),                                  topic: mqc_missing_values_filter_stats
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 

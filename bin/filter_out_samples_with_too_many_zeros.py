@@ -14,7 +14,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 OUTFILE_SUFFIX = ".zeros_filtered.parquet"
-RATIO_ZEROS_OUTFILE = "ratio_zeros_per_sample.csv"
+RATIO_ZEROS_PER_SAMPLE_OUTFILE = "ratio_zeros_per_sample.csv"
+RATIO_ZERO_VALUES_OUTFILE = "ratio_zeros.csv"
 NB_REJECTED_SAMPLES_OUTFILE = "nb_rejected_samples.csv"
 NB_KEPT_SAMPLES_OUTFILE = "nb_kept_samples.csv"
 
@@ -81,7 +82,12 @@ def main():
     else:
         logger.error("No valid columns remaining")
 
-    ratio_zeros_df.write_csv(RATIO_ZEROS_OUTFILE)
+    # collect all ratio values for export
+    ratio_values = list(ratio_zeros_df.row(0))
+    with open(RATIO_ZERO_VALUES_OUTFILE, "w") as outfile:
+        outfile.write(",".join([str(val) for val in ratio_values]))
+
+    ratio_zeros_df.write_csv(RATIO_ZEROS_PER_SAMPLE_OUTFILE)
 
     with open(NB_KEPT_SAMPLES_OUTFILE, "w") as fout:
         fout.write(str(len(valid_samples)))

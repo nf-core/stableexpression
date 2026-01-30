@@ -460,6 +460,68 @@ custom_data:
       Distribution of zeros across samples, displayed dataset per dataset.
     plot_type: "boxplot"
 
+  ratio_nulls:
+    section_name: "Proportion of missing values"
+    parent_id: stats
+    parent_name: "Statistics"
+    parent_description: "Various statistics at the gene or sample level"
+    file_format: "csv"
+    pconfig:
+      sort_samples: false
+      #xmin: 0
+      #xmax: 1
+      xlab: Proportion of null values
+      ylab: Dataset
+    description: |
+      Distribution of missing values (including genes not present) across samples, displayed dataset per dataset.
+    plot_type: "boxplot"
+
+  null_values_filter:
+    section_name: "Filter on null values"
+    parent_id: filtering
+    parent_name: "Sample filtering"
+    parent_description: "Proportion of samples filtered out, relatively to the the variable observed"
+    file_format: "csv"
+    pconfig:
+      sort_samples: true
+      tt_decimals: 0
+      cpswitch: false # show the 'Counts / Percentages' switch
+      cpswitch_c_active: true # show counts per default
+      stacking: "relative"
+    description: |
+      Effect of filter on ratio of null (missing) values
+    categories:
+      kept:
+        name: "Nb samples kept"
+        color: "#2ABF96"
+      rejected:
+        name: "Nb samples rejected"
+        color: "#38B4F2"
+    plot_type: "barplot"
+
+  zero_values_filter:
+    section_name: "Filter on zero values"
+    parent_id: filtering
+    parent_name: "Sample filtering"
+    parent_description: "Proportion of samples filtered out, relatively to the the variable observed"
+    file_format: "csv"
+    pconfig:
+      sort_samples: true
+      tt_decimals: 0
+      cpswitch: false # show the 'Counts / Percentages' switch
+      cpswitch_c_active: true # show counts per default
+      stacking: "relative"
+    description: |
+      Effect of filter on ratio of zero values
+    categories:
+      kept:
+        name: "Nb samples kept"
+        color: "#2ABF96"
+      rejected:
+        name: "Nb samples rejected"
+        color: "#38B4F2"
+    plot_type: "barplot"
+
   id_mapping_stats:
     section_name: "Gene ID mapping statistics"
     parent_id: idmapping
@@ -681,12 +743,18 @@ sp:
     max_filesize: 50000000 # 50MB
   id_mapping_stats:
     fn: "*id_mapping_stats.csv"
+  null_values_filter:
+    fn: "*missing_values_filter_stats.csv"
+  zero_values_filter:
+    fn: "*zero_values_filter_stats.csv"
   total_gene_id_occurrence_quantiles:
     fn: "*total_gene_id_occurrence_quantiles.csv"
   skewness:
     fn: "*skewness.transposed.csv"
   ratio_zeros:
     fn: "*ratio_zeros.transposed.csv"
+  ratio_nulls:
+    fn: "*ratio_nulls.transposed.csv"
   eatlas_selected_experiments_metadata:
     fn: "*selected_experiments.metadata.tsv"
   eatlas_all_experiments_metadata:

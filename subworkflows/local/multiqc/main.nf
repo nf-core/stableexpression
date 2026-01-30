@@ -25,10 +25,10 @@ workflow MULTIQC_WORKFLOW {
     main:
 
     // ------------------------------------------------------------------------------------
-    // STATS
+    // PREPARING BAR PLOTS
     // ------------------------------------------------------------------------------------
 
-    ch_id_mapping_stats = channel.topic('id_mapping_stats')
+    ch_id_mapping_stats = channel.topic('mqc_id_mapping_stats')
                             .collectFile(
                                 name: 'id_mapping_stats.csv',
                                 seed: "dataset,final,merged,not_valid,unmapped",
@@ -37,6 +37,30 @@ workflow MULTIQC_WORKFLOW {
                             ) {
                                 item -> "${item[0]},${item[1]},${item[2]},${item[3]},${item[4]}"
                             }
+
+    ch_missing_values_filter_stats = channel.topic('mqc_missing_values_filter_stats')
+                                        .collectFile(
+                                            name: 'missing_values_filter_stats.csv',
+                                            seed: "dataset,kept,rejected",
+                                            newLine: true,
+                                            storeDir: "${outdir}/statistics/"
+                                        ) {
+                                            item -> "${item[0]},${item[1]},${item[2]}"
+                                        }
+
+    ch_zero_values_filter_stats = channel.topic('mqc_zero_values_filter_stats')
+                                .collectFile(
+                                    name: 'zero_values_filter_stats.csv',
+                                    seed: "dataset,kept,rejected",
+                                    newLine: true,
+                                    storeDir: "${outdir}/statistics/"
+                                ) {
+                                    item -> "${item[0]},${item[1]},${item[2]}"
+                                }
+
+    // ------------------------------------------------------------------------------------
+    // PREPARING BOX PLOTS
+    // ------------------------------------------------------------------------------------
 
     ch_skewness         = channel.topic('skewness')
                             .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with skewness values
@@ -57,9 +81,20 @@ workflow MULTIQC_WORKFLOW {
                                 storeDir: "${outdir}/statistics/"
                                 )
 
-    COLLECT_STATISTICS(
-        ch_skewness.mix( ch_ratio_zeros )
-    )
+    ch_ratio_nulls      = channel.topic('ratio_nulls')
+                            .map { dataset, file -> "${dataset},${file.readLines()[0]}" } // concatenate dataset name with ratio values
+                            .collectFile(
+                                name: 'ratio_nulls.csv',
+                                newLine: true,
+                                sort: true,
+                                storeDir: "${outdir}/statistics/"
+                                )
+
+    ch_stat_files = ch_skewness
+                        .mix( ch_ratio_nulls )
+                        .mix( ch_ratio_zeros )
+
+    COLLECT_STATISTICS( ch_stat_files )
 
     // ------------------------------------------------------------------------------------
     // FAILURE / WARNING REPORTS
@@ -187,7 +222,11 @@ workflow MULTIQC_WORKFLOW {
                         .mix( channel.topic('geo_rejected_datasets').collect() ) // single item
                         .mix( COLLECT_STATISTICS.out.csv )
                         .mix( ch_id_mapping_stats )
+                        .mix( ch_missing_values_filter_stats )
+                        .mix( ch_zero_values_filter_stats )
                         .mix( channel.topic('total_gene_id_occurrence_quantiles').collect() ) // single item
+                        .mix( channel.topic('mqc_stats_zero_values_filter').collect() ) // single item
+                        .mix( channel.topic('mqc_stats_missing_values_filter').collect() ) // single item
                         .mix( ch_eatlas_failure_reasons )
                         .mix( ch_eatlas_warning_reasons )
                         .mix( ch_geo_failure_reasons )
