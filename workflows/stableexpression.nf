@@ -11,7 +11,7 @@ include { SAMPLE_FILTERING                       } from '../subworkflows/local/s
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
 include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
 include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
-include { BASE_STATISTICS                        } from '../subworkflows/local/base_statistics'
+include { GENE_STATISTICS                        } from '../subworkflows/local/gene_statistics'
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { MULTIQC_WORKFLOW                       } from '../subworkflows/local/multiqc'
 
@@ -155,21 +155,21 @@ workflow STABLEEXPRESSION {
             params.outdir
         )
 
-        ch_all_counts   = MERGE_DATA.out.all_counts
-        ch_whole_design = MERGE_DATA.out.whole_design
+        ch_all_counts      = MERGE_DATA.out.all_counts
+        ch_whole_design    = MERGE_DATA.out.whole_design
         ch_platform_counts = MERGE_DATA.out.platform_counts
 
         // -----------------------------------------------------------------
         // COMPUTE BASE STATISTICS FOR ALL GENES
         // -----------------------------------------------------------------
 
-        BASE_STATISTICS (
+        GENE_STATISTICS (
             ch_all_counts,
             ch_platform_counts,
             ch_nb_nulls_per_sample_file
         )
 
-        ch_all_datasets_stats = BASE_STATISTICS.out.stats
+        ch_all_datasets_stats = GENE_STATISTICS.out.stats
 
         // -----------------------------------------------------------------
         // GET CANDIDATES AS REFERENCE GENE AND COMPUTES VARIOUS STABILITY VALUES
@@ -195,7 +195,7 @@ workflow STABLEEXPRESSION {
         AGGREGATE_RESULTS (
             ch_all_counts.map{ meta, file -> file }.collect(),
             ch_stats_all_genes_with_scores.collect(),
-            BASE_STATISTICS.out.platform_stats.collect(),
+            GENE_STATISTICS.out.platform_stats.collect(),
             MERGE_DATA.out.whole_gene_metadata.collect().ifEmpty([]), // handle case where there are no mappings
             MERGE_DATA.out.whole_gene_id_mapping.collect().ifEmpty([]) // handle case where there are no mappings
         )

@@ -1,5 +1,5 @@
-include { MERGE_COUNTS as MERGE_PLATFORM_COUNTS         } from '../../../modules/local/merge_counts'
-include { MERGE_COUNTS as MERGE_ALL_COUNTS              } from '../../../modules/local/merge_counts'
+include { MERGE_COUNTS as PLATFORM                      } from '../../../modules/local/merge_counts'
+include { MERGE_COUNTS as GLOBAL                        } from '../../../modules/local/merge_counts'
 include { IMPUTE_MISSING_VALUES                         } from '../../../modules/local/impute_missing_values'
 
 /*
@@ -37,11 +37,11 @@ workflow MERGE_DATA {
                                         .collect( sort: true )
                                         .map { files -> [ [ platform: "microarray" ], files ] }
 
-    MERGE_PLATFORM_COUNTS (
+    PLATFORM (
         ch_collected_rnaseq_counts.concat( ch_collected_microarray_counts )
     )
 
-    ch_platform_counts = MERGE_PLATFORM_COUNTS.out.counts
+    ch_platform_counts = PLATFORM.out.counts
 
     // -----------------------------------------------------------------
     // MERGE ALL COUNTS
@@ -52,14 +52,14 @@ workflow MERGE_DATA {
                                     .collect( sort: true )
                                     .map { files -> [ [ platform: "all" ], files ] }
 
-    MERGE_ALL_COUNTS( ch_collected_merged_counts.collect() )
+    GLOBAL( ch_collected_merged_counts.collect() )
 
     // -----------------------------------------------------------------
     // IMPUTE MISSING VALUES
     // -----------------------------------------------------------------
 
     IMPUTE_MISSING_VALUES(
-        MERGE_ALL_COUNTS.out.counts.collect(),
+        GLOBAL.out.counts.collect(),
         missing_value_imputer
     )
 

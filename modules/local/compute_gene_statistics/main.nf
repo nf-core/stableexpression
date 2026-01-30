@@ -1,4 +1,4 @@
-process COMPUTE_BASE_STATISTICS {
+process COMPUTE_GENE_STATISTICS {
 
     label 'process_high'
 
@@ -28,7 +28,7 @@ process COMPUTE_BASE_STATISTICS {
         export POLARS_MAX_THREADS=${task.cpus}
     fi
 
-    compute_base_statistics.py \\
+    compute_gene_statistics.py \\
         --counts $count_file \\
         --nb-nulls-per-sample $nb_nulls_per_samples \\
         $args

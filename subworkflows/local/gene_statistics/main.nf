@@ -1,5 +1,5 @@
-include { COMPUTE_BASE_STATISTICS as COMPUTE_GLOBAL_STATISTICS             } from '../../../modules/local/compute_base_statistics'
-include { COMPUTE_BASE_STATISTICS as COMPUTE_PLATFORM_STATISTICS           } from '../../../modules/local/compute_base_statistics'
+include { COMPUTE_GENE_STATISTICS as GLOBAL                      } from '../../../modules/local/compute_gene_statistics'
+include { COMPUTE_GENE_STATISTICS as PLATFORM                    } from '../../../modules/local/compute_gene_statistics'
 
 /*
 ========================================================================================
@@ -7,7 +7,7 @@ include { COMPUTE_BASE_STATISTICS as COMPUTE_PLATFORM_STATISTICS           } fro
 ========================================================================================
 */
 
-workflow BASE_STATISTICS {
+workflow GENE_STATISTICS {
 
     take:
     ch_all_counts      // [ [ platform: platform, dataset_size: size], file ]
@@ -20,7 +20,7 @@ workflow BASE_STATISTICS {
     // PLATFORM-SPECIFIC STATISTICS
     // -----------------------------------------------------------------
 
-    COMPUTE_PLATFORM_STATISTICS(
+    PLATFORM(
         ch_platform_counts,
         ch_nb_nulls_per_sample_file.collect()
     )
@@ -30,13 +30,13 @@ workflow BASE_STATISTICS {
     // ALL DATA
     // -----------------------------------------------------------------
 
-    COMPUTE_GLOBAL_STATISTICS(
+    GLOBAL(
         ch_all_counts.collect(),
         ch_nb_nulls_per_sample_file.collect()
     )
 
     emit:
-    stats                           = COMPUTE_GLOBAL_STATISTICS.out.stats
-    platform_stats                  = COMPUTE_PLATFORM_STATISTICS.out.stats
+    stats                           = GLOBAL.out.stats
+    platform_stats                  = PLATFORM.out.stats
 
 }
