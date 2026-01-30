@@ -14,7 +14,8 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS {
     val(max_zero_ratio)
 
     output:
-    tuple val(meta), path("*.filtered.parquet"), optional: true,                                                      emit: counts
+    tuple val(meta), path("*.zeros_filtered.parquet"), optional: true,                                            emit: counts
+    tuple val(meta.dataset), env("NB_KEPT_SAMPLES"), env("NB_REJECTED_SAMPLES"),                                  topic: stats_zero_values_filter
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
@@ -23,6 +24,9 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS {
     filter_out_samples_with_too_many_zeros.py \\
         --counts $count_file \\
         --max-zero-ratio $max_zero_ratio
+
+    NB_REJECTED_SAMPLES=\$(cat nb_rejected_samples.csv)
+    NB_KEPT_SAMPLES=\$(cat nb_kept_samples.csv)
     """
 
 }

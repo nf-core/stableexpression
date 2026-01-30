@@ -14,7 +14,6 @@ process COMPUTE_DATASET_STATISTICS {
 
     output:
     tuple val(meta.dataset), path("skewness.txt"),                                                                      topic: skewness
-    tuple val(meta.dataset), path("ratio_zeros.txt"),                                                                   topic: ratio_zeros
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                       topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),       topic: versions
 

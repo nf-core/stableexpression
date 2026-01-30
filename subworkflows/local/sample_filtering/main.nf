@@ -4,16 +4,18 @@ include { FILTER_OUT_SAMPLES_WITH_TOO_MANY_MISSING_VALUES as TOO_MANY_MISSING_VA
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
+    SUBWORKFLOW TO FILTER OUT UNVALID SAMPLES AND EMIT STATISTICS ABOUT ZEROS / MISSING VALUES
 ========================================================================================
 */
 
-workflow FILTER_OUT_LOW_QUALITY_SAMPLES {
+workflow SAMPLE_FILTERING {
 
     take:
     ch_counts
+    ch_valid_gene_ids
     max_zero_ratio
     max_null_ratio
+    outdir
 
     main:
 
@@ -32,10 +34,29 @@ workflow FILTER_OUT_LOW_QUALITY_SAMPLES {
 
     TOO_MANY_MISSING_VALUES(
         TOO_MANY_ZEROS.out.counts,
+        ch_valid_gene_ids.collect(),
         max_null_ratio
     )
 
+    // -----------------------------------------------------------------
+    // GET NUMBER OF NULLS PER SAMPLE
+    // -----------------------------------------------------------------
+
+    ch_nb_nulls_per_sample_file = TOO_MANY_MISSING_VALUES.out.nb_nulls_per_sample
+                                    .splitCsv( header: true )
+                                    .collectFile(
+                                        name: 'nb_nulls_per_sample.csv',
+                                        seed: "sample,count",
+                                        newLine: true,
+                                        storeDir: "${outdir}/statistics/",
+                                        sort: true
+                                    )
+                                    {
+                                        item -> "${item["sample"]},${item["count"]}"
+                                    }
+
     emit:
     counts                      = TOO_MANY_MISSING_VALUES.out.counts
+    nb_nulls_per_sample_file    = ch_nb_nulls_per_sample_file
 
 }

@@ -13,7 +13,7 @@ from common import parse_count_table
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-KEY_TO_OUTFILE = {"skewness": "skewness.txt", "ratio_zeros": "ratio_zeros.txt"}
+KEY_TO_OUTFILE = {"skewness": "skewness.txt"}
 
 
 #####################################################
@@ -36,11 +36,7 @@ def parse_args():
 def compute_dataset_statistics(df: pl.DataFrame) -> dict:
     # sample count skewness
     skewness = df.select(pl.exclude(config.GENE_ID_COLNAME).skew()).row(0)
-    # sample count ratio of zeros
-    ratio_zeros = df.select(
-        pl.exclude(config.GENE_ID_COLNAME).eq(pl.lit(0)).sum() / len(df)
-    ).row(0)
-    return dict(skewness=list(skewness), ratio_zeros=list(ratio_zeros))
+    return dict(skewness=list(skewness))
 
 
 def export_count_data(stats: dict):

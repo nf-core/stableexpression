@@ -7,7 +7,7 @@
 include { GET_PUBLIC_ACCESSIONS                  } from '../subworkflows/local/get_public_accessions'
 include { DOWNLOAD_PUBLIC_DATASETS               } from '../subworkflows/local/download_public_datasets'
 include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
-include { FILTER_OUT_LOW_QUALITY_SAMPLES         } from '../subworkflows/local/filter_out_low_quality_samples'
+include { SAMPLE_FILTERING                       } from '../subworkflows/local/sample_filtering'
 include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
 include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
 include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
@@ -113,11 +113,14 @@ workflow STABLEEXPRESSION {
         // FILTER OUT SAMPLES NOT VALID
         // -----------------------------------------------------------------
 
-        FILTER_OUT_LOW_QUALITY_SAMPLES (
+        SAMPLE_FILTERING (
             ch_counts,
+            ch_valid_gene_ids,
             params.max_zero_ratio,
-            params.max_null_ratio
+            params.max_null_ratio,
+            params.outdir
         )
+        ch_nb_nulls_per_sample_file = SAMPLE_FILTERING.out.nb_nulls_per_sample_file
 
         // -----------------------------------------------------------------
         // NORMALISATION OF RAW COUNT DATASETS (INCLUDING RNA-SEQ DATASETS)
@@ -125,7 +128,7 @@ workflow STABLEEXPRESSION {
 
         EXPRESSION_NORMALISATION(
             species,
-            FILTER_OUT_LOW_QUALITY_SAMPLES.out.counts,
+            SAMPLE_FILTERING.out.counts,
             params.normalisation_method,
             params.quantile_norm_target_distrib,
             params.gene_length
@@ -137,11 +140,8 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         DATASET_ANALYSIS(
-            ch_normalised_counts,
-            ch_valid_gene_ids,
-            params.outdir
+            ch_normalised_counts
         )
-        ch_nb_nulls_per_sample_file = DATASET_ANALYSIS.out.nb_nulls_per_sample_file
 
         // -----------------------------------------------------------------
         // MERGE ALL DATASETS INTO ONE SINGLE DATASET

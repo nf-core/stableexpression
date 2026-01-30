@@ -4,7 +4,6 @@
 
 import argparse
 import logging
-import sys
 from pathlib import Path
 
 import config
@@ -15,6 +14,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 OUTFILE_SUFFIX = ".nulls_filtered.parquet"
+RATIO_NULL_VALUES_OUTFILE = "ratio_null_values_per_sample.csv"
+NB_REJECTED_SAMPLES_OUTFILE = "nb_rejected_samples.csv"
+NB_KEPT_SAMPLES_OUTFILE = "nb_kept_samples.csv"
 
 
 #####################################################
@@ -36,21 +38,54 @@ def parse_args():
         required=True,
         help="Maximum ratio of null values",
     )
+    parser.add_argument(
+        "--valid-gene-ids",
+        type=Path,
+        dest="valid_gene_ids",
+        required=True,
+        help="Valid gene IDs",
+    )
     return parser.parse_args()
 
 
-def filter_out_columns_with_high_missing_values_ratio(df: pl.DataFrame, max_null_ratio: float):
+def get_nb_valid_genes(valid_gene_ids_file: Path) -> int:
+    return len(pl.read_csv(valid_gene_ids_file).to_series())
+
+
+def get_nb_internal_nulls(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    Get the number of null values per sample.
+    :return:
+    A polars dataframe containing 2 columns:
+        - sample: name of the sample
+        - nb_nulls: number of null values
+    """
+    return df.select(pl.exclude(config.GENE_ID_COLNAME).is_null().sum()).transpose(
+        include_header=True,
+        header_name=config.SAMPLE_COLNAME,
+        column_names=[config.GENE_COUNT_COLNAME],
+    )
+
+
+def get_total_nb_nulls(
+    df: pl.DataFrame, nb_missing_genes: int, nb_valid_genes: int
+) -> pl.DataFrame:
+    return df.with_columns(
+        (
+            (pl.col(config.GENE_COUNT_COLNAME) + pl.lit(nb_missing_genes))
+            / nb_valid_genes
+        ).alias(config.GENE_COUNT_COLNAME)
+    )
+
+
+def filter_out_columns_with_high_missing_values_ratio(
+    df: pl.DataFrame, max_null_ratio: float
+):
     null_ratio_df = df.select(pl.exclude(config.GENE_ID_COLNAME).is_null()).mean()
     valid_null_ratio_samples = [
         col for col in null_ratio_df.columns if null_ratio_df[col][0] <= max_null_ratio
     ]
     return df.select(pl.col(config.GENE_ID_COLNAME), pl.col(valid_null_ratio_samples))
-
-
-def export_data(df: pl.DataFrame, outfile: Path):
-    logger.info(f"Exporting filtered counts to: {outfile}")
-    df.write_parquet(outfile)
-    logger.info("Done")
 
 
 #####################################################
@@ -66,20 +101,48 @@ def main():
     # putting all counts into a single dataframe
     logger.info("Loading count data...")
     count_df = parse_count_table(args.count_file)
-    logger.info(
-        f"Loaded count data with {len(count_df)} rows and {count_df.shape[1]} columns"
+    nb_genes = len(count_df)
+    nb_samples = count_df.shape[1] - 1
+    logger.info(f"Loaded count data with {nb_genes} genes and {nb_samples} samples")
+
+    logger.info("Computing total number of nulls per sample")
+
+    # getting nb of missing values inside the dataframe (rare but may exist)
+    nb_null_values_df = get_nb_internal_nulls(count_df)
+
+    # getting nb of missing valid genes inside the dataframe
+    nb_valid_genes = get_nb_valid_genes(args.valid_gene_ids)
+    nb_missing_genes = nb_valid_genes - nb_genes
+
+    # adding the nb of missing genes to the number of null vaues for each sample
+    ratio_values_df = get_total_nb_nulls(
+        nb_null_values_df, nb_missing_genes, nb_valid_genes
     )
 
-    valid_count_df = filter_out_columns_with_high_missing_values_ratio(count_df, args.max_null_ratio)
+    valid_samples = (
+        ratio_values_df.filter(pl.col(config.GENE_COUNT_COLNAME) <= args.max_null_ratio)
+        .select(pl.col(config.SAMPLE_COLNAME))
+        .to_series()
+        .to_list()
+    )
 
-    if valid_count_df.shape[1] == 0:
-        logger.error("No valid columns remaining")
-        sys.exit(0)
-    else:
-        logger.info(
-            f"Filtered out {count_df.shape[1] - valid_count_df.shape[1]} columns"
-        )
+    # if at least one valid sample is remaining, making an updated count dataframe
+    if valid_samples:
+        logger.info(f"Filtered out {count_df.shape[1] - len(valid_samples)} columns")
+        valid_count_df = count_df.select([config.GENE_ID_COLNAME] + valid_samples)
         export_parquet(valid_count_df, args.count_file, OUTFILE_SUFFIX)
+    else:
+        logger.error("No valid columns remaining")
+
+    ratio_values_df.write_csv(RATIO_NULL_VALUES_OUTFILE)
+
+    with open(NB_KEPT_SAMPLES_OUTFILE, "w") as fout:
+        fout.write(str(len(valid_samples)))
+
+    with open(NB_REJECTED_SAMPLES_OUTFILE, "w") as fout:
+        fout.write(str(nb_samples - len(valid_samples)))
+
+    logger.info("Done")
 
 
 if __name__ == "__main__":

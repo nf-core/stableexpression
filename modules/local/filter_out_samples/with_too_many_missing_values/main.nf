@@ -11,10 +11,13 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_MISSING_VALUES {
 
     input:
     tuple val(meta), path(count_file)
+    path valid_gene_ids
     val max_null_ratio
 
     output:
-    tuple val(meta), path("*.filtered.parquet"), optional: true,                                                      emit: counts
+    tuple val(meta), path("*.nulls_filtered.parquet"), optional: true,                                            emit: counts
+    path("ratio_null_values_per_sample.csv"),                                                                     emit: nb_nulls_per_sample
+    tuple val(meta.dataset), env("NB_KEPT_SAMPLES"), env("NB_REJECTED_SAMPLES"),                                  topic: stats_missing_values_filter
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
@@ -22,7 +25,11 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_MISSING_VALUES {
     """
     filter_out_samples_with_too_many_missing_values.py \\
         --counts $count_file \\
+        --valid-gene-ids $valid_gene_ids \\
         --max-null-ratio $max_null_ratio
+
+    NB_REJECTED_SAMPLES=\$(cat nb_rejected_samples.csv)
+    NB_KEPT_SAMPLES=\$(cat nb_kept_samples.csv)
     """
 
 }
