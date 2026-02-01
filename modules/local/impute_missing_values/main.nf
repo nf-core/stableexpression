@@ -19,6 +19,7 @@ process IMPUTE_MISSING_VALUES {
 
     script:
     """
+    # limiting number of threads to polars / python
     export POLARS_MAX_THREADS=${task.cpus}
     export OMP_NUM_THREADS=${task.cpus}
 

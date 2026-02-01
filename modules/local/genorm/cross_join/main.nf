@@ -19,12 +19,10 @@ process CROSS_JOIN {
 
     script:
     def args = "--task-attempts ${task.attempt}"
-    def is_using_containers = workflow.containerEngine ? true : false
     """
-    # limiting number of threads when using conda / micromamba
-    if [ "${is_using_containers}" == "false" ]; then
-        export POLARS_MAX_THREADS=${task.cpus}
-    fi
+    # limiting number of threads to polars / python
+    export POLARS_MAX_THREADS=${task.cpus}
+    export OMP_NUM_THREADS=${task.cpus}
 
     make_cross_join.py \\
         --file1 count_chunk_file_1 \\

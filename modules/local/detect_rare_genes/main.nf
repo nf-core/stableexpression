@@ -21,12 +21,10 @@ process DETECT_RARE_GENES {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
-    def is_using_containers = workflow.containerEngine ? true : false
     """
-    # limiting number of threads when using conda / micromamba
-    if [ "${is_using_containers}" == "false" ]; then
-        export POLARS_MAX_THREADS=${task.cpus}
-    fi
+    # limiting number of threads to polars / python
+    export POLARS_MAX_THREADS=${task.cpus}
+    export OMP_NUM_THREADS=${task.cpus}
 
     detect_rare_genes.py \\
         --occurrences $gene_id_occurrences_file \\

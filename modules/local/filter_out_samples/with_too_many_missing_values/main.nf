@@ -24,6 +24,10 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_MISSING_VALUES {
 
     script:
     """
+    # limiting number of threads to polars / python
+    export POLARS_MAX_THREADS=${task.cpus}
+    export OMP_NUM_THREADS=${task.cpus}
+
     filter_out_samples_with_too_many_missing_values.py \\
         --counts $count_file \\
         --valid-gene-ids $valid_gene_ids \\

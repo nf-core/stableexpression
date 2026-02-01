@@ -25,12 +25,10 @@ process FILTER_AND_RENAME_GENES {
     script:
     def mapping_arg  = gene_id_mapping_file ? "--mappings $gene_id_mapping_file" : ""
     def valid_ids_arg = valid_gene_ids_file ? "--valid-gene-ids $valid_gene_ids_file" : ""
-    def is_using_containers = workflow.containerEngine ? true : false
     """
-    # limiting number of threads when using conda / micromamba
-    if [ "${is_using_containers}" == "false" ]; then
-        export POLARS_MAX_THREADS=${task.cpus}
-    fi
+    # limiting number of threads to polars / python
+    export POLARS_MAX_THREADS=${task.cpus}
+    export OMP_NUM_THREADS=${task.cpus}
 
     filter_and_rename_genes.py \\
         --count-file "$count_file" \\
