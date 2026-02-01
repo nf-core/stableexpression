@@ -26,7 +26,7 @@ class StabilityScorer:
     WEIGHT_FIELDS: ClassVar[list[str]] = [
         config.NORMFINDER_STABILITY_VALUE_COLNAME,
         config.GENORM_M_MEASURE_COLNAME,
-        config.VARIATION_COEFFICIENT_COLNAME,
+        config.COEFFICIENT_OF_VARIATION_COLNAME,
         config.ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME,
     ]
 

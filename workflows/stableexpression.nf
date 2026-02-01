@@ -187,7 +187,6 @@ workflow STABLEEXPRESSION {
             ch_all_counts.map{ meta, file -> file },
             ch_whole_design,
             ch_all_datasets_stats,
-            params.candidate_selection_descriptor,
             params.nb_candidates_per_section,
             params.nb_sections,
             params.skip_genorm,

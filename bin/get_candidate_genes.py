@@ -42,13 +42,6 @@ def parse_args():
         help="File containing statistics of expression over all datasets",
     )
     parser.add_argument(
-        "--candidate_selection_descriptor",
-        type=str,
-        dest="candidate_selection_descriptor",
-        required=True,
-        help="Statistical descriptor for gene candidate selection.",
-    )
-    parser.add_argument(
         "--nb-candidates-per-section",
         type=int,
         dest="nb_candidates_per_section",
@@ -72,29 +65,35 @@ def parse_stats(file: Path) -> pl.DataFrame:
     )
 
 
-def add_sections(stat_df: pl.DataFrame, col: str, nb_sections: int):
+def add_sections(stat_df: pl.DataFrame, nb_sections: int):
     """
-    Compute the quantile intervals relatively to col.
-    The function assigns to each gene a quantile interval.
+    Assigns gene to sections bases on mean expression level
+    Polars only ranks non-null values and preserves the null ones.
     """
     return stat_df.with_columns(
         (
-            pl.col(col).rank(method="ordinal") / pl.col(col).count() * nb_sections
+            pl.col(config.MEAN_COLNAME).rank(method="ordinal", descending=True)
+            / pl.col(config.MEAN_COLNAME).count()
+            * nb_sections
             + pl.lit(1)
         )
         .floor()
         .cast(pl.Int8)
-        # we want the only value at nb_sections +1 to be nb_sections
+        # we want the only value at <nb_sections +1> to be at <nb_sections>
         .replace({nb_sections + 1: nb_sections})
         .alias("section")
-    ).sort(col, descending=False, nulls_last=True)
+    )
 
 
 def get_best_candidates(
     stat_df: pl.DataFrame, nb_candidates_per_section: int
 ) -> pl.DataFrame:
-    return stat_df.group_by("section", maintain_order=True).agg(
-        pl.col(config.GENE_ID_COLNAME).head(nb_candidates_per_section)
+    return (
+        stat_df.sort(
+            config.COEFFICIENT_OF_VARIATION_COLNAME, descending=False, nulls_last=True
+        )
+        .group_by("section", maintain_order=True)
+        .agg(pl.col(config.GENE_ID_COLNAME).head(nb_candidates_per_section))
     )
 
 
@@ -125,12 +124,8 @@ def main():
     # stat_df = filter_out_low_expression_genes(stat_df, args.min_pct_quantile_expr_level)
     # stat_lf = filter_out_genes_with_zero_counts(stat_lf)
 
-    column_for_sorting = config.SCORING_BASE_TO_STABILITY_SCORE_COLUMN[
-        args.candidate_selection_descriptor
-    ]
-
     logger.info("Getting sections")
-    stat_df = add_sections(stat_df, column_for_sorting, args.nb_sections)
+    stat_df = add_sections(stat_df, args.nb_sections)
 
     logger.info("Getting best candidates")
     # get base candidate genes based on the chosen statistical descriptor (cv, rcvm)

@@ -114,7 +114,7 @@ class GeneStatistician:
             pl.col("median").alias(self.get_colname(config.MEDIAN_COLNAME)),
             pl.col("mad").alias(self.get_colname(config.MAD_COLNAME)),
             (pl.col("std") / pl.col("mean")).alias(
-                self.get_colname(config.VARIATION_COEFFICIENT_COLNAME)
+                self.get_colname(config.COEFFICIENT_OF_VARIATION_COLNAME)
             ),
             (pl.col("mad") / pl.col("median") * RCV_MULTIFILER).alias(
                 self.get_colname(config.ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME)

@@ -10,7 +10,6 @@ process GET_CANDIDATE_GENES {
     input:
     path count_file
     path stat_file
-    val candidate_selection_descriptor
     val nb_candidates_per_section
     val nb_sections
 
@@ -30,7 +29,6 @@ process GET_CANDIDATE_GENES {
     get_candidate_genes.py \\
         --counts $count_file \\
         --stats $stat_file \\
-        --candidate_selection_descriptor $candidate_selection_descriptor \\
         --nb-candidates-per-section $nb_candidates_per_section \\
         --nb-sections $nb_sections
     """

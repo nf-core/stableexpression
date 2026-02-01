@@ -278,14 +278,6 @@
             "fa_icon": "fas fa-chart-line",
             "description": "Options relative to assessment of stability for each gene.",
             "properties": {
-                "candidate_selection_descriptor": {
-                    "type": "string",
-                    "description": "Statistic descriptor for prior gene candidate selection. Either coefficient of variation (cv), or robust median absolute deviation (rcvm).",
-                    "fa_icon": "far fa-chart-bar",
-                    "enum": ["cv", "rcvm"],
-                    "default": "cv",
-                    "help_text": "Candidate genes are chosen based on a certain statistical descriptor. Set this parameter to modify the descriptor used."
-                },
                 "nb_sections": {
                     "type": "integer",
                     "description": "Number of sections to divide genes into for stability scoring.",

@@ -15,7 +15,6 @@ workflow STABILITY_SCORING {
     ch_counts
     ch_design
     ch_stats
-    candidate_selection_descriptor
     nb_candidates_per_section
     nb_sections
     skip_genorm
@@ -30,7 +29,6 @@ workflow STABILITY_SCORING {
     GET_CANDIDATE_GENES(
         ch_counts.collect(), // single item
         ch_stats.collect(), // single item
-        candidate_selection_descriptor,
         nb_candidates_per_section,
         nb_sections
     )
