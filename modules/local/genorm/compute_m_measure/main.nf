@@ -1,5 +1,6 @@
 process COMPUTE_M_MEASURE {
 
+    tag "${meta.section}"
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
@@ -8,14 +9,12 @@ process COMPUTE_M_MEASURE {
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    path count_file
-    path files
+    tuple val(meta), path(count_file), path(ratio_files)
 
     output:
-    path 'm_measures.csv',                                                                                            emit: m_measures
-    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
-    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
-
+    tuple val(meta), path("m_measures.csv"),                                                                      emit: m_measures
+    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     def args = "--task-attempts ${task.attempt}"
@@ -28,7 +27,8 @@ process COMPUTE_M_MEASURE {
 
     compute_m_measures.py \\
         --counts $count_file \\
-        --std-files "$files" $args
+        --std-files "$ratio_files" \\
+        $args
     """
 
 }

@@ -9,6 +9,7 @@ from pathlib import Path
 
 import config
 import polars as pl
+from common import write_float_csv
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -165,10 +166,14 @@ class GeneStatistician:
 
         The function assigns to each gene a quantile interval of its mean cpm compared to all genes.
         """
-        logger.info("Getting cpm quantiles")
+        logger.info("Getting mean expression quantiles")
         mean_colname = self.get_colname(config.MEAN_COLNAME)
         self.stat_df = self.stat_df.with_columns(
-            (pl.col(mean_colname).rank() / pl.col(mean_colname).count() * NB_QUANTILES)
+            (
+                pl.col(mean_colname).rank(method="ordinal")
+                / pl.col(mean_colname).count()
+                * NB_QUANTILES
+            )
             .floor()
             .cast(pl.Int8)
             # we want the only value = NB_QUANTILES to be NB_QUANTILES - 1
@@ -235,7 +240,7 @@ def export_data(stat_df: pl.DataFrame, platform: str | None):
         else ALL_GENES_RESULT_OUTFILE_SUFFIX
     )
     logger.info(f"Exporting statistics for all genes to: {outfile}")
-    stat_df.write_csv(outfile, float_precision=config.CSV_FLOAT_PRECISION)
+    write_float_csv(stat_df, outfile)
     logger.info("Done")
 
 

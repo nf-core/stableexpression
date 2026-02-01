@@ -70,3 +70,7 @@ def export_parquet(df: pl.DataFrame, count_file: Path, suffix: str):
     outfilename = count_file.with_suffix(suffix).name
     logger.info(f"Exporting processed counts to: {outfilename}")
     df.write_parquet(outfilename)
+
+
+def write_float_csv(df: pl.DataFrame, outfilename: str):
+    df.write_csv(outfilename, float_precision=config.CSV_FLOAT_PRECISION)

@@ -9,7 +9,7 @@ process AGGREGATE_RESULTS {
 
     input:
     path count_file
-    path stat_file
+    path stat_score_files
     path platform_stat_files, stageAs: "?/*"
     path metadata_files
     path mapping_files
@@ -17,10 +17,10 @@ process AGGREGATE_RESULTS {
     output:
     path 'all_genes_summary.csv',                                                                                     emit: all_genes_summary
     path 'most_stable_genes_summary.csv',                                                                             emit: most_stable_genes_summary
-    path 'all_counts_filtered.parquet',                                                                               emit: all_counts_filtered
     path 'most_stable_genes_transposed_counts_filtered.csv',                                                          emit: most_stable_genes_transposed_counts_filtered
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
+    tuple val("${task.process}"), val('pyyaml'),   eval('python3 -c "import yaml; print(yaml.__version__)"'),         topic: versions
 
     script:
     def mapping_files_arg = mapping_files ? "--mappings " + "$mapping_files" : ""
@@ -34,7 +34,7 @@ process AGGREGATE_RESULTS {
 
     aggregate_results.py \\
         --counts $count_file \\
-        --stats $stat_file \\
+        --stats-with-scores $stat_score_files \\
         --platform-stats $platform_stat_files \\
         $mapping_files_arg \\
         $metadata_files_arg

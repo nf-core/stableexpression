@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # outfile names
-CANDIDATE_COUNTS_OUTFILENAME = "candidate_counts.parquet"
+CANDIDATE_COUNTS_OUTFILENAME = "section_{}.candidate_counts.parquet"
 
 
 #####################################################
@@ -49,18 +49,18 @@ def parse_args():
         help="Statistical descriptor for gene candidate selection.",
     )
     parser.add_argument(
-        "--nb-top-stable-genes",
+        "--nb-candidates-per-section",
         type=int,
-        dest="nb_most_stable_genes",
+        dest="nb_candidates_per_section",
         required=True,
-        help="Number of top stable genes to show",
+        help="Number of candidates per section to select for subsequent steps",
     )
     parser.add_argument(
-        "--min-pct-quantile-expr-level",
-        type=float,
-        dest="min_pct_quantile_expr_level",
+        "--nb-sections",
+        type=int,
+        dest="nb_sections",
         required=True,
-        help="Minimum percentage of quantile expression level",
+        help="Number of sections to divide the data into",
     )
     return parser.parse_args()
 
@@ -72,58 +72,41 @@ def parse_stats(file: Path) -> pl.DataFrame:
     )
 
 
+def add_sections(stat_df: pl.DataFrame, col: str, nb_sections: int):
+    """
+    Compute the quantile intervals relatively to col.
+    The function assigns to each gene a quantile interval.
+    """
+    return stat_df.with_columns(
+        (
+            pl.col(col).rank(method="ordinal") / pl.col(col).count() * nb_sections
+            + pl.lit(1)
+        )
+        .floor()
+        .cast(pl.Int8)
+        # we want the only value at nb_sections +1 to be nb_sections
+        .replace({nb_sections + 1: nb_sections})
+        .alias("section")
+    ).sort(col, descending=False, nulls_last=True)
+
+
 def get_best_candidates(
-    stat_df: pl.DataFrame,
-    candidate_selection_descriptor: str,
-    nb_most_stable_genes: int,
-) -> list[str]:
-    logger.info("Getting best candidates")
-    column_for_sorting = config.SCORING_BASE_TO_STABILITY_SCORE_COLUMN[
-        candidate_selection_descriptor
-    ]
-    return (
-        stat_df.sort(column_for_sorting, descending=False, nulls_last=True)
-        .head(nb_most_stable_genes)
-        .select(config.GENE_ID_COLNAME)
-        .to_series()
-        .to_list()
-    )
-
-
-"""
-def filter_out_genes_with_zero_counts(stat_lf: pl.LazyFrame) -> pl.LazyFrame:
-    # keep only genes that show no zero count (ie. count > 0 for all samples)
-    return stat_lf.filter(pl.col(config.RATIO_ZEROS_COLNAME) == 0)
-"""
-
-
-def filter_out_low_expression_genes(
-    stat_df: pl.DataFrame, min_pct_quantile_expr_level: float
+    stat_df: pl.DataFrame, nb_candidates_per_section: int
 ) -> pl.DataFrame:
-    logger.info("Filtering out low expression genes")
-    max_quantile = (
-        stat_df.select(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME).max().item()
-    )
-    return stat_df.filter(
-        pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
-        >= max_quantile * min_pct_quantile_expr_level
+    return stat_df.group_by("section", maintain_order=True).agg(
+        pl.col(config.GENE_ID_COLNAME).head(nb_candidates_per_section)
     )
 
 
 def get_counts_for_candidates(file: Path, best_candidates: list[str]) -> pl.DataFrame:
-    logger.info("Getting counts for candidate genes")
     return pl.read_parquet(file).filter(
         pl.col(config.GENE_ID_COLNAME).is_in(best_candidates)
     )
 
 
-def export_data(filtered_count_df: pl.DataFrame):
-    """Export gene expression data to CSV files."""
-    logger.info(
-        f"Exporting counts for candidate genes to: {CANDIDATE_COUNTS_OUTFILENAME}"
-    )
-    filtered_count_df.write_parquet(CANDIDATE_COUNTS_OUTFILENAME)
-    logger.info("Done")
+def export_data(df: pl.DataFrame, section: int):
+    outfile = CANDIDATE_COUNTS_OUTFILENAME.format(section)
+    df.write_parquet(outfile)
 
 
 #####################################################
@@ -139,20 +122,33 @@ def main():
     stat_df = parse_stats(args.stat_file)
 
     # first basic filters
-    stat_df = filter_out_low_expression_genes(stat_df, args.min_pct_quantile_expr_level)
+    # stat_df = filter_out_low_expression_genes(stat_df, args.min_pct_quantile_expr_level)
     # stat_lf = filter_out_genes_with_zero_counts(stat_lf)
 
+    column_for_sorting = config.SCORING_BASE_TO_STABILITY_SCORE_COLUMN[
+        args.candidate_selection_descriptor
+    ]
+
+    logger.info("Getting sections")
+    stat_df = add_sections(stat_df, column_for_sorting, args.nb_sections)
+
+    logger.info("Getting best candidates")
     # get base candidate genes based on the chosen statistical descriptor (cv, rcvm)
-    best_candidates = get_best_candidates(
-        stat_df, args.candidate_selection_descriptor, args.nb_most_stable_genes
+    best_candidates_df = get_best_candidates(
+        stat_df,
+        args.nb_candidates_per_section,
     )
 
-    # get counts for candidate genes
-    candidate_gene_count_lf = get_counts_for_candidates(
-        args.count_file, best_candidates
-    )
-
-    export_data(candidate_gene_count_lf)
+    logger.info("Getting counts of best candidates")
+    # this was coded as a loop in order to keep it simple
+    # since it does not impact much speed and scability
+    for row in best_candidates_df.iter_rows():
+        section = row[0]
+        best_candidates = row[1]
+        candidate_gene_count_lf = get_counts_for_candidates(
+            args.count_file, best_candidates
+        )
+        export_data(candidate_gene_count_lf, section)
 
 
 if __name__ == "__main__":

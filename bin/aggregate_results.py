@@ -8,22 +8,18 @@ from pathlib import Path
 
 import config
 import polars as pl
+from common import write_float_csv
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # outfile names
 ALL_GENE_SUMMARY_OUTFILENAME = "all_genes_summary.csv"
-MOST_STABLE_GENE_SUMMARY_OUTFILENAME = "most_stable_genes_summary.csv"
-ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME = "all_counts_filtered.parquet"
-MOST_STABLE_GENES_COUNTS_OUTFILENAME = (
-    "most_stable_genes_transposed_counts_filtered.csv"
-)
+SUMMARY_OUTFILENAME_SUFFIX = "most_stable_genes_summary.csv"
+COUNTS_OUTFILENAME_SUFFIX = "most_stable_genes_transposed_counts.csv"
 
-# nb of top stable genes to select and to display at the end
-NB_MOST_STABLE_GENES = 1000
 # quantile intervals
-NB_QUANTILES = 100
+NB_EXPRESSION_QUANTILES = 100
 NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS = 100
 
 #####################################################
@@ -41,11 +37,12 @@ def parse_args():
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
     parser.add_argument(
-        "--stats",
+        "--stats-with-scores",
         type=Path,
-        dest="stat_file",
+        nargs="+",
+        dest="stat_score_files",
         required=True,
-        help="File containing statistics for all genes and stability scores by candidate genes",
+        help="Files containing statistics for all genes and stability scores by candidate genes, one per section",
     )
     parser.add_argument(
         "--platform-stats",
@@ -63,11 +60,10 @@ def parse_args():
     parser.add_argument(
         "--mappings", type=str, dest="mapping_files", help="Mapping file"
     )
-
     return parser.parse_args()
 
 
-def parse_stat_file(file: Path) -> pl.DataFrame:
+def parse_stat_score_file(file: Path) -> pl.DataFrame:
     return pl.read_csv(file).with_columns(
         pl.col(config.GENE_ID_COLNAME).cast(pl.String())
     )
@@ -144,9 +140,11 @@ def get_mappings(mapping_files: list[Path]) -> pl.DataFrame | None:
 
 def get_status(quantile_interval: int) -> str:
     """Return the expression level status of the gene given its quantile interval."""
-    if NB_QUANTILES - 5 <= quantile_interval:
+    if NB_EXPRESSION_QUANTILES - 5 <= quantile_interval:
         return "Very high expression"
-    elif NB_QUANTILES - 10 <= quantile_interval < NB_QUANTILES - 5:
+    elif (
+        NB_EXPRESSION_QUANTILES - 10 <= quantile_interval < NB_EXPRESSION_QUANTILES - 5
+    ):
         return "High expression"
     elif 4 < quantile_interval <= 9:
         return "Low expression"
@@ -160,7 +158,7 @@ def add_expression_level_status(df: pl.DataFrame) -> pl.DataFrame:
     logger.info("Adding expression level status")
     mapping_dict = {
         quantile_interval: get_status(quantile_interval)
-        for quantile_interval in range(NB_QUANTILES)
+        for quantile_interval in range(NB_EXPRESSION_QUANTILES)
     }
     return df.with_columns(
         pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
@@ -169,11 +167,11 @@ def add_expression_level_status(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def get_all_genes_summary(
+def complement_gene_summary_table(
     stat_summary_df: pl.DataFrame, *dfs: pl.DataFrame
 ) -> pl.DataFrame:
     """
-    Extract the most stable genes from the statistics dataframe.
+    Add various metadata to statistics summary.
     """
     # add gene name, description and original gene IDs to statistics summary
     stat_summary_df = join_data_on_gene_id(stat_summary_df, *dfs)
@@ -205,38 +203,6 @@ def get_most_stable_genes_counts(
     ).transpose(column_names=actual_gene_names)
 
 
-def export_data(
-    all_genes_summary_df: pl.DataFrame,
-    most_stable_genes_summary_df: pl.DataFrame,
-    all_counts_df: pl.DataFrame,
-    most_stable_genes_counts_df: pl.DataFrame,
-):
-    """Export gene expression data to CSV files."""
-    logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
-    all_genes_summary_df.write_csv(
-        ALL_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
-    )
-
-    logger.info(
-        f"Exporting statistics of the top stable genes to: {MOST_STABLE_GENE_SUMMARY_OUTFILENAME}"
-    )
-    most_stable_genes_summary_df.write_csv(
-        MOST_STABLE_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
-    )
-
-    logger.info(f"Exporting all counts to: {ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME}")
-    all_counts_df.write_parquet(ALL_COUNTS_FILTERED_PARQUET_OUTFILENAME)
-
-    logger.info(
-        f"Exporting counts of the top stable genes to: {MOST_STABLE_GENES_COUNTS_OUTFILENAME}"
-    )
-    most_stable_genes_counts_df.write_csv(
-        MOST_STABLE_GENES_COUNTS_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
-    )
-
-    logger.info("Done")
-
-
 #####################################################
 #####################################################
 # MAIN
@@ -259,38 +225,60 @@ def main():
     )
 
     count_df = get_counts(args.count_file)
+    # reducing dataframe size (it is only used for plotting by MultiQC)
+    count_df = cast_count_columns_to_float(count_df)
 
-    # getting data, including metadata and mappings
-    all_genes_stat_summary_df = parse_stat_file(args.stat_file)
+    # parsing stat score files, section by section
+    stat_score_dfs = []
+    sections = []
+    for file in args.stat_score_files:
+        # the section name is at the beginning of the file name
+        section = file.name.split(".")[0]
+        df = parse_stat_score_file(file)
+        df = df.with_columns(pl.lit(section).alias(config.SECTION_COLNAME))
+        stat_score_dfs.append(df)
+        sections.append(section)
 
+    stat_score_df = pl.concat(stat_score_dfs)
+
+    # parsing statistics files
     platform_datasets_stat_dfs = [
-        parse_stat_file(file) for file in args.platform_stat_files if file is not None
+        parse_stat_score_file(file)
+        for file in args.platform_stat_files
+        if file is not None
     ]
 
+    # parsing metadata and mapping files
     metadata_df = get_metadata(metadata_files)
     mapping_df = get_mappings(mapping_files)
     optional_dfs = [df for df in [metadata_df, mapping_df] if df is not None]
 
     additional_data_dfs = optional_dfs + platform_datasets_stat_dfs
-    all_genes_summary_df = get_all_genes_summary(
-        all_genes_stat_summary_df, *additional_data_dfs
+    all_genes_summary_df = complement_gene_summary_table(
+        stat_score_df, *additional_data_dfs
     )
 
-    top_stable_stat_summary_df = all_genes_summary_df.head(NB_MOST_STABLE_GENES)
+    logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
 
-    # reducing dataframe size (it is only used for plotting by MultiQC)
-    count_df = cast_count_columns_to_float(count_df)
-    most_stable_genes_counts_df = get_most_stable_genes_counts(
-        count_df, top_stable_stat_summary_df
+    all_genes_summary_df.write_csv(
+        ALL_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
     )
 
-    # exporting computed data
-    export_data(
-        all_genes_summary_df,
-        top_stable_stat_summary_df,
-        count_df,
-        most_stable_genes_counts_df,
-    )
+    for section in sections:
+        section_df = all_genes_summary_df.filter(pl.col("section") == section)
+        section_df = section_df.drop("section")
+
+        section_most_stable_genes_counts_df = get_most_stable_genes_counts(
+            count_df, section_df
+        )
+
+        section_summary_outfile = f"{section}.{SUMMARY_OUTFILENAME_SUFFIX}"
+        write_float_csv(section_df, section_summary_outfile)
+
+        section_counts_outfile = f"{section}.{COUNTS_OUTFILENAME_SUFFIX}"
+        write_float_csv(section_most_stable_genes_counts_df, section_counts_outfile)
+
+    logger.info("Done")
 
 
 if __name__ == "__main__":

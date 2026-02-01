@@ -34,6 +34,7 @@ ORIGINAL_GENE_ID_COLNAME = "original_gene_id"
 ORIGINAL_GENE_IDS_COLNAME = "original_gene_ids"
 GENE_NAME_COLNAME = "name"
 GENE_DESCRIPTION_COLNAME = "description"
+SECTION_COLNAME = "section"
 
 # computed stability values
 NORMFINDER_STABILITY_VALUE_COLNAME = "normfinder_stability_value"

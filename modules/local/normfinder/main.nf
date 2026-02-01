@@ -1,5 +1,6 @@
 process NORMFINDER   {
 
+    tag "${meta.section}"
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
@@ -8,11 +9,11 @@ process NORMFINDER   {
         'community.wave.seqera.io/library/numba_numpy_polars_tqdm:6923cfab6fc04dec' }"
 
     input:
-    path count_file
+    tuple val(meta), path(count_file)
     path design_file
 
     output:
-    path('stability_values.normfinder.csv'),                                                                            emit: stability_values
+    tuple val(meta), path('stability_values.normfinder.csv'),                                                           emit: stability_values
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                       topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),       topic: versions
 
@@ -24,8 +25,8 @@ process NORMFINDER   {
         export POLARS_MAX_THREADS=${task.cpus}
     fi
 
-    normfinder.py \
-        --counts $count_file \
+    normfinder.py \\
+        --counts $count_file \\
         --design $design_file
     """
 

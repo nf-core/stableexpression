@@ -1,5 +1,6 @@
 process MAKE_CHUNKS {
 
+    tag "${meta.section}"
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
@@ -8,10 +9,10 @@ process MAKE_CHUNKS {
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    path count_file
+    tuple val(meta), path(count_file)
 
     output:
-    path 'count_chunk.*.parquet',                                                                                     emit: chunks
+    tuple val(meta), path('count_chunk.*.parquet'),                                                                   emit: chunks
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 

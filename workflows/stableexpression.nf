@@ -181,8 +181,8 @@ workflow STABLEEXPRESSION {
             ch_whole_design,
             ch_all_datasets_stats,
             params.candidate_selection_descriptor,
-            params.nb_top_gene_candidates,
-            params.min_expr_threshold,
+            params.nb_candidates_per_section,
+            params.nb_sections,
             params.skip_genorm,
             params.stability_score_weights
         )

@@ -262,15 +262,6 @@
                     "default": "uniform",
                     "help_text": "In order to compare counts between samples and different datasets, all normalised counts are quantile normalised and mapped to a specific distribution. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
                 },
-                "min_expr_threshold": {
-                    "type": "number",
-                    "description": "Minimum percentage of quantile expression level",
-                    "fa_icon": "fas fa-battery-three-quarters",
-                    "minimum": 0,
-                    "maximum": 1,
-                    "default": 0.2,
-                    "help_text": "To avoid genes with low expression levels from being considered for stability scoring, a threshold is set up. For example, a value of 0.2 means that the pipeline will reject genes showing an average expression level in the bottom 20% of all genes."
-                },
                 "missing_value_imputer": {
                     "type": "string",
                     "description": "Type of imputation method to use for missing values",
@@ -295,12 +286,19 @@
                     "default": "cv",
                     "help_text": "Candidate genes are chosen based on a certain statistical descriptor. Set this parameter to modify the descriptor used."
                 },
-                "nb_top_gene_candidates": {
+                "nb_sections": {
                     "type": "integer",
-                    "description": "Number of candidate genes to keep for stability scoring",
+                    "description": "Number of sections to divide genes into for stability scoring.",
                     "fa_icon": "fas fa-sort-numeric-up-alt",
                     "minimum": 1,
-                    "help_text": "Number of candidate genes to keep in the final list. These candidates genes are chosen as the ones showing the least standard variation."
+                    "help_text": "All genes are divided into sections based on their expression levels. Set this parameter to modify the number of sections."
+                },
+                "nb_candidates_per_section": {
+                    "type": "integer",
+                    "description": "Number of candidate genes to keep for stability scoring in each section",
+                    "fa_icon": "fas fa-sort-numeric-up-alt",
+                    "minimum": 1,
+                    "help_text": "Number of candidate genes to keep in each section for stability scoring. Within each section, the top candidates are selected based on the descriptor chosen with `--candidate_selection_descriptor`."
                 },
                 "skip_genorm": {
                     "type": "boolean",
@@ -442,13 +440,6 @@
                     "description": "Incoming hook URL for messaging service",
                     "fa_icon": "fas fa-people-group",
                     "help_text": "Incoming hook URL for messaging service. Currently, MS Teams and Slack are supported.",
-                    "hidden": true
-                },
-                "multiqc_config": {
-                    "type": "string",
-                    "format": "file-path",
-                    "description": "Custom config file to supply to MultiQC.",
-                    "fa_icon": "fas fa-cog",
                     "hidden": true
                 },
                 "multiqc_logo": {

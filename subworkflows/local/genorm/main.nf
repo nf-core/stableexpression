@@ -28,26 +28,49 @@ workflow GENORM {
 
     main:
 
+    // -----------------------------------------------------------------
+    // MAKE CHUNKS OF GENE COUNTS
+    // -----------------------------------------------------------------
+
     MAKE_CHUNKS( ch_counts )
 
     // we need to flatten to set each chunk file as a separate item in the channel
-    ch_count_chunks = MAKE_CHUNKS.out.chunks.flatten()
-    getUniqueFilePairs( ch_count_chunks ) | CROSS_JOIN
+    ch_count_chunks = getUniqueFilePairs( MAKE_CHUNKS.out.chunks.transpose() )
 
-    CROSS_JOIN.out.data | EXPRESSION_RATIO
+    // -----------------------------------------------------------------
+    // CROSS JOIN CHUNKS
+    // -----------------------------------------------------------------
 
-    EXPRESSION_RATIO.out.data | RATIO_STANDARD_VARIATION
+    CROSS_JOIN( ch_count_chunks )
+
+    // -----------------------------------------------------------------
+    // PAIRWISE EXPRESSION RATIOS
+    // -----------------------------------------------------------------
+
+    EXPRESSION_RATIO( CROSS_JOIN.out.data )
+
+    // -----------------------------------------------------------------
+    // STANDARD VARIATION OF EXPRESSION RATIOS
+    // -----------------------------------------------------------------
+
+    RATIO_STANDARD_VARIATION( EXPRESSION_RATIO.out.data )
+
+    // -----------------------------------------------------------------
+    // COMPUTE M-MEASURE
+    // -----------------------------------------------------------------
+
+    ch_ratio_files = RATIO_STANDARD_VARIATION.out.data
+                        .map{ meta, file -> [ [ section: meta.section ], file ] }
+                        .groupTuple()
 
     COMPUTE_M_MEASURE(
-        ch_counts,
-        RATIO_STANDARD_VARIATION.out.data.collect( sort: true )
+        ch_counts.join( ch_ratio_files )
     )
 
     emit:
     m_measures = COMPUTE_M_MEASURE.out.m_measures
 
 }
-
 
 
 /*
@@ -58,23 +81,22 @@ workflow GENORM {
 
 //
 // Generate channels consisting of unique pairs of files
-// Gets
 //
 def getUniqueFilePairs( ch_count_chunks ) {
 
     def ch_count_chunks_with_indexes = ch_count_chunks
-                                        .map { file -> [file.name.tokenize('.')[1], file] } // extract file index
+                                        .map { meta, file -> [meta, file.name.tokenize('.')[1], file] } // extract file index
 
     return ch_count_chunks_with_indexes
-            .combine( ch_count_chunks_with_indexes ) // full cartesian product with itself
-            .map { // steps not mandatory but helps to make the filter clearer
-                index_1, file_1, index_2, file_2 ->
-                    [index_1: index_1, index_2: index_2, file_1: file_1, file_2: file_2]
-            }
-            .filter { it -> it.index_1 <= it.index_2 } // keeps only pairs where i <= j
+            .combine( // full cartesian product with itself, using the meta map as key
+                ch_count_chunks_with_indexes,
+                by: 0
+            )
+            .filter {
+                meta, i, file_i, j, file_j -> i <= j } // keeps only pairs where i <= j
             .map {
-                it ->
-                    def meta = [index_1: it.index_1, index_2: it.index_2] // puts indexes in a meta tuple
-                    [ meta, it.file_1, it.file_2 ]
+                meta, i, file_i, j, file_j ->
+                    def new_meta = meta + [ index_1: i, index_2: j ] // puts indexes in a meta tuple
+                    [ new_meta, file_i, file_j ]
             }
 }
