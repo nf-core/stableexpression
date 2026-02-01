@@ -1,6 +1,6 @@
 process IMPUTE_MISSING_VALUES {
 
-    label 'process_single'
+    label 'process_high'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
@@ -19,6 +19,9 @@ process IMPUTE_MISSING_VALUES {
 
     script:
     """
+    export POLARS_MAX_THREADS=${task.cpus}
+    export OMP_NUM_THREADS=${task.cpus}
+
     impute_missing_values.py \\
         --counts $count_file \\
         --imputer $missing_value_imputer
