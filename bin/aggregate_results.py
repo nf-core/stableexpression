@@ -8,6 +8,7 @@ from pathlib import Path
 
 import config
 import polars as pl
+import yaml
 from common import write_float_csv
 
 logging.basicConfig(level=logging.INFO)
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 ALL_GENE_SUMMARY_OUTFILENAME = "all_genes_summary.csv"
 SUMMARY_OUTFILENAME_SUFFIX = "most_stable_genes_summary.csv"
 COUNTS_OUTFILENAME_SUFFIX = "most_stable_genes_transposed_counts.csv"
+CUSTOM_CONTENT_MULTIQC_CONFIG_FILE = "custom_content_multiqc_config.yaml"
 
 # quantile intervals
 NB_EXPRESSION_QUANTILES = 100
@@ -43,6 +45,13 @@ def parse_args():
         dest="stat_score_files",
         required=True,
         help="Files containing statistics for all genes and stability scores by candidate genes, one per section",
+    )
+    parser.add_argument(
+        "--multiqc-config",
+        type=Path,
+        dest="multiqc_config",
+        required=True,
+        help="MultiQC config file for custom content",
     )
     parser.add_argument(
         "--platform-stats",
@@ -203,6 +212,31 @@ def get_most_stable_genes_counts(
     ).transpose(column_names=actual_gene_names)
 
 
+def format_multiqc_section(section: str, nb_sections: int, template_dict: dict):
+    section_dict = dict(template_dict)
+
+    parent_id = section.replace("_", " ")
+    parent_name = (
+        f"{section.replace('_', ' ').capitalize()} / {nb_sections}: most stable genes"
+    )
+    parent_description = (
+        f"Most stable genes and distribution of their normalised counts for {section.replace('_', ' ')} / {nb_sections}"
+        + " (section 1 corresponding to the most expressed genes)"
+    )
+
+    section_dict["parent_id"] = parent_id
+    section_dict["parent_name"] = parent_name
+    section_dict["parent_description"] = parent_description
+
+    return section_dict
+
+
+def format_multiqc_sp(section: str, template_dict: dict):
+    sp_dict = dict(template_dict)
+    sp_dict["fn"] = sp_dict["fn"].replace("SECTION", section)
+    return sp_dict
+
+
 #####################################################
 #####################################################
 # MAIN
@@ -212,6 +246,75 @@ def get_most_stable_genes_counts(
 
 def main():
     args = parse_args()
+
+    # --------------------------------------------------
+    # Parsing counts
+    # --------------------------------------------------
+
+    count_df = get_counts(args.count_file)
+    # reducing dataframe size (it is only used for plotting by MultiQC)
+    count_df = cast_count_columns_to_float(count_df)
+
+    # --------------------------------------------------
+    # Parsing statistics and scores, section by section
+    # --------------------------------------------------
+
+    stat_score_dfs = []
+    sections = []
+    for file in args.stat_score_files:
+        # the section name is at the beginning of the file name
+        section = file.name.split(".")[0]
+        df = parse_stat_score_file(file)
+        df = df.with_columns(pl.lit(section).alias(config.SECTION_COLNAME))
+        stat_score_dfs.append(df)
+        sections.append(section)
+
+    stat_score_df = pl.concat(stat_score_dfs)
+    # sorting sections in the order (from 1 to <max nb of section>)
+    sections = sorted(sections, key=lambda x: int(x.split("_")[-1]))
+
+    # --------------------------------------------------
+    # Parsing MultiQC template config for custom content
+    # --------------------------------------------------
+
+    with open(args.multiqc_config, "r") as f:
+        multiqc_config = yaml.safe_load(f.read())
+
+    # putting template parts aside
+    ranking_dict = multiqc_config["custom_data"][
+        "ranked_most_stable_genes_summary_template"
+    ]
+    ranking_sp_dict = multiqc_config["sp"]["ranked_most_stable_genes_summary_template"]
+    expr_distrib_dict = multiqc_config["custom_data"][
+        "expr_distrib_most_stable_genes_template"
+    ]
+    expr_distrib_sp_dict = multiqc_config["sp"][
+        "expr_distrib_most_stable_genes_template"
+    ]
+    print(multiqc_config["custom_data"].keys())
+    del multiqc_config["custom_data"]["ranked_most_stable_genes_summary_template"]
+    del multiqc_config["sp"]["ranked_most_stable_genes_summary_template"]
+    del multiqc_config["custom_data"]["expr_distrib_most_stable_genes_template"]
+    del multiqc_config["sp"]["expr_distrib_most_stable_genes_template"]
+
+    # filling dynamically the number of genes to show in box plots
+    expr_distrib_dict["description"] = expr_distrib_dict["description"].replace(
+        "NB_GENES", str(NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS)
+    )
+
+    # --------------------------------------------------
+    # Parsing statistics per platform
+    # --------------------------------------------------
+
+    platform_datasets_stat_dfs = [
+        parse_stat_score_file(file)
+        for file in args.platform_stat_files
+        if file is not None
+    ]
+
+    # --------------------------------------------------
+    # Parsing metadata and mapping files
+    # --------------------------------------------------
 
     metadata_files = (
         [Path(file) for file in args.metadata_files.split(" ")]
@@ -224,34 +327,14 @@ def main():
         else []
     )
 
-    count_df = get_counts(args.count_file)
-    # reducing dataframe size (it is only used for plotting by MultiQC)
-    count_df = cast_count_columns_to_float(count_df)
-
-    # parsing stat score files, section by section
-    stat_score_dfs = []
-    sections = []
-    for file in args.stat_score_files:
-        # the section name is at the beginning of the file name
-        section = file.name.split(".")[0]
-        df = parse_stat_score_file(file)
-        df = df.with_columns(pl.lit(section).alias(config.SECTION_COLNAME))
-        stat_score_dfs.append(df)
-        sections.append(section)
-
-    stat_score_df = pl.concat(stat_score_dfs)
-
-    # parsing statistics files
-    platform_datasets_stat_dfs = [
-        parse_stat_score_file(file)
-        for file in args.platform_stat_files
-        if file is not None
-    ]
-
     # parsing metadata and mapping files
     metadata_df = get_metadata(metadata_files)
     mapping_df = get_mappings(mapping_files)
     optional_dfs = [df for df in [metadata_df, mapping_df] if df is not None]
+
+    # --------------------------------------------------
+    # Adding metadata, mapping and platform statistics information to gene summary table
+    # --------------------------------------------------
 
     additional_data_dfs = optional_dfs + platform_datasets_stat_dfs
     all_genes_summary_df = complement_gene_summary_table(
@@ -259,13 +342,25 @@ def main():
     )
 
     logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
-
     all_genes_summary_df.write_csv(
         ALL_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
     )
 
+    # --------------------------------------------------
+    # Getting summary table and counts for each section
+    # Adding new sections in MultiQC config for each new expression section
+    # --------------------------------------------------
+
+    nb_sections = len(sections)
+    new_mqc_config_sections = {}
+    new_mqc_config_sp = {}
+    logger.info("Making new sections in the MultiQC config")
     for section in sections:
-        section_df = all_genes_summary_df.filter(pl.col("section") == section)
+        # getting best candidates for this section
+        section_df = all_genes_summary_df.filter(
+            pl.col("section").eq(section)
+            & pl.col(config.STABILITY_SCORE_COLNAME).is_not_null()
+        )
         section_df = section_df.drop("section")
 
         section_most_stable_genes_counts_df = get_most_stable_genes_counts(
@@ -277,6 +372,28 @@ def main():
 
         section_counts_outfile = f"{section}.{COUNTS_OUTFILENAME_SUFFIX}"
         write_float_csv(section_most_stable_genes_counts_df, section_counts_outfile)
+
+        # making new sections in the MultiQC config
+        new_mqc_config_sections[f"ranking_{section}"] = format_multiqc_section(
+            section, nb_sections, ranking_dict
+        )
+        new_mqc_config_sections[f"expr_distrib_{section}"] = format_multiqc_section(
+            section, nb_sections, expr_distrib_dict
+        )
+        new_mqc_config_sp[f"ranking_{section}"] = format_multiqc_sp(
+            section, ranking_sp_dict
+        )
+        new_mqc_config_sp[f"expr_distrib_{section}"] = format_multiqc_sp(
+            section, expr_distrib_sp_dict
+        )
+
+    multiqc_config["custom_data"] = (
+        new_mqc_config_sections | multiqc_config["custom_data"]
+    )
+    multiqc_config["sp"] = new_mqc_config_sp | multiqc_config["sp"]
+
+    with open(CUSTOM_CONTENT_MULTIQC_CONFIG_FILE, "w") as f:
+        yaml.dump(multiqc_config, f, indent=4, sort_keys=False)
 
     logger.info("Done")
 

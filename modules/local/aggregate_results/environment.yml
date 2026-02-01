@@ -6,4 +6,4 @@ channels:
 dependencies:
   - conda-forge::python=3.12.8
   - conda-forge::polars==1.35.2
-  - conda-forge::polars==6.0.2
+  - conda-forge::polars==6.0.3

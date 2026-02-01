@@ -17,6 +17,7 @@ workflow MULTIQC_WORKFLOW {
     take:
     ch_multiqc_files
     ch_versions
+    ch_custom_content_multiqc_config
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -309,6 +310,8 @@ workflow MULTIQC_WORKFLOW {
                 sort: true
             )
         )
+
+    ch_multiqc_custom_config = ch_multiqc_custom_config.mix( ch_custom_content_multiqc_config )
 
     MULTIQC (
         ch_multiqc_files.collect(),

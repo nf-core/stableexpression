@@ -193,17 +193,24 @@ workflow STABLEEXPRESSION {
         // AGGREGATE ALL RESULTS FOR MULTIQC
         // -----------------------------------------------------------------
 
+        ch_custom_content_multiqc_config_template = channel.fromPath(
+                                                        "${projectDir}/assets/custom_content_multiqc_config.template.yaml",
+                                                        checkIfExists: true
+                                                    )
+
         AGGREGATE_RESULTS (
             ch_all_counts.map{ meta, file -> file }.collect(),
             ch_stats_all_genes_with_scores.collect(),
             GENE_STATISTICS.out.platform_stats.collect(),
             MERGE_DATA.out.whole_gene_metadata.collect().ifEmpty([]), // handle case where there are no mappings
-            MERGE_DATA.out.whole_gene_id_mapping.collect().ifEmpty([]) // handle case where there are no mappings
+            MERGE_DATA.out.whole_gene_id_mapping.collect().ifEmpty([]), // handle case where there are no mappings
+            ch_custom_content_multiqc_config_template.collect()
         )
 
         ch_all_genes_summary                   = AGGREGATE_RESULTS.out.all_genes_summary
         ch_most_stable_genes_summary           = AGGREGATE_RESULTS.out.most_stable_genes_summary
         ch_most_stable_genes_transposed_counts = AGGREGATE_RESULTS.out.most_stable_genes_transposed_counts_filtered
+        ch_custom_content_multiqc_config       = AGGREGATE_RESULTS.out.custom_content_multiqc_config
 
         // -----------------------------------------------------------------
         // DASH APPLICATION
@@ -230,6 +237,7 @@ workflow STABLEEXPRESSION {
     MULTIQC_WORKFLOW(
         ch_multiqc_files,
         ch_versions,
+        ch_custom_content_multiqc_config,
         params.multiqc_config,
         params.multiqc_logo,
         params.multiqc_methods_description,
