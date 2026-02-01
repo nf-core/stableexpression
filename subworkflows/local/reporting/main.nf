@@ -1,5 +1,8 @@
-include { MULTIQC                                } from '../../../modules/nf-core/multiqc'
+include { AGGREGATE_RESULTS                      } from '../../../modules/local/aggregate_results'
+include { DASH_APP                               } from '../../../modules/local/dash_app'
 include { COLLECT_STATISTICS                     } from '../../../modules/local/collect_statistics'
+include { MULTIQC                                } from '../../../modules/nf-core/multiqc'
+
 
 include { methodsDescriptionText                 } from '../utils_nfcore_stableexpression_pipeline'
 include { paramsSummaryMultiqc                   } from '../../nf-core/utils_nfcore_pipeline'
@@ -12,18 +15,58 @@ include { paramsSummaryMap                       } from 'plugin/nf-schema'
 ========================================================================================
 */
 
-workflow MULTIQC_WORKFLOW {
+workflow REPORTING {
 
     take:
-    ch_multiqc_files
-    ch_versions
-    ch_custom_content_multiqc_config
+    ch_all_counts
+    ch_whole_design
+    ch_stats_all_genes_with_scores
+    ch_platform_statistics
+    ch_whole_gene_metadata
+    ch_whole_gene_id_mapping
     multiqc_config
     multiqc_logo
     multiqc_methods_description
     outdir
 
     main:
+
+    ch_versions = channel.empty()
+
+    // -----------------------------------------------------------------
+    // AGGREGATE ALL RESULTS FOR MULTIQC
+    // -----------------------------------------------------------------
+
+    ch_custom_content_multiqc_config_template = channel.fromPath(
+                                                    "${projectDir}/assets/custom_content_multiqc_config.template.yaml",
+                                                    checkIfExists: true
+                                                )
+
+    AGGREGATE_RESULTS (
+        ch_all_counts.map{ meta, file -> file }.collect(),
+        ch_stats_all_genes_with_scores.collect(),
+        ch_platform_statistics.collect(),
+        ch_whole_gene_metadata.collect().ifEmpty([]), // handle case where there are no mappings
+        ch_whole_gene_id_mapping.collect().ifEmpty([]), // handle case where there are no mappings
+        ch_custom_content_multiqc_config_template.collect()
+    )
+
+    ch_all_genes_summary                   = AGGREGATE_RESULTS.out.all_genes_summary
+    ch_most_stable_genes_summary           = AGGREGATE_RESULTS.out.most_stable_genes_summary
+    ch_most_stable_genes_transposed_counts = AGGREGATE_RESULTS.out.most_stable_genes_transposed_counts_filtered
+    ch_custom_content_multiqc_config       = AGGREGATE_RESULTS.out.custom_content_multiqc_config
+
+    // -----------------------------------------------------------------
+    // DASH APPLICATION
+    // -----------------------------------------------------------------
+
+    DASH_APP(
+        ch_all_counts.map{ meta, file -> file }.collect(),
+        ch_whole_design.collect(),
+        ch_all_genes_summary.collect()
+    )
+    ch_versions = ch_versions.mix ( DASH_APP.out.versions )
+
 
     // ------------------------------------------------------------------------------------
     // PREPARING BAR PLOTS
@@ -215,7 +258,10 @@ workflow MULTIQC_WORKFLOW {
     // MULTIQC FILES
     // ------------------------------------------------------------------------------------
 
-    ch_multiqc_files = ch_multiqc_files
+    ch_multiqc_files = channel.empty()
+                        .mix( ch_most_stable_genes_summary.collect() )
+                        .mix( ch_all_genes_summary.collect() )
+                        .mix( ch_most_stable_genes_transposed_counts.collect() )
                         .mix( channel.topic('eatlas_all_datasets').collect() ) // single item
                         .mix( channel.topic('eatlas_selected_datasets').collect() ) // single item
                         .mix( channel.topic('geo_all_datasets').collect() ) // single item
@@ -323,5 +369,6 @@ workflow MULTIQC_WORKFLOW {
     )
 
     emit:
-    report = MULTIQC.out.report
+    multiqc_report          = MULTIQC.out.report
+    all_genes_summary       = ch_all_genes_summary
 }
