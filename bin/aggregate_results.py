@@ -271,7 +271,7 @@ def main():
 
     stat_score_df = pl.concat(stat_score_dfs)
     # sorting sections in the order (from 1 to <max nb of section>)
-    sections = sorted(sections, key=lambda x: int(x.split("_")[-1]))
+    sections = sorted(sections, key=lambda section: int(section.split("_")[-1]))
 
     # --------------------------------------------------
     # Parsing MultiQC template config for custom content
@@ -291,11 +291,13 @@ def main():
     expr_distrib_sp_dict = multiqc_config["sp"][
         "expr_distrib_most_stable_genes_template"
     ]
-    print(multiqc_config["custom_data"].keys())
+    other_sections = multiqc_config["custom_content"]["order"]
+
     del multiqc_config["custom_data"]["ranked_most_stable_genes_summary_template"]
     del multiqc_config["sp"]["ranked_most_stable_genes_summary_template"]
     del multiqc_config["custom_data"]["expr_distrib_most_stable_genes_template"]
     del multiqc_config["sp"]["expr_distrib_most_stable_genes_template"]
+    del multiqc_config["custom_content"]["order"]
 
     # filling dynamically the number of genes to show in box plots
     expr_distrib_dict["description"] = expr_distrib_dict["description"].replace(
@@ -374,23 +376,29 @@ def main():
         write_float_csv(section_most_stable_genes_counts_df, section_counts_outfile)
 
         # making new sections in the MultiQC config
-        new_mqc_config_sections[f"ranking_{section}"] = format_multiqc_section(
+        new_mqc_config_sections[f"genes_{section}"] = format_multiqc_section(
             section, nb_sections, ranking_dict
         )
-        new_mqc_config_sections[f"expr_distrib_{section}"] = format_multiqc_section(
-            section, nb_sections, expr_distrib_dict
+        new_mqc_config_sections[f"normalised_expr_distrib_{section}"] = (
+            format_multiqc_section(section, nb_sections, expr_distrib_dict)
         )
-        new_mqc_config_sp[f"ranking_{section}"] = format_multiqc_sp(
+        new_mqc_config_sp[f"genes_{section}"] = format_multiqc_sp(
             section, ranking_sp_dict
         )
-        new_mqc_config_sp[f"expr_distrib_{section}"] = format_multiqc_sp(
+        new_mqc_config_sp[f"normalised_expr_distrib_{section}"] = format_multiqc_sp(
             section, expr_distrib_sp_dict
         )
 
+    # adding new sections
     multiqc_config["custom_data"] = (
         new_mqc_config_sections | multiqc_config["custom_data"]
     )
+    # specifying the filenames linked to the new sections
     multiqc_config["sp"] = new_mqc_config_sp | multiqc_config["sp"]
+    # specifying the section order
+    multiqc_config["custom_content"]["order"] = (
+        list(new_mqc_config_sections.keys()) + other_sections
+    )
 
     with open(CUSTOM_CONTENT_MULTIQC_CONFIG_FILE, "w") as f:
         yaml.dump(multiqc_config, f, indent=4, sort_keys=False)

@@ -1,6 +1,6 @@
 custom_data:
   ranked_most_stable_genes_summary_template:
-    section_name: "Stable genes ranking"
+    section_name: "Most stable genes"
     file_format: "csv"
     no_violin: true
     description: "Expression descriptive statistics of all genes, ranked by stability. Genes are sorted by stability score - from the most stable to the least stable."
@@ -213,12 +213,10 @@ custom_data:
         description: Ratio of Microarray samples in which the gene has a zero value.
 
   expr_distrib_most_stable_genes_template:
-    section_name: "Count distributions"
+    section_name: "Normalised count distributions"
     file_format: "csv"
     pconfig:
       sort_samples: false
-      #xmin: 0
-      #xmax: 1
       xlab: Expression
       ylab: Gene
     description: "Distribution of normalised gene expression (between 0 and 1) across samples for the most stable genes. Only the NB_GENES most stable genes are shown and genes are ranked from the most stable to the least stable."
@@ -612,6 +610,31 @@ custom_data:
     no_violin: true
     description: Reasons of failure during Normalisation (DESeq2 or edgeR)
     plot_type: "table"
+
+custom_content:
+  order:
+    - gene_statistics
+    - skewness
+    - ratio_zeros
+    - ratio_nulls
+    - null_values_filter
+    - zero_values_filter
+    - id_mapping_stats
+    - total_gene_id_occurrence_quantiles
+    - eatlas_selected_experiments_metadata
+    - eatlas_all_experiments_metadata
+    - eatlas_failure_reasons
+    - eatlas_warning_reasons
+    - geo_selected_experiments_metadata
+    - geo_all_experiments_metadata
+    - geo_rejected_experiments_metadata
+    - geo_failure_reasons
+    - geo_warning_reasons
+    - id_cleaning_failure_reasons
+    - renaming_warning_reasons
+    - renaming_failure_reasons
+    - normalisation_failure_reasons
+    - normalisation_warning_reasons
 
 sp:
   ranked_most_stable_genes_summary_template:
