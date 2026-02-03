@@ -12,7 +12,7 @@ process IMPUTE_MISSING_VALUES {
     val missing_value_imputer
 
     output:
-    tuple val(meta), path('*.imputed.parquet'),                                                                      emit: counts
+    tuple val(meta), path('*.imputed.parquet'),                                                                         emit: counts
     tuple val("${task.process}"), val('python'),       eval("python3 --version | sed 's/Python //'"),                   topic: versions
     tuple val("${task.process}"), val('polars'),       eval('python3 -c "import polars; print(polars.__version__)"'),   topic: versions
     tuple val("${task.process}"), val('scikit-learn'), eval('python3 -c "import sklearn; print(sklearn.__version__)"'), topic: versions

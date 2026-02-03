@@ -10,8 +10,9 @@ include { COMPUTE_GENE_STATISTICS as PLATFORM                    } from '../../.
 workflow GENE_STATISTICS {
 
     take:
-    ch_all_counts      // [ [ platform: platform, dataset_size: size], file ]
-    ch_platform_counts // [ [ platform: platform, dataset_size: size], file ]
+    ch_all_imputed_counts
+    ch_all_counts
+    ch_platform_counts
     ch_ratio_nulls_per_sample_file
     max_null_ratio_valid_sample
 
@@ -21,8 +22,9 @@ workflow GENE_STATISTICS {
     // PLATFORM-SPECIFIC STATISTICS
     // -----------------------------------------------------------------
 
+    // platform counts have not been imputed
     PLATFORM(
-        ch_platform_counts,
+        ch_platform_counts.map{ meta, file -> [ meta, file, [] ] },
         ch_ratio_nulls_per_sample_file.collect(),
         max_null_ratio_valid_sample
     )
@@ -33,7 +35,7 @@ workflow GENE_STATISTICS {
     // -----------------------------------------------------------------
 
     GLOBAL(
-        ch_all_counts.collect(),
+        ch_all_counts.join( ch_all_imputed_counts ).collect(),
         ch_ratio_nulls_per_sample_file.collect(),
         max_null_ratio_valid_sample
     )

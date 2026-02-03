@@ -53,13 +53,14 @@ workflow MERGE_DATA {
                                     .map { files -> [ [ platform: "all" ], files ] }
 
     GLOBAL( ch_collected_merged_counts.collect() )
+    ch_all_counts = GLOBAL.out.counts
 
     // -----------------------------------------------------------------
     // IMPUTE MISSING VALUES
     // -----------------------------------------------------------------
 
     IMPUTE_MISSING_VALUES(
-        GLOBAL.out.counts.collect(),
+        ch_all_counts.collect(),
         missing_value_imputer
     )
 
@@ -127,7 +128,8 @@ workflow MERGE_DATA {
                                 }
 
     emit:
-    all_counts                             = IMPUTE_MISSING_VALUES.out.counts
+    all_imputed_counts                     = IMPUTE_MISSING_VALUES.out.counts
+    all_counts                             = ch_all_counts
     platform_counts                        = ch_platform_counts
     whole_design                           = ch_whole_design
     whole_gene_id_mapping                  = ch_whole_gene_id_mapping

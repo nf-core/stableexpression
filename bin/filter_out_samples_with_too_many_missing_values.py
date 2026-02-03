@@ -69,7 +69,7 @@ def get_nb_internal_nulls(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def get_total_nb_nulls(
+def get_ratio_null_values(
     df: pl.DataFrame, nb_missing_genes: int, nb_valid_genes: int
 ) -> pl.DataFrame:
     return df.select(
@@ -79,16 +79,6 @@ def get_total_nb_nulls(
             / nb_valid_genes
         ).alias(config.RATIO_COLNAME),
     )
-
-
-def filter_out_columns_with_high_missing_values_ratio(
-    df: pl.DataFrame, max_null_ratio: float
-):
-    null_ratio_df = df.select(pl.exclude(config.GENE_ID_COLNAME).is_null()).mean()
-    valid_null_ratio_samples = [
-        col for col in null_ratio_df.columns if null_ratio_df[col][0] <= max_null_ratio
-    ]
-    return df.select(pl.col(config.GENE_ID_COLNAME), pl.col(valid_null_ratio_samples))
 
 
 #####################################################
@@ -118,7 +108,7 @@ def main():
     nb_missing_genes = nb_valid_genes - nb_genes
 
     # adding the nb of missing genes to the number of null vaues for each sample
-    ratio_values_df = get_total_nb_nulls(
+    ratio_values_df = get_ratio_null_values(
         nb_null_values_df, nb_missing_genes, nb_valid_genes
     )
 

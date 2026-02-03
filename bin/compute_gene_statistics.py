@@ -59,40 +59,127 @@ class StatsExtension:
         )
 
 
+#####################################################
+#####################################################
+# FUNCTIONS
+#####################################################
+#####################################################
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Get base statistics from count data for each gene"
+    )
+    parser.add_argument(
+        "--imputed-counts",
+        type=Path,
+        dest="imputed_count_file",
+        help="Count file with imputed missing values",
+    )
+    parser.add_argument(
+        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+    )
+    parser.add_argument(
+        "--ratio-nulls-per-sample",
+        type=Path,
+        dest="ratio_nulls_per_samples",
+        required=True,
+        help="Ratio of null values per sample",
+    )
+    parser.add_argument(
+        "--max-ratio-null-valid-sample",
+        type=float,
+        dest="max_ratio_null_valid_sample",
+        required=True,
+        help="Maximum ratio of null values for a sample to be considered valid",
+    )
+    parser.add_argument("--platform", type=str, help="Platform name")
+    return parser.parse_args()
+
+
+def get_counts(file: Path) -> pl.DataFrame:
+    # sorting dataframe (necessary to get consistent output)
+    return pl.read_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
+
+
+def get_colname(colname: str, platform: str | None) -> str:
+    return f"{platform}_{colname}" if platform else colname
+
+
+def get_valid_samples(
+    ratio_nulls_per_samples_df: pl.DataFrame, max_ratio_null_valid_sample: float
+) -> list[str]:
+    """
+    Get samples whose ratio of null values is below the maximum ratio.
+    """
+    return (
+        ratio_nulls_per_samples_df.filter(
+            pl.col(config.RATIO_COLNAME) <= max_ratio_null_valid_sample
+        )
+        .select(config.SAMPLE_COLNAME)
+        .to_series()
+        .to_list()
+    )
+
+
+def compute_ratios_null_values(
+    df: pl.DataFrame, valid_samples: list[str], platform: str | None
+):
+    # the samples showing a low gene count will not be taken into account for the zero count penalty
+    nb_nulls = df.select(pl.exclude(config.GENE_ID_COLNAME).is_null()).sum_horizontal()
+
+    if valid_samples:
+        nb_nulls_valid_samples = df.select(
+            pl.col(valid_samples).is_null()
+        ).sum_horizontal()
+    else:
+        nb_nulls_valid_samples = nb_nulls
+
+    nb_samples = len(df.columns) - 1
+    return df.select(
+        pl.col(config.GENE_ID_COLNAME),
+        (nb_nulls / nb_samples).alias(
+            get_colname(config.RATIO_NULLS_COLNAME, platform)
+        ),
+        (nb_nulls_valid_samples / len(valid_samples)).alias(
+            get_colname(config.RATIO_NULLS_VALID_SAMPLES_COLNAME, platform)
+        ),
+    )
+
+
+def export_data(stat_df: pl.DataFrame, platform: str | None):
+    """Export gene expression data to CSV files."""
+    outfile = (
+        f"{platform}.{ALL_GENES_RESULT_OUTFILE_SUFFIX}"
+        if platform
+        else ALL_GENES_RESULT_OUTFILE_SUFFIX
+    )
+    logger.info(f"Exporting statistics for all genes to: {outfile}")
+    write_float_csv(stat_df, outfile)
+    logger.info("Done")
+
+
+#####################################################
+#####################################################
+# GeneStatistician CLASS
+#####################################################
+#####################################################
+
+
 @dataclass
 class GeneStatistician:
     count_df: pl.DataFrame
-    nb_nulls_per_samples_df: pl.DataFrame
-    max_ratio_null_valid_sample: float
+    ratio_nulls_df: pl.DataFrame
     platform: str | None = field(default=None)
 
-    gene_count_per_sample_df: pl.DataFrame = field(init=False)
     stat_df: pl.DataFrame = field(init=False)
     samples: list[str] = field(init=False)
-    samples_with_low_gene_count: list[str] = field(init=False)
 
     def __post_init__(self):
-        self.samples = [
-            col for col in self.count_df.columns if col != config.GENE_ID_COLNAME
-        ]
-        self.samples_with_low_gene_count = self.get_samples_with_low_gene_count()
+        self.samples = self.count_df.select(pl.exclude(config.GENE_ID_COLNAME)).columns
 
     def get_colname(self, colname: str) -> str:
-        return f"{self.platform}_{colname}" if self.platform else colname
-
-    def get_valid_counts(self) -> pl.DataFrame:
-        return self.count_df.select(pl.exclude(config.GENE_ID_COLNAME))
-
-    def get_samples_with_low_gene_count(self) -> list[str]:
-        return (
-            self.nb_nulls_per_samples_df.filter(
-                pl.col(config.SAMPLE_COLNAME).is_in(self.samples)
-            )
-            .filter(pl.col(config.RATIO_COLNAME) > self.max_ratio_null_valid_sample)
-            .select(config.SAMPLE_COLNAME)
-            .to_series()
-            .to_list()
-        )
+        return get_colname(colname, self.platform)
 
     def get_main_statistics(self) -> pl.DataFrame:
         """
@@ -121,32 +208,9 @@ class GeneStatistician:
             ),
         )
 
-    def compute_ratios_null_values(self):
-        # the samples showing a low gene count will not be taken into account for the zero count penalty
-        valid_samples = [
-            sample
-            for sample in self.samples
-            if sample not in self.samples_with_low_gene_count
-        ]
-
-        nb_nulls = self.count_df.select(
-            pl.exclude(config.GENE_ID_COLNAME).is_null()
-        ).sum_horizontal()
-
-        if valid_samples:
-            nb_nulls_valid_samples = self.count_df.select(
-                pl.col(valid_samples).is_null()
-            ).sum_horizontal()
-        else:
-            nb_nulls_valid_samples = nb_nulls
-
-        self.stat_df = self.stat_df.with_columns(
-            (nb_nulls / len(self.samples)).alias(
-                self.get_colname(config.RATIO_NULLS_COLNAME)
-            ),
-            (nb_nulls_valid_samples / len(valid_samples)).alias(
-                self.get_colname(config.RATIO_NULLS_VALID_SAMPLES_COLNAME)
-            ),
+    def add_ratio_null_values(self):
+        self.stat_df = self.stat_df.join(
+            self.ratio_nulls_df, on=config.GENE_ID_COLNAME, how="inner"
         )
 
     def compute_ratio_zeros(self):
@@ -187,61 +251,12 @@ class GeneStatistician:
         # getting expression statistics
         self.stat_df = self.get_main_statistics()
         # adding column for nb of null values for each gene
-        self.compute_ratios_null_values()
+        self.add_ratio_null_values()
         # adding a column for the frequency of zero values
         self.compute_ratio_zeros()
         # getting quantile intervals
         self.get_quantile_intervals()
         return self.stat_df
-
-
-#####################################################
-#####################################################
-# FUNCTIONS
-#####################################################
-#####################################################
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Get base statistics from count data for each gene"
-    )
-    parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
-    )
-    parser.add_argument(
-        "--ratio-nulls-per-sample",
-        type=Path,
-        dest="ratio_nulls_per_samples",
-        required=True,
-        help="Ratio of null values per sample",
-    )
-    parser.add_argument(
-        "--max-ratio-null-valid-sample",
-        type=float,
-        dest="max_ratio_null_valid_sample",
-        required=True,
-        help="Maximum ratio of null values for a sample to be considered valid",
-    )
-    parser.add_argument("--platform", type=str, help="Platform name")
-    return parser.parse_args()
-
-
-def get_counts(file: Path) -> pl.DataFrame:
-    # sorting dataframe (necessary to get consistent output)
-    return pl.read_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
-
-
-def export_data(stat_df: pl.DataFrame, platform: str | None):
-    """Export gene expression data to CSV files."""
-    outfile = (
-        f"{platform}.{ALL_GENES_RESULT_OUTFILE_SUFFIX}"
-        if platform
-        else ALL_GENES_RESULT_OUTFILE_SUFFIX
-    )
-    logger.info(f"Exporting statistics for all genes to: {outfile}")
-    write_float_csv(stat_df, outfile)
-    logger.info("Done")
 
 
 #####################################################
@@ -254,20 +269,39 @@ def export_data(stat_df: pl.DataFrame, platform: str | None):
 def main():
     args = parse_args()
 
-    # putting all counts into a single dataframe
+    ratio_nulls_per_samples_df = pl.read_csv(args.ratio_nulls_per_samples)
+    valid_samples = get_valid_samples(
+        ratio_nulls_per_samples_df, args.max_ratio_null_valid_sample
+    )
+
+    logger.info("Loading count data (before missing value imputation)")
+    non_imputed_count_df = get_counts(args.count_file)
+
+    ratio_nulls_df = compute_ratios_null_values(
+        non_imputed_count_df, valid_samples, args.platform
+    )
+
+    # deleting non_imputed_count_df in order to free unused memory
+    del non_imputed_count_df
+
+    # if the user provided an imputed count file, use it; otherwise, use the original count file
+    if args.imputed_count_file:
+        logger.info("Using imputed count file")
+        imputed_count_file = args.imputed_count_file
+    else:
+        logger.info("Using original count file")
+        imputed_count_file = args.count_file
+
     logger.info("Loading count data...")
-    count_df = get_counts(args.count_file)
+    count_df = get_counts(imputed_count_file)
     logger.info(
         f"Loaded count data with {count_df.shape[0]} rows and {count_df.shape[1]} columns"
     )
 
-    ratio_nulls_per_samples_df = pl.read_csv(args.ratio_nulls_per_samples)
-
     # computing statistics (mean, standard deviation, coefficient of variation, quantiles)
     gene_stat = GeneStatistician(
         count_df,
-        ratio_nulls_per_samples_df,
-        args.max_ratio_null_valid_sample,
+        ratio_nulls_df,
         args.platform,
     )
     stat_df = gene_stat.compute_statistics()

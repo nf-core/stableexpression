@@ -159,6 +159,7 @@ workflow STABLEEXPRESSION {
             params.outdir
         )
 
+        ch_all_imputed_counts    = MERGE_DATA.out.all_imputed_counts
         ch_all_counts            = MERGE_DATA.out.all_counts
         ch_whole_design          = MERGE_DATA.out.whole_design
         ch_platform_counts       = MERGE_DATA.out.platform_counts
@@ -170,6 +171,7 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         GENE_STATISTICS (
+            ch_all_imputed_counts,
             ch_all_counts,
             ch_platform_counts,
             ch_ratio_nulls_per_sample_file,
@@ -184,7 +186,7 @@ workflow STABLEEXPRESSION {
         // -----------------------------------------------------------------
 
         STABILITY_SCORING (
-            ch_all_counts.map{ meta, file -> file },
+            ch_all_imputed_counts.map{ meta, file -> file },
             ch_whole_design,
             ch_all_datasets_stats,
             params.nb_candidates_per_section,
@@ -202,7 +204,7 @@ workflow STABLEEXPRESSION {
     // -----------------------------------------------------------------
 
     REPORTING(
-        ch_all_counts,
+        ch_all_imputed_counts,
         ch_whole_design,
         ch_stats_all_genes_with_scores,
         ch_platform_statistics,

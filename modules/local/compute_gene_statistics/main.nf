@@ -8,7 +8,7 @@ process COMPUTE_GENE_STATISTICS {
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    tuple val(meta), path(count_file)
+    tuple val(meta), path(count_file), path(imputed_count_file)
     path ratio_nulls_per_samples
     val max_null_ratio_valid_sample
 
@@ -21,6 +21,9 @@ process COMPUTE_GENE_STATISTICS {
     def args = task.ext.args ?: ''
     if ( meta.platform != "all" ) {
         args += " --platform $meta.platform"
+    }
+    if ( imputed_count_file ) {
+        args += " --imputed-counts $imputed_count_file"
     }
     """
     # limiting number of threads to polars / python
