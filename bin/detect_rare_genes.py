@@ -8,7 +8,9 @@ from pathlib import Path
 
 import config
 import polars as pl
+
 from common import parse_table
+from resource_management import set_max_resources
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -58,6 +60,12 @@ def parse_args():
         dest="min_occurrence_quantile",
         help="Minimum frequency of occurrences for a gene among all datasets",
     )
+    parser.add_argument(
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+    )
+    parser.add_argument(
+        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
+    )
     return parser.parse_args()
 
 
@@ -68,6 +76,8 @@ def parse_args():
 
 def main():
     args = parse_args()
+
+    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
 
     original_gene_id_occurrence_df = parse_table(args.gene_id_occurrence_file)
     mapping_df = parse_table(args.mapping_file)

@@ -52,6 +52,12 @@ def parse_args():
         description="Get best assembly for a specific taxon ID"
     )
     parser.add_argument("--species", type=str, required=True, help="Species name")
+    parser.add_argument(
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+    )
+    parser.add_argument(
+        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
+    )
     return parser.parse_args()
 
 
@@ -195,6 +201,7 @@ def extract_annotation_file_from_archive():
 
 if __name__ == "__main__":
     args = parse_args()
+
     species = format_species_name(args.species)
 
     species_taxid = get_species_taxid(species)

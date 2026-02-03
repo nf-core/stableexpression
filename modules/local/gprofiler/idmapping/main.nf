@@ -40,7 +40,9 @@ process GPROFILER_IDMAPPING {
     gprofiler_map_ids.py \\
         --gene-ids $gene_id_file \\
         --species "$species" \\
-        --target-db "$gprofiler_target_db"
+        --target-db "$gprofiler_target_db" \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
     """
 
 

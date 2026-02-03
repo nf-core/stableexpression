@@ -50,7 +50,8 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     get_eatlas_accessions.py \\
         $args \\
-        --cpus ${task.cpus}
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
 
     SAMPLING_QUOTA=\$(cat sampling_quota.txt)
     """

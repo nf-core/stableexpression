@@ -20,11 +20,11 @@ process MAKE_CHUNKS {
     script:
     def args = "--task-attempts ${task.attempt}"
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
-    make_parquet_chunks.py --counts $count_file $args
+    make_parquet_chunks.py \\
+        --counts $count_file \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}" \\
+        ${args}
     """
 
 }

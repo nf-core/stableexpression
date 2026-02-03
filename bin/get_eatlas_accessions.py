@@ -11,13 +11,15 @@ from multiprocessing import Pool
 import pandas as pd
 import requests
 import yaml
-from natural_language_utils import keywords_in_fields
 from tenacity import (
     before_sleep_log,
     retry,
     stop_after_delay,
     wait_exponential,
 )
+
+from natural_language_utils import keywords_in_fields
+from resource_management import set_max_resources
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -53,13 +55,6 @@ def parse_args():
         help="Search Expression Atlas for this specific species",
     )
     parser.add_argument(
-        "--cpus",
-        dest="nb_cpus",
-        type=int,
-        required=True,
-        help="Number of CPUs to use",
-    )
-    parser.add_argument(
         "--keywords",
         type=str,
         nargs="*",
@@ -79,6 +74,12 @@ def parse_args():
         dest="random_sampling_seed",
         type=int,
         help="Random sampling seed",
+    )
+    parser.add_argument(
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+    )
+    parser.add_argument(
+        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     return parser.parse_args()
 
@@ -408,6 +409,8 @@ def format_species_name(species: str) -> str:
 
 def main():
     args = parse_args()
+
+    set_max_resources(args.nb_cpus, args.memory, multiprocess=True)
 
     results = None
     selected_accessions = []

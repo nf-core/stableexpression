@@ -9,7 +9,9 @@ from pathlib import Path
 
 import config
 import polars as pl
+
 from common import parse_count_table
+from resource_management import set_max_resources
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,6 +34,12 @@ def parse_args():
     parser = argparse.ArgumentParser("Rename gene IDs using mapped IDs")
     parser.add_argument(
         "--count-file", type=Path, required=True, help="Input file containing counts"
+    )
+    parser.add_argument(
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+    )
+    parser.add_argument(
+        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     return parser.parse_args()
 
@@ -68,6 +76,8 @@ def clean_mirna_ids(df: pl.DataFrame):
 
 def main():
     args = parse_args()
+
+    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
 
     logger.info(f"Converting IDs for count file {args.count_file.name}...")
 

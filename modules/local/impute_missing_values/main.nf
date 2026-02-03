@@ -19,13 +19,11 @@ process IMPUTE_MISSING_VALUES {
 
     script:
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
     impute_missing_values.py \\
         --counts $count_file \\
-        --imputer $missing_value_imputer
+        --imputer $missing_value_imputer \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
     """
 
 }

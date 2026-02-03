@@ -18,11 +18,10 @@ process COLLECT_STATISTICS {
 
     script:
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
-    collect_statistics.py $file
+    collect_statistics.py \\
+        --file $file \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
     """
 
 }

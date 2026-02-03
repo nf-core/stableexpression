@@ -19,13 +19,11 @@ process NORMFINDER   {
 
     script:
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
     normfinder.py \\
         --counts $count_file \\
-        --design $design_file
+        --design $design_file \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
     """
 
     stub:

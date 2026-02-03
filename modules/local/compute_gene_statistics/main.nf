@@ -26,14 +26,12 @@ process COMPUTE_GENE_STATISTICS {
         args += " --imputed-counts $imputed_count_file"
     }
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
     compute_gene_statistics.py \\
         --counts $count_file \\
         --ratio-nulls-per-sample $ratio_nulls_per_samples \\
         --max-ratio-null-valid-sample $max_null_ratio_valid_sample \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}" \\
         $args
     """
 

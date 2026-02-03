@@ -28,11 +28,9 @@ process AGGREGATE_RESULTS {
     def mapping_files_arg = mapping_files   ? "--mappings " + "$mapping_files"  : ""
     def metadata_files_arg = metadata_files ? "--metadata " + "$metadata_files" : ""
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
     aggregate_results.py \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}" \\
         --counts $count_file \\
         --stats-with-scores $stat_score_files \\
         --platform-stats $platform_stat_files \\

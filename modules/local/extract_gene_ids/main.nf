@@ -19,11 +19,9 @@ process EXTRACT_GENE_IDS {
 
     script:
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
     extract_gene_ids.py \\
-        --count-file "$count_file"
+        --count-file "$count_file" \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
     """
 }

@@ -8,6 +8,8 @@ from pathlib import Path
 
 import polars as pl
 
+from resource_management import set_max_resources
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -56,6 +58,12 @@ def parse_args():
         default=1,
         help="Number of task attempts",
     )
+    parser.add_argument(
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+    )
+    parser.add_argument(
+        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
+    )
     return parser.parse_args()
 
 
@@ -68,6 +76,8 @@ def parse_args():
 
 def main():
     args = parse_args()
+
+    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
 
     low_memory = True if args.task_attempts > 1 else False
     lf = pl.scan_parquet(args.count_file_1, low_memory=low_memory)

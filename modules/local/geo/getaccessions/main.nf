@@ -59,7 +59,8 @@ process GEO_GETACCESSIONS {
 
     get_geo_dataset_accessions.py \\
         $args \\
-        --cpus ${task.cpus}
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
     """
 
     stub:

@@ -10,6 +10,7 @@ import config
 import polars as pl
 import yaml
 from common import write_float_csv
+from resource_management import set_max_resources
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -37,6 +38,12 @@ def parse_args():
     )
     parser.add_argument(
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
+    )
+    parser.add_argument(
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+    )
+    parser.add_argument(
+        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     parser.add_argument(
         "--stats-with-scores",
@@ -246,6 +253,8 @@ def format_multiqc_sp(section: str, template_dict: dict):
 
 def main():
     args = parse_args()
+
+    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
 
     # --------------------------------------------------
     # Parsing counts

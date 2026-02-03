@@ -26,14 +26,12 @@ process FILTER_AND_RENAME_GENES {
     def mapping_arg  = gene_id_mapping_file ? "--mappings $gene_id_mapping_file" : ""
     def valid_ids_arg = valid_gene_ids_file ? "--valid-gene-ids $valid_gene_ids_file" : ""
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
     filter_and_rename_genes.py \\
         --count-file "$count_file" \\
         $mapping_arg \\
-        $valid_ids_arg
+        $valid_ids_arg \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
 
     NB_UNMAPPED=\$(cat unmapped.txt)
     NB_MERGED=\$(cat merged.txt)

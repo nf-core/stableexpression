@@ -9,6 +9,8 @@ from pathlib import Path
 import config
 import polars as pl
 
+from resource_management import set_max_resources
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -38,6 +40,12 @@ def parse_args():
         type=int,
         default=1,
         help="Number of task attempts",
+    )
+    parser.add_argument(
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+    )
+    parser.add_argument(
+        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     return parser.parse_args()
 
@@ -124,10 +132,11 @@ def group_standard_deviations(std_lf: pl.LazyFrame) -> pl.LazyFrame:
 
 def main():
     args = parse_args()
-    file = args.ratio_file
+
+    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
 
     low_memory = True if args.task_attempts > 1 else False
-    std_lf = compute_standard_deviations(file, low_memory)
+    std_lf = compute_standard_deviations(args.ratio_file, low_memory)
     std_lf = group_standard_deviations(std_lf)
 
     # when the ratio file corresponds to the same gene ids cross joined with themselves (i == i)
@@ -135,7 +144,9 @@ def main():
 
     std_df = std_lf.collect()
     if len(std_df) == 0:
-        raise ValueError(f"No output following treatment of file {str(file)}")
+        raise ValueError(
+            f"No output following treatment of file {str(args.ratio_file)}"
+        )
 
     outfile = args.ratio_file.name.replace("ratios", "std")
     std_df.write_parquet(outfile)

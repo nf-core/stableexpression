@@ -22,13 +22,11 @@ process NORMALISATION_COMPUTE_TPM {
 
     script:
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
     compute_tpm.py \\
         --counts $count_file \\
-        --gene-lengths $gene_lengths_file
+        --gene-lengths $gene_lengths_file \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
     """
 
 

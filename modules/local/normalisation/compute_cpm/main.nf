@@ -21,12 +21,10 @@ process NORMALISATION_COMPUTE_CPM {
 
     script:
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
     compute_cpm.py \\
-        --counts $count_file
+        --counts $count_file \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
     """
 
 

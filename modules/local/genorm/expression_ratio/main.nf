@@ -20,11 +20,11 @@ process EXPRESSION_RATIO {
     script:
     def args = "--task-attempts ${task.attempt}"
     """
-    # limiting number of threads to polars / python
-    export POLARS_MAX_THREADS=${task.cpus}
-    export OMP_NUM_THREADS=${task.cpus}
-
-    make_pairwise_gene_expression_ratio.py --file $file
+    make_pairwise_gene_expression_ratio.py \\
+        --file $file \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}" \\
+        ${args}
     """
 
 }

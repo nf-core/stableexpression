@@ -15,7 +15,6 @@ import pandas as pd
 import requests
 import xmltodict
 from Bio import Entrez
-from natural_language_utils import keywords_in_fields
 from requests.exceptions import ConnectionError, HTTPError
 from tenacity import (
     before_sleep_log,
@@ -24,6 +23,9 @@ from tenacity import (
     wait_exponential,
 )
 from tqdm import tqdm
+
+from resource_management import set_max_resources
+from natural_language_utils import keywords_in_fields
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -129,11 +131,10 @@ def parse_args():
         help="Random sampling seed",
     )
     parser.add_argument(
-        "--cpus",
-        dest="nb_cpus",
-        type=int,
-        required=True,
-        help="Number of CPUs to use",
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+    )
+    parser.add_argument(
+        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     parser.add_argument(
         "--accessions",
@@ -763,6 +764,9 @@ def export_dataset_metadatas(
 
 def main():
     args = parse_args()
+
+    set_max_resources(args.nb_cpus, args.memory, multiprocess=True)
+
     random_sampling_size = args.random_sampling_size
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

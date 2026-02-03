@@ -8,8 +8,10 @@ from pathlib import Path
 
 import config
 import polars as pl
-from common import export_parquet, parse_count_table
 from sklearn.preprocessing import quantile_transform
+
+from common import export_parquet, parse_count_table
+from resource_management import set_max_resources
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -43,6 +45,12 @@ def parse_args():
         choices=ALLOWED_TARGET_DISTRIBUTIONS,
         help="Target distribution to map counts to",
     )
+    parser.add_argument(
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+    )
+    parser.add_argument(
+        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
+    )
     return parser.parse_args()
 
 
@@ -70,15 +78,16 @@ def quantile_normalise(df: pl.DataFrame, target_distribution: str):
 
 def main():
     args = parse_args()
-    count_file = args.count_file
 
-    logger.info(f"Parsing {count_file.name}")
-    count_df = parse_count_table(count_file)
+    set_max_resources(args.nb_cpus, "4 GB", limit_polars=True)
 
-    logger.info(f"Quantile normalising {count_file.name}")
+    logger.info(f"Parsing {args.count_file.name}")
+    count_df = parse_count_table(args.count_file)
+
+    logger.info(f"Quantile normalising {args.count_file.name}")
     quantile_normalized_counts = quantile_normalise(count_df, args.target_distribution)
 
-    export_parquet(quantile_normalized_counts, count_file, OUTFILE_SUFFIX)
+    export_parquet(quantile_normalized_counts, args.count_file, OUTFILE_SUFFIX)
 
 
 if __name__ == "__main__":

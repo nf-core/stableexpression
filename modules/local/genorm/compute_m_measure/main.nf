@@ -26,7 +26,9 @@ process COMPUTE_M_MEASURE {
     compute_m_measures.py \\
         --counts $count_file \\
         --std-files "$ratio_files" \\
-        $args
+        $args \\
+        --cpus ${task.cpus} \\
+        --memory "${task.memory}"
     """
 
 }
