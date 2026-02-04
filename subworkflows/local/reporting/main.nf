@@ -24,6 +24,8 @@ workflow REPORTING {
     ch_platform_statistics
     ch_whole_gene_metadata
     ch_whole_gene_id_mapping
+    target_genes
+    target_gene_file
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -37,6 +39,15 @@ workflow REPORTING {
     // AGGREGATE ALL RESULTS FOR MULTIQC
     // -----------------------------------------------------------------
 
+    ch_target_gene_file = target_gene_file ? channel.fromPath( target_gene_file, checkIfExists: true ) : channel.empty()
+
+    ch_target_gene_list = channel.fromList( target_genes.tokenize(',') )
+                        .mix( ch_target_gene_file.splitText() )
+                        .map { it.trim() }
+                        .filter { it != "" }
+                        .unique()
+                        .toSortedList()
+
     ch_custom_content_multiqc_config_template = channel.fromPath(
                                                     "${projectDir}/assets/custom_content_multiqc_config.template.yaml",
                                                     checkIfExists: true
@@ -46,6 +57,7 @@ workflow REPORTING {
         ch_all_counts.map{ meta, file -> file }.collect(),
         ch_stats_all_genes_with_scores.collect(),
         ch_platform_statistics.collect(),
+        ch_target_gene_list,
         ch_whole_gene_metadata.collect().ifEmpty([]), // handle case where there are no mappings
         ch_whole_gene_id_mapping.collect().ifEmpty([]), // handle case where there are no mappings
         ch_custom_content_multiqc_config_template.collect()

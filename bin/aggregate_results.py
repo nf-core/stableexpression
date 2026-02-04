@@ -46,6 +46,14 @@ def parse_args():
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     parser.add_argument(
+        "--target-genes",
+        type=str,
+        nargs="+",
+        dest="target_genes",
+        default=[],
+        help="File containing target genes",
+    )
+    parser.add_argument(
         "--stats-with-scores",
         type=Path,
         nargs="+",
@@ -244,6 +252,45 @@ def format_multiqc_sp(section: str, template_dict: dict):
     return sp_dict
 
 
+def format_target_genes(target_genes: list):
+    # str.maketrans("", "", "-_.") makes a mapping table for str.translate() that
+    # removes all occurrences of any character in "-_." from the input string
+    # it's faster than re.sub
+    return [
+        gene.lower().translate(str.maketrans("", "", "-_.")) for gene in target_genes
+    ]
+
+
+def search_target_genes(df: pl.DataFrame, target_genes: list):
+    gene_ids = df[config.GENE_ID_COLNAME].to_list()
+    gene_names = df[config.GENE_NAME_COLNAME].to_list()
+    original_gene_ids = (
+        df.select(pl.col(config.ORIGINAL_GENE_IDS_COLNAME).str.split(by=",").explode())
+        .to_series()
+        .to_list()
+    )
+
+    formated_gene_ids_df = pl.from_dicts(
+        [
+            {"gene": gene, "formatted_gene": format_target_genes(gene)}
+            for gene in set(gene_ids + gene_names + original_gene_ids)
+        ]
+    )
+
+    formated_target_genes_df = pl.from_dicts(
+        [
+            {"gene": gene, "formatted_gene": format_target_genes(gene)}
+            for gene in target_genes
+        ]
+    )
+
+    intersection_df = formated_gene_ids_df.join(
+        formated_target_genes_df, on="formatted_gene", how="inner"
+    )
+
+    print(intersection_df)
+
+
 #####################################################
 #####################################################
 # MAIN
@@ -274,11 +321,16 @@ def main():
         # the section name is at the beginning of the file name
         section = file.name.split(".")[0]
         df = parse_stat_score_file(file)
+        print(len(df))
         df = df.with_columns(pl.lit(section).alias(config.SECTION_COLNAME))
         stat_score_dfs.append(df)
         sections.append(section)
 
     stat_score_df = pl.concat(stat_score_dfs)
+    print(len(stat_score_df))
+    if stat_score_df.select(config.GENE_ID_COLNAME).is_duplicated().any():
+        raise ValueError("Duplicate gene IDs found in statistics and scores files.")
+
     # sorting sections in the order (from 1 to <max nb of section>)
     sections = sorted(sections, key=lambda section: int(section.split("_")[-1]))
 
@@ -365,14 +417,21 @@ def main():
     nb_sections = len(sections)
     new_mqc_config_sections = {}
     new_mqc_config_sp = {}
+
     logger.info("Making new sections in the MultiQC config")
     for section in sections:
         # getting best candidates for this section
-        section_df = all_genes_summary_df.filter(
-            pl.col("section").eq(section)
-            & pl.col(config.STABILITY_SCORE_COLNAME).is_not_null()
+
+        section_df = (
+            all_genes_summary_df.filter(pl.col("section") == section)
+            .drop("section")
+            .sort(config.STABILITY_SCORE_COLNAME, nulls_last=True, maintain_order=True)
         )
-        section_df = section_df.drop("section")
+
+        section_target_genes_df = []
+        if args.target_genes:
+            section_target_genes_df = search_target_genes(section_df, args.target_genes)
+            print(section_target_genes_df)
 
         section_most_stable_genes_counts_df = get_most_stable_genes_counts(
             count_df, section_df

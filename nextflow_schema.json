@@ -43,6 +43,20 @@
                     "pattern": "(([a-zA-Z,]+))?",
                     "help_text": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas and / or GEO datasets. The pipeline will select all Expression Atlas experiments / GEO datasets that contain the provided keywords in their description of in one of the condition names. Example: `--keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set and --fetch_geo_accessions is not set."
                 },
+                "target_genes": {
+                    "type": "string",
+                    "description": "Target genes",
+                    "fa_icon": "fas fa-arrows-alt-h",
+                    "help_text": "One or multiple target genes (separated by commas). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols."
+                },
+                "target_gene_file": {
+                    "type": "string",
+                    "description": "File containing target genes",
+                    "format": "file-path",
+                    "exists": true,
+                    "fa_icon": "fas fa-arrows-alt-h",
+                    "help_text": "File containing one or multiple target genes (one ID per line). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols."
+                },
                 "platform": {
                     "type": "string",
                     "enum": ["rnaseq", "microarray"],

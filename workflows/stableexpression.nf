@@ -210,6 +210,8 @@ workflow STABLEEXPRESSION {
         ch_platform_statistics,
         ch_whole_gene_metadata,
         ch_whole_gene_id_mapping,
+        params.target_genes,
+        params.target_gene_file,
         params.multiqc_config,
         params.multiqc_logo,
         params.multiqc_methods_description,

@@ -11,6 +11,7 @@ process AGGREGATE_RESULTS {
     path count_file
     path stat_score_files
     path platform_stat_files, stageAs: "?/*"
+    val target_genes
     path metadata_files
     path mapping_files
     path multiqc_config
@@ -25,8 +26,9 @@ process AGGREGATE_RESULTS {
     tuple val("${task.process}"), val('pyyaml'),   eval('python3 -c "import yaml; print(yaml.__version__)"'),         topic: versions
 
     script:
-    def mapping_files_arg = mapping_files   ? "--mappings " + "$mapping_files"  : ""
-    def metadata_files_arg = metadata_files ? "--metadata " + "$metadata_files" : ""
+    def mapping_files_arg  = mapping_files   ? "--mappings " + "$mapping_files"    : ""
+    def metadata_files_arg = metadata_files  ? "--metadata " + "$metadata_files"   : ""
+    def target_genes_arg   = target_genes    ? "--target-genes " + "${target_genes.join(' ')}" : ""
     """
     aggregate_results.py \\
         --cpus ${task.cpus} \\
@@ -36,7 +38,8 @@ process AGGREGATE_RESULTS {
         --platform-stats $platform_stat_files \\
         --multiqc-config $multiqc_config \\
         $mapping_files_arg \\
-        $metadata_files_arg
+        $metadata_files_arg \\
+        $target_genes_arg
     """
 
 }
