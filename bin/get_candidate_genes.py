@@ -8,7 +8,6 @@ from pathlib import Path
 
 import config
 import polars as pl
-
 from resource_management import set_max_resources
 
 logging.basicConfig(level=logging.INFO)
@@ -16,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 # outfile names
 CANDIDATE_COUNTS_OUTFILENAME = "section_{}.candidate_counts.parquet"
+STATS_WITH_SECTION_OUTFILENAME = "section_{}.stats.parquet"
 
 
 #####################################################
@@ -98,7 +98,10 @@ def get_best_candidates(
 ) -> pl.DataFrame:
     return (
         stat_df.sort(
-            config.COEFFICIENT_OF_VARIATION_COLNAME, descending=False, nulls_last=True
+            config.COEFFICIENT_OF_VARIATION_COLNAME,
+            descending=False,
+            nulls_last=True,
+            maintain_order=True,
         )
         .group_by("section", maintain_order=True)
         .agg(pl.col(config.GENE_ID_COLNAME).head(nb_candidates_per_section))
@@ -109,11 +112,6 @@ def get_counts_for_candidates(file: Path, best_candidates: list[str]) -> pl.Data
     return pl.read_parquet(file).filter(
         pl.col(config.GENE_ID_COLNAME).is_in(best_candidates)
     )
-
-
-def export_data(df: pl.DataFrame, section: int):
-    outfile = CANDIDATE_COUNTS_OUTFILENAME.format(section)
-    df.write_parquet(outfile)
 
 
 #####################################################
@@ -153,7 +151,14 @@ def main():
         candidate_gene_count_lf = get_counts_for_candidates(
             args.count_file, best_candidates
         )
-        export_data(candidate_gene_count_lf, section)
+        # exporting count data for the best candidates for this section
+        candidate_gene_count_lf.write_parquet(
+            CANDIDATE_COUNTS_OUTFILENAME.format(section)
+        )
+        # exporting statistics for all genes in this section
+        stat_df.filter(pl.col("section") == section).write_parquet(
+            STATS_WITH_SECTION_OUTFILENAME.format(section)
+        )
 
 
 if __name__ == "__main__":

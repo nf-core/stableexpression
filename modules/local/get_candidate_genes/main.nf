@@ -15,6 +15,7 @@ process GET_CANDIDATE_GENES {
 
     output:
     path 'section_*.candidate_counts.parquet',                                                                        emit: counts
+    path 'section_*.stats.parquet',                                                                                   emit: section_stats
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
