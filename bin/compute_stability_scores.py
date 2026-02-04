@@ -10,7 +10,6 @@ from typing import ClassVar
 
 import config
 import polars as pl
-
 from common import write_float_csv
 from resource_management import set_max_resources
 
@@ -63,10 +62,24 @@ class StabilityScorer:
     def compute_stability_score(self):
         logger.info("Computing stability score for candidate genes")
 
+        # since Normfinder is always run
+        # we can distinguish between candidate and non-candidate genes easily with this column
+        self.df = self.df.with_columns(
+            pl.when(pl.col(config.NORMFINDER_STABILITY_VALUE_COLNAME).is_not_null())
+            .then(1)
+            .otherwise(0)
+            .alias(config.IS_CANDIDATE_COLNAME)
+        )
+
+        # dividing the dataframe into two parts: candidate and non-candidate genes
         candidate_df = self.df.filter(
             pl.col(config.IS_CANDIDATE_COLNAME) == 1
         )  # keep only candidate genes
-        non_candidate_df = self.df.filter(pl.col(config.IS_CANDIDATE_COLNAME).is_null())
+        non_candidate_df = self.df.filter(pl.col(config.IS_CANDIDATE_COLNAME) == 0)
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # DATA NORMALISATION (TO [0, 1])
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         normalised_data = {}
         null_data = {}
@@ -77,7 +90,7 @@ class StabilityScorer:
             if col not in self.df.columns:
                 continue
             data = candidate_df.select(col).to_series()
-            # for each column present, we quantile normalise the data to have values between 0 and 1
+            # for each column present, we perform linear transformation to have values between 0 and 1
             # and put these normalised data in another column suffixed with "_normalised"
             normalised_col = self.get_normalised_col(col)
             normalised_data[col] = self.linear_normalise(data, new_name=normalised_col)
@@ -128,7 +141,7 @@ class StabilityScorer:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         expr = (
-            pl.when(pl.col(config.IS_CANDIDATE_COLNAME).is_not_null())
+            pl.when(pl.col(config.IS_CANDIDATE_COLNAME) == 1)
             .then(stability_scoring_expr)
             .otherwise(None)
         )
@@ -159,10 +172,10 @@ def parse_args():
     )
     parser.add_argument(
         "--stats",
-        type=str,
-        dest="platform_stat_files",
+        type=Path,
+        dest="stats_file",
         required=True,
-        help="Platform stat file",
+        help="Gene Statistics file",
     )
     parser.add_argument(
         "--normfinder-stability",
@@ -193,24 +206,24 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_stabilities(stability_files: list[Path]) -> pl.LazyFrame:
+def get_stabilities(stability_files: list[Path]) -> pl.DataFrame:
     """Retrieve and concatenate stability values from a list of stability files."""
-    lf = pl.scan_csv(stability_files[0])
+    df = pl.read_csv(stability_files[0])
     if len(stability_files) > 1:
         for file in stability_files[1:]:
-            new_df = pl.scan_csv(file)
-            lf = lf.join(new_df, on=config.GENE_ID_COLNAME, how="left")
-    return lf.with_columns(pl.lit(1).alias(config.IS_CANDIDATE_COLNAME))
+            new_df = pl.read_csv(file)
+            df = df.join(new_df, on=config.GENE_ID_COLNAME, how="left")
+    return df.with_columns(pl.lit(1).alias(config.IS_CANDIDATE_COLNAME))
 
 
-def get_statistics(stat_files: list[Path]) -> pl.LazyFrame:
+def get_statistics(stat_files: list[Path]) -> pl.DataFrame:
     """Retrieve and concatenate data from a list of statistics files."""
-    lf = pl.scan_csv(stat_files[0])
+    df = pl.read_csv(stat_files[0])
     if len(stat_files) > 1:
         for file in stat_files[1:]:
-            new_df = pl.scan_csv(file)
-            lf = lf.join(new_df, on=config.GENE_ID_COLNAME, how="left")
-    return lf
+            new_df = pl.read_csv(file)
+            df = df.join(new_df, on=config.GENE_ID_COLNAME, how="left")
+    return df
 
 
 def export_data(scored_df: pl.DataFrame):
@@ -232,8 +245,7 @@ def main():
 
     set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
 
-    stat_files = [Path(file) for file in args.platform_stat_files.split(" ")]
-    stat_lf = get_statistics(stat_files)
+    stat_df = pl.read_parquet(args.stats_file)
 
     stability_files = [
         Path(file)
@@ -242,12 +254,12 @@ def main():
     ]
 
     # getting metadata and mappings
-    stability_lf = get_stabilities(stability_files)
+    stability_df = get_stabilities(stability_files)
     # merges base statistics with computed stability measurements
-    lf = stat_lf.join(stability_lf, on=config.GENE_ID_COLNAME, how="left")
+    df = stat_df.join(stability_df, on=config.GENE_ID_COLNAME, how="left")
 
     # sort genes according to the metrics present in the dataframe
-    stability_scorer = StabilityScorer(lf.collect(), args.stability_score_weights)
+    stability_scorer = StabilityScorer(df, args.stability_score_weights)
     scored_df = stability_scorer.get_statistics_with_stability_scores()
 
     # exporting computed data

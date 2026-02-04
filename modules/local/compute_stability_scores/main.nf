@@ -9,8 +9,7 @@ process COMPUTE_STABILITY_SCORES {
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    tuple val(meta), path(normfinder_stability_file), path(genorm_stability_file)
-    path stat_file
+    tuple val(meta), path(normfinder_stability_file), path(genorm_stability_file), path(section_stat_file)
     val stability_score_weights
 
     output:
@@ -24,7 +23,7 @@ process COMPUTE_STABILITY_SCORES {
     compute_stability_scores.py \\
         --cpus ${task.cpus} \\
         --memory "${task.memory}" \\
-        --stats $stat_file \\
+        --stats $section_stat_file \\
         --weights "$stability_score_weights" \\
         --normfinder-stability $normfinder_stability_file \\
         $genorm_stability_file_arg
