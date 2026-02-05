@@ -79,14 +79,9 @@ workflow STABILITY_SCORING {
 */
 
 def splitBySection( ch_files ) {
-    // the collect operator here is very important as it ensures reproducibility between runs
-    // without it, the flatMap can create a variable amount of items
     return ch_files
-            .collect()
-            .flatMap{ n -> n } // turns a channel of one list of n files into a channel of n files
-            .map {
-                file ->
-                        section = file.name.tokenize(".")[0]
-                        [ [ section: section ], file]
+            .map { files ->
+                files.collect { file -> [ [ section: file.name.tokenize(".")[0] ], file ] }
             }
+            .flatMap{ n -> n } // turns a channel of one list of n files into a channel of n files
 }
