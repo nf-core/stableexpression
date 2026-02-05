@@ -78,7 +78,7 @@ def quantile_normalise(df: pl.DataFrame, target_distribution: str):
 def main():
     args = parse_args()
 
-    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
+    set_max_resources(1, "8 GB", limit_polars=True)
 
     logger.info(f"Parsing {args.count_file.name}")
     count_df = parse_count_table(args.count_file)

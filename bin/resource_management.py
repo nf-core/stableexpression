@@ -47,7 +47,7 @@ def set_max_resources(
     # instead, we limit the number of threads used by polars
     cpu_soft_limit = get_soft_limit(max_cpus)
     if limit_polars:
-        os.environ["POLARS_MAX_THREADS"] = str(cpu_soft_limit)
+        os.environ["POLARS_MAX_THREADS"] = str(max_cpus)
     elif multiprocess:
         os.environ["OMP_NUM_THREADS"] = str(cpu_soft_limit)
     else:
