@@ -20,7 +20,6 @@ process COLLECT_STATISTICS {
     """
     collect_statistics.py \\
         --file $file \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}"
     """
 

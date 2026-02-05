@@ -11,7 +11,7 @@ from typing import ClassVar
 import config
 import polars as pl
 from common import write_float_csv
-from resource_management import set_max_resources
+from resource_management import set_max_memory
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -198,9 +198,6 @@ def parse_args():
         help="Weights for Coefficient of Variation / Robust Coefficient of Variation on Median / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.7,0.1,0.1,0.1",
     )
     parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
-    )
-    parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     return parser.parse_args()
@@ -243,7 +240,7 @@ def export_data(scored_df: pl.DataFrame):
 def main():
     args = parse_args()
 
-    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
+    set_max_memory(args.memory)
 
     stat_df = pl.read_parquet(args.stats_file)
 

@@ -22,10 +22,12 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS {
 
     script:
     """
+    # limiting number of threads used by polars
+    export POLARS_MAX_THREADS=${task.cpus}
+
     filter_out_samples_with_too_many_zeros.py \\
         --counts $count_file \\
         --max-zero-ratio $max_zero_ratio \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}"
 
     NB_REJECTED_SAMPLES=\$(cat nb_rejected_samples.csv)

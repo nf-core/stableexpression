@@ -22,13 +22,15 @@ process DETECT_RARE_GENES {
 
     script:
     """
+    # limiting number of threads used by polars
+    export POLARS_MAX_THREADS=${task.cpus}
+
     detect_rare_genes.py \\
         --occurrences $gene_id_occurrences_file \\
         --mappings $gene_id_mapping_file \\
         --nb-datasets $nb_datasets \\
         --min-occurrence-frequency $min_occurrence_frequency \\
         --min-occurrence-quantile $min_occurrence_quantile \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}"
 
     """

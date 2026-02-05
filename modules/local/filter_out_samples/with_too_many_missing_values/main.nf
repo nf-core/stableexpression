@@ -24,11 +24,13 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_MISSING_VALUES {
 
     script:
     """
+    # limiting number of threads used by polars
+    export POLARS_MAX_THREADS=${task.cpus}
+
     filter_out_samples_with_too_many_missing_values.py \\
         --counts $count_file \\
         --valid-gene-ids $valid_gene_ids \\
         --max-null-ratio $max_null_ratio \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}"
 
     NB_REJECTED_SAMPLES=\$(cat nb_rejected_samples.csv)

@@ -12,9 +12,8 @@ from pathlib import Path
 
 import config
 import polars as pl
+from resource_management import set_max_memory
 from tqdm import tqdm
-
-from resource_management import set_max_resources
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,9 +32,6 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Merge count datasets")
     parser.add_argument(
         "--counts", type=str, dest="count_files", required=True, help="Count files"
-    )
-    parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
     )
     parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"
@@ -175,7 +171,7 @@ def export_data(count_df: pl.DataFrame):
 def main():
     args = parse_args()
 
-    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
+    set_max_memory(args.memory)
 
     # parsing count files
     count_files = [Path(file) for file in args.count_files.split(" ")]

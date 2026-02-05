@@ -21,7 +21,6 @@ process DOWNLOAD_NCBI_ANNOTATION {
     """
     download_latest_ncbi_annotation.py \\
         --species ${species} \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}"
 
     gzip -n *.gff

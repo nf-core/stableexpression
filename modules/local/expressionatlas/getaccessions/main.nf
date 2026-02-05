@@ -45,6 +45,9 @@ process EXPRESSIONATLAS_GETACCESSIONS {
         args += " --random-sampling-seed $random_sampling_seed"
     }
     """
+    # limiting CPU usage
+    export OMP_NUM_THREADS=${task.cpus}
+
     # the folder where nltk will download data needs to be writable (necessary for singularity)
     export NLTK_DATA=\${PWD}
 

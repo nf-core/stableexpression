@@ -10,7 +10,7 @@ import config
 import polars as pl
 import yaml
 from common import write_float_csv
-from resource_management import set_max_resources
+from resource_management import set_max_memory
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -38,9 +38,6 @@ def parse_args():
     )
     parser.add_argument(
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
-    )
-    parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
     )
     parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"
@@ -333,7 +330,7 @@ def search_target_genes(df: pl.DataFrame, target_genes: list[str]) -> list[dict]
 def main():
     args = parse_args()
 
-    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
+    set_max_memory(args.memory)
 
     # --------------------------------------------------
     # Parsing counts

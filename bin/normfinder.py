@@ -12,11 +12,10 @@ from statistics import mean
 import config
 import numpy as np
 import polars as pl
-from numba import njit, prange
-from tqdm import tqdm
-
 from common import write_float_csv
-from resource_management import set_max_resources
+from numba import njit, prange
+from resource_management import set_max_memory
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -487,9 +486,6 @@ def parse_args():
         "--design", type=Path, dest="design_file", required=True, help="Design file"
     )
     parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
-    )
-    parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     return parser.parse_args()
@@ -504,7 +500,7 @@ def export_stability(stabilities: pl.DataFrame):
 def main():
     args = parse_args()
 
-    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
+    set_max_memory(args.memory)
 
     logger.info(f"Getting counts from {args.count_file}")
     count_lf = pl.scan_parquet(args.count_file)

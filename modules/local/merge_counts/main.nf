@@ -18,9 +18,11 @@ process MERGE_COUNTS {
 
     script:
     """
+    # limiting number of threads used by polars
+    export POLARS_MAX_THREADS=${task.cpus}
+
     merge_counts.py \\
         --counts "$count_files" \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}"
     """
 

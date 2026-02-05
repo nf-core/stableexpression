@@ -56,9 +56,6 @@ def parse_args():
         help="Annotation file in GFF3 format",
     )
     parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
-    )
-    parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     return parser.parse_args()

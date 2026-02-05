@@ -24,7 +24,6 @@ process DOWNLOAD_ENSEMBL_ANNOTATION {
     """
     download_latest_ensembl_annotation.py \\
         --species ${species} \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}"
     """
 

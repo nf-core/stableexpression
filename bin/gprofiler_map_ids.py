@@ -9,7 +9,6 @@ from pathlib import Path
 
 import config
 import pandas as pd
-
 from gprofiler_utils import convert_ids
 
 logging.basicConfig(level=logging.INFO)
@@ -51,9 +50,6 @@ def parse_args():
         required=True,
         choices=TARGET_DATABASE_CHOICES,
         help="Target database to convert IDs to",
-    )
-    parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
     )
     parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"

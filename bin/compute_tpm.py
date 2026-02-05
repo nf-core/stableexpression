@@ -15,7 +15,7 @@ from common import (
     parse_count_table,
     parse_table,
 )
-from resource_management import set_max_resources
+from resource_management import set_max_memory
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -45,9 +45,6 @@ def parse_args():
         dest="gene_lengths_file",
         required=True,
         help="Gene lengths file (CSV format)",
-    )
-    parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
     )
     parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"
@@ -151,7 +148,7 @@ def compute_tpm(df: pl.DataFrame, cdna_length_df: pl.DataFrame) -> pl.DataFrame:
 def main():
     args = parse_args()
 
-    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
+    set_max_memory(args.memory)
 
     try:
         logger.info("Parsing data")

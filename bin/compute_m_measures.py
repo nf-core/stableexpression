@@ -8,8 +8,7 @@ from pathlib import Path
 
 import config
 import polars as pl
-
-from resource_management import set_max_resources
+from resource_management import set_max_memory
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,9 +48,6 @@ def parse_args():
         type=int,
         default=1,
         help="Number of task attempts",
-    )
-    parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
     )
     parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"
@@ -99,7 +95,7 @@ def get_chunks(lst: list, chunksize: int):
 def main():
     args = parse_args()
 
-    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
+    set_max_memory(args.memory)
 
     low_memory = True if args.task_attempts > 1 else False
     files = [Path(file) for file in args.std_files.split(" ")]

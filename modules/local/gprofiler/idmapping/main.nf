@@ -41,7 +41,6 @@ process GPROFILER_IDMAPPING {
         --gene-ids $gene_id_file \\
         --species "$species" \\
         --target-db "$gprofiler_target_db" \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}"
     """
 

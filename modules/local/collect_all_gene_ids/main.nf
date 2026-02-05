@@ -19,7 +19,6 @@ process COLLECT_ALL_GENE_IDS {
     script:
     """
     collect_gene_ids.py \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}" \\
         --ids "$count_files"
     """

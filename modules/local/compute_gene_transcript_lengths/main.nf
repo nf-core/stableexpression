@@ -27,7 +27,6 @@ process COMPUTE_GENE_TRANSCRIPT_LENGTHS {
 
     compute_gene_transcript_lengths.py \\
         --annotation ${gff3_name} \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}"
     """
 

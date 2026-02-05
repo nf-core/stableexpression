@@ -20,8 +20,10 @@ process COMPUTE_STABILITY_SCORES {
     script:
     def genorm_stability_file_arg = genorm_stability_file ? "--genorm-stability $genorm_stability_file" : ""
     """
+    # limiting number of threads used by polars
+    export POLARS_MAX_THREADS=${task.cpus}
+
     compute_stability_scores.py \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}" \\
         --stats $section_stat_file \\
         --weights "$stability_score_weights" \\

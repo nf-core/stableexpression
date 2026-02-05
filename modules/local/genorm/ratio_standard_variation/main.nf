@@ -20,9 +20,11 @@ process RATIO_STANDARD_VARIATION {
     script:
     def args = "--task-attempts ${task.attempt}"
     """
+    # limiting number of threads used by polars
+    export POLARS_MAX_THREADS=${task.cpus}
+
     get_ratio_standard_variation.py \\
         --file $file \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}" \\
         ${args}
     """

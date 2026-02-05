@@ -8,7 +8,7 @@ from pathlib import Path
 
 import config
 import polars as pl
-from resource_management import set_max_resources
+from resource_management import set_max_memory
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -56,9 +56,6 @@ def parse_args():
         dest="nb_sections",
         required=True,
         help="Number of sections to divide the data into",
-    )
-    parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
     )
     parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"
@@ -124,7 +121,7 @@ def get_counts_for_candidates(file: Path, best_candidates: list[str]) -> pl.Data
 def main():
     args = parse_args()
 
-    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
+    set_max_memory(args.memory)
 
     stat_df = parse_stats(args.stat_file)
 

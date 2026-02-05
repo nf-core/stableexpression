@@ -7,9 +7,8 @@ import logging
 from collections import Counter
 from pathlib import Path
 
-from tqdm import tqdm
-
 import config
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -29,9 +28,6 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Collect gene IDs from count files")
     parser.add_argument(
         "--ids", type=str, dest="gene_id_files", required=True, help="Gene ID files"
-    )
-    parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
     )
     parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"

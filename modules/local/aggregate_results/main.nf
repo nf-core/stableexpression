@@ -30,8 +30,10 @@ process AGGREGATE_RESULTS {
     def metadata_files_arg = metadata_files  ? "--metadata " + "$metadata_files"   : ""
     def target_genes_arg   = target_genes    ? "--target-genes " + "${target_genes.join(' ')}" : ""
     """
+    # limiting number of threads used by polars
+    export POLARS_MAX_THREADS=${task.cpus}
+
     aggregate_results.py \\
-        --cpus ${task.cpus} \\
         --memory "${task.memory}" \\
         --counts $count_file \\
         --stats-with-scores $stat_score_files \\

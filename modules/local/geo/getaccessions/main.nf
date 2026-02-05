@@ -50,6 +50,9 @@ process GEO_GETACCESSIONS {
     }
     // the folder where nltk will download data needs to be writable (necessary for singularity)
     """
+    # limiting CPU usage
+    export OMP_NUM_THREADS=${task.cpus}
+
     # the Entrez module from biopython automatically stores temp results in <home dir>/.config
     # if this directory is not writable, the script fails
     export HOME=/tmp/biopython

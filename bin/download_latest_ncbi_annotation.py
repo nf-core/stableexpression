@@ -53,9 +53,6 @@ def parse_args():
     )
     parser.add_argument("--species", type=str, required=True, help="Species name")
     parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
-    )
-    parser.add_argument(
         "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     return parser.parse_args()
