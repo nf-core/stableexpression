@@ -35,14 +35,13 @@ def set_max_resources(
     logger.info(f"Setting max resources to {max_cpus} CPUs and {max_memory_str}")
 
     max_memory = get_memory_bytes(max_memory_str)
+    memory_soft_limit = get_soft_limit(max_memory)
     try:
         # RLIMIT_DATA limits data segment (more reliable than RLIMIT_AS on some systems)
-        resource.setrlimit(
-            resource.RLIMIT_DATA, (get_soft_limit(max_memory), max_memory)
-        )
+        resource.setrlimit(resource.RLIMIT_DATA, (memory_soft_limit, max_memory))
     except (ValueError, OSError):
         # Fallback to RLIMIT_AS if RLIMIT_DATA doesn't work
-        resource.setrlimit(resource.RLIMIT_AS, (get_soft_limit(max_memory), max_memory))
+        resource.setrlimit(resource.RLIMIT_AS, (memory_soft_limit, max_memory))
 
     # if running polars, resource.setrlimit returns an error with the cpus
     # instead, we limit the number of threads used by polars

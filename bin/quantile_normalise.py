@@ -8,10 +8,9 @@ from pathlib import Path
 
 import config
 import polars as pl
-from sklearn.preprocessing import quantile_transform
-
 from common import export_parquet, parse_count_table
 from resource_management import set_max_resources
+from sklearn.preprocessing import quantile_transform
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -79,7 +78,7 @@ def quantile_normalise(df: pl.DataFrame, target_distribution: str):
 def main():
     args = parse_args()
 
-    set_max_resources(args.nb_cpus, "4 GB", limit_polars=True)
+    set_max_resources(args.nb_cpus, args.memory, limit_polars=True)
 
     logger.info(f"Parsing {args.count_file.name}")
     count_df = parse_count_table(args.count_file)
