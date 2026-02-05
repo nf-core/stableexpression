@@ -1,6 +1,6 @@
 process QUANTILE_NORMALISATION {
 
-    label 'process_single'
+    label 'process_low'
 
     tag "${meta.dataset}"
 
