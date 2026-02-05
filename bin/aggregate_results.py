@@ -275,19 +275,22 @@ def search_target_genes(df: pl.DataFrame, target_genes: list[str]) -> list[dict]
         list[dict]: A list of dictionaries associating each found target gene with its corresponding gene ID in the datasets.
     """
 
-    gene_ids = df[config.GENE_ID_COLNAME].to_list()
-    gene_names = df[config.GENE_NAME_COLNAME].to_list()
-    original_gene_ids = (
-        df.select(pl.col(config.ORIGINAL_GENE_IDS_COLNAME).str.split(by=",").explode())
-        .to_series()
-        .to_list()
-    )
+    unique_gene_ids = set(df[config.GENE_ID_COLNAME].to_list())
 
-    all_unique_gene_ids = [
-        gene
-        for gene in list(set(gene_ids + gene_names + original_gene_ids))
-        if gene is not None
-    ]
+    if config.GENE_NAME_COLNAME in df.columns:
+        unique_gene_ids |= set(df[config.GENE_NAME_COLNAME].to_list())
+
+    if config.ORIGINAL_GENE_IDS_COLNAME in df.columns:
+        original_gene_ids = (
+            df.select(
+                pl.col(config.ORIGINAL_GENE_IDS_COLNAME).str.split(by=",").explode()
+            )
+            .to_series()
+            .to_list()
+        )
+        unique_gene_ids |= set(original_gene_ids)
+
+    all_unique_gene_ids = [gene for gene in unique_gene_ids if gene is not None]
 
     formated_gene_ids_df = pl.DataFrame({"gene": all_unique_gene_ids}).with_columns(
         pl.col("gene")
