@@ -21,13 +21,9 @@ process QUANTILE_NORMALISATION {
 
     script:
     """
-    # limiting number of threads used by polars
-    export POLARS_MAX_THREADS=${task.cpus}
-
     quantile_normalise.py \\
         --counts $count_file \\
-        --target-distrib $target_distribution \\
-        --memory "${task.memory}"
+        --target-distrib $target_distribution
     """
 
     stub:

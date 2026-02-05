@@ -19,9 +19,6 @@ def parse_args():
         type=Path,
         required=True,
     )
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
-    )
     return parser.parse_args()
 
 

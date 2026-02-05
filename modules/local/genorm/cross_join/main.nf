@@ -20,15 +20,11 @@ process CROSS_JOIN {
     script:
     def args = "--task-attempts ${task.attempt}"
     """
-    # limiting number of threads used by polars
-    export POLARS_MAX_THREADS=${task.cpus}
-
     make_cross_join.py \\
         --file1 count_chunk_file_1 \\
         --file2 count_chunk_file_2 \\
         --index1 ${meta.index_1} \\
         --index2 ${meta.index_2} \\
-        --memory "${task.memory}" \\
         ${args}
     """
 

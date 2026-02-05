@@ -51,9 +51,6 @@ def parse_args():
         choices=TARGET_DATABASE_CHOICES,
         help="Target database to convert IDs to",
     )
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
-    )
     return parser.parse_args()
 
 

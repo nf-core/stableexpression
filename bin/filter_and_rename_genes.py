@@ -10,7 +10,6 @@ from pathlib import Path
 import config
 import polars as pl
 from common import parse_count_table, parse_table
-from resource_management import set_max_memory
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -52,9 +51,6 @@ def parse_args():
         dest="valid_gene_ids_file",
         help="File containing valid gene IDs",
     )
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
-    )
     return parser.parse_args()
 
 
@@ -65,8 +61,6 @@ def parse_args():
 
 def main():
     args = parse_args()
-
-    set_max_memory(args.memory)
 
     logger.info(f"Converting IDs for count file {args.count_file.name}...")
 

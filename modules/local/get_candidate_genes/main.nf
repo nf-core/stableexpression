@@ -21,15 +21,11 @@ process GET_CANDIDATE_GENES {
 
     script:
     """
-    # limiting number of threads used by polars
-    export POLARS_MAX_THREADS=${task.cpus}
-
     get_candidate_genes.py \\
         --counts $count_file \\
         --stats $stat_file \\
         --nb-candidates-per-section $nb_candidates_per_section \\
-        --nb-sections $nb_sections \\
-        --memory "${task.memory}"
+        --nb-sections $nb_sections
     """
 
 }

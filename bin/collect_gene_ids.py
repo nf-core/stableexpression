@@ -29,9 +29,6 @@ def parse_args():
     parser.add_argument(
         "--ids", type=str, dest="gene_id_files", required=True, help="Gene ID files"
     )
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
-    )
     return parser.parse_args()
 
 

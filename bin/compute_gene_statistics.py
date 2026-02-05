@@ -10,7 +10,6 @@ from pathlib import Path
 import config
 import polars as pl
 from common import write_float_csv
-from resource_management import set_max_memory
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -95,9 +94,6 @@ def parse_args():
         help="Maximum ratio of null values for a sample to be considered valid",
     )
     parser.add_argument("--platform", type=str, help="Platform name")
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
-    )
     return parser.parse_args()
 
 
@@ -272,8 +268,6 @@ class GeneStatistician:
 
 def main():
     args = parse_args()
-
-    set_max_memory(args.memory)
 
     ratio_nulls_per_samples_df = pl.read_csv(args.ratio_nulls_per_samples)
     valid_samples = get_valid_samples(

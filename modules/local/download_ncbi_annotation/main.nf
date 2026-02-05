@@ -20,8 +20,7 @@ process DOWNLOAD_NCBI_ANNOTATION {
     script:
     """
     download_latest_ncbi_annotation.py \\
-        --species ${species} \\
-        --memory "${task.memory}"
+        --species ${species}
 
     gzip -n *.gff
     """

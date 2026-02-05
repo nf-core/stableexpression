@@ -9,7 +9,6 @@ from pathlib import Path
 import config
 import polars as pl
 from common import export_parquet, parse_count_table
-from resource_management import set_max_memory
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -40,9 +39,6 @@ def parse_args():
         required=True,
         help="Maximum ratio of zeros allowed",
     )
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
-    )
     return parser.parse_args()
 
 
@@ -55,8 +51,6 @@ def parse_args():
 
 def main():
     args = parse_args()
-
-    set_max_memory(args.memory)
 
     # putting all counts into a single dataframe
     logger.info("Loading count data...")

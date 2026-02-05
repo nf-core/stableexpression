@@ -19,14 +19,10 @@ process COMPUTE_M_MEASURE {
     script:
     def args = "--task-attempts ${task.attempt}"
     """
-    # limiting number of threads used by polars
-    export POLARS_MAX_THREADS=${task.cpus}
-
     compute_m_measures.py \\
         --counts $count_file \\
         --std-files "$ratio_files" \\
-        $args \\
-        --memory "${task.memory}"
+        $args
     """
 
 }

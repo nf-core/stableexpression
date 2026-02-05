@@ -12,7 +12,6 @@ import pandas as pd
 import requests
 import yaml
 from natural_language_utils import keywords_in_fields
-from resource_management import set_max_memory
 from tenacity import (
     before_sleep_log,
     retry,
@@ -76,9 +75,6 @@ def parse_args():
     )
     parser.add_argument(
         "--cpus", type=str, dest="nb_cpus", required=True, help="Number of CPUs"
-    )
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     return parser.parse_args()
 
@@ -408,8 +404,6 @@ def format_species_name(species: str) -> str:
 
 def main():
     args = parse_args()
-
-    set_max_memory(args.memory)
 
     results = None
     selected_accessions = []

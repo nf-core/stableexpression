@@ -23,8 +23,7 @@ process DOWNLOAD_ENSEMBL_ANNOTATION {
     script:
     """
     download_latest_ensembl_annotation.py \\
-        --species ${species} \\
-        --memory "${task.memory}"
+        --species ${species}
     """
 
     stub:

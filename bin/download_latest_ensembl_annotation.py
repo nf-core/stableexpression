@@ -64,9 +64,6 @@ def parse_args():
         required=True,
         help="Species name",
     )
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
-    )
     return parser.parse_args()
 
 

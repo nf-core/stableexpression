@@ -8,7 +8,6 @@ from pathlib import Path
 
 import config
 import polars as pl
-from resource_management import set_max_memory
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -39,9 +38,6 @@ def parse_args():
         type=int,
         default=1,
         help="Number of task attempts",
-    )
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
     )
     return parser.parse_args()
 
@@ -128,8 +124,6 @@ def group_standard_deviations(std_lf: pl.LazyFrame) -> pl.LazyFrame:
 
 def main():
     args = parse_args()
-
-    set_max_memory(args.memory)
 
     low_memory = True if args.task_attempts > 1 else False
     std_lf = compute_standard_deviations(args.ratio_file, low_memory)

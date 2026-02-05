@@ -20,11 +20,7 @@ process CLEAN_GENE_IDS {
 
     script:
     """
-    # limiting number of threads used by polars
-    export POLARS_MAX_THREADS=${task.cpus}
-
     clean_gene_ids.py \\
-        --memory "${task.memory}" \\
         --count-file "$count_file"
     """
 

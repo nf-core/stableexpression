@@ -9,7 +9,6 @@ from pathlib import Path
 import config
 import polars as pl
 from common import export_parquet, parse_count_table
-from resource_management import set_max_memory
 from sklearn.preprocessing import quantile_transform
 
 logging.basicConfig(level=logging.INFO)
@@ -44,9 +43,6 @@ def parse_args():
         choices=ALLOWED_TARGET_DISTRIBUTIONS,
         help="Target distribution to map counts to",
     )
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
-    )
     return parser.parse_args()
 
 
@@ -74,8 +70,6 @@ def quantile_normalise(df: pl.DataFrame, target_distribution: str):
 
 def main():
     args = parse_args()
-
-    set_max_memory(args.memory)
 
     logger.info(f"Parsing {args.count_file.name}")
     count_df = parse_count_table(args.count_file)

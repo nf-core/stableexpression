@@ -19,8 +19,7 @@ process COLLECT_STATISTICS {
     script:
     """
     collect_statistics.py \\
-        --file $file \\
-        --memory "${task.memory}"
+        --file $file
     """
 
 }

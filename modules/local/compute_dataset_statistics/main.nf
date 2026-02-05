@@ -20,12 +20,8 @@ process COMPUTE_DATASET_STATISTICS {
     script:
     def prefix = task.ext.prefix ?: "${meta.dataset}"
     """
-    # limiting number of threads used by polars
-    export POLARS_MAX_THREADS=${task.cpus}
-
     compute_dataset_statistics.py \\
-        --counts $count_file \\
-        --memory "${task.memory}"
+        --counts $count_file
     """
 
 }

@@ -9,7 +9,7 @@ from pathlib import Path
 import config
 import polars as pl
 from common import export_parquet, parse_count_table
-from resource_management import set_max_memory
+from sklearn.experimental import enable_iterative_imputer  # noqa
 from sklearn.impute import IterativeImputer, KNNImputer, SimpleImputer
 
 logging.basicConfig(level=logging.INFO)
@@ -42,9 +42,6 @@ def parse_args():
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
     parser.add_argument("--imputer", choices=IMPUTERS, required=True, dest="imputer")
-    parser.add_argument(
-        "--memory", type=str, dest="memory", required=True, help="Memory in GB"
-    )
     return parser.parse_args()
 
 
@@ -92,8 +89,6 @@ def apply_iterative_imputer(df: pl.DataFrame) -> pl.DataFrame:
 
 def main():
     args = parse_args()
-
-    set_max_memory(args.memory)
 
     logger.info(f"Parsing {args.count_file.name}")
     df = parse_count_table(args.count_file)
