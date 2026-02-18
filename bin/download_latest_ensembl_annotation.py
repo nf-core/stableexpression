@@ -7,8 +7,8 @@ import logging
 from datetime import datetime
 from urllib.request import urlretrieve
 
+import httpx
 import pandas as pd
-import requests
 from bs4 import BeautifulSoup
 from tenacity import (
     before_sleep_log,
@@ -69,7 +69,7 @@ def parse_args():
 
 ##################################################################
 ##################################################################
-# REQUESTS
+# httpx
 ##################################################################
 ##################################################################
 
@@ -80,7 +80,7 @@ def parse_args():
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
 def parse_page_data(url: str) -> BeautifulSoup:
-    page = requests.get(url)
+    page = httpx.get(url)
     page.raise_for_status()
     return BeautifulSoup(page.content, "html.parser")
 
@@ -94,7 +94,7 @@ def send_request_to_ncbi_taxonomy(taxid: str | int):
     logger.info(f"Sending POST request to {NCBI_TAXONOMY_API_URL}")
     taxons = [str(taxid)]
     data = {"taxons": taxons}
-    response = requests.post(NCBI_TAXONOMY_API_URL, headers=NCBI_API_HEADERS, json=data)
+    response = httpx.post(NCBI_TAXONOMY_API_URL, headers=NCBI_API_HEADERS, json=data)
     response.raise_for_status()
     return response.json()
 
@@ -106,7 +106,7 @@ def send_request_to_ncbi_taxonomy(taxid: str | int):
 )
 def send_get_request_to_ensembl(url: str) -> list[dict]:
     logger.info(f"Sending GET request to {url}")
-    response = requests.get(url, headers=ENSEMBL_API_HEADERS)
+    response = httpx.get(url, headers=ENSEMBL_API_HEADERS)
     if response.status_code == 200:
         response.raise_for_status()
     else:
