@@ -22,7 +22,7 @@ CUSTOM_CONTENT_MULTIQC_CONFIG_FILE = "custom_content_multiqc_config.yaml"
 
 # quantile intervals
 NB_EXPRESSION_QUANTILES = 100
-NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS = 50
+NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS = 25
 
 #####################################################
 #####################################################
