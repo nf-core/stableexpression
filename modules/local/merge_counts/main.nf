@@ -4,8 +4,8 @@ process MERGE_COUNTS {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/90/90617e987f709570820b8e7752baf9004ba85917111425d4b44b429b27b201ca/data':
-        'community.wave.seqera.io/library/polars_tqdm:54b124dde91d1bf3' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/eb/ebf9af86c494e5b3e93706ae0d611d28e8788b2e99717f87a1f586ecf30b7067/data':
+        'community.wave.seqera.io/library/polars_python_tqdm:ca595df92ae9b061' }"
 
     input:
     tuple val(meta), path(count_files, stageAs: "?/*")
