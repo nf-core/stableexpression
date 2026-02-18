@@ -129,7 +129,7 @@ def parse_args():
         help="Random sampling seed",
     )
     parser.add_argument(
-        "--cpus", type=str, dest="nb_cpus", required=True, help="Number of CPUs"
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
     )
     parser.add_argument(
         "--accessions",
