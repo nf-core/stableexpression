@@ -134,6 +134,7 @@ workflow STABLEEXPRESSION {
             SAMPLE_FILTERING.out.counts,
             params.normalisation_method,
             params.quantile_norm_target_distrib,
+            params.gff,
             params.gene_length
         )
 

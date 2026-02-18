@@ -12,13 +12,18 @@ workflow GET_TRANSCRIPT_LENGTHS {
 
     take:
     species
+    gff_file
 
     main:
 
-    DOWNLOAD_ENSEMBL_ANNOTATION (species)
-    ch_annotation = DOWNLOAD_ENSEMBL_ANNOTATION.out.gff3
+    if ( gff_file ) {
+        ch_annotation = channel.fromPath( gff_file, checkIfExists: true )
+    } else {
+        DOWNLOAD_ENSEMBL_ANNOTATION( species )
+        ch_annotation = DOWNLOAD_ENSEMBL_ANNOTATION.out.gff3
+    }
 
-    COMPUTE_GENE_TRANSCRIPT_LENGTHS (ch_annotation)
+    COMPUTE_GENE_TRANSCRIPT_LENGTHS( ch_annotation )
 
 
 
