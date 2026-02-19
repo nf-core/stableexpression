@@ -6,8 +6,8 @@ process GEO_GETACCESSIONS {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ca/caae35ec5dc72367102a616a47b6f1a7b3de9ff272422f2c08895b8bb5f0566c/data':
-        'community.wave.seqera.io/library/biopython_nltk_pandas_parallelbar_pruned:5fc501b07f8e0428' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e8/e8be45bdbe57d56f7d452513c4799a878fdfeb2f8ff8351f1c02ee99627dc50e/data':
+        'community.wave.seqera.io/library/biopython_httpx_nltk_pandas_pruned:f692df8e1f55b14b' }"
 
     input:
     val species
@@ -18,17 +18,16 @@ process GEO_GETACCESSIONS {
     val random_sampling_seed
 
     output:
-    path "accessions.txt",                     optional: true,          emit: accessions
-    path "geo_selected_datasets.metadata.tsv", optional: true,          topic: geo_selected_datasets
-    path "geo_all_datasets.metadata.tsv",      optional: true,          topic: geo_all_datasets
-    path "geo_rejected_datasets.metadata.tsv", optional: true,          topic: geo_rejected_datasets
-
-    tuple val("${task.process}"), val('python'),      eval("python3 --version | sed 's/Python //'"),                          topic: versions
-    tuple val("${task.process}"), val('requests'),    eval('python3 -c "import requests; print(requests.__version__)"'),      topic: versions
-    tuple val("${task.process}"), val('nltk'),        eval('python3 -c "import nltk; print(nltk.__version__)"'),              topic: versions
-    tuple val("${task.process}"), val('pandas'),      eval('python3 -c "import pandas; print(pandas.__version__)"'),          topic: versions
-    tuple val("${task.process}"), val('biopython'),   eval('python3 -c "import Bio; print(Bio.__version__)"'),                topic: versions
-    tuple val("${task.process}"), val('tqdm'),        eval('python3 -c "import tqdm; print(tqdm.__version__)"'),              topic: versions
+    path "accessions.txt",                     optional: true,                                                     emit: accessions
+    path "geo_selected_datasets.metadata.tsv", optional: true,                                                     topic: geo_selected_datasets
+    path "geo_all_datasets.metadata.tsv",      optional: true,                                                     topic: geo_all_datasets
+    path "geo_rejected_datasets.metadata.tsv", optional: true,                                                     topic: geo_rejected_datasets
+    tuple val("${task.process}"), val('python'),    eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("${task.process}"), val('httpx'),     eval('python3 -c "import httpx; print(httpx.__version__)"'),   topic: versions
+    tuple val("${task.process}"), val('nltk'),      eval('python3 -c "import nltk; print(nltk.__version__)"'),     topic: versions
+    tuple val("${task.process}"), val('pandas'),    eval('python3 -c "import pandas; print(pandas.__version__)"'), topic: versions
+    tuple val("${task.process}"), val('biopython'), eval('python3 -c "import Bio; print(Bio.__version__)"'),       topic: versions
+    tuple val("${task.process}"), val('tqdm'),      eval('python3 -c "import tqdm; print(tqdm.__version__)"'),     topic: versions
 
     script:
     def keywords_string = keywords.split(',').collect { it.trim() }.join(' ')

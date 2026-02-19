@@ -12,20 +12,12 @@
                 ],
                 "1": [
                     [
-                        [
-                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                        ],
-                        "ratio_zeros.txt:md5,2fc93fe393cf18725bbc6d575e3d2d89"
-                    ]
-                ],
-                "2": [
-                    [
                         "COMPUTE_DATASET_STATISTICS",
                         "python",
                         "3.12.8"
                     ]
                 ],
-                "3": [
+                "2": [
                     [
                         "COMPUTE_DATASET_STATISTICS",
                         "polars",
@@ -36,8 +28,8 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:37:06.331244835"
+        "timestamp": "2026-02-18T20:29:51.869150067"
     }
 }

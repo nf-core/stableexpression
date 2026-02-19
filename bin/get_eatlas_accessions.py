@@ -8,8 +8,8 @@ import random
 from functools import partial
 from multiprocessing import Pool
 
+import httpx
 import pandas as pd
-import requests
 import yaml
 from natural_language_utils import keywords_in_fields
 from tenacity import (
@@ -103,7 +103,7 @@ def get_data(url: str) -> dict:
     RuntimeError
         If the query fails
     """
-    response = requests.get(url)
+    response = httpx.get(url)
     response.raise_for_status()
     return response.json()
 

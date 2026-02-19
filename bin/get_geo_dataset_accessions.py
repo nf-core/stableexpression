@@ -11,12 +11,11 @@ from multiprocessing import Pool
 from pathlib import Path
 from urllib.request import urlretrieve
 
+import httpx
 import pandas as pd
-import requests
 import xmltodict
 from Bio import Entrez
 from natural_language_utils import keywords_in_fields
-from requests.exceptions import ConnectionError, HTTPError
 from tenacity import (
     before_sleep_log,
     retry,
@@ -179,19 +178,19 @@ def send_request_to_entrez_esummary(ids: list[str]) -> list[dict]:
     before_sleep=before_sleep_log(logger, logging.WARNING),
     retry_error_callback=(lambda _: None),
 )
-def send_request_to_ncbi_api(accession: str) -> requests.Response | None:
+def send_request_to_ncbi_api(accession: str) -> httpx.Response | None:
     url = NCBI_API_BASE_URL.format(accession=accession)
     server_error = False
     response = None
 
     try:
-        response = requests.get(url, stream=True)
-    except requests.exceptions.ConnectionError:
+        response = httpx.get(url)
+    except httpx.ConnectError:
         server_error = True
     else:
         try:
             response.raise_for_status()
-        except (HTTPError, ConnectionError) as err:
+        except Exception as err:
             if str(response.status_code).startswith("5"):  # error 500 -> 509
                 server_error = True
                 raise err
@@ -259,6 +258,7 @@ def fetch_geo_datasets_for_species(species: str) -> list[dict]:
     # we need possibly to perform multiple queries because the max number of returned results is capped
     nb_entries = None
     retstart = 0
+    record = {}
     while not nb_entries or retstart < nb_entries:
         record = send_request_to_entrez_esearch(query)
 
@@ -857,7 +857,7 @@ def main():
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info("Getting platform metadata")
-    # making chunks to group requests to NCBI GEO
+    # making chunks to group httpx to NCBI GEO
     checked_datasets_chunks = chunk_list(checked_datasets, PLATFORM_METADATA_CHUNKSIZE)
     # resetting selecting datasets
     accession_to_platform_metadata = {}
