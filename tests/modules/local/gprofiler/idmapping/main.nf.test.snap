@@ -12,21 +12,21 @@
                     [
                         "GPROFILER_IDMAPPING",
                         "python",
-                        "3.13.5"
+                        "3.14.3"
                     ]
                 ],
                 "3": [
                     [
                         "GPROFILER_IDMAPPING",
                         "pandas",
-                        "2.3.1"
+                        "3.0.1"
                     ]
                 ],
                 "4": [
                     [
                         "GPROFILER_IDMAPPING",
-                        "requests",
-                        "2.32.4"
+                        "httpx",
+                        "0.28.1"
                     ]
                 ],
                 "metadata": [
@@ -36,8 +36,8 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-07T10:30:46.747985228"
+        "timestamp": "2026-02-19T10:26:01.249646558"
     }
 }

@@ -3,144 +3,78 @@
         "content": [
             {
                 "0": [
-                    [
-                        {
-                            "platform": "rnaseq"
-                        },
-                        "all_counts.parquet:md5,ea386983967ba07c233245b530c3edd0"
-                    ]
+                    
                 ],
                 "1": [
-                    [
-                        "MERGE_COUNTS",
-                        "python",
-                        "3.14.0"
-                    ]
+                    
                 ],
                 "2": [
-                    [
-                        "MERGE_COUNTS",
-                        "polars",
-                        "1.34.0"
-                    ]
+                    
                 ],
                 "3": [
-                    [
-                        "MERGE_COUNTS",
-                        "tqdm",
-                        "4.67.1"
-                    ]
+                    
                 ],
                 "counts": [
-                    [
-                        {
-                            "platform": "rnaseq"
-                        },
-                        "all_counts.parquet:md5,ea386983967ba07c233245b530c3edd0"
-                    ]
+                    
                 ]
             }
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T18:55:36.577938151"
+        "timestamp": "2026-02-19T10:26:16.873022438"
     },
     "2 identical files": {
         "content": [
             {
                 "0": [
-                    [
-                        {
-                            "platform": "rnaseq"
-                        },
-                        "all_counts.parquet:md5,a83c94a90be32af4fc3bcc4909f6f1d2"
-                    ]
+                    
                 ],
                 "1": [
-                    [
-                        "MERGE_COUNTS",
-                        "python",
-                        "3.14.0"
-                    ]
+                    
                 ],
                 "2": [
-                    [
-                        "MERGE_COUNTS",
-                        "polars",
-                        "1.34.0"
-                    ]
+                    
                 ],
                 "3": [
-                    [
-                        "MERGE_COUNTS",
-                        "tqdm",
-                        "4.67.1"
-                    ]
+                    
                 ],
                 "counts": [
-                    [
-                        {
-                            "platform": "rnaseq"
-                        },
-                        "all_counts.parquet:md5,a83c94a90be32af4fc3bcc4909f6f1d2"
-                    ]
+                    
                 ]
             }
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T18:55:45.369797346"
+        "timestamp": "2026-02-19T10:26:32.463105179"
     },
     "1 file": {
         "content": [
             {
                 "0": [
-                    [
-                        {
-                            "platform": "microarray"
-                        },
-                        "all_counts.parquet:md5,57629ccf12df0e16a39281dfe02df4bc"
-                    ]
+                    
                 ],
                 "1": [
-                    [
-                        "MERGE_COUNTS",
-                        "python",
-                        "3.14.0"
-                    ]
+                    
                 ],
                 "2": [
-                    [
-                        "MERGE_COUNTS",
-                        "polars",
-                        "1.34.0"
-                    ]
+                    
                 ],
                 "3": [
-                    [
-                        "MERGE_COUNTS",
-                        "tqdm",
-                        "4.67.1"
-                    ]
+                    
                 ],
                 "counts": [
-                    [
-                        {
-                            "platform": "microarray"
-                        },
-                        "all_counts.parquet:md5,57629ccf12df0e16a39281dfe02df4bc"
-                    ]
+                    
                 ]
             }
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T18:55:54.187807965"
+        "timestamp": "2026-02-19T10:26:47.832142535"
     }
 }

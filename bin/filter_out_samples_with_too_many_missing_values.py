@@ -130,7 +130,8 @@ def main():
     # collect all ratio values for export
     ratio_values = ratio_values_df.select(config.RATIO_COLNAME).to_series().to_list()
     with open(RATIO_NULL_VALUES_OUTFILE, "w") as outfile:
-        outfile.write(",".join([str(val) for val in ratio_values]))
+        # sorting values in order to having consistent output
+        outfile.write(",".join([str(val) for val in sorted(ratio_values)]))
 
     ratio_values_df.write_csv(RATIO_NULL_VALUES_PER_SAMPLE_OUTFILE)
 

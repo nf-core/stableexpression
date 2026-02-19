@@ -94,7 +94,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.tpm.quant_norm.parquet:md5,f7e75c14dde78849897a89f6e2d6ef65"
+                        "rnaseq.raw.tpm.quant_norm.parquet:md5,2f169c426887a3c3502f665825c487aa"
                     ],
                     [
                         {
@@ -114,7 +114,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.tpm.quant_norm.parquet:md5,f7e75c14dde78849897a89f6e2d6ef65"
+                        "rnaseq.raw.tpm.quant_norm.parquet:md5,2f169c426887a3c3502f665825c487aa"
                     ],
                     [
                         {
@@ -130,9 +130,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:49:56.051333397"
+        "timestamp": "2026-02-19T11:25:23.406640228"
     },
     "TPM Normalisation": {
         "content": [

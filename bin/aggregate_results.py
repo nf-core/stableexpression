@@ -430,7 +430,8 @@ def main():
     )
 
     logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
-    all_genes_summary_df.write_csv(
+    # sorting values in order to having consistent output
+    all_genes_summary_df.sort(by=config.GENE_ID_COLNAME).write_csv(
         ALL_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
     )
 

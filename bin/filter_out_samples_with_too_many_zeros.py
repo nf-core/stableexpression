@@ -85,7 +85,8 @@ def main():
     # collect all ratio values for export
     ratio_values = list(ratio_zeros_df.row(0))
     with open(RATIO_ZERO_VALUES_OUTFILE, "w") as outfile:
-        outfile.write(",".join([str(val) for val in ratio_values]))
+        # sorting values in order to having consistent output
+        outfile.write(",".join([str(val) for val in sorted(ratio_values)]))
 
     ratio_zeros_df.write_csv(RATIO_ZEROS_PER_SAMPLE_OUTFILE)
 

@@ -34,6 +34,7 @@ workflow STABLEEXPRESSION {
     ch_accessions                          = channel.empty()
     ch_downloaded_datasets                 = channel.empty()
     ch_all_counts                          = channel.empty()
+    ch_all_imputed_counts                  = channel.empty()
     ch_whole_design                        = channel.empty()
     ch_whole_design                        = channel.empty()
     ch_stats_all_genes_with_scores         = channel.empty()
