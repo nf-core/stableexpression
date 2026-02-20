@@ -69,7 +69,7 @@ You may want to have a first look at what your tool looks like in the Galaxy int
 To launch a local instance of Galaxy with your tool already installed:
 
 ```
-tool/serve.sh
+./serve
 ```
 
 You can test the behaviour of your tool by providing different inputs and check the corrsponding output.
@@ -79,11 +79,25 @@ You can test the behaviour of your tool by providing different inputs and check 
 To lint your tool:
 
 ```
-test/lint.sh
+./lint
 ```
 
-To test your tool:
+To test your tool (NOT WORKING FOR NOW...):
 
 ```
-test/test.sh
+./test
+```
+
+## Publishing to Galaxy Toolshed
+
+### Test Toolshed
+
+```
+./lint
+```
+
+### Official Galaxy Toolshed
+
+```
+./lint
 ```
