@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/main/nextflow_schema.json",
     "title": "nf-core/stableexpression pipeline parameters",
-    "description": "This pipeline is dedicated to finding the most stable genes across count datasets",
+    "description": "This pipeline is dedicated to identifying the most stable genes within a single or multiple expression dataset(s). This is particularly useful for identifying the most suitable RT-qPCR reference genes for a specific species.",
     "type": "object",
     "$defs": {
         "input_output_options": {
