@@ -5,9 +5,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
                     ]
@@ -35,9 +33,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
                     ]
@@ -46,9 +42,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:46:55.157210607"
+        "timestamp": "2026-02-21T09:55:28.307661988"
     },
     "One group": {
         "content": [
@@ -56,9 +52,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.tpm.parquet:md5,7cc642e81f82432bf38690f105e5d2de"
                     ]
@@ -86,9 +80,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.tpm.parquet:md5,7cc642e81f82432bf38690f105e5d2de"
                     ]
@@ -97,9 +89,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:47:12.492274549"
+        "timestamp": "2026-02-21T09:55:48.474041541"
     },
     "TSV files": {
         "content": [
@@ -107,9 +99,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
                     ]
@@ -137,9 +127,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
                     ]
@@ -148,9 +136,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:47:20.896198862"
+        "timestamp": "2026-02-21T09:55:58.697226034"
     },
     "Rows with many zeros": {
         "content": [
@@ -158,9 +146,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.tpm.parquet:md5,72d0424d7465443a882963b3a77a2162"
                     ]
@@ -188,9 +174,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.tpm.parquet:md5,72d0424d7465443a882963b3a77a2162"
                     ]
@@ -199,8 +183,8 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:47:03.903930502"
+        "timestamp": "2026-02-21T09:55:38.263330206"
     }
 }
