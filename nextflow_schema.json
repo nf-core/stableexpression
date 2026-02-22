@@ -262,7 +262,7 @@
                     "format": "file-path",
                     "exists": true,
                     "mimetype": "text/tsv",
-                    "pattern": "^\\S+\\.(gff(3)?|dat)$",
+                    "pattern": "^\\S+\\.(gff|dat)$",
                     "description": "Genome annotation file (GFF format)",
                     "help_text": "Path to genome annotation file (GFF format). Cannot be compressed.",
                     "fa_icon": "fas fa-file"

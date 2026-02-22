@@ -8,8 +8,8 @@ from formatters import ConfigFormatter
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-STATIC_TOOL_FILENAME = Path(__file__).parent / "static/boilerplate.xml"
-TEMPLATE_FILENAME = Path(__file__).parent / "static/boilerplate.template.xml"
+STATIC_TOOL_FILENAME = Path(__file__).parent / "static/template.xml"
+BOILERPLATE_FILENAME = Path(__file__).parent / "static/template.boilerplate.xml"
 
 
 def main():
@@ -20,13 +20,13 @@ def main():
     # REPLACING ACTUAL PARAMS IN STATIC TOOL
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    with open(TEMPLATE_FILENAME, "r") as fin:
-        template_string = fin.read()
+    with open(BOILERPLATE_FILENAME, "r") as fin:
+        boilerplate_string = fin.read()
 
     pipeline_name = pipeline_metadata["name"].replace("nf-core/", "")
 
-    logger.info("Building boilerplate XML file")
-    template_string = template_string.replace("PIPELINE_NAME", pipeline_name)
+    logger.info("Building template XML file")
+    template_string = boilerplate_string.replace("PIPELINE_NAME", pipeline_name)
 
     with open(STATIC_TOOL_FILENAME, "w") as fout:
         fout.write(template_string)

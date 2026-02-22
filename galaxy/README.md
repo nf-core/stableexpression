@@ -1,55 +1,36 @@
 # Galaxy
 
-## Setup build / testing environment
+The following instructions need to performed for each release
 
-NB: You need conda installed (micromamba does not work, since the Galaxy installer looks for a venv / conda environment)
+>[!TIP]
+>For the first time setup of Galaxy for you Nextflow pipeline, see the [setup instructions](setup.md)
 
-Create a new environment with python and planemo installed:
+## Activate environment
 
+>[!NOTE]
+>If you're planemo environment is not set up, see the [setup instructions](setup.md)
+
+Activate your planemo environment:
 ```
-conda env create -f environment.yml -y
-conda activate planemo
-```
-
-## Build tool XML file
-
-The XML definition file is partially generated dynamically by:
-
-- parsing nextflow_schema.json
-- fetching latest version of Nextflow, Singularity and OpenJDK in Conda channels
-
-However, you need to build a boilerplate file with things that cannot be directly interpreted from nextflow_schema.json, such as:
-
-- path to selected output files
-- tests
-- specific conditions for the inputs
-
-### Build boilerplate XML file (only once)
-
-```
-python build/build_boilerplate.py
+micromamba activate planemo
 ```
 
-The boilerplate XML file is generated at `galaxy/build/static/boilerplate.xml`.
+## At each release: build XML file
 
-### Customise boilerplate XML file
+### Optional: modify static values in template file
 
-You must edit the boilerplate XML file to add your customisations:
-
-- Mandatory (at least if your pipeline uses a samplesheet): modify file paths in the samplesheet
-  Galaxy has its own path system, and you must retrieve dynamically the paths of the files provided, in order to modify them in the samplesheet
-  "Running the pipeline"
-  In this cas, add "&&" before "nextflow drop ..."
-
+If needed, you can:
+- update the versions of core dependencies (Nextflow, Micromamba, OpenJDK)
 - modify outputs
-- add tests
+- modify tests
 
-```
-python build/build_custom.py
-```
+>[!NOTE]
+>The versions of core dependencies (Nextflow, Micromamba, OpenJDK) are not updated automatically, although the code necessary for this is already implemented.
+>For now, we want to keep control over the versions used, to avoid versions that may contain bugs.
 
-### Build XML file (at each release)
+### Update tool
 
+Update the tool XML file:
 ```
 python build/build_tool.py
 ```
@@ -58,6 +39,8 @@ This script will fetch :
 
 - all the parameters in your nextflow_schema.json
 - the latest version of Nextflow, Singularity and OpenJDK in Conda channels.
+
+and modify the XML file located at `galaxy/tool_shed/tool/nf_core_stableexpression.xml`.
 
 Your tool is ready to be used!
 
@@ -82,22 +65,32 @@ To lint your tool:
 ./lint
 ```
 
-To test your tool (NOT WORKING FOR NOW...):
+>[!WARNING]
+>The test script is not working for now... Planemo does not seem to find the input data for testing...
+>For the moment, testing in a local webserver and linting using the provided script should be sufficient.
+
+To test your tool:
 
 ```
 ./test
 ```
 
-## Publishing to Galaxy Toolshed
+## Publishing to the Galaxy Toolshed
 
-### Test Toolshed
 
 ```
-./lint
+cd tool_shed
+```
+
+### Optional: test update on the test Toolshed
+
+If you have already set up an account on the test Toolshed, you can test the update of your tool:
+```
+planemo shed_update --shed_target toolshed
 ```
 
 ### Official Galaxy Toolshed
 
 ```
-./lint
+planemo shed_update --shed_target toolshed
 ```

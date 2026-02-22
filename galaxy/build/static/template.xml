@@ -1,7 +1,7 @@
 <tool id="nf_core_stableexpression" name="nf-core/stableexpression" version="PIPELINE_VERSION">
     <description>DESCRIPTION</description>
     <requirements>
-        <requirement type="package" version="25.04.8">nextflow</requirement>
+        <requirement type="package" version="25.10.04">nextflow</requirement>
         <requirement type="package" version="2.3.3">micromamba</requirement>
         <requirement type="package" version="17.0.10">openjdk</requirement>
     </requirements>
@@ -93,7 +93,7 @@ INPUTS
                     />
                 </conditional>
             </section>
-            <section name="expression_atlas_options">
+            <section name="public_data_options">
                 <param name="skip_fetch_eatlas_accessions" value="true" />
             </section>
             <output name="gene_stats">

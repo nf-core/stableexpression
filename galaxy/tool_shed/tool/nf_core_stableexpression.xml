@@ -1,12 +1,13 @@
-<tool id="nf_core_stableexpression" name="nf-core/stableexpression" version="1.0dev">
-    <description>This pipeline is dedicated to finding the most stable genes across count datasets</description>
+<tool id="nf_core_stableexpression" name="nf-core/stableexpression" version="1.1dev">
+    <description
+    >This pipeline is dedicated to identifying the most stable genes within a single or multiple expression dataset(s). This is particularly useful for identifying the most suitable RT-qPCR reference genes for a specific species.</description>
     <requirements>
-        <requirement type="package" version="25.04.8">nextflow</requirement>
+        <requirement type="package" version="25.10.04">nextflow</requirement>
         <requirement type="package" version="2.3.3">micromamba</requirement>
         <requirement type="package" version="17.0.10">openjdk</requirement>
     </requirements>
     <version_command><![CDATA[
-VERSION="1.0dev"; echo "$VERSION"
+VERSION="1.1dev"; echo "$VERSION"
     ]]></version_command>
     <command
         detect_errors="exit_code"
@@ -158,94 +159,381 @@ VERSION="1.0dev"; echo "$VERSION"
     ]]>
     </command>
     <inputs>
-		<section name="input_output_options" title="Input/output options" help="Define where the pipeline should find input data and save output data." expanded="true">
-			<param name="species" type="text" label="Scientifc species name (genus and species)" help="At least genus and species name should be supplied. Words should be separated by ` ` or `_`. Note that character case is ignored. Examples: `--species 'Arabidopsis thaliana'`, `--species 'homo_sapiens' or `--species MARMOTA_MARMOTA_MARMOTA`." optional="false">
-				<validator type="regex" message="must match regular expression ^([a-zA-Z]+)[_ ]([a-zA-Z]+)[_ a-zA-Z]*$">^([a-zA-Z]+)[_ ]([a-zA-Z]+)[_ a-zA-Z]*$</validator>
+		<section
+            name="input_output_options"
+            title="Input/output options"
+            help="Define where the pipeline should find input data and save output data."
+            expanded="true"
+        >
+			<param
+                name="species"
+                type="text"
+                label="Scientifc species name (genus and species)"
+                help="At least genus and species name should be supplied. Words should be separated by ` ` or `_`. Note that character case is ignored. Examples: `--species 'Arabidopsis thaliana'`, `--species 'homo_sapiens' or `--species MARMOTA_MARMOTA_MARMOTA`."
+                optional="false"
+            >
+				<validator
+                    type="regex"
+                    message="must match regular expression ^([a-zA-Z]+)[_ ]([a-zA-Z]+)[_ a-zA-Z]*$"
+                >^([a-zA-Z]+)[_ ]([a-zA-Z]+)[_ a-zA-Z]*$</validator>
 			</param>
  			<conditional name="datasets">
-                <param name="provide_datasets" type="select" label="Provide custom count datasets?" >
+                <param name="provide_datasets" type="select" label="Provide custom count datasets?">
                     <option value="true">Yes</option>
                     <option selected="true" value="false">No</option>
                 </param>
                 <when value="true">
-        			<param name="samplesheet" type="data" label="Custom samplesheet (counts + designs)" format="csv,yaml,yml" help="Path to CSV / YAML file listing your own count samplesheet and their related experimental design. This file should be a comma-separated file with 4 columns (`counts`, `design`, `platform` and `normalised`). It must have a header row. Before running the pipeline, and for each count dataset provided by you, a design file with information about the samples in your experiment is required. Combine with --skip_fetch_eatlas_accessions if you only want to analyse your own count samplesheet. Otherwise, accessions from Expression Atlas and GEO will be fetched automatically. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. " optional="false" />
-                    <param name="count_datasets" label="Count datasets" type="data" format="csv" multiple="true" optional="false" help="User count datasets in CSV format" />
-                    <param name="experimental_designs" label="Experimental designs" type="data" format="csv" multiple="true" optional="true" help="Experimental designs relative to the provided count datasets" />
+        			<param
+                        name="samplesheet"
+                        type="data"
+                        label="Custom samplesheet (counts + designs)"
+                        format="csv,yaml"
+                        help="Path to CSV / YAML file listing your own count samplesheet and their related experimental design. This file should be a comma-separated file with 4 columns (`counts`, `design`, `platform` and `normalised`). It must have a header row. Before running the pipeline, and for each count dataset provided by you, a design file with information about the samples in your experiment is required. Combine with --skip_fetch_eatlas_accessions if you only want to analyse your own count samplesheet. Otherwise, accessions from Expression Atlas and GEO will be fetched automatically. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information. "
+                        optional="false"
+                    />
+                    <param
+                        name="count_datasets"
+                        label="Count datasets"
+                        type="data"
+                        format="csv"
+                        multiple="true"
+                        optional="false"
+                        help="User count datasets in CSV format"
+                    />
+                    <param
+                        name="experimental_designs"
+                        label="Experimental designs"
+                        type="data"
+                        format="csv"
+                        multiple="true"
+                        optional="true"
+                        help="Experimental designs relative to the provided count datasets"
+                    />
                 </when>
                 <when value="false">
                 </when>
             </conditional>
-			<param name="keywords" type="text" label="Keywords used for selecting specific Expression Atlas / GEO accessions" help="Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas and / or GEO datasets. The pipeline will select all Expression Atlas experiments / GEO datasets that contain the provided keywords in their description of in one of the condition names. Example: `--keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set and --fetch_geo_accessions is not set." optional="true">
+			<param
+                name="keywords"
+                type="text"
+                label="Keywords used for selecting specific Expression Atlas / GEO accessions"
+                help="Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas and / or GEO datasets. The pipeline will select all Expression Atlas experiments / GEO datasets that contain the provided keywords in their description of in one of the condition names. Example: `--keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set and --fetch_geo_accessions is not set."
+                optional="true"
+            >
 				<validator type="regex" message="must match regular expression (([a-zA-Z,]+))?">(([a-zA-Z,]+))?</validator>
 			</param>
-			<param name="target_genes" type="text" label="Target genes" help="One or multiple target genes (separated by commas). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols." optional="true" />
-			<param name="target_gene_file" type="data" label="File containing target genes" format="data" help="File containing one or multiple target genes (one ID per line). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols." optional="true" />
-			<param name="platform" type="select" label="Only download from this platform" help="By default, data from both RNA-seq and Microarray platforms are downloaded. Setting this parameter applies a filter to get data from only one of the two platforms. This filter is only used while fetching appropriate Expression atlas / GEO accessions. It will not filter accessions provided directly by the user." optional="true">
+			<param
+                name="target_genes"
+                type="text"
+                label="Target genes"
+                help="One or multiple target genes (separated by commas). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols."
+                optional="true"
+            />
+			<param
+                name="target_gene_file"
+                type="data"
+                label="File containing target genes"
+                format="data"
+                help="File containing one or multiple target genes (one ID per line). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols."
+                optional="true"
+            />
+			<param
+                name="platform"
+                type="select"
+                label="Only download from this platform"
+                help="By default, data from both RNA-seq and Microarray platforms are downloaded. Setting this parameter applies a filter to get data from only one of the two platforms. This filter is only used while fetching appropriate Expression atlas / GEO accessions. It will not filter accessions provided directly by the user."
+                optional="true"
+            >
 				<option value="rnaseq">Rnaseq</option>
 				<option value="microarray">Microarray</option>
 			</param>
-			<param name="accessions_only" type="boolean" label="Only get accessions from Expression Atlas / GEO and exit." truevalue="--accessions_only" falsevalue="" help="Use this option if you only want to get Expression Atlas accessions and skip the rest of the pipeline." optional="true" />
-			<param name="download_only" type="boolean" label="Only get accessions from Expression Atlas / GEO and download the selected datasets." truevalue="--download_only" falsevalue="" help="Use this option if you only want to get Expression Atlas / GEO accessions, download the selected data, and skip the rest of the pipeline." optional="true" />
+			<param
+                name="accessions_only"
+                type="boolean"
+                label="Only get accessions from Expression Atlas / GEO and exit."
+                truevalue="--accessions_only"
+                falsevalue=""
+                help="Use this option if you only want to get Expression Atlas accessions and skip the rest of the pipeline."
+                optional="true"
+            />
+			<param
+                name="download_only"
+                type="boolean"
+                label="Only get accessions from Expression Atlas / GEO and download the selected datasets."
+                truevalue="--download_only"
+                falsevalue=""
+                help="Use this option if you only want to get Expression Atlas / GEO accessions, download the selected data, and skip the rest of the pipeline."
+                optional="true"
+            />
 		</section>
-		<section name="public_data_options" title="Public data options" help="Options for fetching experiment data from Expression Atlas / GEO." expanded="false">
-			<param name="skip_fetch_eatlas_accessions" type="boolean" label="Skip fetching Expression Atlas accessions" truevalue="--skip_fetch_eatlas_accessions" falsevalue="" help="Expression Atlas accessions are automatically fetched by default. Set this parameter to skip this step." optional="true" />
-			<param name="fetch_geo_accessions" type="boolean" label="Fetch GEO accessions from NCBI" truevalue="--fetch_geo_accessions" falsevalue="" help="Set this parameter to fetch GEO accessions from NCBI. This feature is experimental and may not work as expected. Please report any issues to https://github.com/nf-core/stableexpression." optional="true" />
-			<param name="accessions" type="text" label="Expression Atlas / GEO accession(s) to include" help="Provide Expression Atlas / GEO accession(s) that you want to download. The accessions should be comma-separated. Example: `--accessions E-MTAB-552,E-GEOD-61690,GSE8165,GSE8161`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions." optional="true">
+		<section
+            name="public_data_options"
+            title="Public data options"
+            help="Options for fetching experiment data from Expression Atlas / GEO."
+            expanded="false"
+        >
+			<param
+                name="skip_fetch_eatlas_accessions"
+                type="boolean"
+                label="Skip fetching Expression Atlas accessions"
+                truevalue="--skip_fetch_eatlas_accessions"
+                falsevalue=""
+                help="Expression Atlas accessions are automatically fetched by default. Set this parameter to skip this step."
+                optional="true"
+            />
+			<param
+                name="fetch_geo_accessions"
+                type="boolean"
+                label="Fetch GEO accessions from NCBI"
+                truevalue="--fetch_geo_accessions"
+                falsevalue=""
+                help="Set this parameter to fetch GEO accessions from NCBI. This feature is experimental and may not work as expected. Please report any issues to https://github.com/nf-core/stableexpression."
+                optional="true"
+            />
+			<param
+                name="accessions"
+                type="text"
+                label="Expression Atlas / GEO accession(s) to include"
+                help="Provide Expression Atlas / GEO accession(s) that you want to download. The accessions should be comma-separated. Example: `--accessions E-MTAB-552,E-GEOD-61690,GSE8165,GSE8161`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions."
+                optional="true"
+            >
 				<validator type="regex" message="must match regular expression ([A-Z0-9-]+,?)+">([A-Z0-9-]+,?)+</validator>
 			</param>
-			<param name="accessions_file" type="data" label="File containing Expression Atlas / GEO accession(s) to download" format="data" help="File containing Expression Atlas / GEO accession(s) that you want to download. One accession per line. Example: `--accessions_file included_accessions.txt`. Combine with --skip_fetch_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions." optional="true" />
-			<param name="excluded_accessions" type="text" label="Expression Atlas accession(s) to exclude" help="Provide Expression Atlas / GEO accession(s) that you want to exclude. The accessions should be comma-separated. Example: `--excluded_accessions E-MTAB-552,E-GEOD-61690`" optional="true">
+			<param
+                name="accessions_file"
+                type="data"
+                label="File containing Expression Atlas / GEO accession(s) to download"
+                format="data"
+                help="File containing Expression Atlas / GEO accession(s) that you want to download. One accession per line. Example: `--accessions_file included_accessions.txt`. Combine with --skip_fetch_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions."
+                optional="true"
+            />
+			<param
+                name="excluded_accessions"
+                type="text"
+                label="Expression Atlas accession(s) to exclude"
+                help="Provide Expression Atlas / GEO accession(s) that you want to exclude. The accessions should be comma-separated. Example: `--excluded_accessions E-MTAB-552,E-GEOD-61690`"
+                optional="true"
+            >
 				<validator type="regex" message="must match regular expression ([A-Z0-9-]+,?)+">([A-Z0-9-]+,?)+</validator>
 			</param>
-			<param name="excluded_accessions_file" type="data" label="File containing Expression Atlas accession(s) to exclude" format="data" help="File containing Expression Atlas / GEO accession(s) that you want to exclude. One accession per line. Example: `--excluded_accessions_file excluded_accessions.txt`." optional="true" />
+			<param
+                name="excluded_accessions_file"
+                type="data"
+                label="File containing Expression Atlas accession(s) to exclude"
+                format="data"
+                help="File containing Expression Atlas / GEO accession(s) that you want to exclude. One accession per line. Example: `--excluded_accessions_file excluded_accessions.txt`."
+                optional="true"
+            />
 		</section>
 		<section name="idmapping_options" title="ID mapping options" help="Options for mapping gene IDs." expanded="false">
-			<param name="skip_id_mapping" type="boolean" label="Skip g:Profiler ID mapping step" truevalue="--skip_id_mapping" falsevalue="" optional="true" />
-			<param name="skip_cleaning_gene_ids" type="boolean" label="Skip cleaning gene IDs step" truevalue="--skip_cleaning_gene_ids" falsevalue="" optional="true" />
-			<param name="gprofiler_target_db" type="select" label="Experimental: target database for g:Profiler" help="Experimental: target database for g:Profiler. You can see the full list of available target databases at https://biit.cs.ut.ee/gprofiler/convert." optional="true">
+			<param
+                name="skip_id_mapping"
+                type="boolean"
+                label="Skip g:Profiler ID mapping step"
+                truevalue="--skip_id_mapping"
+                falsevalue=""
+                optional="true"
+            />
+			<param
+                name="skip_cleaning_gene_ids"
+                type="boolean"
+                label="Skip cleaning gene IDs step"
+                truevalue="--skip_cleaning_gene_ids"
+                falsevalue=""
+                optional="true"
+            />
+			<param
+                name="gprofiler_target_db"
+                type="select"
+                label="Experimental: target database for g:Profiler"
+                help="Experimental: target database for g:Profiler. You can see the full list of available target databases at https://biit.cs.ut.ee/gprofiler/convert."
+                optional="true"
+            >
 				<option value="ENSG" selected="true">Ensg</option>
 				<option value="ENTREZGENE">Entrezgene</option>
 				<option value="UNIPROTSPTREMBL">Uniprotsptrembl</option>
 				<option value="UNIPROTSWISSPROT">Uniprotswissprot</option>
 			</param>
-			<param name="gene_id_mapping" type="data" label="Custom gene id mapping file" format="csv" help="Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to a prefered gene ID. The mapping file should be a comma-separated file with 2 columns (original_gene_id and gene_id) and a header row." optional="true" />
-			<param name="gene_metadata" type="data" label="Custom gene metadata file" format="csv" help="Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (gene_id, name and description) and a header row." optional="true" />
-			<param name="min_occurrence_quantile" type="float" label="Minimum quantile for the frequency of occurrence" value="0.2" max="1" help="To avoid genes that are rarely observed, genes less represented than the specified quantile will be filtered out. For example, value of 0.2 means that the 20% less represented will be filtered out. This filter is applied before using the absolute filter `--min_occurrence_freq`." optional="true" />
-			<param name="min_occurrence_freq" type="float" label="Minimum frequency of occurrence among all datasets" value="0.1" max="1" help="To avoid genes that are rarely observed, genes showing a frequency of occurrence below this threshold will be filtered out." optional="true" />
+			<param
+                name="gene_id_mapping"
+                type="data"
+                label="Custom gene id mapping file"
+                format="csv"
+                help="Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to a prefered gene ID. The mapping file should be a comma-separated file with 2 columns (original_gene_id and gene_id) and a header row."
+                optional="true"
+            />
+			<param
+                name="gene_metadata"
+                type="data"
+                label="Custom gene metadata file"
+                format="csv"
+                help="Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (gene_id, name and description) and a header row."
+                optional="true"
+            />
+			<param
+                name="min_occurrence_quantile"
+                type="float"
+                label="Minimum quantile for the frequency of occurrence"
+                value="0.2"
+                max="1"
+                help="To avoid genes that are rarely observed, genes less represented than the specified quantile will be filtered out. For example, value of 0.2 means that the 20% less represented will be filtered out. This filter is applied before using the absolute filter `--min_occurrence_freq`."
+                optional="true"
+            />
+			<param
+                name="min_occurrence_freq"
+                type="float"
+                label="Minimum frequency of occurrence among all datasets"
+                value="0.1"
+                max="1"
+                help="To avoid genes that are rarely observed, genes showing a frequency of occurrence below this threshold will be filtered out."
+                optional="true"
+            />
 		</section>
-		<section name="sample_filtering_options" title="Sample filtering options" help="Options for filtering samples based on their expression levels." expanded="false">
-			<param name="max_zero_ratio" type="float" label="Maximum ratio of zero counts to total counts" value="0.9" max="1" help="A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out." optional="true" />
-			<param name="max_null_ratio" type="float" label="Maximum ratio of null values" value="0.9" max="1" help="A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out." optional="true" />
-			<param name="max_null_ratio_valid_sample" type="float" label="Maximum ratio of null values in a sample for it to be considered in the computation of the null value malus" value="0.75" max="1" help="After filtering out samples with a very high proportion of zero counts (via `--max_null_ratio`), a second filter is set up to avoid samples that contain a substantial proportion of null values to be considered in the malus of null values comprised in the stability score." optional="true" />
+		<section
+            name="sample_filtering_options"
+            title="Sample filtering options"
+            help="Options for filtering samples based on their expression levels."
+            expanded="false"
+        >
+			<param
+                name="max_zero_ratio"
+                type="float"
+                label="Maximum ratio of zero counts to total counts"
+                value="0.9"
+                max="1"
+                help="A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
+                optional="true"
+            />
+			<param
+                name="max_null_ratio"
+                type="float"
+                label="Maximum ratio of null values"
+                value="0.9"
+                max="1"
+                help="A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
+                optional="true"
+            />
+			<param
+                name="max_null_ratio_valid_sample"
+                type="float"
+                label="Maximum ratio of null values in a sample for it to be considered in the computation of the null value malus"
+                value="0.75"
+                max="1"
+                help="After filtering out samples with a very high proportion of zero counts (via `--max_null_ratio`), a second filter is set up to avoid samples that contain a substantial proportion of null values to be considered in the malus of null values comprised in the stability score."
+                optional="true"
+            />
 		</section>
-		<section name="statistical_options" title="Statistics options" help="Statistical options for normalisation and calculation of gene expression variation." expanded="false">
-			<param name="normalisation_method" type="select" label="Count normalisation method" help="Raw RNAseq data must be normalised before further processing. `tmp offers a more accurate representation of gene expression levels as it is unbiased toward gene length. However, you can choose `cpm` if you do not have access to a genome annotation." optional="false">
+		<section
+            name="statistical_options"
+            title="Statistics options"
+            help="Statistical options for normalisation and calculation of gene expression variation."
+            expanded="false"
+        >
+			<param
+                name="normalisation_method"
+                type="select"
+                label="Count normalisation method"
+                help="Raw RNAseq data must be normalised before further processing. `tmp offers a more accurate representation of gene expression levels as it is unbiased toward gene length. However, you can choose `cpm` if you do not have access to a genome annotation."
+                optional="false"
+            >
 				<option value="tpm" selected="true">Tpm</option>
 				<option value="cpm">Cpm</option>
 			</param>
-			<param name="gff" type="data" label="Genome annotation file (GFF format)" format="gff(3)?" help="Path to genome annotation file (GFF format). Cannot be compressed." optional="true" />
-			<param name="gene_length" type="data" label="Gene length file" format="csv,tsv" help="Path to comma-separated file containing gene lengths. Each row represents a gene and gives the length of its longest transcript. The file should be a comma-separated file with 2 columns (gene_id and length) and a header row." optional="true" />
-			<param name="quantile_norm_target_distrib" type="select" label="Target distribution for quantile normalisation" help="In order to compare counts between samples and different datasets, all normalised counts are quantile normalised and mapped to a specific distribution. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to." optional="true">
+			<param
+                name="gff"
+                type="data"
+                label="Genome annotation file (GFF format)"
+                format="gff"
+                help="Path to genome annotation file (GFF format). Cannot be compressed."
+                optional="true"
+            />
+			<param
+                name="gene_length"
+                type="data"
+                label="Gene length file"
+                format="csv,tsv"
+                help="Path to comma-separated file containing gene lengths. Each row represents a gene and gives the length of its longest transcript. The file should be a comma-separated file with 2 columns (gene_id and length) and a header row."
+                optional="true"
+            />
+			<param
+                name="quantile_norm_target_distrib"
+                type="select"
+                label="Target distribution for quantile normalisation"
+                help="In order to compare counts between samples and different datasets, all normalised counts are quantile normalised and mapped to a specific distribution. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
+                optional="true"
+            >
 				<option value="uniform" selected="true">Uniform</option>
 				<option value="normal">Normal</option>
 			</param>
-			<param name="missing_value_imputer" type="select" label="Type of imputation method to use for missing values" help="The pipeline provides three options for imputing missing values: iterative, k-nearest neighbors, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Gene mean imputation is a very basic method that replaces missing values with the mean expression level of the gene across all samples." optional="true">
+			<param
+                name="missing_value_imputer"
+                type="select"
+                label="Type of imputation method to use for missing values"
+                help="The pipeline provides three options for imputing missing values: iterative, k-nearest neighbors, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Gene mean imputation is a very basic method that replaces missing values with the mean expression level of the gene across all samples."
+                optional="true"
+            >
 				<option value="iterative" selected="true">Iterative</option>
 				<option value="knn">Knn</option>
 				<option value="gene_mean">Gene_mean</option>
 			</param>
 		</section>
-		<section name="stability_scoring_options" title="Stability scoring options" help="Options relative to assessment of stability for each gene." expanded="false">
-			<param name="nb_sections" type="integer" label="Number of sections to divide genes into for stability scoring." min="1" help="All genes are divided into sections based on their expression levels. Set this parameter to modify the number of sections." optional="true" />
-			<param name="nb_candidates_per_section" type="integer" label="Number of candidate genes to keep for stability scoring in each section" min="1" help="Number of candidate genes to keep in each section for stability scoring. Within each section, the top candidates are selected based on the descriptor chosen with `--candidate_selection_descriptor`." optional="true" />
+		<section
+            name="stability_scoring_options"
+            title="Stability scoring options"
+            help="Options relative to assessment of stability for each gene."
+            expanded="false"
+        >
+			<param
+                name="nb_sections"
+                type="integer"
+                label="Number of sections to divide genes into for stability scoring."
+                min="1"
+                help="All genes are divided into sections based on their expression levels. Set this parameter to modify the number of sections."
+                optional="true"
+            />
+			<param
+                name="nb_candidates_per_section"
+                type="integer"
+                label="Number of candidate genes to keep for stability scoring in each section"
+                min="1"
+                help="Number of candidate genes to keep in each section for stability scoring. Within each section, the top candidates are selected based on the descriptor chosen with `--candidate_selection_descriptor`."
+                optional="true"
+            />
 			<param name="skip_genorm" type="boolean" label="Run Genorm" truevalue="--skip_genorm" falsevalue="" optional="true" />
-			<param name="stability_score_weights" type="text" label="Weights for stability score calculation" help="Weights for Normfinder / Genorm / Coefficient of Variation (CV) / Robust Coefficient of Variation on Median (RCVM) respectively. Must be a comma-separated string. Example: 0.5,0.5,0.0,0" optional="true">
-				<validator type="regex" message="must match regular expression ^\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?$">^\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?$</validator>
+			<param
+                name="stability_score_weights"
+                type="text"
+                label="Weights for stability score calculation"
+                help="Weights for Normfinder / Genorm / Coefficient of Variation (CV) / Robust Coefficient of Variation on Median (RCVM) respectively. Must be a comma-separated string. Example: 0.5,0.5,0.0,0"
+                optional="true"
+            >
+				<validator
+                    type="regex"
+                    message="must match regular expression ^\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?$"
+                >^\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?$</validator>
 			</param>
 		</section>
-		<section name="scalability_options" title="Scalability options" help="Options to improve pipeline scalability and robustness" expanded="false">
-			<param name="random_sampling_size" type="integer" label="Number of public dataset samples to choose randomly before downloading." min="1" help="When dealing with species for which there is a large number (eg. >10000) of samples considering all the downloaded datasets, users may encounter RAM issues (eg. errors with `137` exit codes). In such cases, it is recommended to sample a random subset of these datasets to reduce the computational load. A first subsampling is performedduring the search for Expression Atlas accessions. In case there is still room for datasets and if the `--fetch_geo_accessions` flag was set, a second ssubsampling is performed during the search for NCBI GEO accessions." optional="true" />
-			<param name="random_sampling_seed" type="integer" label="Seed for dataset random sampling." help="Seed for dataset random sampling. This ensures reproducibility of the random sampling process. Changing the seed will result in a different random sample being selected." optional="true" />
+		<section
+            name="scalability_options"
+            title="Scalability options"
+            help="Options to improve pipeline scalability and robustness"
+            expanded="false"
+        >
+			<param
+                name="random_sampling_size"
+                type="integer"
+                label="Number of public dataset samples to choose randomly before downloading."
+                min="1"
+                help="When dealing with species for which there is a large number (eg. >10000) of samples considering all the downloaded datasets, users may encounter RAM issues (eg. errors with `137` exit codes). In such cases, it is recommended to sample a random subset of these datasets to reduce the computational load. A first subsampling is performedduring the search for Expression Atlas accessions. In case there is still room for datasets and if the `--fetch_geo_accessions` flag was set, a second ssubsampling is performed during the search for NCBI GEO accessions."
+                optional="true"
+            />
+			<param
+                name="random_sampling_seed"
+                type="integer"
+                label="Seed for dataset random sampling."
+                help="Seed for dataset random sampling. This ensures reproducibility of the random sampling process. Changing the seed will result in a different random sample being selected."
+                optional="true"
+            />
 		</section>
     </inputs>
     <outputs>
@@ -282,7 +570,7 @@ VERSION="1.0dev"; echo "$VERSION"
                     />
                 </conditional>
             </section>
-            <section name="expression_atlas_options">
+            <section name="public_data_options">
                 <param name="skip_fetch_eatlas_accessions" value="true" />
             </section>
             <output name="gene_stats">
