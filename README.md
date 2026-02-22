@@ -22,7 +22,7 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline aiming to aggregate multiple count datasets (public / provided by the user) for a specific species and find the most stable genes.
+**nf-core/stableexpression** is a bioinformatics pipeline aiming to aggregate multiple count datasets for a specific species and find the most stable genes. The datasets can be either downloaded from public databases (EBI, NCBI) or provided directly by the user. Both RNA-seq and Microarray count datasets can be utilised.
 
 <p align="center">
     <img title="Stableexpression Workflow" src="docs/images/nf_core_stableexpression.metromap.png" width=100%>
@@ -50,7 +50,8 @@ To search the most stable genes in a species considering all public datasets, si
 nextflow run nf-core/stableexpression \
    -profile <PROFILE (examples: docker / apptainer / conda / micromamba)> \
    --species <SPECIES (examples: arabidopsis_thaliana / "drosophila melanogaster")> \
-   --outdir <OUTDIR (example: ./results)>
+   --outdir <OUTDIR (example: ./results)> \
+   -resume
 ```
 
 ## More advanced usage
@@ -61,6 +62,10 @@ For more specific scenarios, like:
 - **using your own expression dataset(s)**
 
 please refer to the [usage documentation](https://nf-co.re/stableexpression/usage).
+
+## Resource allocation
+
+For setting pipeline CPU / memory usage, see [here](docs/configuration.md).
 
 ## Profiles
 

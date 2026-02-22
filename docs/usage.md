@@ -6,6 +6,9 @@
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
 > [!TIP]
+> For setting number of CPUs and memory used by the pipeline, or for instruction on how to run it on an HPC, see [configuration](configuration.md).
+
+> [!TIP]
 > In case of issues with the pipeline, please check the [troubleshooting page](troubleshooting.md) or [report a new issue](https://github.com/nf-core/stableexpression/issues).
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
@@ -18,8 +21,12 @@ This pipeline fetches Expression Atlas and GEO accessions for the provided speci
 nextflow run nf-core/stableexpression \
    -profile <PROFILE (examples: docker / apptainer / conda / micromamba)> \
    --species <SPECIES (examples: arabidopsis_thaliana / "drosophila melanogaster")> \
-   --outdir <OUTDIR (example: ./results)>
+   --outdir <OUTDIR (example: ./results)> \
+   -resume
 ```
+
+> [!TIP]
+> It is often a good practice to run the pipeline with the `-resume` flag. See the [caching and resuming Nextflow documentation](https://www.nextflow.io/docs/latest/cache-and-resume.html) for more information.
 
 > [!NOTE]
 > See [here](#profiles) for more information about profiles.
