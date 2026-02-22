@@ -6,9 +6,9 @@
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
 > [!TIP]
-> For setting number of CPUs and memory used by the pipeline, or for instruction on how to run it on an HPC, see [configuration](configuration.md).
+> For setting number of CPUs and memory used by the pipeline, or for instruction on how to run it on an HPC, see the [configuration instructions](configuration.md).
 
-> [!TIP]
+> [!NOTE]
 > In case of issues with the pipeline, please check the [troubleshooting page](troubleshooting.md) or [report a new issue](https://github.com/nf-core/stableexpression/issues).
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
@@ -26,7 +26,7 @@ nextflow run nf-core/stableexpression \
 ```
 
 > [!TIP]
-> It is often a good practice to run the pipeline with the `-resume` flag. See the [caching and resuming Nextflow documentation](https://www.nextflow.io/docs/latest/cache-and-resume.html) for more information.
+> It is often a good practice to run the pipeline with the `-resume` flag. See the [Nextflow documentation on caching and resuming](https://www.nextflow.io/docs/latest/cache-and-resume.html) for more information.
 
 > [!NOTE]
 > See [here](#profiles) for more information about profiles.
@@ -46,9 +46,9 @@ nextflow run nf-core/stableexpression \
 > [!NOTE]
 >
 > - Multiple keywords must be separated by commas.
-> - Note that the keywords are additive: you will get datasets that fit with **either of the keywords**.
+> - Please note that keywords are additive: you will get datasets that fit with **either of the provided keywords**.
 > - A dataset will be downloaded if a keyword is found in its summary or in the same of a sample.
-> - The natural language processing [`ǹltk`](https://www.nltk.org/) python package is used to find keywords as well as derived words. For example, the `leaf` keyword should match 'leaf', 'leaves', 'leafy', etc.
+> - The natural language processing [`nltk`](https://www.nltk.org/) python package is used to find keywords as well as derived words. For example, the `leaf` keyword should match 'leaf', 'leaves', 'leafy', etc.
 
 ## 3. Provide your own accessions
 
@@ -91,11 +91,11 @@ You can of course provide your own counts datasets / experimental designs.
 
 > [!NOTE]
 >
-> - To ensure all RNAseq datasets are processed the same way, you should provide **raw counts**.
-> - In case normalised counts are provided, you should provide the same normalisation method for all of them (TPM, FPKM, etc.).
+> - To ensure all RNA-seq datasets are processed the same way, users should provide **raw counts**.
+> - If normalised counts are provided, users should apply the same normalisation process to all of them. **The prefered method is `TPM`**.
 
 > [!WARNING]
-> Microarray data must be already normalised. When mixing your own datasets with public ones in a single run, you should use the `RMA` method to be compliant with Expression Atlas and GEO datasets.
+> Microarray data must be already normalised. When mixing your own datasets with public ones in a single run, you should use the `RMA` method in order to be compliant with Expression Atlas and GEO datasets.
 
 First, prepare a CSV samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
 
@@ -152,7 +152,7 @@ sample_C,condition_1
 > [!WARNING]
 >
 > - In the count file, the first header column (corresponding to gene IDs) should not be empty. However, its name can be anything.
-> - The count file should not have any column other than the first one (gene IDs) and the sample columns. Extra columns will be ignored.
+> - The count file should not have any column other than the first one (gene IDs) and the sample columns.
 
 > [!TIP]
 > Both counts and design files can also be supplied as TSV files.
@@ -172,36 +172,20 @@ nextflow run nf-core/stableexpression \
 > The `--skip_fetch_eatlas_accessions` parameter is supplied here to show how to analyse **only your own dataset**. You may remove this parameter if you want to mix you dataset(s) with public ones.
 
 > [!IMPORTANT]
-> By default, the pipeline tries to map gene IDs to NCBI Entrez Gene IDs. **All genes that cannot be mapped are discarded from the analysis**. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think on the contrary that your gene IDs just won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, you may supply your own gene id mapping file and gene metadata file with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
+> By default, the pipeline tries to map gene IDs to Ensembl gene IDs. **All genes that cannot be mapped are discarded from the analysis**. This ensures  that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think on the contrary that your gene IDs just won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, we recommend users to supply their own gene id mapping and gene metadata files using the `--gene_id_mapping` and `--gene_metadata` parameters respectively.
+>
+> Both files are totally optional, however:
+> - a custom gene id mapping might help merging datasets properly
+> - custom gene metadata (association between gene id, gene name and gene description) will supply relevant metadata in the final MultiQC report
+>
+> See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
 
 > [!TIP]
 > You can check if your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
 
-### 5. Custom gene ID mapping / metadata / length
+### 5. Custom gene ID mapping / metadata
 
-You can supply your own:
-
-- gene id mapping file
-- gene metadata file
-- gene length file
-
-The gene ID mapping file is used to map gene IDs in count table(s) (local or downloaded) to more generic IDs that will be used as basis fore subsequent steps.
-
-The gene metadata file provides additional information about the genes, such as their common name and description.
-
-The gene length file provides the length of each gene, which is used to compute the TPM values during gene expression normalisation.
-
-```bash
-nextflow run nf-core/stableexpression \
-   -profile <PROFILE> \
-   --species <SPECIES> \
-   --datasets <CSV / YAML FILE> \
-   --gene_id_mapping <CSV FILE> \
-   --gene_metadata <CSV FILE> \
-   --gene_length <CSV FILE> \
-   --skip_fetch_eatlas_accessions \
-   --outdir <OUTDIR>
-```
+You can supply your own gene ID mapping and / or gene metadata with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. The gene ID mapping file is used to map gene IDs in count table(s) (local or downloaded) to more generic IDs that will be used as a basis for subsequent steps. The gene metadata file provides additional information about the genes, such as their common name and description.
 
 Structure of the gene id mapping file:
 
@@ -234,7 +218,13 @@ ENSG1234567890,Gene A,Description of gene A
 OTHERmappedgeneID,My OTHER Gene,Another description
 ```
 
-Structure of the gene length file:
+### 6. Custom gene annotation / gene length
+
+For the computation of TPM values during gene expression normalisation, the knowledge of gene length is required. In the case where the species of interest does not have a public annotation, or if you are encountering network issues, you can supply directly either your own genome annotation or a file associating gene ids to gene lengths with the `--gff` and `--gene_length` parameters respectively.
+
+The genome annotation must be in `GFF` format and have the `.gff` extension. You can use the [`AGAT`](https://github.com/NBISweden/AGAT) package to convert other genome annotation formats to `GFF`.
+
+The gene length file must be in `CSV` or `TSV` format and have the following structure:
 
 | Column    | Description                      |
 | --------- | -------------------------------- |
@@ -243,12 +233,14 @@ Structure of the gene length file:
 
 Example:
 
-````csv title=gene_length.csv
+```csv title=gene_length.csv
 gene_id,length
 ENSG1234567890,1000
 OTHERmappedgeneID,2000
+```
 
-### 6. More advanced scenarios
+
+### 7. More advanced scenarios
 
 For advanced scenarios, you can see the list of available parameters in the [parameter documentation](https://nf-co.re/stableexpression/parameters).
 
@@ -261,7 +253,7 @@ work                # Directory containing the nextflow working files
 <OUTDIR>            # Finished results in specified location (defined with --outdir)
 .nextflow_log       # Log file from Nextflow
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
-````
+```
 
 For a detailed description of the output files, please consult the [nf-core stableexpression output directory structure](https://nf-co.re/stableexpression/output).
 
