@@ -107,10 +107,10 @@ workflow STABLEEXPRESSION {
             params.outdir
         )
 
-        ch_counts          = ID_MAPPING.out.counts
-        ch_gene_id_mapping = ID_MAPPING.out.mapping
-        ch_gene_metadata   = ID_MAPPING.out.metadata
-        ch_valid_gene_ids  = ID_MAPPING.out.valid_gene_ids
+        ch_counts                = ID_MAPPING.out.counts
+        ch_whole_gene_id_mapping = ID_MAPPING.out.mapping
+        ch_whole_gene_metadata   = ID_MAPPING.out.metadata
+        ch_valid_gene_ids        = ID_MAPPING.out.valid_gene_ids
 
         // -----------------------------------------------------------------
         // FILTER OUT SAMPLES NOT VALID
@@ -155,8 +155,6 @@ workflow STABLEEXPRESSION {
 
         MERGE_DATA (
             ch_normalised_counts,
-            ch_gene_id_mapping,
-            ch_gene_metadata,
             params.missing_value_imputer,
             params.outdir
         )
@@ -165,8 +163,6 @@ workflow STABLEEXPRESSION {
         ch_all_counts            = MERGE_DATA.out.all_counts
         ch_whole_design          = MERGE_DATA.out.whole_design
         ch_platform_counts       = MERGE_DATA.out.platform_counts
-        ch_whole_gene_metadata   = MERGE_DATA.out.whole_gene_metadata
-        ch_whole_gene_id_mapping = MERGE_DATA.out.whole_gene_id_mapping
 
         // -----------------------------------------------------------------
         // COMPUTE BASE STATISTICS FOR ALL GENES

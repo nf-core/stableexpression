@@ -12,8 +12,6 @@ workflow MERGE_DATA {
 
     take:
     ch_normalised_counts
-    ch_gene_id_mapping
-    ch_gene_metadata
     missing_value_imputer
     outdir
 
@@ -91,47 +89,9 @@ workflow MERGE_DATA {
                             item -> "${item.batch},${item.condition},${item.sample}"
                         }
 
-    // -----------------------------------------------------------------
-    // MERGE ALL GENE ID MAPPINGS
-    // -----------------------------------------------------------------
-
-    ch_whole_gene_id_mapping = ch_gene_id_mapping
-                                .filter { it != [] } // handle case where there are no mappings
-                                .splitCsv( header: true )
-                                .unique()
-                                .collectFile(
-                                    name: 'whole_gene_id_mapping.csv',
-                                    seed: "original_gene_id,gene_id",
-                                    newLine: true,
-                                    sort: true,
-                                    storeDir: "${outdir}/idmapping/"
-                                ) {
-                                    item -> "${item.original_gene_id},${item.gene_id}"
-                                }
-
-    // -----------------------------------------------------------------
-    // MERGE ALL GENE METADATA
-    // -----------------------------------------------------------------
-
-    ch_whole_gene_metadata = ch_gene_metadata
-                                .filter { it != [] } // handle case where there are no mappings
-                                .splitCsv( header: true )
-                                .unique()
-                                .collectFile(
-                                    name: 'whole_gene_metadata.csv',
-                                    seed: "gene_id,name,description",
-                                    newLine: true,
-                                    sort: true,
-                                    storeDir: "${outdir}/idmapping/"
-                                ) {
-                                    item -> "${item.gene_id},${item.name},${item.description}"
-                                }
-
     emit:
     all_imputed_counts                     = IMPUTE_MISSING_VALUES.out.counts
     all_counts                             = ch_all_counts
     platform_counts                        = ch_platform_counts
     whole_design                           = ch_whole_design
-    whole_gene_id_mapping                  = ch_whole_gene_id_mapping
-    whole_gene_metadata                    = ch_whole_gene_metadata
 }
