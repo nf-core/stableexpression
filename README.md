@@ -39,6 +39,66 @@ It takes as main inputs :
 - **find the most suitable genes as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
 - download all Expression Atlas and / or NCBI GEO datasets for a species (and optionally keywords)
 
+## Pipeline overview
+
+The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
+
+#### 1. Get accessions from public databases
+
+- Get [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords)
+  This step is run by default but is optional. Set `--skip_fetch_eatlas_accessions` to skip it.
+- Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) **microarray** dataset accessions corresponding to the provided species (and optionally keywords)
+  This is optional and **NOT** run by default. Set `--fetch_geo_accessions` to run it.
+
+#### 2. Download data (see [usage](conf/usage.md#3-provide-your-own-accessions))
+
+- Download [Expression Atlas](https://www.ebi.ac.uk/gxa/home) data if any
+- Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data if any
+
+> [!NOTE]
+> At this point, datasets downloaded from public databases are merged with datasets provided by the user using the `--datasets` parameter. See [usage](conf/usage.md#4-use-your-own-expression-datasets) for more information about local datasets.
+
+#### 3. ID Mapping (see [usage](conf/usage.md#5-custom-gene-id-mapping--metadata))
+
+- Gene IDs are cleaned
+- Map gene IDS to NCBI Entrez Gene IDS (or Ensembl IDs) for standardisation among datasets using [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
+- Rare genes are filtered out
+
+#### 4. Sample filtering
+
+Samples that show too high ratios of zeros or missing values are removed from the analysis.
+
+#### 5. Normalisation of expression
+
+- Normalize RNAseq raw data using TPM (necessitates downloading the corresponding genome and computing transcript lengths) or CPM.
+- Perform quantile normalisation on each dataset separately using [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html)
+
+#### 6. Merge all data
+
+All datasets are merged into one single dataframe.
+
+#### 7. Imputation of missing values
+
+Missing values are replaced by imputed values using a specific algorithm provided by [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html). The user can choose the method of imputation with the `--missing_value_imputer` parameter.
+
+#### 8. General statistics for each gene
+
+Base statistics are computed for each gene, platform-wide and for each platform (RNAseq and microarray).
+
+#### 9. Scoring
+
+- The whole list of genes is divided in multiple sections, based on their expression level.
+- Based on the coefficient of variation, a shortlist of candidates genes is extracted for each section.
+- Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder)
+- Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034) (run by default; optional)
+- Compute stability scores for each candidate gene
+
+#### 10. Reporting
+
+- Result aggregation
+- Make [`MultiQC`](http://multiqc.info/) report
+- Prepare [Dash Plotly](https://dash.plotly.com/) app for further investigation of gene / sample counts
+
 ## Basic usage
 
 > [!NOTE]
@@ -79,7 +139,7 @@ For more details about the output files and reports, please refer to the
 
 ## Support us
 
-If you like nf-core/stableexpression, please make sure you give it a star on GitHub.
+If you like nf-core/stableexpression, please make sure you give it a star on GitHub!
 
 [![stars - stableexpression](https://img.shields.io/github/stars/nf-core/stableexpression?style=social)](https://github.com/nf-core/stableexpression)
 
