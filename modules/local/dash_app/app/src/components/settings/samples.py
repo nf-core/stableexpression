@@ -1,9 +1,12 @@
 import dash_mantine_components as dmc
-
 from src.utils import style
 from src.utils.data_management import DataManager
 
 data_manager = DataManager()
+
+sorted_samples = data_manager.get_sorted_samples()
+
+NB_SAMPLES_DEFAULT = 10
 
 sample_selection_stack = dmc.Stack(
     [
@@ -12,8 +15,8 @@ sample_selection_stack = dmc.Stack(
             label="Select list of samples to visualise",
             placeholder="Select samples",
             nothingFoundMessage="No samples found",
-            data=data_manager.get_sorted_samples(),
-            value=[],
+            data=sorted_samples,
+            value=sorted_samples[:NB_SAMPLES_DEFAULT],
             w=400,
             clearable=True,
             searchable=True,

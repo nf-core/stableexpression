@@ -18,6 +18,8 @@ ALL_DESIGNS_FILENAME = "whole_design.csv"
 GENE_ID_COLNAME = "gene_id"
 STD_COLNAME = "standard_deviation"
 STABILITY_SCORE_COLNAME = "stability_score"
+RANK_COLNAME = "rank"
+SECTION_COLNAME = "section"
 
 AG_GRID_DEFAULT_COLUMN_DEF = {
     "filter": True,

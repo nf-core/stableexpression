@@ -1,9 +1,12 @@
 import dash_mantine_components as dmc
-
 from src.utils import style
 from src.utils.data_management import DataManager
 
 data_manager = DataManager()
+
+sorted_genes = data_manager.get_sorted_genes()
+
+nb_sections = data_manager.get_nb_sections()
 
 gene_selection_stack = dmc.Stack(
     [
@@ -12,8 +15,8 @@ gene_selection_stack = dmc.Stack(
             label=dmc.Text("Genes to display", fw=600, style={"paddingBottom": "5px"}),
             placeholder="Select genes of interest",
             nothingFoundMessage="No gene found",
-            data=data_manager.get_sorted_genes(),
-            value=[],
+            data=sorted_genes,
+            value=sorted_genes[:nb_sections],
             w=400,
             clearable=True,
             searchable=True,

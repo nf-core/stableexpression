@@ -57,7 +57,8 @@ class DataManager:
     def get_sorted_genes(self) -> list[str]:
         return (
             self.all_genes_stat_df.sort(
-                by=config.STABILITY_SCORE_COLNAME, descending=False
+                by=[config.RANK_COLNAME, config.SECTION_COLNAME],
+                descending=False,
             )
             .select(config.GENE_ID_COLNAME)
             .to_series()
@@ -81,3 +82,12 @@ class DataManager:
             .to_pandas()
             .iloc[:, 0]
         )
+
+    def get_nb_sections(self) -> int:
+        return self.all_genes_stat_df.select(config.SECTION_COLNAME).n_unique()
+
+    def get_table_raw_data(self) -> list[dict]:
+        return self.all_genes_stat_df.sort(
+            by=[config.RANK_COLNAME, config.SECTION_COLNAME],
+            descending=False,
+        ).to_dicts()
