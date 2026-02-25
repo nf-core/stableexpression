@@ -216,8 +216,6 @@
                 "idmapping/renamed",
                 "idmapping/renamed/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.parquet",
                 "idmapping/renamed/warning_reason.txt",
-                "idmapping/whole_gene_id_mapping.csv",
-                "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
                 "merged_datasets/whole_design.csv",
                 "multiqc",
@@ -290,11 +288,12 @@
                 "multiqc/multiqc_plots/svg/normalised_expr_distrib_section_1.svg",
                 "multiqc/multiqc_report.html",
                 "normalised",
-                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay",
-                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/quantile_normalised",
-                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/quantile_normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/tpm",
-                "normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/tpm/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/quantile_normalised",
+                "normalised/quantile_normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay",
+                "normalised/quantile_normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/tpm",
+                "normalised/tpm/SRP254919.salmon.merged.gene_counts.top1000cov.assay",
+                "normalised/tpm/SRP254919.salmon.merged.gene_counts.top1000cov.assay/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "statistics",
@@ -362,8 +361,6 @@
                 "gene_metadata.csv:md5,bd76860b422e45eca7cd583212a977d2",
                 "mapped_gene_ids.csv:md5,78934d2ac5fe7d863f114c5703f57a06",
                 "warning_reason.txt:md5,b13d82afc1a3752e78dd796fb1c53d52",
-                "whole_gene_id_mapping.csv:md5,78934d2ac5fe7d863f114c5703f57a06",
-                "whole_gene_metadata.csv:md5,bd76860b422e45eca7cd583212a977d2",
                 "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
                 "id_mapping_stats.csv:md5,b47d6ebd34e3fb11a40665b0a38db3da",
                 "missing_values_filter_stats.csv:md5,310182ec872cf37ffb81370dfcd01207",
@@ -379,7 +376,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T15:34:52.290035655"
+        "timestamp": "2026-02-23T18:30:50.491816768"
     },
     "-profile test_eatlas_only_with_keywords": {
         "content": [
@@ -606,8 +603,6 @@
                 "idmapping/gprofiler/mapped_gene_ids.csv",
                 "idmapping/renamed",
                 "idmapping/renamed/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "idmapping/whole_gene_id_mapping.csv",
-                "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
                 "merged_datasets/whole_design.csv",
                 "multiqc",
@@ -681,11 +676,12 @@
                 "multiqc/multiqc_plots/svg/normalised_expr_distrib_section_1.svg",
                 "multiqc/multiqc_report.html",
                 "normalised",
-                "normalised/E_MTAB_8187_rnaseq",
-                "normalised/E_MTAB_8187_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_8187_rnaseq/quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_MTAB_8187_rnaseq/tpm",
-                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/quantile_normalised",
+                "normalised/quantile_normalised/E_MTAB_8187_rnaseq",
+                "normalised/quantile_normalised/E_MTAB_8187_rnaseq/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/tpm",
+                "normalised/tpm/E_MTAB_8187_rnaseq",
+                "normalised/tpm/E_MTAB_8187_rnaseq/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -760,8 +756,6 @@
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "mapped_gene_ids.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "whole_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "whole_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
@@ -779,7 +773,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T15:51:03.966213319"
+        "timestamp": "2026-02-23T18:47:16.939793804"
     },
     "-profile test_included_and_excluded_accessions": {
         "content": [
@@ -1014,8 +1008,6 @@
                 "idmapping/renamed/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
                 "idmapping/renamed/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
                 "idmapping/renamed/failure_reason.txt",
-                "idmapping/whole_gene_id_mapping.csv",
-                "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
                 "merged_datasets/whole_design.csv",
                 "multiqc",
@@ -1091,36 +1083,32 @@
                 "multiqc/multiqc_plots/svg/normalised_expr_distrib_section_1.svg",
                 "multiqc/multiqc_report.html",
                 "normalised",
-                "normalised/E_GEOD_61690_rnaseq",
-                "normalised/E_GEOD_61690_rnaseq/quantile_normalised",
-                "normalised/E_GEOD_61690_rnaseq/quantile_normalised/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_GEOD_61690_rnaseq/tpm",
-                "normalised/E_GEOD_61690_rnaseq/tpm/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
-                "normalised/E_GEOD_77826_rnaseq",
-                "normalised/E_GEOD_77826_rnaseq/quantile_normalised",
-                "normalised/E_GEOD_77826_rnaseq/quantile_normalised/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_GEOD_77826_rnaseq/tpm",
-                "normalised/E_GEOD_77826_rnaseq/tpm/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
-                "normalised/E_MTAB_5038_rnaseq",
-                "normalised/E_MTAB_5038_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_5038_rnaseq/quantile_normalised/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_MTAB_5038_rnaseq/tpm",
-                "normalised/E_MTAB_5038_rnaseq/tpm/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
-                "normalised/E_MTAB_5215_rnaseq",
-                "normalised/E_MTAB_5215_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_5215_rnaseq/quantile_normalised/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_MTAB_5215_rnaseq/tpm",
-                "normalised/E_MTAB_5215_rnaseq/tpm/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
-                "normalised/E_MTAB_552_rnaseq",
-                "normalised/E_MTAB_552_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_552_rnaseq/quantile_normalised/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_MTAB_552_rnaseq/tpm",
-                "normalised/E_MTAB_552_rnaseq/tpm/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
-                "normalised/E_MTAB_7711_rnaseq",
-                "normalised/E_MTAB_7711_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_7711_rnaseq/quantile_normalised/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_MTAB_7711_rnaseq/tpm",
-                "normalised/E_MTAB_7711_rnaseq/tpm/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/quantile_normalised",
+                "normalised/quantile_normalised/E_GEOD_61690_rnaseq",
+                "normalised/quantile_normalised/E_GEOD_61690_rnaseq/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/quantile_normalised/E_GEOD_77826_rnaseq",
+                "normalised/quantile_normalised/E_GEOD_77826_rnaseq/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/quantile_normalised/E_MTAB_5038_rnaseq",
+                "normalised/quantile_normalised/E_MTAB_5038_rnaseq/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/quantile_normalised/E_MTAB_5215_rnaseq",
+                "normalised/quantile_normalised/E_MTAB_5215_rnaseq/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/quantile_normalised/E_MTAB_552_rnaseq",
+                "normalised/quantile_normalised/E_MTAB_552_rnaseq/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/quantile_normalised/E_MTAB_7711_rnaseq",
+                "normalised/quantile_normalised/E_MTAB_7711_rnaseq/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/tpm",
+                "normalised/tpm/E_GEOD_61690_rnaseq",
+                "normalised/tpm/E_GEOD_61690_rnaseq/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/tpm/E_GEOD_77826_rnaseq",
+                "normalised/tpm/E_GEOD_77826_rnaseq/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/tpm/E_MTAB_5038_rnaseq",
+                "normalised/tpm/E_MTAB_5038_rnaseq/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/tpm/E_MTAB_5215_rnaseq",
+                "normalised/tpm/E_MTAB_5215_rnaseq/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/tpm/E_MTAB_552_rnaseq",
+                "normalised/tpm/E_MTAB_552_rnaseq/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/tpm/E_MTAB_7711_rnaseq",
+                "normalised/tpm/E_MTAB_7711_rnaseq/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -1211,8 +1199,6 @@
                 "gene_metadata.csv:md5,e33e0ed63a3dec26bc95fe422f02844c",
                 "mapped_gene_ids.csv:md5,a86823539deb80c0aa44378d3078969d",
                 "failure_reason.txt:md5,c18601322172e9ea1b2a93d03288d1c0",
-                "whole_gene_id_mapping.csv:md5,a86823539deb80c0aa44378d3078969d",
-                "whole_gene_metadata.csv:md5,e33e0ed63a3dec26bc95fe422f02844c",
                 "whole_design.csv:md5,cc24405dce8d22b93b9999a2287113ef",
                 "accessions.txt:md5,e38a0aaf5191ba5f94cb7a96b8d30aa7",
                 "E_GEOD_61690_rnaseq.design.csv:md5,ba807caf74e0b55f5c3fe23810a89560",
@@ -1243,7 +1229,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T16:02:57.777789774"
+        "timestamp": "2026-02-23T18:59:50.801141668"
     },
     "-profile test_skip_id_mapping": {
         "content": [
@@ -1267,14 +1253,14 @@
                 "multiqc/multiqc_data/multiqc_sources.txt",
                 "multiqc/multiqc_report.html",
                 "normalised",
-                "normalised/microarray.normalised",
-                "normalised/microarray.normalised/quantile_normalised",
-                "normalised/microarray.normalised/quantile_normalised/microarray.normalised.zeros_filtered.nulls_filtered.quant_norm.parquet",
-                "normalised/rnaseq.raw",
-                "normalised/rnaseq.raw/quantile_normalised",
-                "normalised/rnaseq.raw/quantile_normalised/rnaseq.raw.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/rnaseq.raw/tpm",
-                "normalised/rnaseq.raw/tpm/rnaseq.raw.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/quantile_normalised",
+                "normalised/quantile_normalised/microarray.normalised",
+                "normalised/quantile_normalised/microarray.normalised/microarray.normalised.zeros_filtered.nulls_filtered.quant_norm.parquet",
+                "normalised/quantile_normalised/rnaseq.raw",
+                "normalised/quantile_normalised/rnaseq.raw/rnaseq.raw.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/tpm",
+                "normalised/tpm/rnaseq.raw",
+                "normalised/tpm/rnaseq.raw/rnaseq.raw.zeros_filtered.nulls_filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "statistics",
@@ -1303,7 +1289,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T15:52:32.720649435"
+        "timestamp": "2026-02-23T18:48:49.274228209"
     },
     "-profile test": {
         "content": [
@@ -1394,8 +1380,6 @@
                 "idmapping/renamed",
                 "idmapping/renamed/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
                 "idmapping/renamed/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "idmapping/whole_gene_id_mapping.csv",
-                "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
                 "merged_datasets/whole_design.csv",
                 "multiqc",
@@ -1473,11 +1457,12 @@
                 "multiqc/multiqc_plots/svg/normalised_expr_distrib_section_1.svg",
                 "multiqc/multiqc_report.html",
                 "normalised",
-                "normalised/E_MTAB_8187_rnaseq",
-                "normalised/E_MTAB_8187_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_8187_rnaseq/quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_MTAB_8187_rnaseq/tpm",
-                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/quantile_normalised",
+                "normalised/quantile_normalised/E_MTAB_8187_rnaseq",
+                "normalised/quantile_normalised/E_MTAB_8187_rnaseq/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/tpm",
+                "normalised/tpm/E_MTAB_8187_rnaseq",
+                "normalised/tpm/E_MTAB_8187_rnaseq/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -1561,8 +1546,6 @@
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "mapped_gene_ids.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "whole_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "whole_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
@@ -1583,7 +1566,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T15:30:29.782426399"
+        "timestamp": "2026-02-25T10:38:10.97537882"
     },
     "-profile test_dataset_custom_mapping_and_gene_length": {
         "content": [
@@ -1609,8 +1592,6 @@
                 "idmapping/global_gene_metadata.csv",
                 "idmapping/renamed",
                 "idmapping/renamed/failure_reason.txt",
-                "idmapping/whole_gene_id_mapping.csv",
-                "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
                 "multiqc",
                 "multiqc/multiqc_data",
@@ -1634,8 +1615,6 @@
                 "global_gene_id_mapping.csv:md5,187a86074197044846bb8565e122eb8e",
                 "global_gene_metadata.csv:md5,5ae2d701ca0cb6384d9e1e08a345e452",
                 "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e",
-                "whole_gene_id_mapping.csv:md5,187a86074197044846bb8565e122eb8e",
-                "whole_gene_metadata.csv:md5,5ae2d701ca0cb6384d9e1e08a345e452",
                 "id_mapping_stats.csv:md5,20bd1443c864cb013c97efc760465e9c"
             ]
         ],
@@ -1643,7 +1622,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T12:29:11.443812948"
+        "timestamp": "2026-02-23T18:49:18.440444811"
     },
     "-profile test_accessions_only": {
         "content": [
@@ -1690,7 +1669,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T12:56:44.398119849"
+        "timestamp": "2026-02-23T18:31:18.879046816"
     },
     "-profile test_one_accession_low_gene_count": {
         "content": [
@@ -1912,8 +1891,6 @@
                 "idmapping/gprofiler/mapped_gene_ids.csv",
                 "idmapping/renamed",
                 "idmapping/renamed/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "idmapping/whole_gene_id_mapping.csv",
-                "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
                 "merged_datasets/whole_design.csv",
                 "multiqc",
@@ -1985,11 +1962,12 @@
                 "multiqc/multiqc_plots/svg/normalised_expr_distrib_section_1.svg",
                 "multiqc/multiqc_report.html",
                 "normalised",
-                "normalised/E_GEOD_51720_rnaseq",
-                "normalised/E_GEOD_51720_rnaseq/quantile_normalised",
-                "normalised/E_GEOD_51720_rnaseq/quantile_normalised/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_GEOD_51720_rnaseq/tpm",
-                "normalised/E_GEOD_51720_rnaseq/tpm/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/quantile_normalised",
+                "normalised/quantile_normalised/E_GEOD_51720_rnaseq",
+                "normalised/quantile_normalised/E_GEOD_51720_rnaseq/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/tpm",
+                "normalised/tpm/E_GEOD_51720_rnaseq",
+                "normalised/tpm/E_GEOD_51720_rnaseq/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -2060,8 +2038,6 @@
                 "global_gene_metadata.csv:md5,b35e20500269d4e6787ef1a3468f16bc",
                 "gene_metadata.csv:md5,b35e20500269d4e6787ef1a3468f16bc",
                 "mapped_gene_ids.csv:md5,42491ef436cce231258c0358e1af5745",
-                "whole_gene_id_mapping.csv:md5,42491ef436cce231258c0358e1af5745",
-                "whole_gene_metadata.csv:md5,b35e20500269d4e6787ef1a3468f16bc",
                 "whole_design.csv:md5,d3aa542c4ad07d0051a84482fe6cd81c",
                 "E_GEOD_51720_rnaseq.design.csv:md5,80805afb29837b6fbb73a6aa6f3a461b",
                 "E_GEOD_51720_rnaseq.rnaseq.raw.counts.csv:md5,07cd448196fc2fea4663bd9705da2b98",
@@ -2078,7 +2054,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T14:46:52.90055945"
+        "timestamp": "2026-02-23T18:39:44.471631158"
     },
     "-profile test_bigger_with_genorm": {
         "content": [
@@ -2305,8 +2281,6 @@
                 "idmapping/gprofiler/mapped_gene_ids.csv",
                 "idmapping/renamed",
                 "idmapping/renamed/E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "idmapping/whole_gene_id_mapping.csv",
-                "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
                 "merged_datasets/whole_design.csv",
                 "multiqc",
@@ -2380,11 +2354,12 @@
                 "multiqc/multiqc_plots/svg/normalised_expr_distrib_section_1.svg",
                 "multiqc/multiqc_report.html",
                 "normalised",
-                "normalised/E_MTAB_5072_rnaseq",
-                "normalised/E_MTAB_5072_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_5072_rnaseq/quantile_normalised/E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_MTAB_5072_rnaseq/tpm",
-                "normalised/E_MTAB_5072_rnaseq/tpm/E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/quantile_normalised",
+                "normalised/quantile_normalised/E_MTAB_5072_rnaseq",
+                "normalised/quantile_normalised/E_MTAB_5072_rnaseq/E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/tpm",
+                "normalised/tpm/E_MTAB_5072_rnaseq",
+                "normalised/tpm/E_MTAB_5072_rnaseq/E_MTAB_5072_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -2459,8 +2434,6 @@
                 "global_gene_metadata.csv:md5,1d342577587bc48c1eff077a594929fa",
                 "gene_metadata.csv:md5,1d342577587bc48c1eff077a594929fa",
                 "mapped_gene_ids.csv:md5,efc95a8e276be1eb0af9639f72e48145",
-                "whole_gene_id_mapping.csv:md5,efc95a8e276be1eb0af9639f72e48145",
-                "whole_gene_metadata.csv:md5,1d342577587bc48c1eff077a594929fa",
                 "whole_design.csv:md5,c9bfd7bc8ca365222e03e67eb24b9a76",
                 "accessions.txt:md5,561a967c16b2ef6c29fb643cd4002947",
                 "E_MTAB_5072_rnaseq.design.csv:md5,a1f33d126dde387a2d542381c44bc1f3",
@@ -2478,7 +2451,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T16:17:52.31370558"
+        "timestamp": "2026-02-23T19:14:52.910531839"
     },
     "-profile test_download_only": {
         "content": [
@@ -2532,7 +2505,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T15:35:51.64057725"
+        "timestamp": "2026-02-23T18:31:54.266065347"
     },
     "-profile test_gprofiler_target_database_entrez": {
         "content": [
@@ -2621,8 +2594,6 @@
                 "idmapping/gprofiler/mapped_gene_ids.csv",
                 "idmapping/renamed",
                 "idmapping/renamed/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "idmapping/whole_gene_id_mapping.csv",
-                "idmapping/whole_gene_metadata.csv",
                 "merged_datasets",
                 "merged_datasets/whole_design.csv",
                 "multiqc",
@@ -2696,11 +2667,12 @@
                 "multiqc/multiqc_plots/svg/normalised_expr_distrib_section_1.svg",
                 "multiqc/multiqc_report.html",
                 "normalised",
-                "normalised/E_MTAB_8187_rnaseq",
-                "normalised/E_MTAB_8187_rnaseq/quantile_normalised",
-                "normalised/E_MTAB_8187_rnaseq/quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "normalised/E_MTAB_8187_rnaseq/tpm",
-                "normalised/E_MTAB_8187_rnaseq/tpm/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
+                "normalised/quantile_normalised",
+                "normalised/quantile_normalised/E_MTAB_8187_rnaseq",
+                "normalised/quantile_normalised/E_MTAB_8187_rnaseq/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "normalised/tpm",
+                "normalised/tpm/E_MTAB_8187_rnaseq",
+                "normalised/tpm/E_MTAB_8187_rnaseq/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "public_data",
@@ -2775,8 +2747,6 @@
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "mapped_gene_ids.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "whole_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "whole_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
@@ -2794,6 +2764,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-19T16:10:19.888782769"
+        "timestamp": "2026-02-23T19:07:16.74802239"
     }
 }
