@@ -3,7 +3,6 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import logging
-import os
 from pathlib import Path
 
 import config
