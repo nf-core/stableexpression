@@ -70,15 +70,14 @@ def quantile_normalise(df: pl.DataFrame, target_distribution: str):
 
 def main():
     args = parse_args()
-    count_file = args.count_file
 
-    logger.info(f"Parsing {count_file.name}")
-    count_df = parse_count_table(count_file)
+    logger.info(f"Parsing {args.count_file.name}")
+    count_df = parse_count_table(args.count_file)
 
-    logger.info(f"Quantile normalising {count_file.name}")
+    logger.info(f"Quantile normalising {args.count_file.name}")
     quantile_normalized_counts = quantile_normalise(count_df, args.target_distribution)
 
-    export_parquet(quantile_normalized_counts, count_file, OUTFILE_SUFFIX)
+    export_parquet(quantile_normalized_counts, args.count_file, OUTFILE_SUFFIX)
 
 
 if __name__ == "__main__":

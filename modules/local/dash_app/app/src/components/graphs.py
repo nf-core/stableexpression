@@ -1,5 +1,4 @@
 from dash_extensions.enrich import dcc
-
 from src.utils import style
 
 

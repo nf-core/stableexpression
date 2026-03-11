@@ -1,22 +1,27 @@
-from pathlib import Path
-import requests
+import logging
 import re
 from dataclasses import dataclass
+from pathlib import Path
 from typing import ClassVar
+
+import requests
 from packaging.version import parse as vparse
-import logging
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class BaseConfigFormatter:
+    """
+    Base class for extracting metadata from the pipeline's config files.
+    """
+
     CONFIG_FILE: ClassVar[Path] = Path(__file__).parents[4] / "nextflow.config"
     MAIN_FILE: ClassVar[Path] = Path(__file__).parents[4] / "main.nf"
     PACKAGES_REPOS: ClassVar[dict] = {
         "nextflow": "bioconda",
-        "apptainer": "conda-forge",
-        # "openjdk": "conda-forge",
+        "micromamba": "conda-forge",
+        "openjdk": "conda-forge",
     }
 
     @classmethod

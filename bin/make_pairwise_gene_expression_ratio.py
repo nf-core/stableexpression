@@ -76,15 +76,16 @@ def compute_ratios(file: Path, low_memory: bool) -> pl.LazyFrame:
 
 def main():
     args = parse_args()
-    file = args.cross_joined_file
 
     low_memory = True if args.task_attempts > 1 else False
-    ratios_lf = compute_ratios(file, low_memory)
+    ratios_lf = compute_ratios(args.cross_joined_file, low_memory)
 
     ratios_df = ratios_lf.collect()
 
     if len(ratios_df) == 0:
-        raise ValueError(f"No output following treatment of file {str(file)}")
+        raise ValueError(
+            f"No output following treatment of file {str(args.cross_joined_file)}"
+        )
 
     outfilename = args.cross_joined_file.name.replace("cross_join", "ratios")
     ratios_df.write_parquet(outfilename)

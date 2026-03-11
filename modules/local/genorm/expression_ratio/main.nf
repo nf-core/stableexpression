@@ -1,5 +1,6 @@
 process EXPRESSION_RATIO {
 
+    tag "${meta.section} :: ${meta.index_1} vs ${meta.index_2}"
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
@@ -8,24 +9,20 @@ process EXPRESSION_RATIO {
         'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
 
     input:
-    path file
+    tuple val(meta), path(file)
 
     output:
-    path 'ratios.*.parquet',                                                                                            emit: data
+    tuple val(meta), path('ratios.*.parquet'),                                                                        emit: data
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
 
     script:
     def args = "--task-attempts ${task.attempt}"
-    def is_using_containers = workflow.containerEngine ? true : false
     """
-    # limiting number of threads when using conda / micromamba
-    if [ "${is_using_containers}" == "false" ]; then
-        export POLARS_MAX_THREADS=${task.cpus}
-    fi
-
-    make_pairwise_gene_expression_ratio.py --file $file
+    make_pairwise_gene_expression_ratio.py \\
+        --file $file \\
+        ${args}
     """
 
 }

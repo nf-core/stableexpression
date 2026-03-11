@@ -1,6 +1,6 @@
 process QUANTILE_NORMALISATION {
 
-    label 'process_single'
+    label 'process_low'
 
     tag "${meta.dataset}"
 
@@ -15,8 +15,8 @@ process QUANTILE_NORMALISATION {
 
     output:
     tuple val(meta), path('*.quant_norm.parquet'),                                                                      emit: counts
-    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                       topic: versions
-    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),       topic: versions
+    tuple val("${task.process}"), val('python'),       eval("python3 --version | sed 's/Python //'"),                   topic: versions
+    tuple val("${task.process}"), val('polars'),       eval('python3 -c "import polars; print(polars.__version__)"'),   topic: versions
     tuple val("${task.process}"), val('scikit-learn'), eval('python3 -c "import sklearn; print(sklearn.__version__)"'), topic: versions
 
     script:

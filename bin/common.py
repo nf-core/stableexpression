@@ -33,7 +33,12 @@ def parse_table(file: Path):
         sep = "," if file.suffix == ".csv" else "\t"
         header = parse_header(file, sep)
         return pl.read_csv(
-            file, separator=sep, has_header=False, skip_rows=1, new_columns=header
+            file,
+            separator=sep,
+            has_header=False,
+            skip_rows=1,
+            new_columns=header,
+            null_values=["NA", "N/A", "na", "n/a"],
         )
     elif file.suffix == ".parquet":
         return pl.read_parquet(file)
@@ -65,3 +70,7 @@ def export_parquet(df: pl.DataFrame, count_file: Path, suffix: str):
     outfilename = count_file.with_suffix(suffix).name
     logger.info(f"Exporting processed counts to: {outfilename}")
     df.write_parquet(outfilename)
+
+
+def write_float_csv(df: pl.DataFrame, outfilename: str):
+    df.write_csv(outfilename, float_precision=config.CSV_FLOAT_PRECISION)

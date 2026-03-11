@@ -58,7 +58,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def parse_gff3_file(annotation_file: Path):
+def parse_gff3_file(annotation_file: Path) -> pd.DataFrame:
     return pd.read_csv(
         annotation_file,
         sep="\t",
@@ -69,7 +69,7 @@ def parse_gff3_file(annotation_file: Path):
     )
 
 
-def compute_transcript_lengths(df: pd.DataFrame):
+def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
     exon_df = df.loc[df["feature"] == "exon"].copy()
     # extract transcript ID from attributes column for each exon
     exon_df["transcript_id"] = exon_df["attributes"].str.extract(
@@ -85,7 +85,7 @@ def compute_transcript_lengths(df: pd.DataFrame):
 
 def compute_max_transcript_lengths_per_gene(
     df: pd.DataFrame, transcript_lengths_df: pd.DataFrame
-):
+) -> pd.DataFrame:
     rna_cols = [
         feature
         for feature in df["feature"].unique()

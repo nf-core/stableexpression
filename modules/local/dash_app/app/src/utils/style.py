@@ -37,7 +37,10 @@ HEADER_TABLIST_ITEM = {
     #'width': LEFT_SIDEBAR_WIDTH
 }
 
-TABS_PANEL = {"margin-top": HEADER_HEIGHT, "height": f"calc(100% - {HEADER_HEIGHT})"}
+TABS_PANEL = {
+    "margin-top": HEADER_HEIGHT,
+    "height": f"calc(100% - {HEADER_HEIGHT})",
+}
 
 
 SETTINGS_BUTTON = {

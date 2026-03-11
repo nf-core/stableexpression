@@ -3,7 +3,7 @@ nextflow_process {
     name "Test Process COMPUTE_DATASET_STATISTICS"
     script "modules/local/compute_dataset_statistics/main.nf"
     process "COMPUTE_DATASET_STATISTICS"
-    tag "COMPUTE_DATASET_STATISTICS"
+    tag "dataset_stats"
 
     test("Should not fail") {
 

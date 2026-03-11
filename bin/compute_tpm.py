@@ -9,7 +9,12 @@ from pathlib import Path
 
 import config
 import polars as pl
-from common import compute_log2, export_parquet, parse_count_table, parse_table
+from common import (
+    compute_log2,
+    export_parquet,
+    parse_count_table,
+    parse_table,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

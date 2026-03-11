@@ -5,7 +5,7 @@ nextflow_process {
     process "GET_CANDIDATE_GENES"
     tag "get_candidate_genes"
 
-    test("With coefficient of variation") {
+    test("Nb sections & candidates per section lower than total nb genes") {
 
         when {
 
@@ -13,9 +13,8 @@ nextflow_process {
                 """
                 input[0] = file('$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = file('$projectDir/tests/test_data/base_statistics/output/stats_all_genes.csv', checkIfExists: true)
-                input[2] = "cv"
-                input[3] = 10
-                input[4] = 0.2
+                input[2] = "2"
+                input[3] = 3
                 """
             }
         }
@@ -29,7 +28,7 @@ nextflow_process {
 
     }
 
-    test("With RCVm and no filter on expression level") {
+    test("Too many sections") {
 
         when {
 
@@ -37,9 +36,8 @@ nextflow_process {
                 """
                 input[0] = file('$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = file('$projectDir/tests/test_data/base_statistics/output/stats_all_genes.csv', checkIfExists: true)
-                input[2] = "rcvm"
-                input[3] = 10
-                input[4] = 0
+                input[2] = "50"
+                input[3] = 20
                 """
             }
         }

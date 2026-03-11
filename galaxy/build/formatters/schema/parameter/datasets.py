@@ -1,5 +1,7 @@
 import re
 from dataclasses import dataclass
+from typing import override
+
 from .base import BaseParameterFormatter
 
 
@@ -8,6 +10,7 @@ class DatasetsParameterFormatter(BaseParameterFormatter):
     # if param is an optional file with multiple possible values, it requires special handling
     # see https://docs.galaxyproject.org/en/latest/dev/schema.html#id51
 
+    @override
     def get_input(self) -> str:
         input_param_str = super().get_input()
         # setting to required
@@ -35,6 +38,7 @@ class DatasetsParameterFormatter(BaseParameterFormatter):
                 </when>
             </conditional>"""
 
+    @override
     def get_cli(self) -> str:
         # see https://planemo.readthedocs.io/en/latest/writing_advanced.html#consuming-collections
         return f"""

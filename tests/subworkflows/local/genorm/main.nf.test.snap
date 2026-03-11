@@ -1,4 +1,21 @@
 {
+    "1000 genes": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "m_measures": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-02-19T11:49:02.635827714"
+    },
     "10 genes": {
         "content": [
             {

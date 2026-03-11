@@ -124,10 +124,9 @@ def group_standard_deviations(std_lf: pl.LazyFrame) -> pl.LazyFrame:
 
 def main():
     args = parse_args()
-    file = args.ratio_file
 
     low_memory = True if args.task_attempts > 1 else False
-    std_lf = compute_standard_deviations(file, low_memory)
+    std_lf = compute_standard_deviations(args.ratio_file, low_memory)
     std_lf = group_standard_deviations(std_lf)
 
     # when the ratio file corresponds to the same gene ids cross joined with themselves (i == i)
@@ -135,7 +134,9 @@ def main():
 
     std_df = std_lf.collect()
     if len(std_df) == 0:
-        raise ValueError(f"No output following treatment of file {str(file)}")
+        raise ValueError(
+            f"No output following treatment of file {str(args.ratio_file)}"
+        )
 
     outfile = args.ratio_file.name.replace("ratios", "std")
     std_df.write_parquet(outfile)

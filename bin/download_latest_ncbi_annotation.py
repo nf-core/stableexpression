@@ -9,7 +9,7 @@ import sys
 import zipfile
 from pathlib import Path
 
-import requests
+import httpx
 from tenacity import (
     before_sleep_log,
     retry,
@@ -57,7 +57,7 @@ def parse_args():
 
 #####################################################
 #####################################################
-# REQUESTS
+# httpx
 #####################################################
 #####################################################
 
@@ -69,7 +69,7 @@ def parse_args():
 )
 def send_post_request_to_ncbi_dataset(endpoint: str, data: dict, params: dict = {}):
     url = NCBI_DATASET_API_URL + endpoint
-    response = requests.post(url, headers=NCBI_API_HEADERS, json=data, params=params)
+    response = httpx.post(url, headers=NCBI_API_HEADERS, json=data, params=params)
     response.raise_for_status()
     return response.json()
 
@@ -81,7 +81,7 @@ def send_post_request_to_ncbi_dataset(endpoint: str, data: dict, params: dict = 
 )
 def send_get_request_to_ncbi_dataset(endpoint: str, params: dict = {}):
     url = NCBI_DATASET_API_URL + endpoint
-    response = requests.get(url, headers=NCBI_API_HEADERS, params=params)
+    response = httpx.get(url, headers=NCBI_API_HEADERS, params=params)
     response.raise_for_status()
     return response.json()
 
@@ -167,6 +167,10 @@ def download_genome_annotation(genome_accession: str) -> str:
     data = {"accessions": [genome_accession], "include_annotation_type": ["GENOME_GFF"]}
     params = {"filename": DOWNLOADED_FILENAME}
     send_post_request_to_ncbi_dataset(NCBI_TAXONOMY_ENDPOINT, data, params)
+    if not Path(DOWNLOADED_FILENAME).exists():
+        raise FileNotFoundError(
+            f"Downloaded file not found for accession {genome_accession}"
+        )
 
 
 def extract_annotation_file_from_archive():
@@ -195,6 +199,7 @@ def extract_annotation_file_from_archive():
 
 if __name__ == "__main__":
     args = parse_args()
+
     species = format_species_name(args.species)
 
     species_taxid = get_species_taxid(species)
@@ -209,7 +214,7 @@ if __name__ == "__main__":
 
     # looping while we can get an annotation file
     annotation_found = False
-    while not annotation_found:
+    while not annotation_found and reports:
         best_assembly_report = get_reference_assembly(reports)
         logger.info(
             f"Best assembly: {best_assembly_report['accession']}. Trying to download annotation"

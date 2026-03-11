@@ -17,7 +17,8 @@ workflow EXPRESSION_NORMALISATION {
     ch_datasets
     normalisation_method
     quantile_norm_target_distrib
-    gene_length
+    gff_file
+    gene_length_file
 
     main:
 
@@ -36,15 +37,18 @@ workflow EXPRESSION_NORMALISATION {
 
     if ( normalisation_method == 'tpm' ) {
 
-        if ( params.gene_length ) {
+        if ( gene_length_file ) {
 
-            ch_gene_length_file = channel.fromPath( params.gene_length, checkIfExists: true )
+            ch_gene_length_file = channel.fromPath( gene_length_file, checkIfExists: true )
 
         } else {
 
             // download genome annotation
             // and computing length of the longest transcript gene per gene
-            GET_TRANSCRIPT_LENGTHS (species)
+            GET_TRANSCRIPT_LENGTHS(
+                species,
+                gff_file
+            )
             ch_gene_length_file = GET_TRANSCRIPT_LENGTHS.out.csv
 
         }

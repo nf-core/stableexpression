@@ -5,7 +5,7 @@ CDNA_LENGTH_COLNAME = "length"
 RANK_COLNAME = "rank"
 
 # base statistics
-VARIATION_COEFFICIENT_COLNAME = "coefficient_of_variation"
+COEFFICIENT_OF_VARIATION_COLNAME = "coefficient_of_variation"
 ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME = (
     "robust_coefficient_of_variation_median"
 )
@@ -27,21 +27,18 @@ KS_TEST_COLNAME = "kolmogorov_smirnov_pvalue"
 # count dataframe
 GENE_COUNT_COLNAME = "count"
 SAMPLE_COLNAME = "sample"
+RATIO_COLNAME = "ratio"
 
 # gene metadata
 ORIGINAL_GENE_ID_COLNAME = "original_gene_id"
 ORIGINAL_GENE_IDS_COLNAME = "original_gene_ids"
 GENE_NAME_COLNAME = "name"
 GENE_DESCRIPTION_COLNAME = "description"
+SECTION_COLNAME = "section"
 
 # computed stability values
 NORMFINDER_STABILITY_VALUE_COLNAME = "normfinder_stability_value"
 GENORM_M_MEASURE_COLNAME = "genorm_m_measure"
 RATIOS_STD_COLNAME = "ratios_stds"
-
-SCORING_BASE_TO_STABILITY_SCORE_COLUMN = {
-    "cv": VARIATION_COEFFICIENT_COLNAME,
-    "rcvm": ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME,
-}
 
 CSV_FLOAT_PRECISION = 6

@@ -10,8 +10,10 @@ nextflow_process {
         when {
             process {
                 """
-                file = file( '$projectDir/tests/test_data/genorm/cross_join/output/cross_join.0.1.parquet', checkIfExists: true)
-                input[0] = file
+                input[0] = [
+                    [section: "section_1", index_1: 0, index_2: 1],
+                    file( '$projectDir/tests/test_data/genorm/cross_join/output/cross_join.0.1.parquet', checkIfExists: true)
+                ]
                 """
             }
         }

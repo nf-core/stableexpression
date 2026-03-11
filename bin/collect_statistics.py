@@ -2,8 +2,8 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
+import argparse
 import logging
-import sys
 from pathlib import Path
 
 import pandas as pd
@@ -12,12 +12,22 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Collect statistics")
+    parser.add_argument(
+        "--file",
+        type=Path,
+        required=True,
+    )
+    return parser.parse_args()
+
+
 def main():
-    file = Path(sys.argv[1])
+    args = parse_args()
 
     logger.info("Collecting statistics...")
     # parsing file manually because it's not a standard CSV format
-    with open(file, "r") as f:
+    with open(args.file, "r") as f:
         lines = f.readlines()
     data = [line.strip().split(",") for line in lines]
 
@@ -31,7 +41,7 @@ def main():
     # the first item is the dataset name
     df.set_index(df.columns[0], inplace=True)
 
-    outfile = file.name.replace(".csv", ".transposed.csv")
+    outfile = args.file.name.replace(".csv", ".transposed.csv")
     logger.info(f"Saving statistics to {outfile}")
     df.T.to_csv(outfile, index=False, header=True)
 

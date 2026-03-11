@@ -1,5 +1,6 @@
 process CROSS_JOIN {
 
+    tag "${meta.section} :: ${meta.index_1} vs ${meta.index_2}"
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
@@ -11,25 +12,20 @@ process CROSS_JOIN {
     tuple val(meta), path("count_chunk_file_1"), path("count_chunk_file_2")
 
     output:
-    path 'cross_join.*.parquet',                                                                                      emit: data
+    tuple val(meta), path('cross_join.*.parquet'),                                                                    emit: data
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
 
     script:
     def args = "--task-attempts ${task.attempt}"
-    def is_using_containers = workflow.containerEngine ? true : false
     """
-    # limiting number of threads when using conda / micromamba
-    if [ "${is_using_containers}" == "false" ]; then
-        export POLARS_MAX_THREADS=${task.cpus}
-    fi
-
     make_cross_join.py \\
         --file1 count_chunk_file_1 \\
         --file2 count_chunk_file_2 \\
         --index1 ${meta.index_1} \\
-        --index2 ${meta.index_2} $args
+        --index2 ${meta.index_2} \\
+        ${args}
     """
 
 }

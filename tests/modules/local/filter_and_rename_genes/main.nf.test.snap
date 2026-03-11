@@ -7,9 +7,7 @@
                 ],
                 "1": [
                     [
-                        [
-                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                        ],
+                        "test",
                         "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e"
                     ]
                 ],
@@ -18,9 +16,7 @@
                 ],
                 "3": [
                     [
-                        [
-                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                        ],
+                        "test",
                         "0",
                         "0",
                         "3",
@@ -48,9 +44,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T19:01:46.153372095"
+        "timestamp": "2026-02-21T09:28:39.199420229"
     },
     "Map Ensembl IDs": {
         "content": [
@@ -58,9 +54,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.ensembl_ids.renamed.parquet:md5,dcdec4c4a0bdcc5802a6d4c3c24d0af6"
                     ]
@@ -73,9 +67,7 @@
                 ],
                 "3": [
                     [
-                        [
-                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                        ],
+                        "test",
                         "2",
                         "1",
                         "1",
@@ -99,9 +91,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.ensembl_ids.renamed.parquet:md5,dcdec4c4a0bdcc5802a6d4c3c24d0af6"
                     ]
@@ -110,9 +100,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T19:00:32.790897635"
+        "timestamp": "2026-02-21T09:28:21.213775764"
     },
     "No valid gene": {
         "content": [
@@ -122,9 +112,7 @@
                 ],
                 "1": [
                     [
-                        [
-                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                        ],
+                        "test",
                         "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e"
                     ]
                 ],
@@ -133,9 +121,7 @@
                 ],
                 "3": [
                     [
-                        [
-                            "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                        ],
+                        "test",
                         "0",
                         "0",
                         "3",
@@ -163,8 +149,8 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T19:00:41.34477175"
+        "timestamp": "2026-02-21T09:28:30.334157385"
     }
 }

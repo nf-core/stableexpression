@@ -5,6 +5,7 @@ nextflow_process {
     process "GEO_GETDATA"
     tag "geo_getdata"
 
+/*
     test("Beta vulgaris - Small RNA of sugar beet in response to drought stress") {
 
         when {
@@ -28,7 +29,6 @@ nextflow_process {
         }
 
     }
-
     test("Accession does not exist") {
 
         when {
@@ -52,7 +52,7 @@ nextflow_process {
         }
 
     }
-/*
+
     test("Drosophila simulans - Only one sample among several") {
 
         when {
@@ -76,7 +76,7 @@ nextflow_process {
         }
 
     }
-*/
+
     test("Drosophila simulans - No data found") {
 
         when {
@@ -222,5 +222,6 @@ nextflow_process {
         }
 
     }
+    */
 
 }

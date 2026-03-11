@@ -6,10 +6,9 @@ data_manager = DataManager()
 
 NB_GENES_SELECTED_DEFAULT = 10
 
-row_data = data_manager.all_genes_stat_df.to_dicts()
-default_selected_rows = data_manager.all_genes_stat_df.head(
-    NB_GENES_SELECTED_DEFAULT
-).to_dicts()
+row_data = data_manager.get_table_raw_data()
+# default_selected_rows = data_manager.all_genes_stat_df.head(NB_GENES_SELECTED_DEFAULT).to_dicts()
+
 column_defs = [
     {"field": col, "headerName": col.replace("_", " ").capitalize()}
     for col in data_manager.all_genes_stat_df.columns
@@ -38,10 +37,10 @@ all_genes_stats_table = dag.AgGrid(
         headerCheckboxSelection=False,
         getRowId="params.data.gene_id",
     ),
-    selectedRows=default_selected_rows,
+    # selectedRows=default_selected_rows,
     style=style.AG_GRID,
-    persistence=True,
-    persistence_type="session",
-    persisted_props=["selectedRows"],
+    # persistence=True,
+    # persistence_type="session",
+    # persisted_props=["selectedRows"],
     id="gene-stats-table",
 )

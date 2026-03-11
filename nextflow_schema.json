@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/main/nextflow_schema.json",
     "title": "nf-core/stableexpression pipeline parameters",
-    "description": "This pipeline is dedicated to finding the most stable genes across count datasets",
+    "description": "This pipeline is dedicated to identifying the most stable genes within a single or multiple expression dataset(s). This is particularly useful for identifying the most suitable RT-qPCR reference genes for a specific species.",
     "type": "object",
     "$defs": {
         "input_output_options": {
@@ -42,6 +42,20 @@
                     "fa_icon": "fas fa-font",
                     "pattern": "(([a-zA-Z,]+))?",
                     "help_text": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas and / or GEO datasets. The pipeline will select all Expression Atlas experiments / GEO datasets that contain the provided keywords in their description of in one of the condition names. Example: `--keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set and --fetch_geo_accessions is not set."
+                },
+                "target_genes": {
+                    "type": "string",
+                    "description": "Target genes",
+                    "fa_icon": "fas fa-arrows-alt-h",
+                    "help_text": "One or multiple target genes (separated by commas). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols."
+                },
+                "target_gene_file": {
+                    "type": "string",
+                    "description": "File containing target genes",
+                    "format": "file-path",
+                    "exists": true,
+                    "fa_icon": "fas fa-arrows-alt-h",
+                    "help_text": "File containing one or multiple target genes (one ID per line). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols."
                 },
                 "platform": {
                     "type": "string",
@@ -138,13 +152,19 @@
                     "fa_icon": "fas fa-ban",
                     "help": "If you don't want to map gene IDs with g:Profiler, you can skip this step by providing `--skip_id_mapping`. It can be in particular useful if the g:Profiler is down and if you already have a custom mapping file."
                 },
+                "skip_cleaning_gene_ids": {
+                    "type": "boolean",
+                    "description": "Skip cleaning gene IDs step",
+                    "fa_icon": "fas fa-ban",
+                    "help": "If you don't want to clean gene IDs, you can skip this step by providing `--skip_cleaning_gene_ids`. Note that gene ID cleaning is automatically disabled with `--skip_id_mapping`."
+                },
                 "gprofiler_target_db": {
                     "type": "string",
-                    "description": "Target database for g:Profiler",
+                    "description": "Experimental: target database for g:Profiler",
                     "fa_icon": "fas fa-divide",
                     "enum": ["ENSG", "ENTREZGENE", "UNIPROTSPTREMBL", "UNIPROTSWISSPROT"],
                     "default": "ENSG",
-                    "help_text": "Target database for g:Profiler. You can see the full list of available target databases at https://biit.cs.ut.ee/gprofiler/convert."
+                    "help_text": "Experimental: target database for g:Profiler. You can see the full list of available target databases at https://biit.cs.ut.ee/gprofiler/convert."
                 },
                 "gene_id_mapping": {
                     "type": "string",
@@ -188,6 +208,41 @@
                 }
             }
         },
+        "sample_filtering_options": {
+            "title": "Sample filtering options",
+            "type": "object",
+            "fa_icon": "fas fa-chart-line",
+            "description": "Options for filtering samples based on their expression levels.",
+            "properties": {
+                "max_zero_ratio": {
+                    "type": "number",
+                    "description": "Maximum ratio of zero counts to total counts",
+                    "fa_icon": "fas fa-divide",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.9,
+                    "help_text": "A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
+                },
+                "max_null_ratio": {
+                    "type": "number",
+                    "description": "Maximum ratio of null values",
+                    "fa_icon": "fas fa-divide",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.9,
+                    "help_text": "A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
+                },
+                "max_null_ratio_valid_sample": {
+                    "type": "number",
+                    "description": "Maximum ratio of null values in a sample for it to be considered in the computation of the null value malus",
+                    "fa_icon": "fas fa-divide",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.75,
+                    "help_text": "After filtering out samples with a very high proportion of zero counts (via `--max_null_ratio`), a second filter is set up to avoid samples that contain a substantial proportion of null values to be considered in the malus of null values comprised in the stability score."
+                }
+            }
+        },
         "statistical_options": {
             "title": "Statistics options",
             "type": "object",
@@ -201,6 +256,16 @@
                     "enum": ["tpm", "cpm"],
                     "default": "tpm",
                     "help_text": "Raw RNAseq data must be normalised before further processing. `tmp offers a more accurate representation of gene expression levels as it is unbiased toward gene length. However, you can choose `cpm` if you do not have access to a genome annotation."
+                },
+                "gff": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/tsv",
+                    "pattern": "^\\S+\\.(gff|dat)$",
+                    "description": "Genome annotation file (GFF format)",
+                    "help_text": "Path to genome annotation file (GFF format). Cannot be compressed.",
+                    "fa_icon": "fas fa-file"
                 },
                 "gene_length": {
                     "type": "string",
@@ -221,14 +286,13 @@
                     "default": "uniform",
                     "help_text": "In order to compare counts between samples and different datasets, all normalised counts are quantile normalised and mapped to a specific distribution. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
                 },
-                "min_expr_threshold": {
-                    "type": "number",
-                    "description": "Minimum percentage of quantile expression level",
+                "missing_value_imputer": {
+                    "type": "string",
+                    "description": "Type of imputation method to use for missing values",
                     "fa_icon": "fas fa-battery-three-quarters",
-                    "minimum": 0,
-                    "maximum": 1,
-                    "default": 0.2,
-                    "help_text": "To avoid genes with low expression levels from being considered for stability scoring, a threshold is set up. For example, a value of 0.2 means that the pipeline will reject genes showing an average expression level in the bottom 20% of all genes."
+                    "enum": ["iterative", "knn", "gene_mean"],
+                    "default": "iterative",
+                    "help_text": "The pipeline provides three options for imputing missing values: iterative, k-nearest neighbors, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Gene mean imputation is a very basic method that replaces missing values with the mean expression level of the gene across all samples."
                 }
             }
         },
@@ -238,32 +302,31 @@
             "fa_icon": "fas fa-chart-line",
             "description": "Options relative to assessment of stability for each gene.",
             "properties": {
-                "candidate_selection_descriptor": {
-                    "type": "string",
-                    "description": "Statistic descriptor for prior gene candidate selection. Either coefficient of variation (cv), or robust median absolute deviation (rcvm).",
-                    "fa_icon": "far fa-chart-bar",
-                    "enum": ["cv", "rcvm"],
-                    "default": "cv",
-                    "help_text": "Candidate genes are chosen based on a certain statistical descriptor. Set this parameter to modify the descriptor used."
-                },
-                "nb_top_gene_candidates": {
+                "nb_sections": {
                     "type": "integer",
-                    "description": "Number of candidate genes to keep for stability scoring",
+                    "description": "Number of sections to divide genes into for stability scoring.",
                     "fa_icon": "fas fa-sort-numeric-up-alt",
                     "minimum": 1,
-                    "help_text": "Number of candidate genes to keep in the final list. These candidates genes are chosen as the ones showing the least standard variation."
+                    "help_text": "All genes are divided into sections based on their expression levels. Set this parameter to modify the number of sections."
                 },
-                "run_genorm": {
+                "nb_candidates_per_section": {
+                    "type": "integer",
+                    "description": "Number of candidate genes to keep for stability scoring in each section",
+                    "fa_icon": "fas fa-sort-numeric-up-alt",
+                    "minimum": 1,
+                    "help_text": "Number of candidate genes to keep in each section for stability scoring. Within each section, the top candidates are selected based on the descriptor chosen with `--candidate_selection_descriptor`."
+                },
+                "skip_genorm": {
                     "type": "boolean",
                     "description": "Run Genorm",
                     "fa_icon": "fas fa-check",
-                    "help": "Genorm is not run by default. To run and get additional information about gene stability, set this parameter to true. Moreover, you can integrate the Genorm M-measure in the stability score by modifying the score weights with --stability_score_weights."
+                    "help": "Skip Genorm by setting this parameter to true. In this case, by default, only Normfinder will participate in the stability score."
                 },
                 "stability_score_weights": {
                     "type": "string",
                     "description": "Weights for stability score calculation",
                     "fa_icon": "fas fa-balance-scale",
-                    "help_text": "Weights for Coefficient of Variation / Robust Coefficient of Variation on Median / Normfinder / Genorm respectively. Must be a comma-separated string. Example: 0.8,0.1,0.1,0",
+                    "help_text": "Weights for Normfinder / Genorm / Coefficient of Variation (CV) / Robust Coefficient of Variation on Median (RCVM) respectively. Must be a comma-separated string. Example: 0.5,0.5,0.0,0",
                     "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$"
                 }
             }
@@ -457,6 +520,9 @@
         },
         {
             "$ref": "#/$defs/idmapping_options"
+        },
+        {
+            "$ref": "#/$defs/sample_filtering_options"
         },
         {
             "$ref": "#/$defs/statistical_options"

@@ -18,7 +18,8 @@ process COLLECT_STATISTICS {
 
     script:
     """
-    collect_statistics.py $file
+    collect_statistics.py \\
+        --file $file
     """
 
 }

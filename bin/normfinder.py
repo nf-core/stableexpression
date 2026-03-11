@@ -12,6 +12,7 @@ from statistics import mean
 import config
 import numpy as np
 import polars as pl
+from common import write_float_csv
 from numba import njit, prange
 from tqdm import tqdm
 
@@ -483,16 +484,13 @@ def parse_args():
     parser.add_argument(
         "--design", type=Path, dest="design_file", required=True, help="Design file"
     )
-
     return parser.parse_args()
 
 
 def export_stability(stabilities: pl.DataFrame):
     """Export stability values to CSV file."""
     logger.info(f"Exporting stability values to: {STABILITY_OUTFILENAME}")
-    stabilities.write_csv(
-        STABILITY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
-    )
+    write_float_csv(stabilities, STABILITY_OUTFILENAME)
 
 
 def main():

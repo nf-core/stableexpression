@@ -1,5 +1,6 @@
 include { CLEAN_GENE_IDS                         } from '../../../modules/local/clean_gene_ids'
-include { COLLECT_GENE_IDS                       } from '../../../modules/local/collect_gene_ids'
+include { EXTRACT_GENE_IDS                       } from '../../../modules/local/extract_gene_ids'
+include { COLLECT_ALL_GENE_IDS                   } from '../../../modules/local/collect_all_gene_ids'
 include { GPROFILER_IDMAPPING                    } from '../../../modules/local/gprofiler/idmapping'
 include { DETECT_RARE_GENES                      } from '../../../modules/local/detect_rare_genes'
 include { FILTER_AND_RENAME_GENES                } from '../../../modules/local/filter_and_rename_genes'
@@ -16,6 +17,7 @@ workflow ID_MAPPING {
     ch_counts
     species
     skip_id_mapping
+    skip_cleaning_gene_ids
     gprofiler_target_db
     custom_gene_id_mapping
     custom_gene_metadata
@@ -27,25 +29,55 @@ workflow ID_MAPPING {
 
     ch_gene_id_mapping      = channel.empty()
     ch_gene_metadata        = channel.empty()
-    ch_valid_gene_ids       = channel.empty()
 
-    if ( !skip_id_mapping ) {
 
-        // -----------------------------------------------------------------
-        // CLEANING GENE IDS
-        // -----------------------------------------------------------------
+    // -----------------------------------------------------------------
+    // IN CASE OF ID MAPPING, CLEANING GENE IDS BEFOREHAND
+    // -----------------------------------------------------------------
 
+    if ( !skip_id_mapping && !skip_cleaning_gene_ids ) {
+
+        // ensuring that all gene ids are valid before mapping
         CLEAN_GENE_IDS ( ch_counts )
-        ch_counts           = CLEAN_GENE_IDS.out.counts
-        ch_cleaned_gene_ids = CLEAN_GENE_IDS.out.gene_ids
+        ch_counts = CLEAN_GENE_IDS.out.counts
+
+    }
+
+    // -----------------------------------------------------------------
+    // EXTRACTING GENE IDS FROM COUNTS FILE
+    // -----------------------------------------------------------------
+
+    EXTRACT_GENE_IDS ( ch_counts )
+    ch_gene_ids = EXTRACT_GENE_IDS.out.gene_ids
+
+
+
+    if ( skip_id_mapping ) {
+
+        // -----------------------------------------------------------------
+        // MAKING FILE CONTAINING ALL GENE UNIQUE GENE IDS (ALL GENE IDS ARE VALID)
+        // -----------------------------------------------------------------
+
+        ch_valid_gene_ids = ch_gene_ids
+                                .splitText()
+                                .map { it.trim() }
+                                .unique()
+                                .collectFile(
+                                    name: 'gene_ids.txt',
+                                    newLine: true,
+                                    storeDir: "${outdir}/idmapping/",
+                                    sort: true
+                                )
+
+    } else {
 
         // -----------------------------------------------------------------
         // COLLECTING ALL CLEANED GENE IDS FROM ALL DATASETS
         // -----------------------------------------------------------------
 
         // sorting files in order to have a consistent input and be able to retry
-        COLLECT_GENE_IDS(
-            ch_cleaned_gene_ids.toSortedList()
+        COLLECT_ALL_GENE_IDS(
+            ch_gene_ids.toSortedList()
         )
 
         // -----------------------------------------------------------------
@@ -53,7 +85,7 @@ workflow ID_MAPPING {
         // -----------------------------------------------------------------
 
         GPROFILER_IDMAPPING(
-            COLLECT_GENE_IDS.out.unique_gene_ids,
+            COLLECT_ALL_GENE_IDS.out.unique_gene_ids,
             species,
             gprofiler_target_db
         )
@@ -66,7 +98,7 @@ workflow ID_MAPPING {
 
         DETECT_RARE_GENES(
             ch_gene_id_mapping,
-            COLLECT_GENE_IDS.out.gene_id_occurrences,
+            COLLECT_ALL_GENE_IDS.out.gene_id_occurrences,
             ch_counts.count(),
             min_occurrence_freq,
             min_occurrence_quantile
@@ -134,5 +166,6 @@ workflow ID_MAPPING {
     counts          = ch_counts
     mapping         = ch_global_gene_id_mapping
     metadata        = ch_global_gene_metadata
+    valid_gene_ids  = ch_valid_gene_ids
 
 }

@@ -5,9 +5,8 @@
 import logging
 
 import config
+import httpx
 import pandas as pd
-import requests
-from requests.exceptions import ConnectionError, HTTPError
 from tenacity import (
     before_sleep_log,
     retry,
@@ -112,16 +111,16 @@ def request_conversion(
     server_appears_down = False
 
     try:
-        response = requests.post(
+        response = httpx.post(
             url=url,
             json={"organism": organism, "query": gene_ids, "target": target_database},
         )
-    except requests.exceptions.ConnectionError:
+    except httpx.ConnectError:
         server_appears_down = True
     else:
         try:
             response.raise_for_status()
-        except (HTTPError, ConnectionError) as err:
+        except Exception as err:
             if str(response.status_code).startswith("5"):  # error 500 -> 509
                 server_appears_down = True
             else:

@@ -14,27 +14,14 @@ process CLEAN_GENE_IDS {
 
     output:
     tuple val(meta), path('*.cleaned.parquet'),             optional: true,                                           emit: counts
-    path('*.cleaned_gene_ids.txt'),                         optional: true,                                           emit: gene_ids
     tuple val(meta.dataset), path("failure_reason.txt"),    optional: true,                                           topic: id_cleaning_failure_reason
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
-    def is_using_containers = workflow.containerEngine ? true : false
     """
-    # limiting number of threads when using conda / micromamba
-    if [ "${is_using_containers}" == "false" ]; then
-        export POLARS_MAX_THREADS=${task.cpus}
-    fi
-
     clean_gene_ids.py \\
         --count-file "$count_file"
-    """
-
-
-    stub:
-    """
-    touch fake.cleaned.csv
     """
 
 }

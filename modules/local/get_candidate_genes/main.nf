@@ -10,29 +10,22 @@ process GET_CANDIDATE_GENES {
     input:
     path count_file
     path stat_file
-    val candidate_selection_descriptor
-    val nb_most_stable_genes
-    val min_pct_quantile_expr_level
+    val nb_candidates_per_section
+    val nb_sections
 
     output:
-    path 'candidate_counts.parquet',                                                                                  emit: counts
+    path 'section_*.candidate_counts.parquet',                                                                        emit: counts
+    path 'section_*.stats.parquet',                                                                                   emit: section_stats
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
-    def is_using_containers = workflow.containerEngine ? true : false
     """
-    # limiting number of threads when using conda / micromamba
-    if [ "${is_using_containers}" == "false" ]; then
-        export POLARS_MAX_THREADS=${task.cpus}
-    fi
-
     get_candidate_genes.py \\
         --counts $count_file \\
         --stats $stat_file \\
-        --candidate_selection_descriptor $candidate_selection_descriptor \\
-        --nb-top-stable-genes $nb_most_stable_genes \\
-        --min-pct-quantile-expr-level $min_pct_quantile_expr_level
+        --nb-candidates-per-section $nb_candidates_per_section \\
+        --nb-sections $nb_sections
     """
 
 }

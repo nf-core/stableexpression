@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # experimentally chosen
-GENE_CHUNK_SIZE = 300
+GENE_CHUNK_SIZE = 100
 ZERO_REPLACE_VALUE = 1e-8
 
 #####################################################

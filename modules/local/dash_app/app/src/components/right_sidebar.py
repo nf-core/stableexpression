@@ -1,8 +1,6 @@
 import dash_mantine_components as dmc
-
-from src.utils import style
-
 from src.components.settings import genes, samples
+from src.utils import style
 
 drawer = dmc.Drawer(
     children=[
@@ -10,7 +8,7 @@ drawer = dmc.Drawer(
         samples.sidebar_stack,
     ],
     id="drawer",
-    opened=False,
+    opened=True,
     position="right",
     withCloseButton=True,
     closeOnEscape=True,

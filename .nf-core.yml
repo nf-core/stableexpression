@@ -17,11 +17,11 @@ lint:
     - tests/test_data/genorm/compute_m_measure/input/std.1.2.parquet
   schema_lint: false
 
-nf_core_version: 3.5.1
+nf_core_version: 3.5.2
 repository_type: pipeline
 template:
   author: Olivier Coen
-  description: This pipeline is dedicated to finding the most stable genes across count datasets
+  description: This pipeline is dedicated to identifying the most stable genes within a single or multiple expression dataset(s). This is particularly useful for identifying the most suitable RT-qPCR reference genes for a specific species.
   force: false
   is_nfcore: true
   name: stableexpression

@@ -10,4 +10,4 @@ long_description: |
   A typical usage is to find the most suitable qPCR housekeeping genes for a specific species (and optionally specific conditions).
 name: nf_core_stableexpression
 owner: ocoen
-remote_repository_url: https://github.com/OlivierCoen/stableexpression/
+remote_repository_url: https://github.com/nf-core/stableexpression/

@@ -5,9 +5,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.cpm.parquet:md5,5f9f89a0711ea45a216dcd29805d806a"
                     ]
@@ -35,9 +33,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.cpm.parquet:md5,5f9f89a0711ea45a216dcd29805d806a"
                     ]
@@ -46,9 +42,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:46:20.91627774"
+        "timestamp": "2026-02-21T09:54:49.255411101"
     },
     "One group": {
         "content": [
@@ -150,9 +146,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.cpm.parquet:md5,a342cf59dee7ab9eadbe8df3420e3477"
                     ]
@@ -180,9 +174,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "counts.cpm.parquet:md5,a342cf59dee7ab9eadbe8df3420e3477"
                     ]
@@ -191,8 +183,8 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:46:29.367031711"
+        "timestamp": "2026-02-21T09:54:58.866506808"
     }
 }

@@ -1,4 +1,48 @@
 {
+    "With target genes": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    
+                ],
+                "6": [
+                    
+                ],
+                "all_genes_summary": [
+                    
+                ],
+                "custom_content_multiqc_config": [
+                    
+                ],
+                "most_stable_genes_summary": [
+                    
+                ],
+                "most_stable_genes_transposed_counts_filtered": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-02-19T09:57:42.302887488"
+    },
     "Without microarray": {
         "content": [
             {
@@ -20,10 +64,13 @@
                 "5": [
                     
                 ],
-                "all_counts_filtered": [
+                "6": [
                     
                 ],
                 "all_genes_summary": [
+                    
+                ],
+                "custom_content_multiqc_config": [
                     
                 ],
                 "most_stable_genes_summary": [
@@ -35,10 +82,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2025-12-03T18:51:31.019751859"
+        "timestamp": "2026-02-19T09:57:12.065279677"
     },
     "With microarray": {
         "content": [
@@ -61,10 +108,13 @@
                 "5": [
                     
                 ],
-                "all_counts_filtered": [
+                "6": [
                     
                 ],
                 "all_genes_summary": [
+                    
+                ],
+                "custom_content_multiqc_config": [
                     
                 ],
                 "most_stable_genes_summary": [
@@ -76,9 +126,9 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2025-12-03T18:51:42.230203404"
+        "timestamp": "2026-02-19T09:57:27.141519642"
     }
 }

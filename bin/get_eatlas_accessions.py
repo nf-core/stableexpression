@@ -8,8 +8,8 @@ import random
 from functools import partial
 from multiprocessing import Pool
 
+import httpx
 import pandas as pd
-import requests
 import yaml
 from natural_language_utils import keywords_in_fields
 from tenacity import (
@@ -53,13 +53,6 @@ def parse_args():
         help="Search Expression Atlas for this specific species",
     )
     parser.add_argument(
-        "--cpus",
-        dest="nb_cpus",
-        type=int,
-        required=True,
-        help="Number of CPUs to use",
-    )
-    parser.add_argument(
         "--keywords",
         type=str,
         nargs="*",
@@ -79,6 +72,9 @@ def parse_args():
         dest="random_sampling_seed",
         type=int,
         help="Random sampling seed",
+    )
+    parser.add_argument(
+        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
     )
     return parser.parse_args()
 
@@ -107,7 +103,7 @@ def get_data(url: str) -> dict:
     RuntimeError
         If the query fails
     """
-    response = requests.get(url)
+    response = httpx.get(url)
     response.raise_for_status()
     return response.json()
 

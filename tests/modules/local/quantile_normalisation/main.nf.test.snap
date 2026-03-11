@@ -5,9 +5,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "count.raw.cpm.quant_norm.parquet:md5,57629ccf12df0e16a39281dfe02df4bc"
                     ]
@@ -36,9 +34,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "count.raw.cpm.quant_norm.parquet:md5,57629ccf12df0e16a39281dfe02df4bc"
                     ]
@@ -47,9 +43,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:48:09.829197251"
+        "timestamp": "2026-02-21T09:56:51.559770587"
     },
     "Normal target distribution": {
         "content": [
@@ -57,9 +53,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "count.raw.cpm.quant_norm.parquet:md5,93484b73e81c9e3a6138aaddc1f79c41"
                     ]
@@ -88,9 +82,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                "nb_samples.ipynb:md5,eaea35c0b57650ecf2f88322e6060926"
-                            ]
+                            "dataset": "test"
                         },
                         "count.raw.cpm.quant_norm.parquet:md5,93484b73e81c9e3a6138aaddc1f79c41"
                     ]
@@ -99,8 +91,8 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:48:21.228107331"
+        "timestamp": "2026-02-21T09:57:03.814875185"
     }
 }

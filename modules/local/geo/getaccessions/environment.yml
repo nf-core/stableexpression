@@ -4,11 +4,11 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - conda-forge::python=3.13.7
-  - conda-forge::pandas==2.3.3
-  - conda-forge::requests==2.32.5
-  - conda-forge::tenacity==9.1.2
+  - conda-forge::python=3.14.3
+  - conda-forge::pandas==3.0.1
+  - conda-forge::httpx==0.28.1
+  - conda-forge::tenacity==9.1.4
   - conda-forge::nltk==3.9.2
-  - conda-forge::tqdm==4.67.1
-  - conda-forge::xmltodict==1.0.2
+  - conda-forge::tqdm==4.67.3
+  - conda-forge::xmltodict==1.0.3
   - conda-forge::biopython==1.86

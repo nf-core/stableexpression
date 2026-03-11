@@ -1,8 +1,7 @@
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
-
-from src.utils import style
 from src.components import graphs, tables
+from src.utils import style
 
 gene_icon = DashIconify(icon="material-symbols:genetics", width=20)
 
@@ -41,6 +40,7 @@ tabs = dmc.Tabs(
         ),
         dmc.TabsPanel(
             children=[
+                dmc.Text("dhkhg"),
                 graphs.gene_graph,
             ],
             style=style.TABS_PANEL,
@@ -72,7 +72,7 @@ tabs = dmc.Tabs(
 )
 
 settings_button = dmc.Button(
-    "Open settings",
+    "Select data / options",
     id="settings-button",
     className="settings-button",
     color="teal",

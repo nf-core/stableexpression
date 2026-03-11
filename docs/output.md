@@ -12,43 +12,7 @@ This document describes the output produced by the pipeline.
 
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 
-## Pipeline overview
-
-The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
-
-1. Get accessions
-
-- Get [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords) (run by default; optional)
-- Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) **microarray** dataset accessions corresponding to the provided species (and optionally keywords) (run by default; optional)
-
-2. Download data
-
-- Download [Expression Atlas](https://www.ebi.ac.uk/gxa/home) data (run by default; optional)
-- Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data (run by default; optional)
-
-3. ID Mapping
-
-- Map gene IDS to NCBI Entrez Gene IDS (or Ensembl IDs) for standardisation among datasets using [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
-
-4. Data normalisation
-
-- Normalize RNAseq raw data using TPM (necessitates downloading the corresponding genome and computing transcript lengths) or CPM.
-- Perform quantile normalisation on each dataset separately using [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html)
-
-6. Merge all data
-7. Compute base statistics for each gene, platform-wide and for each platform (RNAseq and microarray)
-8. Compute stability scoring
-
-- Get list of candidate genes based on base statistics
-- Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder)
-- Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034) (NOT run by default; optional)
-- Compute stability scores for each candidate gene
-
-9. Aggregate results
-10. Prepare [Dash Plotly](https://dash.plotly.com/) app for further investigation of gene / sample counts
-11. Make [`MultiQC`](http://multiqc.info/) report
-
-## Output files
+## Main output files
 
 ### MultiQC
 
@@ -91,6 +55,33 @@ and open your browser at `http://localhost:8080`
 > [!NOTE]
 > The app will try to use the port `8080` by default. If it is already in use, it will try `8081`, `8082` and so on. Check the logs to see which port it is using.
 
+### Statistics and scoring
+
+The gene stat summary is also bundled with the Dash Plotly app.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `dash_app/data/all_genes_summary.csv`: file containing all gene statistics, scores and ranked by stability score
+
+</details>
+
+### Merged data
+
+The file containing all normalised counts is bundled as a Parquet file with the Dash Plotly app.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `dash_app/data/all_counts.imputed.parquet`: parquet file containing all normalised + imputed gene counts
+- `idmapping/global_gene_metadata.csv`: table containing the complete set of gene metadata, obtained either via gProfiler or via the custom file provided by the user
+- `idmapping/global_gene_id_mapping.csv`: table containing the complete set of gene id mapping, obtained either via gProfiler or via the custom file - -
+- `merged_datasets/whole_design.csv`: table contained designs for all datasets and all samples comprised in the analysis
+
+</details>
+
+## Other output files of interest (useful for debbuging)
+
 ### Expression Atlas
 
 <details markdown="1">
@@ -116,10 +107,7 @@ and open your browser at `http://localhost:8080`
 <details markdown="1">
 <summary>Output files</summary>
 
-- `idmapping/`
-  - Count datasets whose gene IDs have been mapped: `*.renamed.csv`.
-  - Table associating original gene IDs and mapped gene IDs: `*.mapping.csv`.
-  - Gene metadata (name and description): `*.metadata.csv`.
+ - `renamed`: count datasets with renamed and filtered gene IDs
 
 </details>
 
@@ -129,50 +117,18 @@ and open your browser at `http://localhost:8080`
 <summary>Output files</summary>
 
 - `normalised/`: Newly normalised datasets
-  - `normalised/deseq2/` for DESeq2
-  - `normalised/edger/` for EdgeR
-- `quantile_normalised` : Quantile normalised datasets
+  - `tpm/`: with TPM
+  - `cpm/`: with CPM
+- `normalised/quantile_normalised` : Quantile normalised datasets
 
-### Gene base statistics
-
-<details markdown="1">
-<summary>Output files</summary>
-
-- `merged_datasets/`: Merged count datasets (sample-wide)
-  - `merged_datasets/all/` : all datasets together
-  - `merged_datasets/rnaseq/` : only RNA-seq datasets
-  - `merged_datasets/microarray/` : only microarray datasets
-
-</details>
-
-### Merged counts
-
-The file containing all normalised counts is bundled as a Parquet file with the Dash Plotly app.
+### Genome annotation and gene length
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `dash_app/data/all_counts.parquet`: Merged count datasets (sample-wide)
-
-</details>
-
-### Summary of gene statistics and scores
-
-The gene stat summary is also bundled with the Dash Plotly app.
-
-<details markdown="1">
-<summary>Output files</summary>
-
-- `dash_app/data/all_genes_summary.csv`: file containing all gene statistics, scores and ranked by stability score
-
-</details>
-
-### Overall experimental design
-
-<details markdown="1">
-<summary>Output files</summary>
-
-- `dash_app/data/whole_design.csv`: file containing all experimental design information
+- `gene_length/`:
+  - `gene_trnascript_lengths.csv`: table containing gene transcript lengths
+  - `*.gff*`: downloaded genome annotation
 
 </details>
 
