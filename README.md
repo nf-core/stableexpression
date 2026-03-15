@@ -147,9 +147,9 @@ If you like nf-core/stableexpression, please make sure you give it a star on Git
 
 nf-core/stableexpression was originally written by Olivier Coen.
 
-<!-- We thank the following people for their extensive assistance in the development of this pipeline: -->
+We thank the following people for their assistance in the development of this pipeline:
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+- Rémy Costa
 
 ## Contributions and Support
 
