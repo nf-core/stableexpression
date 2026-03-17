@@ -127,7 +127,7 @@
                     "python": "3.12.8"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0dev"
+                    "nf-core/stableexpression": "v1.0.0"
                 }
             },
             [
@@ -515,7 +515,7 @@
                     "python": "3.12.8"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0dev"
+                    "nf-core/stableexpression": "v1.0.0"
                 }
             },
             [
@@ -912,7 +912,7 @@
                     "python": "3.12.8"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0dev"
+                    "nf-core/stableexpression": "v1.0.0"
                 }
             },
             [
@@ -1580,7 +1580,7 @@
                     "python": "3.12.8"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0dev"
+                    "nf-core/stableexpression": "v1.0.0"
                 }
             },
             [
@@ -1635,7 +1635,7 @@
                     "pyyaml": "6.0.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0dev"
+                    "nf-core/stableexpression": "v1.0.0"
                 }
             },
             [
@@ -1803,7 +1803,7 @@
                     "python": "3.12.8"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0dev"
+                    "nf-core/stableexpression": "v1.0.0"
                 }
             },
             [
@@ -2193,7 +2193,7 @@
                     "python": "3.12.8"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0dev"
+                    "nf-core/stableexpression": "v1.0.0"
                 }
             },
             [
@@ -2466,7 +2466,7 @@
                     "pyyaml": "6.0.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0dev"
+                    "nf-core/stableexpression": "v1.0.0"
                 }
             },
             [
