@@ -11,7 +11,6 @@ from pathlib import Path
 
 import config
 import polars as pl
-from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -41,7 +40,7 @@ def parse_args():
 
 def get_lazyframes(files: list[Path]) -> list[pl.LazyFrame]:
     """Get a list of LazyFrames from a list of files."""
-    return [pl.scan_parquet(file, low_memory=True) for file in tqdm(files)]
+    return [pl.scan_parquet(file, low_memory=True) for file in files]
 
 
 def get_columns(lf: pl.LazyFrame) -> list[str]:
@@ -99,7 +98,7 @@ def collect_all_gene_ids(lfs: list[pl.LazyFrame]) -> pl.DataFrame:
     """
     logger.info("Getting the full list of gene IDs")
     gene_id_set = set()
-    for lf in tqdm(lfs):
+    for lf in lfs:
         lf_gene_ids = lf.select(config.GENE_ID_COLNAME).collect().to_series().to_list()
         gene_id_set.update(lf_gene_ids)
     return pl.DataFrame({config.GENE_ID_COLNAME: sorted(list(gene_id_set))})

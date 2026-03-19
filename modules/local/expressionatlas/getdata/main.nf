@@ -8,8 +8,8 @@ process EXPRESSIONATLAS_GETDATA {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer']  && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/7f/7fd21450c3a3f7df37fa0480170780019e9686be319da1c9e10712f7f17cca26/data':
-        'community.wave.seqera.io/library/bioconductor-expressionatlas_r-base_r-optparse:ca0f8cd9d3f44af9' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/96/963bb5cfef2f27d3c5b2a428b18319c65e4d6ff428be08cf3e124e4f9a25a234/data':
+        'community.wave.seqera.io/library/bioconductor-expressionatlas_r-base_r-optparse:e15047a6b3701e2c' }"
 
     input:
     val accession

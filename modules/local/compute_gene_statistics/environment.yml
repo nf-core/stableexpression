@@ -5,4 +5,4 @@ channels:
   - bioconda
 dependencies:
   - conda-forge::python=3.14.3
-  - conda-forge::polars==1.38.1
+  - conda-forge::polars==1.39.2
