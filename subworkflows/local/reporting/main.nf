@@ -271,21 +271,19 @@ workflow REPORTING {
     // ------------------------------------------------------------------------------------
 
     ch_multiqc_files = channel.empty()
-                        .mix( ch_most_stable_genes_summary.collect() )
-                        .mix( ch_all_genes_summary.collect() )
-                        .mix( ch_most_stable_genes_transposed_counts.collect() )
-                        .mix( channel.topic('eatlas_all_datasets').collect() ) // single item
-                        .mix( channel.topic('eatlas_selected_datasets').collect() ) // single item
-                        .mix( channel.topic('geo_all_datasets').collect() ) // single item
-                        .mix( channel.topic('geo_selected_datasets').collect() ) // single item
-                        .mix( channel.topic('geo_rejected_datasets').collect() ) // single item
+                        .mix( ch_most_stable_genes_summary.collect() )                          // single item
+                        .mix( ch_all_genes_summary.collect() )                                  // single item
+                        .mix( ch_most_stable_genes_transposed_counts.collect() )                // single item
+                        .mix( channel.topic('eatlas_all_datasets').toSortedList() )
+                        .mix( channel.topic('eatlas_selected_datasets').toSortedList() )
+                        .mix( channel.topic('geo_all_datasets').toSortedList() )
+                        .mix( channel.topic('geo_selected_datasets').toSortedList() )
+                        .mix( channel.topic('geo_rejected_datasets').toSortedList() )
+                        .mix( channel.topic('total_gene_id_occurrence_quantiles').toSortedList() )
                         .mix( COLLECT_STATISTICS.out.csv )
                         .mix( ch_id_mapping_stats )
                         .mix( ch_missing_values_filter_stats )
                         .mix( ch_zero_values_filter_stats )
-                        .mix( channel.topic('total_gene_id_occurrence_quantiles').collect() ) // single item
-                        .mix( channel.topic('mqc_stats_zero_values_filter').collect() ) // single item
-                        .mix( channel.topic('mqc_stats_missing_values_filter').collect() ) // single item
                         .mix( ch_eatlas_failure_reasons )
                         .mix( ch_eatlas_warning_reasons )
                         .mix( ch_geo_failure_reasons )
@@ -295,6 +293,7 @@ workflow REPORTING {
                         .mix( ch_id_mapping_failure_reasons )
                         .mix( ch_normalisation_failure_reasons )
                         .mix( ch_normalisation_warning_reasons )
+
 
     // ------------------------------------------------------------------------------------
     // VERSIONS
