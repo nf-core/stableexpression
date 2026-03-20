@@ -8,8 +8,8 @@ process GEO_GETDATA {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/4c/4cb08d96e62942e7b6288abf2cfd30e813521a022459700e610325a3a7c0b1c8/data':
-        'community.wave.seqera.io/library/bioconductor-geoquery_r-base_r-dplyr_r-optparse:fcd002470b7d6809' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/2d/2dd2efcca10168936aabe4209344f952df791be9a7530ddbd9e89cdbfc426a7c/data':
+        'community.wave.seqera.io/library/bioconductor-geoquery_r-base_r-dplyr_r-optparse_wget:f425756c75602053' }"
 
     input:
     val accession
