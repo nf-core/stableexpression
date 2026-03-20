@@ -105,8 +105,8 @@
                 "fetch_geo_accessions": {
                     "type": "boolean",
                     "fa_icon": "fas fa-cloud-arrow-down",
-                    "description": "Fetch GEO accessions from NCBI",
-                    "help_text": "Set this parameter to fetch GEO accessions from NCBI. This feature is experimental and may not work as expected. Please report any issues to https://github.com/nf-core/stableexpression."
+                    "description": "Fetch GEO accessions from NCBI [Experimental]",
+                    "help_text": "Set this parameter to fetch GEO accessions from NCBI. **This feature is experimental and may not work as expected**. Please report any issues to https://github.com/nf-core/stableexpression/issues."
                 },
                 "accessions": {
                     "type": "string",
