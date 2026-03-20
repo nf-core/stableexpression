@@ -379,6 +379,26 @@ get_microarray_counts <- function(platform) {
   return(counts)
 }
 
+parse_first_line <- function(filename){
+    tryCatch({
+        counts <- read.table(filename, header = FALSE, sep = sep, row.names = 1, nrows = 1)
+        return(counts)
+    }, error = function(e) {
+        write_warning(paste("ERROR PARSING FIRST LINE IN", filename, "::", e))
+        return(NULL)
+    })
+}
+
+download_file <- function(data_url, filename){
+    tryCatch({
+        download.file(data_url, filename, method = "wget", quiet = TRUE)
+        return("SUCCESS")
+    }, error = function(e) {
+        write_warning(paste("ERROR WHILE DOWNLOADING:", filename))
+        return("FAILURE")
+    })
+}
+
 
 get_raw_counts_from_url <- function(data_url) {
 
@@ -399,20 +419,23 @@ get_raw_counts_from_url <- function(data_url) {
     }
 
     message(paste("Downloading", filename))
-    tryCatch({
-        download.file(data_url, filename, method = "wget", quiet = TRUE)
-    }, error = function(e) {
-        write_warning(paste("ERROR WHILE DOWNLOADING:", filename))
-        return(NULL)
-    })
+    download_status <- download_file(data_url, filename)
+    if (download_status == "FAILURE") {
+      return(NULL)
+    }
 
     separator <- NULL
     for (sep in c("\t", ",", " ")) {
+
         # parsing the first line to determine the separator and see if there is a header
-        counts <- read.table(filename, header = FALSE, sep = sep, row.names = 1, nrows = 1)
-        if (ncol(counts) > 0) {
+        first_line <- parse_first_line(filename)
+        if (is.null(first_line)) {
+          return(NULL)
+        }
+
+        if (ncol(first_line) > 0) {
             separator <- sep
-            if (is.numeric(counts[1, 1])) {
+            if (is.numeric(first_line[1, 1])) {
                 has_header <- FALSE
             } else {
                 has_header <- TRUE
