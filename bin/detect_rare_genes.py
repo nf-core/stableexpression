@@ -106,13 +106,13 @@ def main():
         .unique()
     )
 
-    # selecting columns for output and sorting (for output consistency)
-    df = df.select([config.GENE_ID_COLNAME, "total_occurrences_quantile"]).sort(
-        ["total_occurrences_quantile", "gene_id"], descending=[True, False]
-    )
+    # sorting (for output consistency)
+    df = df.sort(["total_occurrences_quantile", "gene_id"], descending=[True, False])
 
     # writing total occurrences in a csv before filtering
-    df.write_csv(TOTAL_OCCURRENCES_OUTFILE)
+    df.select([config.GENE_ID_COLNAME, "total_occurrences_quantile"]).write_csv(
+        TOTAL_OCCURRENCES_OUTFILE
+    )
 
     # filtering genes
     valid_gene_ids = (
