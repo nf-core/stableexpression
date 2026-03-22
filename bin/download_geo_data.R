@@ -379,12 +379,12 @@ get_microarray_counts <- function(platform) {
   return(counts)
 }
 
-parse_first_line <- function(filename){
+parse_first_line <- function(filename, sep){
     tryCatch({
         counts <- read.table(filename, header = FALSE, sep = sep, row.names = 1, nrows = 1)
         return(counts)
     }, error = function(e) {
-        write_warning(paste("ERROR PARSING FIRST LINE IN", filename, "::", e))
+        write_warning(paste("ERROR PARSING FIRST LINE IN", filename))
         return(NULL)
     })
 }
@@ -428,7 +428,7 @@ get_raw_counts_from_url <- function(data_url) {
     for (sep in c("\t", ",", " ")) {
 
         # parsing the first line to determine the separator and see if there is a header
-        first_line <- parse_first_line(filename)
+        first_line <- parse_first_line(filename, sep)
         if (is.null(first_line)) {
           return(NULL)
         }
@@ -453,7 +453,7 @@ get_raw_counts_from_url <- function(data_url) {
     tryCatch({
       counts <- read.table(filename, header = has_header, sep = separator, row.names = 1)
     }, error = function(e) {
-        write_warning(paste("ERROR WHILE PARSING", filename, ":", e))
+        write_warning(paste("ERROR WHILE PARSING", filename))
         return(NULL)
     })
 
@@ -816,6 +816,8 @@ main <- function() {
           write_warning(paste("UNSUPPORTED PLATFORM:", series$experiment_type))
         }
     }
+
+    message("Done")
 }
 
 
