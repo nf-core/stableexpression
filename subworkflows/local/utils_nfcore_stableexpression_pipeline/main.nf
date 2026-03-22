@@ -407,15 +407,20 @@ def checkCounts(ch_counts) {
             def msg_lst = []
             if ( !params.fetch_geo_accessions ) {
                 msg_lst = [
-                    "Could not find any readily usable public dataset.",
-                    "Please set the --fetch_geo_accessions flag and run again."
+                    "Could not find any readily usable public dataset...",
+                    "This might be due to connection issues on the Expression Atlas FTP server.",
+                    "If it is the case, please wait for a couple of minutes and run again.",
+                    "Alternatively, datasets for your species of interest might not exist on Expression Atlas.",
+                    "In this case, you can try to get additional datasets from NCBI GEO Datasets using the --fetch_geo_accessions flag (this feature is still experimental)."
                 ]
             } else {
                 msg_lst = [
-                    "Could not find any readily usable public dataset.",
-                    "You can check directly on NCBI GEO if there are datasets for this species that you can prepare yourself:",
+                    "Could not find any readily usable public dataset...",
+                    "This might be due to connection issues on the Expression Atlas FTP server.",
+                    "If it is the case, please wait for a couple of minutes and run again.",
+                    "You can check directly on NCBI GEO Datasets if there are available datasets for this species that you can prepare yourself:",
                     "https://www.ncbi.nlm.nih.gov/gds",
-                    "Once you have prepared your own data, you can relaunch the pipeline and provided your prepared count datasets using the --datasets parameter. ",
+                    "Once you have prepared your own data, you can relaunch the pipeline and provide your prepared count datasets using the --datasets parameter. ",
                     "For more information, see the online documentation at https://nf-co.re/stableexpression."
                 ]
             }

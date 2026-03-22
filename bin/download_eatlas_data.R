@@ -66,6 +66,10 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
                     warning(w$message)
                     write("EXPERIMENT NOT FOUND", file = FAILURE_REASON_FILE)
                     quit(save = "no", status = 0)
+                } else if (grepl("FTP status was", w$message)) {
+                    warning(w$message)
+                    write("FTP ERROR", file = FAILURE_REASON_FILE)
+                    quit(save = "no", status = 101)
                 } else {
                     warning("Unhandled warning: ", w$message)
                     write("UNKNOWN ERROR", file = FAILURE_REASON_FILE)
