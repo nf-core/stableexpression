@@ -7,7 +7,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
+                        "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
                     ]
                 ],
                 "1": [
@@ -20,14 +20,14 @@
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "python",
-                        "3.12.8"
+                        "3.14.3"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "polars",
-                        "1.17.1"
+                        "1.39.2"
                     ]
                 ],
                 "counts": [
@@ -35,7 +35,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
+                        "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
                     ]
                 ]
             }
@@ -44,7 +44,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-21T09:55:28.307661988"
+        "timestamp": "2026-03-19T12:24:02.997684026"
     },
     "One group": {
         "content": [
@@ -54,7 +54,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,7cc642e81f82432bf38690f105e5d2de"
+                        "counts.tpm.parquet:md5,2bb5797b24bcd02a06b2794c94567638"
                     ]
                 ],
                 "1": [
@@ -67,14 +67,14 @@
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "python",
-                        "3.12.8"
+                        "3.14.3"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "polars",
-                        "1.17.1"
+                        "1.39.2"
                     ]
                 ],
                 "counts": [
@@ -82,7 +82,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,7cc642e81f82432bf38690f105e5d2de"
+                        "counts.tpm.parquet:md5,2bb5797b24bcd02a06b2794c94567638"
                     ]
                 ]
             }
@@ -91,7 +91,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-21T09:55:48.474041541"
+        "timestamp": "2026-03-19T12:24:19.979776602"
     },
     "TSV files": {
         "content": [
@@ -101,7 +101,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
+                        "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
                     ]
                 ],
                 "1": [
@@ -114,14 +114,14 @@
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "python",
-                        "3.12.8"
+                        "3.14.3"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "polars",
-                        "1.17.1"
+                        "1.39.2"
                     ]
                 ],
                 "counts": [
@@ -129,7 +129,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,2fe2ac9557f7d3955d5104563185cb31"
+                        "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
                     ]
                 ]
             }
@@ -138,7 +138,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-21T09:55:58.697226034"
+        "timestamp": "2026-03-19T12:24:28.379319954"
     },
     "Rows with many zeros": {
         "content": [
@@ -148,7 +148,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,72d0424d7465443a882963b3a77a2162"
+                        "counts.tpm.parquet:md5,95563b1ba1083cfc31c2b9c18c5aeaaa"
                     ]
                 ],
                 "1": [
@@ -161,14 +161,14 @@
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "python",
-                        "3.12.8"
+                        "3.14.3"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_TPM",
                         "polars",
-                        "1.17.1"
+                        "1.39.2"
                     ]
                 ],
                 "counts": [
@@ -176,7 +176,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,72d0424d7465443a882963b3a77a2162"
+                        "counts.tpm.parquet:md5,95563b1ba1083cfc31c2b9c18c5aeaaa"
                     ]
                 ]
             }
@@ -185,6 +185,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-21T09:55:38.263330206"
+        "timestamp": "2026-03-19T12:24:11.542614897"
     }
 }

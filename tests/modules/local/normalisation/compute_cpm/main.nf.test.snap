@@ -7,7 +7,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,5f9f89a0711ea45a216dcd29805d806a"
+                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
                     ]
                 ],
                 "1": [
@@ -20,14 +20,14 @@
                     [
                         "NORMALISATION_COMPUTE_CPM",
                         "python",
-                        "3.12.8"
+                        "3.14.3"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_CPM",
                         "polars",
-                        "1.17.1"
+                        "1.39.2"
                     ]
                 ],
                 "counts": [
@@ -35,7 +35,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,5f9f89a0711ea45a216dcd29805d806a"
+                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
                     ]
                 ]
             }
@@ -44,7 +44,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-21T09:54:49.255411101"
+        "timestamp": "2026-03-19T12:23:28.869065608"
     },
     "One group": {
         "content": [
@@ -54,7 +54,7 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,0af81a4e4e335bb2be6c4fa2e375696c"
+                        "counts.cpm.parquet:md5,c8855975f68aad3c3bb060a23c14e2f9"
                     ]
                 ],
                 "1": [
@@ -67,14 +67,14 @@
                     [
                         "NORMALISATION_COMPUTE_CPM",
                         "python",
-                        "3.12.8"
+                        "3.14.3"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_CPM",
                         "polars",
-                        "1.17.1"
+                        "1.39.2"
                     ]
                 ],
                 "counts": [
@@ -82,16 +82,16 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,0af81a4e4e335bb2be6c4fa2e375696c"
+                        "counts.cpm.parquet:md5,c8855975f68aad3c3bb060a23c14e2f9"
                     ]
                 ]
             }
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:46:38.175795079"
+        "timestamp": "2026-03-19T12:23:45.874853063"
     },
     "TSV files": {
         "content": [
@@ -101,7 +101,7 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,5f9f89a0711ea45a216dcd29805d806a"
+                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
                     ]
                 ],
                 "1": [
@@ -114,14 +114,14 @@
                     [
                         "NORMALISATION_COMPUTE_CPM",
                         "python",
-                        "3.12.8"
+                        "3.14.3"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_CPM",
                         "polars",
-                        "1.17.1"
+                        "1.39.2"
                     ]
                 ],
                 "counts": [
@@ -129,16 +129,16 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,5f9f89a0711ea45a216dcd29805d806a"
+                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
                     ]
                 ]
             }
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2026-01-06T17:46:46.581965221"
+        "timestamp": "2026-03-19T12:23:54.407797312"
     },
     "Rows with many zeros": {
         "content": [
@@ -148,7 +148,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,a342cf59dee7ab9eadbe8df3420e3477"
+                        "counts.cpm.parquet:md5,ab2596a5bb8b3b2e39754191a2dce2aa"
                     ]
                 ],
                 "1": [
@@ -161,14 +161,14 @@
                     [
                         "NORMALISATION_COMPUTE_CPM",
                         "python",
-                        "3.12.8"
+                        "3.14.3"
                     ]
                 ],
                 "4": [
                     [
                         "NORMALISATION_COMPUTE_CPM",
                         "polars",
-                        "1.17.1"
+                        "1.39.2"
                     ]
                 ],
                 "counts": [
@@ -176,7 +176,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,a342cf59dee7ab9eadbe8df3420e3477"
+                        "counts.cpm.parquet:md5,ab2596a5bb8b3b2e39754191a2dce2aa"
                     ]
                 ]
             }
@@ -185,6 +185,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-02-21T09:54:58.866506808"
+        "timestamp": "2026-03-19T12:23:37.673065199"
     }
 }
