@@ -150,6 +150,8 @@ nf-core/stableexpression was originally written by Olivier Coen.
 We thank the following people for their assistance in the development of this pipeline:
 
 - Rémy Costa
+- Shaheen Acheche
+- Janine Soares
 
 ## Contributions and Support
 
