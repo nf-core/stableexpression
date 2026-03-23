@@ -182,7 +182,7 @@
             "url": {
                 "@id": "https://www.nextflow.io/"
             },
-            "version": "!>=25.04.8"
+            "version": "!>=25.10.4"
         },
         {
             "@id": "#6aa6a373-9bb0-4502-a8f4-2fce1f6296ee",
