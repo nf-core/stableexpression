@@ -99,6 +99,14 @@ Base statistics are computed for each gene, platform-wide and for each platform 
 - Make [`MultiQC`](http://multiqc.info/) report
 - Prepare [Dash Plotly](https://dash.plotly.com/) app for further investigation of gene / sample counts
 
+## Test pipeline
+
+You can test the execution of the pipeline locally with:
+
+```bash
+nextflow run nf-core/stableexpression -profile test,<docker/apptainer/conda/micromamba/...>
+```
+
 ## Basic usage
 
 > [!NOTE]
