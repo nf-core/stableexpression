@@ -14,6 +14,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 KEY_TO_OUTFILE = {"skewness": "skewness.txt"}
+FLOAT_PRECISION = 6
 
 
 #####################################################
@@ -47,7 +48,9 @@ def export_count_data(stats: dict):
     for key, outfile_name in KEY_TO_OUTFILE.items():
         logger.info(f"Exporting dataset statistics {key} to: {outfile_name}")
         with open(outfile_name, "w") as outfile:
-            outfile.write(",".join([str(val) for val in stats[key]]))
+            outfile.write(
+                ",".join([f"{val:.{FLOAT_PRECISION}f}" for val in stats[key]])
+            )
 
 
 #####################################################

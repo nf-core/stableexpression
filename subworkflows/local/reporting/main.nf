@@ -49,7 +49,7 @@ workflow REPORTING {
                         .toSortedList()
 
     ch_custom_content_multiqc_config_template = channel.fromPath(
-                                                    "${projectDir}/assets/custom_content_multiqc_config.template.yaml",
+                                                    "${projectDir}/assets/multiqc_config.custom_content.template.yaml",
                                                     checkIfExists: true
                                                 )
 

@@ -8,8 +8,8 @@
                     "pyyaml": "6.0.3"
                 },
                 "CLEAN_GENE_IDS": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
                 },
                 "COLLECT_ALL_GENE_IDS": {
                     "python": "3.14.2",
@@ -51,8 +51,8 @@
                     "scipy": "1.17.1"
                 },
                 "DESCRIPTIVE_STATISTICS": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
                 },
                 "DETECT_RARE_GENES": {
                     "polars": "1.39.2",
@@ -350,34 +350,16 @@
                 "section_8.most_stable_genes_transposed_counts.csv:md5,35e02009d4aff77f0fca02711a8ad058",
                 "section_9.most_stable_genes_summary.csv:md5,0e7776950594471fc8dfb914eed0a17a",
                 "section_9.most_stable_genes_transposed_counts.csv:md5,e102dcbb3bdcec1bd724adbd772655d1",
-                "app.py:md5,bb43a37542f3525925e68e41f26b3eb3",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,8c7a5a2bc367bc483c78c250abd8a06f",
                 "all_genes_summary.csv:md5,67694aeb7cb1bec8e31a604fa5350783",
                 "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
-                "common.py:md5,2579b1cf40bc1f19bf4d6cf9e7ee3261",
-                "genes.py:md5,680cb5f4e107a3b091821917d72a555c",
-                "samples.py:md5,ebe1620fd6a7280933c6e82f05b04820",
-                "graphs.py:md5,acdc8511cfcd2ea77ba7a90c3250fd17",
-                "icons.py:md5,3e66bae5ceca3dfbd190d88db0dc0828",
-                "right_sidebar.py:md5,7d062dd7b7b891ea04275a03eca49f8e",
-                "genes.py:md5,bf00a35192a594861a809a0fdfd73fc3",
-                "samples.py:md5,1d145b9c85f61ab340857e87a728bc54",
-                "stores.py:md5,6e829f7950f09c7c9b10568de41baca2",
-                "tables.py:md5,0cc5a469719e67a3b6ae0d11cd35cc66",
-                "tooltips.py:md5,3f6e77c5bc52d3ae8b64420c50f5daa1",
-                "top.py:md5,fb907f3f053a0973df8c7a4c8151baf3",
-                "config.py:md5,26c75ba54e5c636b291dc8d2bd685004",
-                "data_management.py:md5,6a4a5268f808fe198a4a6e4b6d06c5f3",
-                "style.py:md5,5dc95d725903350537940a41cae355dd",
                 "Mus_musculus.GRCm39.115.chr.gff3.gz:md5,66a5d70eeb2ce9685ca871fc7b0f4f96",
                 "gene_transcript_lengths.csv:md5,09e2d2a8881df9aa96ee71802e9c3451",
                 "global_gene_id_mapping.csv:md5,78934d2ac5fe7d863f114c5703f57a06",
                 "global_gene_metadata.csv:md5,bd76860b422e45eca7cd583212a977d2",
                 "gene_metadata.csv:md5,bd76860b422e45eca7cd583212a977d2",
                 "mapped_gene_ids.csv:md5,78934d2ac5fe7d863f114c5703f57a06",
-                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.parquet:md5,5e1319b58bb414274a47661fd46eb681",
                 "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "multiqc_gene_statistics.txt:md5,9285ae2cfc531a0987e3172be0aa6483",
@@ -426,17 +408,15 @@
                 "multiqc_ratio_nulls.txt:md5,7063b06cadcf854671bc9cefb51a6fe3",
                 "multiqc_ratio_zeros.txt:md5,7063b06cadcf854671bc9cefb51a6fe3",
                 "multiqc_renaming_warning_reasons.txt:md5,6e3001e79809e518b23efc517fc5bc67",
-                "multiqc_skewness.txt:md5,8e46fd80b0c2d1785775571e74ab7994",
+                "multiqc_skewness.txt:md5,552473ba350fdb4ff40b745bb583e6d7",
                 "multiqc_total_gene_id_occurrence_quantiles.txt:md5,ca154d649786ea5336e7c9e980f00eac",
                 "multiqc_zero_values_filter.txt:md5,64ca3e3acc613e1b85733fd847712a37",
-                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,9fe0de399237e89cc8e4df6fa775d4b0",
-                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,da24ac8d0594e03926d4a0a698bf2c7f",
                 "id_mapping_stats.csv:md5,b47d6ebd34e3fb11a40665b0a38db3da",
                 "missing_values_filter_stats.csv:md5,310182ec872cf37ffb81370dfcd01207",
                 "ratio_nulls.csv:md5,2272ebcf58ac8bb283d238f87d508b96",
                 "ratio_nulls_per_sample.csv:md5,375371c6d3e58ae69430f0e96b71920d",
                 "ratio_zeros.csv:md5,2272ebcf58ac8bb283d238f87d508b96",
-                "skewness.csv:md5,a002bba76a07fcb14897928cb6ee8412",
+                "skewness.csv:md5,3c3f6f6984a29e5a6679650e1da0816e",
                 "zero_values_filter_stats.csv:md5,310182ec872cf37ffb81370dfcd01207",
                 "renaming_warning_reasons.tsv:md5,0a11a59b5b547a39ab7a0e4dac622173"
             ]
@@ -445,7 +425,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-21T12:21:53.030465877"
+        "timestamp": "2026-03-29T14:17:04.976060321"
     },
     "-profile test_fetch_geo": {
         "content": [
@@ -701,35 +681,16 @@
                 "section_8.most_stable_genes_transposed_counts.csv:md5,0bfb8031fc91115a61a57113a6df5c4d",
                 "section_9.most_stable_genes_summary.csv:md5,7178bb75b1733f71d0aeba2a09750b3b",
                 "section_9.most_stable_genes_transposed_counts.csv:md5,b02e0d31ed2c0fa925060893062c07a7",
-                "app.py:md5,bb43a37542f3525925e68e41f26b3eb3",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,1f732d695fb191f4c87b065aec34138e",
                 "all_genes_summary.csv:md5,75d3db24909c578bbc764585cc25bde3",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
-                "common.py:md5,2579b1cf40bc1f19bf4d6cf9e7ee3261",
-                "genes.py:md5,680cb5f4e107a3b091821917d72a555c",
-                "samples.py:md5,ebe1620fd6a7280933c6e82f05b04820",
-                "graphs.py:md5,acdc8511cfcd2ea77ba7a90c3250fd17",
-                "icons.py:md5,3e66bae5ceca3dfbd190d88db0dc0828",
-                "right_sidebar.py:md5,7d062dd7b7b891ea04275a03eca49f8e",
-                "genes.py:md5,bf00a35192a594861a809a0fdfd73fc3",
-                "samples.py:md5,1d145b9c85f61ab340857e87a728bc54",
-                "stores.py:md5,6e829f7950f09c7c9b10568de41baca2",
-                "tables.py:md5,0cc5a469719e67a3b6ae0d11cd35cc66",
-                "tooltips.py:md5,3f6e77c5bc52d3ae8b64420c50f5daa1",
-                "top.py:md5,fb907f3f053a0973df8c7a4c8151baf3",
-                "config.py:md5,26c75ba54e5c636b291dc8d2bd685004",
-                "data_management.py:md5,6a4a5268f808fe198a4a6e4b6d06c5f3",
-                "style.py:md5,5dc95d725903350537940a41cae355dd",
                 "Beta_vulgaris.RefBeet-1.2.2.62.gff3.gz:md5,6f2c45809441c8776e6578000db2b0e4",
                 "gene_transcript_lengths.csv:md5,458c7dfd3598bdcbcb6ceb76ccba189f",
                 "global_gene_id_mapping.csv:md5,63f67fb73898870c360293d30362bc33",
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "mapped_gene_ids.csv:md5,63f67fb73898870c360293d30362bc33",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,bc9ebd34015289f205fca0afff7300c2",
-                "GSE55951_GPL18429.microarray.normalised.counts.cleaned.renamed.parquet:md5,a216e8107dcf85855b26a1c556dde641",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "multiqc_eatlas_all_experiments_metadata.txt:md5,8b7643e0ef8eaaa3fa72f7103fd7ccee",
@@ -755,9 +716,9 @@
                 "multiqc_genes_section_1_7.txt:md5,d440bc9cce034ba82dd0d9f3387f9094",
                 "multiqc_genes_section_1_8.txt:md5,dc1f5de798343036301a059b545a378f",
                 "multiqc_genes_section_1_9.txt:md5,e9402e81e8c32c8a6b4015c4a55962f0",
-                "multiqc_geo_all_experiments_metadata.txt:md5,ea55376b4ab9e0edaa324b8b261dae22",
-                "multiqc_geo_rejected_experiments_metadata.txt:md5,d6252a5d3c78d577293853c911e32f69",
-                "multiqc_geo_selected_experiments_metadata.txt:md5,7635ba27ea2acce2c9517ed3c1d77ebb",
+                "multiqc_geo_all_experiments_metadata.txt:md5,86633ac033ae596a16f71018431632e7",
+                "multiqc_geo_rejected_experiments_metadata.txt:md5,48667640716e09d5c8d4ab7a7fc43fcb",
+                "multiqc_geo_selected_experiments_metadata.txt:md5,aa15bf400baf47226d570d61e8af61b2",
                 "multiqc_geo_warning_reasons.txt:md5,2b53d4be74728c504752515f74c58fd2",
                 "multiqc_id_mapping_stats.txt:md5,f03d4786d088307ad756b9661fd61ede",
                 "multiqc_normalised_expr_distrib_section_1.txt:md5,fe7c9f8eff636a38deee18a05e17ed4d",
@@ -784,20 +745,18 @@
                 "multiqc_ratio_nulls.txt:md5,d8ae8a87932da88063c21b9e96d7a0b3",
                 "multiqc_ratio_zeros.txt:md5,63fd4bb33e1160d0071bd2fda14a3434",
                 "multiqc_renaming_warning_reasons.txt:md5,317e6da04b74b7e4470616a5e791308f",
-                "multiqc_skewness.txt:md5,0ca6196205ff0776a826bd0b782af5e2",
+                "multiqc_skewness.txt:md5,5cd75e38d9b3c508bfabed7d20df20e0",
                 "multiqc_total_gene_id_occurrence_quantiles.txt:md5,d1e0b917cd62b17c37700d4ff0f4e3ee",
                 "multiqc_zero_values_filter.txt:md5,049541b0d77aac9703471aaafedba758",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,1f732d695fb191f4c87b065aec34138e",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,56e8645b7ad1a61f15ea3f68705bb47b",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "selected_experiments.metadata.tsv:md5,cf220f0d0aab141abf220c856430f2f2",
                 "species_experiments.metadata.tsv:md5,cf220f0d0aab141abf220c856430f2f2",
                 "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1",
                 "accessions.txt:md5,a850f625a78be7b4b10ce08a5b638e23",
-                "geo_all_datasets.metadata.tsv:md5,7fd4e7b26f1348f86e97aa16f3fd40c0",
-                "geo_rejected_datasets.metadata.tsv:md5,4b4908f7ae40b84a1ac1bd5addfc8dd2",
-                "geo_selected_datasets.metadata.tsv:md5,62bdb8eb0e87155d149020e65d110e80",
+                "geo_all_datasets.metadata.tsv:md5,02070ee3605fac89e2a98d47bbc81ac8",
+                "geo_rejected_datasets.metadata.tsv:md5,b3c90393c5defe89783752d329ce8bc0",
+                "geo_selected_datasets.metadata.tsv:md5,730a0cb5d65b5fba4d1a8d373e9049eb",
                 "GSE55951_GPL18429.microarray.normalised.counts.csv:md5,18fd2d728ad2ec5cb78f994f73375144",
                 "GSE55951_GPL18429.microarray.normalised.design.csv:md5,f4872dff0edbe441d1600ffe2b67a25d",
                 "GSE135555_suppl.rnaseq.raw.counts.csv:md5,b34bde25ea5d508a1670ce4264073df1",
@@ -809,7 +768,7 @@
                 "ratio_nulls.csv:md5,61a1fa51598dd19691274cec72344086",
                 "ratio_nulls_per_sample.csv:md5,26be7a3455d1c25335aa4f791d3f5fb8",
                 "ratio_zeros.csv:md5,dbe4685e6c4b2c698f608d220ac0fddd",
-                "skewness.csv:md5,9095a03fa430d3becf74e51c843e6342",
+                "skewness.csv:md5,a6035b3fe1b58bb061120e9751e69434",
                 "zero_values_filter_stats.csv:md5,5506c189469bd93293ef11c9727ddca6",
                 "geo_warning_reasons.csv:md5,1d7787445686300070a7af880d707015",
                 "renaming_warning_reasons.tsv:md5,ae651ff0a559e025e014412009eac136"
@@ -819,7 +778,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-24T13:28:16.078143925"
+        "timestamp": "2026-03-30T07:48:54.920307824"
     },
     "-profile test_included_and_excluded_accessions": {
         "content": [
@@ -830,8 +789,8 @@
                     "pyyaml": "6.0.3"
                 },
                 "CLEAN_GENE_IDS": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
                 },
                 "COLLECT_ALL_GENE_IDS": {
                     "python": "3.14.2",
@@ -873,8 +832,8 @@
                     "scipy": "1.17.1"
                 },
                 "DESCRIPTIVE_STATISTICS": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
                 },
                 "DETECT_RARE_GENES": {
                     "polars": "1.39.2",
@@ -1231,27 +1190,10 @@
                 "section_8.most_stable_genes_transposed_counts.csv:md5,104530b6c89c013b7ad42b5ac8784ee3",
                 "section_9.most_stable_genes_summary.csv:md5,389e652ee34671bcb083ce63846b2114",
                 "section_9.most_stable_genes_transposed_counts.csv:md5,f7c5d81dc152dc573ab1d5a2cc0e02f0",
-                "app.py:md5,bb43a37542f3525925e68e41f26b3eb3",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,df99baea9c37a28b553940a4b438a455",
                 "all_genes_summary.csv:md5,2b30f2f39feb4d4ee9ad84dbc1bf2399",
                 "whole_design.csv:md5,cc24405dce8d22b93b9999a2287113ef",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
-                "common.py:md5,2579b1cf40bc1f19bf4d6cf9e7ee3261",
-                "genes.py:md5,680cb5f4e107a3b091821917d72a555c",
-                "samples.py:md5,ebe1620fd6a7280933c6e82f05b04820",
-                "graphs.py:md5,acdc8511cfcd2ea77ba7a90c3250fd17",
-                "icons.py:md5,3e66bae5ceca3dfbd190d88db0dc0828",
-                "right_sidebar.py:md5,7d062dd7b7b891ea04275a03eca49f8e",
-                "genes.py:md5,bf00a35192a594861a809a0fdfd73fc3",
-                "samples.py:md5,1d145b9c85f61ab340857e87a728bc54",
-                "stores.py:md5,6e829f7950f09c7c9b10568de41baca2",
-                "tables.py:md5,0cc5a469719e67a3b6ae0d11cd35cc66",
-                "tooltips.py:md5,3f6e77c5bc52d3ae8b64420c50f5daa1",
-                "top.py:md5,fb907f3f053a0973df8c7a4c8151baf3",
-                "config.py:md5,26c75ba54e5c636b291dc8d2bd685004",
-                "data_management.py:md5,6a4a5268f808fe198a4a6e4b6d06c5f3",
-                "style.py:md5,5dc95d725903350537940a41cae355dd",
                 "eatlas_failure_reasons.csv:md5,2a8cd0ed795e82647d19c484a79acde6",
                 "renaming_failure_reasons.tsv:md5,af783264770a861c263480141fdd8bf6",
                 "Solanum_tuberosum.SolTub_3.0.62.gff3.gz:md5,cca99141f43d57d697f6df75de790e05",
@@ -1260,12 +1202,6 @@
                 "global_gene_metadata.csv:md5,e33e0ed63a3dec26bc95fe422f02844c",
                 "gene_metadata.csv:md5,e33e0ed63a3dec26bc95fe422f02844c",
                 "mapped_gene_ids.csv:md5,a86823539deb80c0aa44378d3078969d",
-                "E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,05f6368236ea745249e6c31f9f121c8a",
-                "E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,80b6da1a80fe87abf0152cdcd50137ab",
-                "E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,4b7240bb59bad1e06117a592a52d4c58",
-                "E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,349f4773826c50b69e086da3ee66088b",
-                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,faba0c436faa50ec5d6b0b09e10c4154",
-                "E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,680b57633ca58305714665ff8a779059",
                 "whole_design.csv:md5,cc24405dce8d22b93b9999a2287113ef",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "multiqc_eatlas_all_experiments_metadata.txt:md5,a2b6cf46faf4b8c7dcdae06e17b35432",
@@ -1317,21 +1253,9 @@
                 "multiqc_ratio_nulls.txt:md5,0ac63e9a99cd503fdf2d480f24c068e2",
                 "multiqc_ratio_zeros.txt:md5,0bc9941a68efad9127d32c641c1f18ec",
                 "multiqc_renaming_failure_reasons.txt:md5,970e990d84a5a7d3950db1ee248aef36",
-                "multiqc_skewness.txt:md5,200713febe9940f5adbc2cafa3698404",
+                "multiqc_skewness.txt:md5,a69660e0aa17774b57b2a8a054e89f42",
                 "multiqc_total_gene_id_occurrence_quantiles.txt:md5,f20d5839dc5b645e0eae39e1eeeb0c35",
                 "multiqc_zero_values_filter.txt:md5,6307f10147d98e999018d2647e2e82f8",
-                "E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,bfc95236c9d7824dcea5d0e61f0378aa",
-                "E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,248d1341556e4f01410f31c75ee63330",
-                "E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,974adfb96b89522ce0f815350a353701",
-                "E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,14e5e72b4896b5d33e4c8dbf66aefbf6",
-                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,f5650e2ec100cda47282413ead5c22de",
-                "E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,f96eb7b94c0144669756d54fe3105589",
-                "E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,4c39d4b6dad31310712d717ef84a6bda",
-                "E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,ccda15cdd04f679abd872a5b8bd8f281",
-                "E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,f0a661c541b2d2d32c9859f785ae3b86",
-                "E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,1e0914a2acdc76fd0c32f0c9eea80d2a",
-                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,acc5c785994cce93aead342912919400",
-                "E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,90b8c163b2e5e5c1489373670e12773b",
                 "accessions.txt:md5,e38a0aaf5191ba5f94cb7a96b8d30aa7",
                 "selected_experiments.metadata.tsv:md5,15baa430176fcadf7bf03034fa9e95c6",
                 "species_experiments.metadata.tsv:md5,15baa430176fcadf7bf03034fa9e95c6",
@@ -1354,7 +1278,7 @@
                 "ratio_nulls.csv:md5,b2b0b0e91d7f427dd16f2cfc25cc9c40",
                 "ratio_nulls_per_sample.csv:md5,142c1f0b8adb34d8d20ad781111b9e7c",
                 "ratio_zeros.csv:md5,f6c6e2df4dd9d2c089bce4847e89e6a0",
-                "skewness.csv:md5,9c4839399feeb4946667c87fa60fda89",
+                "skewness.csv:md5,2738193010a0f2d17faf2ca8ad3ab86a",
                 "zero_values_filter_stats.csv:md5,e3f9e9e8b5c6b6e90e57444d438de219"
             ]
         ],
@@ -1362,7 +1286,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-21T13:05:07.696911214"
+        "timestamp": "2026-03-29T14:59:07.864297207"
     },
     "-profile test_skip_id_mapping": {
         "content": [
@@ -1411,14 +1335,11 @@
                 "gene_ids.txt:md5,831b47f91a0808802967aa0e53a25de9",
                 "whole_design.csv:md5,70d6c2673e619ca52d2774fb3e368382",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
-                "microarray.normalised.zeros_filtered.nulls_filtered.quant_norm.parquet:md5,0f9ed5a872e8c424a9ccc83b1c33753f",
-                "rnaseq.raw.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,d0e926a720de0803775b0dbd118b03ac",
-                "rnaseq.raw.zeros_filtered.nulls_filtered.tpm.parquet:md5,bbee0410478c6ffcf57609478cdb6ab5",
                 "missing_values_filter_stats.csv:md5,ebad5386e7c670ff04887eff67c8faae",
                 "ratio_nulls.csv:md5,ab65c49c9b8ba7e242f391438789e080",
                 "ratio_nulls_per_sample.csv:md5,5c2931cb8c5ecb27ffa9136628fc714c",
                 "ratio_zeros.csv:md5,1837a5a03a551fdb0a7bba2869157559",
-                "skewness.csv:md5,41b18fbdbc8ac0803228e81ea1179fe5",
+                "skewness.csv:md5,9767d4d483957a12e6aac9cf372470d0",
                 "zero_values_filter_stats.csv:md5,ebad5386e7c670ff04887eff67c8faae"
             ]
         ],
@@ -1426,7 +1347,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-20T08:16:48.30600717"
+        "timestamp": "2026-03-29T14:46:58.081207316"
     },
     "-profile test_dataset_custom_mapping_and_gene_length": {
         "content": [
@@ -1713,34 +1634,16 @@
                 "section_8.most_stable_genes_transposed_counts.csv:md5,0bfb8031fc91115a61a57113a6df5c4d",
                 "section_9.most_stable_genes_summary.csv:md5,7178bb75b1733f71d0aeba2a09750b3b",
                 "section_9.most_stable_genes_transposed_counts.csv:md5,b02e0d31ed2c0fa925060893062c07a7",
-                "app.py:md5,bb43a37542f3525925e68e41f26b3eb3",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,1f732d695fb191f4c87b065aec34138e",
                 "all_genes_summary.csv:md5,e3f8d59accf267c351d0a995ffc9ebf5",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
-                "common.py:md5,2579b1cf40bc1f19bf4d6cf9e7ee3261",
-                "genes.py:md5,680cb5f4e107a3b091821917d72a555c",
-                "samples.py:md5,ebe1620fd6a7280933c6e82f05b04820",
-                "graphs.py:md5,acdc8511cfcd2ea77ba7a90c3250fd17",
-                "icons.py:md5,3e66bae5ceca3dfbd190d88db0dc0828",
-                "right_sidebar.py:md5,7d062dd7b7b891ea04275a03eca49f8e",
-                "genes.py:md5,bf00a35192a594861a809a0fdfd73fc3",
-                "samples.py:md5,1d145b9c85f61ab340857e87a728bc54",
-                "stores.py:md5,6e829f7950f09c7c9b10568de41baca2",
-                "tables.py:md5,0cc5a469719e67a3b6ae0d11cd35cc66",
-                "tooltips.py:md5,3f6e77c5bc52d3ae8b64420c50f5daa1",
-                "top.py:md5,fb907f3f053a0973df8c7a4c8151baf3",
-                "config.py:md5,26c75ba54e5c636b291dc8d2bd685004",
-                "data_management.py:md5,6a4a5268f808fe198a4a6e4b6d06c5f3",
-                "style.py:md5,5dc95d725903350537940a41cae355dd",
                 "Beta_vulgaris.RefBeet-1.2.2.62.gff3.gz:md5,6f2c45809441c8776e6578000db2b0e4",
                 "gene_transcript_lengths.csv:md5,458c7dfd3598bdcbcb6ceb76ccba189f",
                 "global_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "mapped_gene_ids.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,bc9ebd34015289f205fca0afff7300c2",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "multiqc_eatlas_all_experiments_metadata.txt:md5,8b7643e0ef8eaaa3fa72f7103fd7ccee",
@@ -1790,11 +1693,9 @@
                 "multiqc_null_values_filter.txt:md5,36e80c213d14d0e3942d84e8ad14b9cc",
                 "multiqc_ratio_nulls.txt:md5,ba7ee3e2a9f20f19bae430c56ca11e9a",
                 "multiqc_ratio_zeros.txt:md5,238d38905ef9fdc5e6a252255dea7f82",
-                "multiqc_skewness.txt:md5,0ca6196205ff0776a826bd0b782af5e2",
+                "multiqc_skewness.txt:md5,5cd75e38d9b3c508bfabed7d20df20e0",
                 "multiqc_total_gene_id_occurrence_quantiles.txt:md5,389252b8ba48d86c6100d0abcd762ac1",
                 "multiqc_zero_values_filter.txt:md5,36e80c213d14d0e3942d84e8ad14b9cc",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,1f732d695fb191f4c87b065aec34138e",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,56e8645b7ad1a61f15ea3f68705bb47b",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "selected_experiments.metadata.tsv:md5,cf220f0d0aab141abf220c856430f2f2",
                 "species_experiments.metadata.tsv:md5,cf220f0d0aab141abf220c856430f2f2",
@@ -1805,7 +1706,7 @@
                 "ratio_nulls.csv:md5,3649422febfc0208bb0f1892d071a0a1",
                 "ratio_nulls_per_sample.csv:md5,88f76a381ba0635b334ea65f1dc9311f",
                 "ratio_zeros.csv:md5,e31a1f46c19c75381bd237f520658bf3",
-                "skewness.csv:md5,9095a03fa430d3becf74e51c843e6342",
+                "skewness.csv:md5,a6035b3fe1b58bb061120e9751e69434",
                 "zero_values_filter_stats.csv:md5,a4a1e6b5e88fc2226c01f237b90214db"
             ]
         ],
@@ -1813,7 +1714,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-22T13:10:05.64690275"
+        "timestamp": "2026-03-29T14:12:07.597296294"
     },
     "-profile test_accessions_only": {
         "content": [
@@ -1863,7 +1764,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-20T08:13:35.266891999"
+        "timestamp": "2026-03-29T14:35:30.092884854"
     },
     "-profile test_one_accession_low_gene_count": {
         "content": [
@@ -1874,8 +1775,8 @@
                     "pyyaml": "6.0.3"
                 },
                 "CLEAN_GENE_IDS": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
                 },
                 "COLLECT_ALL_GENE_IDS": {
                     "python": "3.14.2",
@@ -1917,8 +1818,8 @@
                     "scipy": "1.17.1"
                 },
                 "DESCRIPTIVE_STATISTICS": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
                 },
                 "DETECT_RARE_GENES": {
                     "polars": "1.39.2",
@@ -2223,34 +2124,16 @@
                 "section_8.most_stable_genes_transposed_counts.csv:md5,337a0e231598d45291a6a42a25c585b1",
                 "section_9.most_stable_genes_summary.csv:md5,cfaafcd65fffaed8169835cfc0992430",
                 "section_9.most_stable_genes_transposed_counts.csv:md5,cdb7220619e76d11963f1f1b08101e42",
-                "app.py:md5,bb43a37542f3525925e68e41f26b3eb3",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,0ead509ded110fe58b922c6a944fd64c",
                 "all_genes_summary.csv:md5,643bb1aa5f128bad6f192bd2aeaa2ee6",
                 "whole_design.csv:md5,d3aa542c4ad07d0051a84482fe6cd81c",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
-                "common.py:md5,2579b1cf40bc1f19bf4d6cf9e7ee3261",
-                "genes.py:md5,680cb5f4e107a3b091821917d72a555c",
-                "samples.py:md5,ebe1620fd6a7280933c6e82f05b04820",
-                "graphs.py:md5,acdc8511cfcd2ea77ba7a90c3250fd17",
-                "icons.py:md5,3e66bae5ceca3dfbd190d88db0dc0828",
-                "right_sidebar.py:md5,7d062dd7b7b891ea04275a03eca49f8e",
-                "genes.py:md5,bf00a35192a594861a809a0fdfd73fc3",
-                "samples.py:md5,1d145b9c85f61ab340857e87a728bc54",
-                "stores.py:md5,6e829f7950f09c7c9b10568de41baca2",
-                "tables.py:md5,0cc5a469719e67a3b6ae0d11cd35cc66",
-                "tooltips.py:md5,3f6e77c5bc52d3ae8b64420c50f5daa1",
-                "top.py:md5,fb907f3f053a0973df8c7a4c8151baf3",
-                "config.py:md5,26c75ba54e5c636b291dc8d2bd685004",
-                "data_management.py:md5,6a4a5268f808fe198a4a6e4b6d06c5f3",
-                "style.py:md5,5dc95d725903350537940a41cae355dd",
                 "Arabidopsis_thaliana.TAIR10.62.gff3.gz:md5,b02566c301d47461db70747b3adaa6ce",
                 "gene_transcript_lengths.csv:md5,06b4612031f4f300a6d67f36e7625492",
                 "global_gene_id_mapping.csv:md5,42491ef436cce231258c0358e1af5745",
                 "global_gene_metadata.csv:md5,b35e20500269d4e6787ef1a3468f16bc",
                 "gene_metadata.csv:md5,b35e20500269d4e6787ef1a3468f16bc",
                 "mapped_gene_ids.csv:md5,42491ef436cce231258c0358e1af5745",
-                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,4e5f3b3fc2c206769cfb50feaba70046",
                 "whole_design.csv:md5,d3aa542c4ad07d0051a84482fe6cd81c",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "multiqc_gene_statistics.txt:md5,53fe105326f1a097d3437731eb4e3a8d",
@@ -2298,11 +2181,9 @@
                 "multiqc_null_values_filter.txt:md5,91eb32460cdebb4e08ae0b1ee559cf59",
                 "multiqc_ratio_nulls.txt:md5,bcf9aa423c404f2e7f8ea84735810959",
                 "multiqc_ratio_zeros.txt:md5,c743a773da2858b59923eff1873c26d0",
-                "multiqc_skewness.txt:md5,8842798a4596894a554be2b18469a89a",
+                "multiqc_skewness.txt:md5,c93d0056023177557858a0c36629158b",
                 "multiqc_total_gene_id_occurrence_quantiles.txt:md5,9eb24790b7fbfee4b7c3bcff74a334db",
                 "multiqc_zero_values_filter.txt:md5,a9ec449705f94f15962e6ca856b87420",
-                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,0ead509ded110fe58b922c6a944fd64c",
-                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,8fc3d605078189ee180878b216655a5e",
                 "E_GEOD_51720_rnaseq.design.csv:md5,80805afb29837b6fbb73a6aa6f3a461b",
                 "E_GEOD_51720_rnaseq.rnaseq.raw.counts.csv:md5,07cd448196fc2fea4663bd9705da2b98",
                 "id_mapping_stats.csv:md5,cd17a5d4afa6b86a48adb03868d3073f",
@@ -2310,7 +2191,7 @@
                 "ratio_nulls.csv:md5,9c496b3b8c098a1bc17c6be7a87f2331",
                 "ratio_nulls_per_sample.csv:md5,9211cb6081071e8825119194faf6241f",
                 "ratio_zeros.csv:md5,17b7bde6ca29e11bb1e28db6b8053add",
-                "skewness.csv:md5,68470c0c5c2e54af93e2cd8c8517d779",
+                "skewness.csv:md5,ebf2cbe1881481de975f88fe8e4d671f",
                 "zero_values_filter_stats.csv:md5,766d888e41179e8a785f634b3b606bc9"
             ]
         ],
@@ -2318,7 +2199,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-21T12:50:51.861295012"
+        "timestamp": "2026-03-29T14:45:11.705713295"
     },
     "-profile test_public_and_dataset": {
         "content": [
@@ -2551,35 +2432,16 @@
                 "section_8.most_stable_genes_transposed_counts.csv:md5,0bfb8031fc91115a61a57113a6df5c4d",
                 "section_9.most_stable_genes_summary.csv:md5,7178bb75b1733f71d0aeba2a09750b3b",
                 "section_9.most_stable_genes_transposed_counts.csv:md5,b02e0d31ed2c0fa925060893062c07a7",
-                "app.py:md5,bb43a37542f3525925e68e41f26b3eb3",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,1f732d695fb191f4c87b065aec34138e",
                 "all_genes_summary.csv:md5,e3f8d59accf267c351d0a995ffc9ebf5",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
-                "common.py:md5,2579b1cf40bc1f19bf4d6cf9e7ee3261",
-                "genes.py:md5,680cb5f4e107a3b091821917d72a555c",
-                "samples.py:md5,ebe1620fd6a7280933c6e82f05b04820",
-                "graphs.py:md5,acdc8511cfcd2ea77ba7a90c3250fd17",
-                "icons.py:md5,3e66bae5ceca3dfbd190d88db0dc0828",
-                "right_sidebar.py:md5,7d062dd7b7b891ea04275a03eca49f8e",
-                "genes.py:md5,bf00a35192a594861a809a0fdfd73fc3",
-                "samples.py:md5,1d145b9c85f61ab340857e87a728bc54",
-                "stores.py:md5,6e829f7950f09c7c9b10568de41baca2",
-                "tables.py:md5,0cc5a469719e67a3b6ae0d11cd35cc66",
-                "tooltips.py:md5,3f6e77c5bc52d3ae8b64420c50f5daa1",
-                "top.py:md5,fb907f3f053a0973df8c7a4c8151baf3",
-                "config.py:md5,26c75ba54e5c636b291dc8d2bd685004",
-                "data_management.py:md5,6a4a5268f808fe198a4a6e4b6d06c5f3",
-                "style.py:md5,5dc95d725903350537940a41cae355dd",
                 "Beta_vulgaris.RefBeet-1.2.2.62.gff3.gz:md5,6f2c45809441c8776e6578000db2b0e4",
                 "gene_transcript_lengths.csv:md5,458c7dfd3598bdcbcb6ceb76ccba189f",
                 "global_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "mapped_gene_ids.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,bc9ebd34015289f205fca0afff7300c2",
-                "beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.parquet:md5,4a442e10b6c541e1378f9bc8746be20f",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "multiqc_eatlas_all_experiments_metadata.txt:md5,8b7643e0ef8eaaa3fa72f7103fd7ccee",
@@ -2629,11 +2491,9 @@
                 "multiqc_null_values_filter.txt:md5,88b2d9e16cd8ab52f58a48fd5d915b8c",
                 "multiqc_ratio_nulls.txt:md5,c9ac04a67937c7bacfebc33fcd50aab1",
                 "multiqc_ratio_zeros.txt:md5,9f50cd64ea4afe3723c7e222182981f6",
-                "multiqc_skewness.txt:md5,0ca6196205ff0776a826bd0b782af5e2",
+                "multiqc_skewness.txt:md5,5cd75e38d9b3c508bfabed7d20df20e0",
                 "multiqc_total_gene_id_occurrence_quantiles.txt:md5,497b807412eb4478e97ff0c50846c9ce",
                 "multiqc_zero_values_filter.txt:md5,4082d32f92221ed686e79910c6d2f6b3",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,1f732d695fb191f4c87b065aec34138e",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,56e8645b7ad1a61f15ea3f68705bb47b",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "selected_experiments.metadata.tsv:md5,cf220f0d0aab141abf220c856430f2f2",
                 "species_experiments.metadata.tsv:md5,cf220f0d0aab141abf220c856430f2f2",
@@ -2644,7 +2504,7 @@
                 "ratio_nulls.csv:md5,62625b0e4f7f36a59dfe077a4c709a94",
                 "ratio_nulls_per_sample.csv:md5,be115e6d6c5ed7b7206891ebaa0f7a67",
                 "ratio_zeros.csv:md5,96bbe4bd2d4c29ab5701588132af9684",
-                "skewness.csv:md5,9095a03fa430d3becf74e51c843e6342",
+                "skewness.csv:md5,a6035b3fe1b58bb061120e9751e69434",
                 "zero_values_filter_stats.csv:md5,17fc6d525450d34445bf9cc25defe18a"
             ]
         ],
@@ -2652,7 +2512,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-21T12:30:48.493791227"
+        "timestamp": "2026-03-29T14:25:41.575250542"
     },
     "-profile test_download_only": {
         "content": [
@@ -2709,7 +2569,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-20T08:14:08.452492061"
+        "timestamp": "2026-03-29T14:36:07.351960504"
     },
     "-profile test_gprofiler_target_database_entrez": {
         "content": [
@@ -2941,34 +2801,16 @@
                 "section_8.most_stable_genes_transposed_counts.csv:md5,0bfb8031fc91115a61a57113a6df5c4d",
                 "section_9.most_stable_genes_summary.csv:md5,7178bb75b1733f71d0aeba2a09750b3b",
                 "section_9.most_stable_genes_transposed_counts.csv:md5,b02e0d31ed2c0fa925060893062c07a7",
-                "app.py:md5,bb43a37542f3525925e68e41f26b3eb3",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,1f732d695fb191f4c87b065aec34138e",
                 "all_genes_summary.csv:md5,e3f8d59accf267c351d0a995ffc9ebf5",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
-                "common.py:md5,2579b1cf40bc1f19bf4d6cf9e7ee3261",
-                "genes.py:md5,680cb5f4e107a3b091821917d72a555c",
-                "samples.py:md5,ebe1620fd6a7280933c6e82f05b04820",
-                "graphs.py:md5,acdc8511cfcd2ea77ba7a90c3250fd17",
-                "icons.py:md5,3e66bae5ceca3dfbd190d88db0dc0828",
-                "right_sidebar.py:md5,7d062dd7b7b891ea04275a03eca49f8e",
-                "genes.py:md5,bf00a35192a594861a809a0fdfd73fc3",
-                "samples.py:md5,1d145b9c85f61ab340857e87a728bc54",
-                "stores.py:md5,6e829f7950f09c7c9b10568de41baca2",
-                "tables.py:md5,0cc5a469719e67a3b6ae0d11cd35cc66",
-                "tooltips.py:md5,3f6e77c5bc52d3ae8b64420c50f5daa1",
-                "top.py:md5,fb907f3f053a0973df8c7a4c8151baf3",
-                "config.py:md5,26c75ba54e5c636b291dc8d2bd685004",
-                "data_management.py:md5,6a4a5268f808fe198a4a6e4b6d06c5f3",
-                "style.py:md5,5dc95d725903350537940a41cae355dd",
                 "Beta_vulgaris.RefBeet-1.2.2.62.gff3.gz:md5,6f2c45809441c8776e6578000db2b0e4",
                 "gene_transcript_lengths.csv:md5,458c7dfd3598bdcbcb6ceb76ccba189f",
                 "global_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "mapped_gene_ids.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,bc9ebd34015289f205fca0afff7300c2",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "multiqc_eatlas_all_experiments_metadata.txt:md5,8b7643e0ef8eaaa3fa72f7103fd7ccee",
@@ -3018,11 +2860,9 @@
                 "multiqc_null_values_filter.txt:md5,36e80c213d14d0e3942d84e8ad14b9cc",
                 "multiqc_ratio_nulls.txt:md5,ba7ee3e2a9f20f19bae430c56ca11e9a",
                 "multiqc_ratio_zeros.txt:md5,238d38905ef9fdc5e6a252255dea7f82",
-                "multiqc_skewness.txt:md5,0ca6196205ff0776a826bd0b782af5e2",
+                "multiqc_skewness.txt:md5,5cd75e38d9b3c508bfabed7d20df20e0",
                 "multiqc_total_gene_id_occurrence_quantiles.txt:md5,389252b8ba48d86c6100d0abcd762ac1",
                 "multiqc_zero_values_filter.txt:md5,36e80c213d14d0e3942d84e8ad14b9cc",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,1f732d695fb191f4c87b065aec34138e",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,56e8645b7ad1a61f15ea3f68705bb47b",
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "selected_experiments.metadata.tsv:md5,cf220f0d0aab141abf220c856430f2f2",
                 "species_experiments.metadata.tsv:md5,cf220f0d0aab141abf220c856430f2f2",
@@ -3033,7 +2873,7 @@
                 "ratio_nulls.csv:md5,3649422febfc0208bb0f1892d071a0a1",
                 "ratio_nulls_per_sample.csv:md5,88f76a381ba0635b334ea65f1dc9311f",
                 "ratio_zeros.csv:md5,e31a1f46c19c75381bd237f520658bf3",
-                "skewness.csv:md5,9095a03fa430d3becf74e51c843e6342",
+                "skewness.csv:md5,a6035b3fe1b58bb061120e9751e69434",
                 "zero_values_filter_stats.csv:md5,a4a1e6b5e88fc2226c01f237b90214db"
             ]
         ],
@@ -3041,6 +2881,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-21T13:14:00.255319576"
+        "timestamp": "2026-03-29T15:07:53.783250807"
     }
 }

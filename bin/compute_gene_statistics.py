@@ -130,9 +130,11 @@ def compute_ratios_null_values(
     # the samples showing a low gene count will not be taken into account for the zero count penalty
     nb_nulls = df.select(pl.exclude(config.GENE_ID_COLNAME).is_null()).sum_horizontal()
 
-    if valid_samples:
+    found_valid_samples = [sample for sample in valid_samples if sample in df.columns]
+
+    if found_valid_samples:
         nb_nulls_valid_samples = df.select(
-            pl.col(valid_samples).is_null()
+            pl.col(found_valid_samples).is_null()
         ).sum_horizontal()
     else:
         nb_nulls_valid_samples = nb_nulls
@@ -143,7 +145,7 @@ def compute_ratios_null_values(
         (nb_nulls / nb_samples).alias(
             get_colname(config.RATIO_NULLS_COLNAME, platform)
         ),
-        (nb_nulls_valid_samples / len(valid_samples)).alias(
+        (nb_nulls_valid_samples / len(found_valid_samples)).alias(
             get_colname(config.RATIO_NULLS_VALID_SAMPLES_COLNAME, platform)
         ),
     )

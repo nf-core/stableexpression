@@ -68,7 +68,7 @@ runs:
           --changed-since HEAD^ \
           --verbose \
           --tap=test.tap \
-          --shard ${{ inputs.shard }}/${{ inputs.total_shards }}
+          --shard ${{ inputs.shard }}/${{ inputs.total_shards }} --debug
 
           # Save the absolute path of the test.tap file to the output
           echo "tap_file_path=$(realpath test.tap)" >> $GITHUB_OUTPUT
@@ -103,6 +103,14 @@ runs:
         else
           echo "| ⚠️ | No test results found | ${{ inputs.profile }} | ${{ inputs.shard }}/${{ inputs.total_shards }} |" >> $GITHUB_STEP_SUMMARY
         fi
+
+    - name: Check files
+      if: always()
+      shell: bash
+      run: |
+        for file in $(find .nf-test -name "skewness.txt"); do
+            echo "$file" && cat $file
+        done
 
     - name: Clean up
       if: always()
