@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+act_folder=$(dirname "$(realpath $0)")
+root_folder=$(dirname $(dirname "${act_folder}"))
+
+act pull_request \
+    --job nf-test \
+    --secret GITHUB_TOKEN="$(gh auth token)" \
+    --directory "${root_folder}" \
+    --env-file "${act_folder}/params.env" \
+    --env ACT_FOLDER="${act_folder}" \
+    --workflows "${act_folder}/nf-test.yml" \
+    --platform local=catthehacker/ubuntu:act-24.04 \
+    --container-architecture linux/amd64 \
+    --container-options "--privileged -u $(id -u):$(id -g)"
