@@ -1,6 +1,7 @@
 process GEO_GETDATA {
 
     label 'process_single'
+    label 'can_fail'
 
     tag "$accession"
 
