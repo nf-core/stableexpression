@@ -399,13 +399,13 @@ def augmentMetadata( ch_files ) {
 ========================================================================================
 */
 
-def checkCounts(ch_counts) {
+def checkCounts(ch_counts, fetch_geo_accessions) {
 
     ch_counts.count().map { n ->
         if( n == 0 ) {
             // display a warning if no datasets are found
             def msg_lst = []
-            if ( !params.fetch_geo_accessions ) {
+            if ( !fetch_geo_accessions ) {
                 msg_lst = [
                     "Could not find any readily usable public dataset...",
                     "This might be due to connection issues on the Expression Atlas FTP server.",
