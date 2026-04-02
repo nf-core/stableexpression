@@ -12,3 +12,4 @@ pipeline_info/*.{html,json,txt,yml}
 **.parquet
 **multiqc_geo*metadata.txt
 **geo*metadata.tsv
+**skewness.csv

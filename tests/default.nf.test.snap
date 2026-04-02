@@ -302,7 +302,6 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
-                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings",
                 "warnings/renaming_warning_reasons.tsv"
@@ -416,7 +415,6 @@
                 "ratio_nulls.csv:md5,2272ebcf58ac8bb283d238f87d508b96",
                 "ratio_nulls_per_sample.csv:md5,375371c6d3e58ae69430f0e96b71920d",
                 "ratio_zeros.csv:md5,2272ebcf58ac8bb283d238f87d508b96",
-                "skewness.csv:md5,3c3f6f6984a29e5a6679650e1da0816e",
                 "zero_values_filter_stats.csv:md5,310182ec872cf37ffb81370dfcd01207",
                 "renaming_warning_reasons.tsv:md5,0a11a59b5b547a39ab7a0e4dac622173"
             ]
@@ -632,7 +630,6 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
-                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings",
                 "warnings/geo_warning_reasons.csv",
@@ -762,7 +759,6 @@
                 "ratio_nulls.csv:md5,61a1fa51598dd19691274cec72344086",
                 "ratio_nulls_per_sample.csv:md5,26be7a3455d1c25335aa4f791d3f5fb8",
                 "ratio_zeros.csv:md5,dbe4685e6c4b2c698f608d220ac0fddd",
-                "skewness.csv:md5,a6035b3fe1b58bb061120e9751e69434",
                 "zero_values_filter_stats.csv:md5,5506c189469bd93293ef11c9727ddca6",
                 "geo_warning_reasons.csv:md5,1d7787445686300070a7af880d707015",
                 "renaming_warning_reasons.tsv:md5,ae651ff0a559e025e014412009eac136"
@@ -1137,7 +1133,6 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
-                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -1272,7 +1267,6 @@
                 "ratio_nulls.csv:md5,b2b0b0e91d7f427dd16f2cfc25cc9c40",
                 "ratio_nulls_per_sample.csv:md5,142c1f0b8adb34d8d20ad781111b9e7c",
                 "ratio_zeros.csv:md5,f6c6e2df4dd9d2c089bce4847e89e6a0",
-                "skewness.csv:md5,2738193010a0f2d17faf2ca8ad3ab86a",
                 "zero_values_filter_stats.csv:md5,e3f9e9e8b5c6b6e90e57444d438de219"
             ]
         ],
@@ -1319,7 +1313,6 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
-                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -1333,7 +1326,6 @@
                 "ratio_nulls.csv:md5,ab65c49c9b8ba7e242f391438789e080",
                 "ratio_nulls_per_sample.csv:md5,5c2931cb8c5ecb27ffa9136628fc714c",
                 "ratio_zeros.csv:md5,1837a5a03a551fdb0a7bba2869157559",
-                "skewness.csv:md5,9767d4d483957a12e6aac9cf372470d0",
                 "zero_values_filter_stats.csv:md5,ebad5386e7c670ff04887eff67c8faae"
             ]
         ],
@@ -1581,7 +1573,6 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
-                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -1700,7 +1691,6 @@
                 "ratio_nulls.csv:md5,3649422febfc0208bb0f1892d071a0a1",
                 "ratio_nulls_per_sample.csv:md5,88f76a381ba0635b334ea65f1dc9311f",
                 "ratio_zeros.csv:md5,e31a1f46c19c75381bd237f520658bf3",
-                "skewness.csv:md5,a6035b3fe1b58bb061120e9751e69434",
                 "zero_values_filter_stats.csv:md5,a4a1e6b5e88fc2226c01f237b90214db"
             ]
         ],
@@ -2071,7 +2061,6 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
-                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -2185,7 +2174,6 @@
                 "ratio_nulls.csv:md5,9c496b3b8c098a1bc17c6be7a87f2331",
                 "ratio_nulls_per_sample.csv:md5,9211cb6081071e8825119194faf6241f",
                 "ratio_zeros.csv:md5,17b7bde6ca29e11bb1e28db6b8053add",
-                "skewness.csv:md5,ebf2cbe1881481de975f88fe8e4d671f",
                 "zero_values_filter_stats.csv:md5,766d888e41179e8a785f634b3b606bc9"
             ]
         ],
@@ -2379,7 +2367,6 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
-                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -2498,7 +2485,6 @@
                 "ratio_nulls.csv:md5,62625b0e4f7f36a59dfe077a4c709a94",
                 "ratio_nulls_per_sample.csv:md5,be115e6d6c5ed7b7206891ebaa0f7a67",
                 "ratio_zeros.csv:md5,96bbe4bd2d4c29ab5701588132af9684",
-                "skewness.csv:md5,a6035b3fe1b58bb061120e9751e69434",
                 "zero_values_filter_stats.csv:md5,17fc6d525450d34445bf9cc25defe18a"
             ]
         ],
@@ -2748,7 +2734,6 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
-                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -2867,7 +2852,6 @@
                 "ratio_nulls.csv:md5,3649422febfc0208bb0f1892d071a0a1",
                 "ratio_nulls_per_sample.csv:md5,88f76a381ba0635b334ea65f1dc9311f",
                 "ratio_zeros.csv:md5,e31a1f46c19c75381bd237f520658bf3",
-                "skewness.csv:md5,a6035b3fe1b58bb061120e9751e69434",
                 "zero_values_filter_stats.csv:md5,a4a1e6b5e88fc2226c01f237b90214db"
             ]
         ],
