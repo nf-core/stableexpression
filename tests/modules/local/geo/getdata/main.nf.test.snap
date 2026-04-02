@@ -21,21 +21,21 @@
                     [
                         "GEO_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "6": [
                     [
                         "GEO_GETDATA",
                         "GEOquery",
-                        "2.74.0"
+                        "2.78.0"
                     ]
                 ],
                 "7": [
                     [
                         "GEO_GETDATA",
                         "dplyr",
-                        "1.1.4"
+                        "1.2.0"
                     ]
                 ],
                 "counts": [
@@ -51,9 +51,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2025-12-11T15:57:14.702700023"
+        "timestamp": "2026-03-30T14:54:35.640938644"
     },
     "Drosophila simulans - No data found": {
         "content": [
@@ -77,21 +77,21 @@
                     [
                         "GEO_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "6": [
                     [
                         "GEO_GETDATA",
                         "GEOquery",
-                        "2.74.0"
+                        "2.78.0"
                     ]
                 ],
                 "7": [
                     [
                         "GEO_GETDATA",
                         "dplyr",
-                        "1.1.4"
+                        "1.2.0"
                     ]
                 ],
                 "counts": [
@@ -107,9 +107,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2025-12-11T15:56:37.133179219"
+        "timestamp": "2026-03-30T14:54:07.057142353"
     },
     "Drosophila simulans - Mismatch in suppl data colnames / design": {
         "content": [
@@ -133,21 +133,21 @@
                     [
                         "GEO_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "6": [
                     [
                         "GEO_GETDATA",
                         "GEOquery",
-                        "2.74.0"
+                        "2.78.0"
                     ]
                 ],
                 "7": [
                     [
                         "GEO_GETDATA",
                         "dplyr",
-                        "1.1.4"
+                        "1.2.0"
                     ]
                 ],
                 "counts": [
@@ -163,9 +163,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2025-12-11T15:57:39.828336686"
+        "timestamp": "2026-03-30T14:54:54.838651132"
     },
     "Accession does not exist": {
         "content": [
@@ -189,21 +189,21 @@
                     [
                         "GEO_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "6": [
                     [
                         "GEO_GETDATA",
                         "GEOquery",
-                        "2.74.0"
+                        "2.78.0"
                     ]
                 ],
                 "7": [
                     [
                         "GEO_GETDATA",
                         "dplyr",
-                        "1.1.4"
+                        "1.2.0"
                     ]
                 ],
                 "counts": [
@@ -219,9 +219,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2025-12-11T15:56:24.827278212"
+        "timestamp": "2026-03-30T14:53:48.164404869"
     },
     "Drosophila simulans - Expression profiling by array": {
         "content": [
@@ -245,21 +245,21 @@
                     [
                         "GEO_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "6": [
                     [
                         "GEO_GETDATA",
                         "GEOquery",
-                        "2.74.0"
+                        "2.78.0"
                     ]
                 ],
                 "7": [
                     [
                         "GEO_GETDATA",
                         "dplyr",
-                        "1.1.4"
+                        "1.2.0"
                     ]
                 ],
                 "counts": [
@@ -275,9 +275,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2025-12-11T15:56:49.691858912"
+        "timestamp": "2026-03-30T14:54:16.400915284"
     },
     "Drosophila simulans - Expression profiling by high throughput sequencing / Some raw counts found": {
         "content": [
@@ -301,21 +301,21 @@
                     [
                         "GEO_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "6": [
                     [
                         "GEO_GETDATA",
                         "GEOquery",
-                        "2.74.0"
+                        "2.78.0"
                     ]
                 ],
                 "7": [
                     [
                         "GEO_GETDATA",
                         "dplyr",
-                        "1.1.4"
+                        "1.2.0"
                     ]
                 ],
                 "counts": [
@@ -331,9 +331,9 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2025-12-11T15:57:02.033741199"
+        "timestamp": "2026-03-30T14:54:25.947789471"
     },
     "Drosophila simulans - Only series suppl data but multiple species": {
         "content": [
@@ -357,21 +357,21 @@
                     [
                         "GEO_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "6": [
                     [
                         "GEO_GETDATA",
                         "GEOquery",
-                        "2.74.0"
+                        "2.78.0"
                     ]
                 ],
                 "7": [
                     [
                         "GEO_GETDATA",
                         "dplyr",
-                        "1.1.4"
+                        "1.2.0"
                     ]
                 ],
                 "counts": [
@@ -387,9 +387,65 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2025-12-11T15:57:27.287712988"
+        "timestamp": "2026-03-30T14:54:45.272163295"
+    },
+    "Drosophila simulans - Only one sample among several": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.78.0"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.2.0"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ],
+                "rejected": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-03-30T14:53:57.533758257"
     },
     "Beta vulgaris - Small RNA of sugar beet in response to drought stress": {
         "content": [
@@ -413,21 +469,21 @@
                     [
                         "GEO_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "6": [
                     [
                         "GEO_GETDATA",
                         "GEOquery",
-                        "2.74.0"
+                        "2.78.0"
                     ]
                 ],
                 "7": [
                     [
                         "GEO_GETDATA",
                         "dplyr",
-                        "1.1.4"
+                        "1.2.0"
                     ]
                 ],
                 "counts": [
@@ -443,8 +499,8 @@
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
+            "nextflow": "25.10.4"
         },
-        "timestamp": "2025-12-11T15:56:12.348217731"
+        "timestamp": "2026-03-30T14:53:38.690525862"
     }
 }

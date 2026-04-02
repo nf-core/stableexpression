@@ -127,11 +127,7 @@
         },
         {
             "@id": "main.nf",
-            "@type": [
-                "File",
-                "SoftwareSourceCode",
-                "ComputationalWorkflow"
-            ],
+            "@type": ["File", "SoftwareSourceCode", "ComputationalWorkflow"],
             "creator": [
                 {
                     "@id": "https://orcid.org/0000-0003-3387-1040"
@@ -140,37 +136,22 @@
             "dateCreated": "",
             "dateModified": "2026-03-14T10:55:43Z",
             "dct:conformsTo": "https://bioschemas.org/profiles/ComputationalWorkflow/1.0-RELEASE/",
-            "keywords": [
-                "nf-core",
-                "nextflow",
-                "expression",
-                "housekeeping-genes",
-                "qpcr-analysis"
-            ],
-            "license": [
-                "MIT"
-            ],
+            "keywords": ["nf-core", "nextflow", "expression", "housekeeping-genes", "qpcr-analysis"],
+            "license": ["MIT"],
             "maintainer": [
                 {
                     "@id": "https://orcid.org/0000-0003-3387-1040"
                 }
             ],
-            "name": [
-                "nf-core/stableexpression"
-            ],
+            "name": ["nf-core/stableexpression"],
             "programmingLanguage": {
                 "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow"
             },
             "sdPublisher": {
                 "@id": "https://nf-co.re/"
             },
-            "url": [
-                "https://github.com/nf-core/stableexpression",
-                "https://nf-co.re/stableexpression/1.0.0/"
-            ],
-            "version": [
-                "1.0.0"
-            ]
+            "url": ["https://github.com/nf-core/stableexpression", "https://nf-co.re/stableexpression/1.0.0/"],
+            "version": ["1.0.0"]
         },
         {
             "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow",
@@ -182,7 +163,7 @@
             "url": {
                 "@id": "https://www.nextflow.io/"
             },
-            "version": "!>=25.10.4"
+            "version": "!>=25.04.0"
         },
         {
             "@id": "#6aa6a373-9bb0-4502-a8f4-2fce1f6296ee",

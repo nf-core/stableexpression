@@ -716,9 +716,6 @@
                 "multiqc_genes_section_1_7.txt:md5,d440bc9cce034ba82dd0d9f3387f9094",
                 "multiqc_genes_section_1_8.txt:md5,dc1f5de798343036301a059b545a378f",
                 "multiqc_genes_section_1_9.txt:md5,e9402e81e8c32c8a6b4015c4a55962f0",
-                "multiqc_geo_all_experiments_metadata.txt:md5,86633ac033ae596a16f71018431632e7",
-                "multiqc_geo_rejected_experiments_metadata.txt:md5,48667640716e09d5c8d4ab7a7fc43fcb",
-                "multiqc_geo_selected_experiments_metadata.txt:md5,aa15bf400baf47226d570d61e8af61b2",
                 "multiqc_geo_warning_reasons.txt:md5,2b53d4be74728c504752515f74c58fd2",
                 "multiqc_id_mapping_stats.txt:md5,f03d4786d088307ad756b9661fd61ede",
                 "multiqc_normalised_expr_distrib_section_1.txt:md5,fe7c9f8eff636a38deee18a05e17ed4d",
@@ -754,9 +751,6 @@
                 "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1",
                 "accessions.txt:md5,a850f625a78be7b4b10ce08a5b638e23",
-                "geo_all_datasets.metadata.tsv:md5,02070ee3605fac89e2a98d47bbc81ac8",
-                "geo_rejected_datasets.metadata.tsv:md5,b3c90393c5defe89783752d329ce8bc0",
-                "geo_selected_datasets.metadata.tsv:md5,730a0cb5d65b5fba4d1a8d373e9049eb",
                 "GSE55951_GPL18429.microarray.normalised.counts.csv:md5,18fd2d728ad2ec5cb78f994f73375144",
                 "GSE55951_GPL18429.microarray.normalised.design.csv:md5,f4872dff0edbe441d1600ffe2b67a25d",
                 "GSE135555_suppl.rnaseq.raw.counts.csv:md5,b34bde25ea5d508a1670ce4264073df1",
@@ -778,7 +772,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-30T07:48:54.920307824"
+        "timestamp": "2026-04-01T18:07:34.763955365"
     },
     "-profile test_included_and_excluded_accessions": {
         "content": [
@@ -1286,7 +1280,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-29T14:59:07.864297207"
+        "timestamp": "2026-03-30T12:50:35.580272727"
     },
     "-profile test_skip_id_mapping": {
         "content": [

@@ -188,5 +188,51 @@ nextflow_workflow {
 
     }
 
+    test("With samplling size") {
+
+        when {
+
+            params {
+                species = 'beta vulgaris'
+                skip_fetch_eatlas_accessions = false
+                fetch_geo_accessions = false
+                platform = null
+                keywords = ""
+                accessions = ""
+                accessions_file = null
+                excluded_accessions = ""
+                excluded_accessions_file = null
+                random_sampling_size = 2
+                random_sampling_seed = 42
+                outdir = "$outputDir"
+            }
+
+            workflow {
+                """
+                input[0] = params.species.split(' ').join('_')
+                input[1] = params.skip_fetch_eatlas_accessions
+                input[2] = params.fetch_geo_accessions
+                input[3] = params.platform
+                input[4] = params.keywords
+                input[5] = channel.fromList( params.accessions.tokenize(',') )
+                input[6] = params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty()
+                input[7] = channel.fromList( params.excluded_accessions.tokenize(',') )
+                input[8] = params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty()
+                input[9] = params.random_sampling_size
+                input[10] = params.random_sampling_seed
+                input[11] = params.outdir
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
 
 }

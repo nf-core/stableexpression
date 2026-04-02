@@ -3,25 +3,55 @@
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,05b3b9508930923bd86c281e8febe6b6"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        "NORMFINDER",
+                        "python",
+                        "3.14.3"
+                    ]
                 ],
                 "2": [
-                    
+                    [
+                        "NORMFINDER",
+                        "polars",
+                        "1.39.2"
+                    ]
                 ],
                 "3": [
-                    
+                    [
+                        "NORMFINDER",
+                        "tqdm",
+                        "4.67.3"
+                    ]
                 ],
                 "4": [
-                    
+                    [
+                        "NORMFINDER",
+                        "numpy",
+                        "2.4.3"
+                    ]
                 ],
                 "5": [
-                    
+                    [
+                        "NORMFINDER",
+                        "numba",
+                        "0.64.0"
+                    ]
                 ],
                 "stability_values": [
-                    
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,05b3b9508930923bd86c281e8febe6b6"
+                    ]
                 ]
             }
         ],
@@ -29,31 +59,61 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-19T12:25:07.29573484"
+        "timestamp": "2026-03-30T15:45:00.995645591"
     },
     "Very small dataset - Cq values": {
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,a7c936faa9135439fd1b86c195f60414"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        "NORMFINDER",
+                        "python",
+                        "3.14.3"
+                    ]
                 ],
                 "2": [
-                    
+                    [
+                        "NORMFINDER",
+                        "polars",
+                        "1.39.2"
+                    ]
                 ],
                 "3": [
-                    
+                    [
+                        "NORMFINDER",
+                        "tqdm",
+                        "4.67.3"
+                    ]
                 ],
                 "4": [
-                    
+                    [
+                        "NORMFINDER",
+                        "numpy",
+                        "2.4.3"
+                    ]
                 ],
                 "5": [
-                    
+                    [
+                        "NORMFINDER",
+                        "numba",
+                        "0.64.0"
+                    ]
                 ],
                 "stability_values": [
-                    
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,a7c936faa9135439fd1b86c195f60414"
+                    ]
                 ]
             }
         ],
@@ -61,6 +121,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-19T12:24:48.380454454"
+        "timestamp": "2026-03-30T15:44:51.060894512"
     }
 }

@@ -1,64 +1,36 @@
 {
-    "2 files": {
-        "content": [
-            {
-                "0": [
-                    
-                ],
-                "1": [
-                    
-                ],
-                "2": [
-                    
-                ],
-                "counts": [
-                    
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-19T12:22:52.352902147"
-    },
-    "2 identical files": {
-        "content": [
-            {
-                "0": [
-                    
-                ],
-                "1": [
-                    
-                ],
-                "2": [
-                    
-                ],
-                "counts": [
-                    
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-19T12:23:06.464908148"
-    },
     "1 file": {
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "all_counts.parquet:md5,4ceb116e0a52b92ab31ec4e122ed12a1"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        "MERGE_COUNTS",
+                        "python",
+                        "3.14.3"
+                    ]
                 ],
                 "2": [
-                    
+                    [
+                        "MERGE_COUNTS",
+                        "polars",
+                        "1.39.2"
+                    ]
                 ],
                 "counts": [
-                    
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "all_counts.parquet:md5,4ceb116e0a52b92ab31ec4e122ed12a1"
+                    ]
                 ]
             }
         ],
@@ -66,6 +38,47 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-19T12:23:20.533218583"
+        "timestamp": "2026-03-30T16:41:25.646239587"
+    },
+    "3 files": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "all_counts.parquet:md5,c519c7936217c9399081069a48539c07"
+                    ]
+                ],
+                "1": [
+                    [
+                        "MERGE_COUNTS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "MERGE_COUNTS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "all_counts.parquet:md5,c519c7936217c9399081069a48539c07"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-03-30T16:39:46.447995126"
     }
 }

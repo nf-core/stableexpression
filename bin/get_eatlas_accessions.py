@@ -446,6 +446,7 @@ def main():
     # getting accessions of selected experiments
     selected_accessions = [exp_dict["accession"] for exp_dict in results]
 
+    sampling_status = "ok"
     if args.random_sampling_size and args.random_sampling_seed:
         selected_accession_to_nb_samples = [
             {
@@ -469,11 +470,13 @@ def main():
             f"Kept {len(selected_accessions)} experiments after random sampling"
         )
 
-        # writing status to file
-        # so that the wrapper module can get the status
-        with open(SAMPLING_QUOTA_OUTFILE, "w") as fout:
-            sampling_status = "full" if sampling_quota_reached else "ok"
-            fout.write(sampling_status)
+        if sampling_quota_reached:
+            sampling_status = "full"
+
+    # writing status to file
+    # so that the wrapper module can get the status
+    with open(SAMPLING_QUOTA_OUTFILE, "w") as fout:
+        fout.write(sampling_status)
 
     # keeping metadata only for selected experiments
     selected_experiments = get_metadata_for_selected_experiments(experiments, results)

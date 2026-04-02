@@ -428,7 +428,7 @@ def main():
     all_genes_summary_df = complement_gene_summary_table(
         stat_score_df, *additional_data_dfs
     )
-
+    print(additional_data_dfs)
     logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
     # sorting values in order to having consistent output
     all_genes_summary_df.sort(by=config.GENE_ID_COLNAME).write_csv(

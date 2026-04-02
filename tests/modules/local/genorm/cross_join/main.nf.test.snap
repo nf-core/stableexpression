@@ -9,7 +9,7 @@
                             "index_1": 0,
                             "index_2": 1
                         },
-                        "cross_join.0.1.parquet:md5,4557570a16dce055584692d68ea29ec8"
+                        "cross_join.0.1.parquet:md5,10d5591947a85f788dd6db61a1486f14"
                     ]
                 ],
                 "1": [
@@ -33,7 +33,7 @@
                             "index_1": 0,
                             "index_2": 1
                         },
-                        "cross_join.0.1.parquet:md5,4557570a16dce055584692d68ea29ec8"
+                        "cross_join.0.1.parquet:md5,10d5591947a85f788dd6db61a1486f14"
                     ]
                 ]
             }
@@ -42,6 +42,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-03-19T12:20:27.090508116"
+        "timestamp": "2026-03-30T15:40:29.248178717"
     }
 }

@@ -10,3 +10,5 @@ multiqc/multiqc_report.html
 pipeline_info/*.{html,json,txt,yml}
 **.py
 **.parquet
+**multiqc_geo*metadata.txt
+**geo*metadata.tsv

@@ -5,7 +5,7 @@ nextflow_process {
     process "GEO_GETDATA"
     tag "geo_getdata"
 
-/*
+
     test("Beta vulgaris - Small RNA of sugar beet in response to drought stress") {
 
         when {
@@ -24,6 +24,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert process.exitStatus == 0 },
                 { assert snapshot(process.out).match() }
             )
         }
@@ -47,6 +48,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert process.exitStatus == 0 },
                 { assert snapshot(process.out).match() }
             )
         }
@@ -71,6 +73,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert process.exitStatus == 0 },
                 { assert snapshot(process.out).match() }
             )
         }
@@ -95,6 +98,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert process.exitStatus == 0 },
                 { assert snapshot(process.out).match() }
             )
         }
@@ -119,6 +123,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert process.exitStatus == 0 },
                 { assert snapshot(process.out).match() }
             )
         }
@@ -143,6 +148,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert process.exitStatus == 0 },
                 { assert snapshot(process.out).match() }
             )
         }
@@ -167,6 +173,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert process.exitStatus == 0 },
                 { assert snapshot(process.out).match() }
             )
         }
@@ -191,6 +198,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert process.exitStatus == 0 },
                 { assert process.out.counts.size() == 0 },
                 { assert snapshot(process.out).match() }
             )
@@ -216,12 +224,12 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert process.exitStatus == 0 },
                 { assert process.out.counts.size() == 0 },
                 { assert snapshot(process.out).match() }
             )
         }
 
     }
-    */
 
 }
