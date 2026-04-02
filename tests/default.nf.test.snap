@@ -421,11 +421,11 @@
                 "renaming_warning_reasons.tsv:md5,0a11a59b5b547a39ab7a0e4dac622173"
             ]
         ],
+        "timestamp": "2026-03-29T14:17:04.976060321",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-29T14:17:04.976060321"
+        }
     },
     "-profile test_fetch_geo": {
         "content": [
@@ -768,11 +768,11 @@
                 "renaming_warning_reasons.tsv:md5,ae651ff0a559e025e014412009eac136"
             ]
         ],
+        "timestamp": "2026-04-01T18:07:34.763955365",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-01T18:07:34.763955365"
+        }
     },
     "-profile test_included_and_excluded_accessions": {
         "content": [
@@ -1276,11 +1276,11 @@
                 "zero_values_filter_stats.csv:md5,e3f9e9e8b5c6b6e90e57444d438de219"
             ]
         ],
+        "timestamp": "2026-03-30T12:50:35.580272727",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T12:50:35.580272727"
+        }
     },
     "-profile test_skip_id_mapping": {
         "content": [
@@ -1337,11 +1337,11 @@
                 "zero_values_filter_stats.csv:md5,ebad5386e7c670ff04887eff67c8faae"
             ]
         ],
+        "timestamp": "2026-03-29T14:46:58.081207316",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-29T14:46:58.081207316"
+        }
     },
     "-profile test_dataset_custom_mapping_and_gene_length": {
         "content": [
@@ -1392,11 +1392,11 @@
                 "id_mapping_stats.csv:md5,20bd1443c864cb013c97efc760465e9c"
             ]
         ],
+        "timestamp": "2026-03-21T12:53:02.926804675",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-21T12:53:02.926804675"
+        }
     },
     "-profile test": {
         "content": [
@@ -1704,11 +1704,11 @@
                 "zero_values_filter_stats.csv:md5,a4a1e6b5e88fc2226c01f237b90214db"
             ]
         ],
+        "timestamp": "2026-03-29T14:12:07.597296294",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-29T14:12:07.597296294"
+        }
     },
     "-profile test_accessions_only": {
         "content": [
@@ -1754,11 +1754,11 @@
                 "species_experiments.metadata.tsv:md5,cf220f0d0aab141abf220c856430f2f2"
             ]
         ],
+        "timestamp": "2026-03-29T14:35:30.092884854",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-29T14:35:30.092884854"
+        }
     },
     "-profile test_one_accession_low_gene_count": {
         "content": [
@@ -2189,11 +2189,11 @@
                 "zero_values_filter_stats.csv:md5,766d888e41179e8a785f634b3b606bc9"
             ]
         ],
+        "timestamp": "2026-03-29T14:45:11.705713295",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-29T14:45:11.705713295"
+        }
     },
     "-profile test_public_and_dataset": {
         "content": [
@@ -2502,11 +2502,11 @@
                 "zero_values_filter_stats.csv:md5,17fc6d525450d34445bf9cc25defe18a"
             ]
         ],
+        "timestamp": "2026-03-29T14:25:41.575250542",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-29T14:25:41.575250542"
+        }
     },
     "-profile test_download_only": {
         "content": [
@@ -2559,11 +2559,11 @@
                 "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1"
             ]
         ],
+        "timestamp": "2026-03-29T14:36:07.351960504",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-29T14:36:07.351960504"
+        }
     },
     "-profile test_gprofiler_target_database_entrez": {
         "content": [
@@ -2871,10 +2871,10 @@
                 "zero_values_filter_stats.csv:md5,a4a1e6b5e88fc2226c01f237b90214db"
             ]
         ],
+        "timestamp": "2026-03-29T15:07:53.783250807",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-29T15:07:53.783250807"
+        }
     }
 }

@@ -49,11 +49,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-30T14:54:35.640938644",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:54:35.640938644"
+        }
     },
     "Drosophila simulans - No data found": {
         "content": [
@@ -105,11 +105,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-30T14:54:07.057142353",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:54:07.057142353"
+        }
     },
     "Drosophila simulans - Mismatch in suppl data colnames / design": {
         "content": [
@@ -161,11 +161,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-30T14:54:54.838651132",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:54:54.838651132"
+        }
     },
     "Accession does not exist": {
         "content": [
@@ -217,11 +217,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-30T14:53:48.164404869",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:53:48.164404869"
+        }
     },
     "Drosophila simulans - Expression profiling by array": {
         "content": [
@@ -273,11 +273,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-30T14:54:16.400915284",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:54:16.400915284"
+        }
     },
     "Drosophila simulans - Expression profiling by high throughput sequencing / Some raw counts found": {
         "content": [
@@ -329,11 +329,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-30T14:54:25.947789471",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:54:25.947789471"
+        }
     },
     "Drosophila simulans - Only series suppl data but multiple species": {
         "content": [
@@ -385,11 +385,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-30T14:54:45.272163295",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:54:45.272163295"
+        }
     },
     "Drosophila simulans - Only one sample among several": {
         "content": [
@@ -441,11 +441,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-30T14:53:57.533758257",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:53:57.533758257"
+        }
     },
     "Beta vulgaris - Small RNA of sugar beet in response to drought stress": {
         "content": [
@@ -497,10 +497,10 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-30T14:53:38.690525862",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:53:38.690525862"
+        }
     }
 }

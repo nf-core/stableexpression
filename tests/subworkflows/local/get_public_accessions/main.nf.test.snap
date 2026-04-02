@@ -16,11 +16,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-04-01T14:49:26.109506348",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-01T14:49:26.109506348"
+        }
     },
     "No GEO + accessions provided": {
         "content": [
@@ -39,11 +39,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-04-01T14:49:15.733265214",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-01T14:49:15.733265214"
+        }
     },
     "Fetch eatlas accessions without keywords": {
         "content": [
@@ -56,11 +56,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-04-01T14:48:43.670211053",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-01T14:48:43.670211053"
+        }
     },
     "With samplling size": {
         "content": [
@@ -73,11 +73,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-04-01T14:53:02.05138484",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-01T14:53:02.05138484"
+        }
     },
     "Fetch public accessions with keywords": {
         "content": [
@@ -100,10 +100,10 @@
                 ]
             }
         ],
+        "timestamp": "2026-04-01T14:49:04.709620479",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-01T14:49:04.709620479"
+        }
     }
 }

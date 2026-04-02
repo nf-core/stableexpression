@@ -54,6 +54,4 @@ runs:
       run: |
         nf-test test \
           --profile ${{ inputs.profile }} \
-          ${{ inputs.args }} \
-          --ci \
-          --changed-since HEAD^
+          ${{ inputs.args }}
