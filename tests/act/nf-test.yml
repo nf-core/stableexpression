@@ -1,9 +1,8 @@
 name: Run nf-test
 on:
-  pull_request:
+  push:
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NFT_VER: "0.9.3"
   NFT_WORKDIR: "~"
   NXF_ANSI_LOG: false
@@ -22,6 +21,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get profile
+        id: get_profile
+        run: |
+          if [ -z "${{ env.PROFILE }}" ]; then
+            echo "Using default profile ${{ env.DEFAULT_PROFILE }}"
+            echo "profile=${{ env.DEFAULT_PROFILE }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using profile ${{ env.PROFILE }}"
+            echo "profile=${{ env.PROFILE }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run nf-test
         id: run_nf_test
         uses: ./tests/act/actions/nf-test
@@ -30,20 +40,5 @@ jobs:
           NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
           NXF_VERSION: ${{ env.NXF_VER }}
         with:
-          profile: ${{ env.PROFILE }}
-          tags: ${{ env.TAGS }}
-
-      - name: Report test status
-        if: ${{ always() }}
-        run: |
-          if [[ "${{ steps.run_nf_test.outcome }}" == "failure" ]]; then
-            echo "::error::Test with ${{ env.NXF_VER }} failed"
-            # Add to workflow summary
-            echo "## ❌ Test failed: ${{ env.PROFILE }} | ${{ env.NXF_VER }}" >> $GITHUB_STEP_SUMMARY
-            if [[ "${{ env.NXF_VER }}" == "latest-everything" ]]; then
-              echo "::warning::Test with latest-everything failed but will not cause workflow failure. Please check if the error is expected or if it needs fixing."
-            fi
-            if [[ "${{ env.NXF_VER }}" != "latest-everything" ]]; then
-              exit 1
-            fi
-          fi
+          profile: ${{ steps.get_profile.outputs.profile }}
+          args: ${{ env.ARGS }}

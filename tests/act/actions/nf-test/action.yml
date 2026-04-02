@@ -2,20 +2,11 @@ name: "nf-test Action"
 description: "Runs nf-test with common setup steps"
 inputs:
   profile:
-    description: "Profile to use"
+    description: "Profile(s) to use for nf-test"
     required: true
-  paths:
-    description: "Test paths"
+  args:
+    description: "Arguments to pass to nf-test"
     required: true
-  tags:
-    description: "Tags to pass as argument for nf-test --tag parameter"
-    required: false
-  verbose:
-    description: "Enable verbose output for nf-test"
-    required: false
-  debug:
-    description: "Enable debug output for nf-test"
-    required: false
 runs:
   using: "composite"
   steps:
@@ -62,50 +53,7 @@ runs:
         NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
       run: |
         nf-test test \
-          --profile=+${{ inputs.profile }} \
-          $(if [ -n "${{ inputs.tags }}" ]; then echo "--tag ${{ inputs.tags }}"; fi) \
-          $(if [ "${{ inputs.verbose }}" == "true" ]; then echo "--verbose"; fi) \
-          $(if [ "${{ inputs.debug }}" == "true" ]; then echo "--debug"; fi) \
+          --profile ${{ inputs.profile }} \
+          ${{ inputs.args }} \
           --ci \
-          --changed-since HEAD^ \
-          --tap=./act/output/test.tap
-
-          # Save the absolute path of the test.tap file to the output
-          echo "tap_file_path=$(realpath act/output/test.tap)" >> $GITHUB_OUTPUT
-
-    - name: Generate test summary
-      if: always()
-      shell: bash
-      run: |
-        # Add header if it doesn't exist (using a token file to track this)
-        if [ ! -f "act/output/.summary_header" ]; then
-          echo "# 🚀 nf-test results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Status | Test Name | Profile |" >> $GITHUB_STEP_SUMMARY
-          echo "|:------:|-----------|---------|" >> $GITHUB_STEP_SUMMARY
-          touch ./act/output/.summary_header
-        fi
-
-        if [ -f test.tap ]; then
-          while IFS= read -r line; do
-            if [[ $line =~ ^ok ]]; then
-              test_name="${line#ok }"
-              # Remove the test number from the beginning
-              test_name="${test_name#* }"
-              echo "| ✅ | ${test_name} | ${{ inputs.profile }} |" >> $GITHUB_STEP_SUMMARY
-            elif [[ $line =~ ^not\ ok ]]; then
-              test_name="${line#not ok }"
-              # Remove the test number from the beginning
-              test_name="${test_name#* }"
-              echo "| ❌ | ${test_name} | ${{ inputs.profile }} |" >> $GITHUB_STEP_SUMMARY
-            fi
-          done < test.tap
-        else
-          echo "| ⚠️ | No test results found | ${{ inputs.profile }} |" >> $GITHUB_STEP_SUMMARY
-        fi
-
-    - name: Clean up
-      if: always()
-      shell: bash
-      run: |
-        sudo rm -rf /home/ubuntu/tests/
+          --changed-since HEAD^
