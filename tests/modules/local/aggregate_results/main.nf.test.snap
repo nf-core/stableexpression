@@ -18,7 +18,7 @@
                     ]
                 ],
                 "3": [
-                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109"
                 ],
                 "4": [
                     [
@@ -45,7 +45,7 @@
                     "all_genes_summary.csv:md5,67da835eca8de21309e7b3ec0f6a31f7"
                 ],
                 "custom_content_multiqc_config": [
-                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109"
                 ],
                 "most_stable_genes_summary": [
                     [
@@ -61,9 +61,9 @@
                 ]
             }
         ],
-        "timestamp": "2026-04-01T09:37:44.641977973",
+        "timestamp": "2026-04-03T12:20:06.316942755",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
         }
     },

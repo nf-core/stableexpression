@@ -302,6 +302,7 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
+                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings",
                 "warnings/renaming_warning_reasons.tsv"
@@ -419,9 +420,9 @@
                 "renaming_warning_reasons.tsv:md5,0a11a59b5b547a39ab7a0e4dac622173"
             ]
         ],
-        "timestamp": "2026-03-29T14:17:04.976060321",
+        "timestamp": "2026-04-03T11:45:55.057515744",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
         }
     },
@@ -630,6 +631,7 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
+                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings",
                 "warnings/geo_warning_reasons.csv",
@@ -764,9 +766,9 @@
                 "renaming_warning_reasons.tsv:md5,ae651ff0a559e025e014412009eac136"
             ]
         ],
-        "timestamp": "2026-04-01T18:07:34.763955365",
+        "timestamp": "2026-04-03T11:58:39.567822759",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
         }
     },
@@ -1133,6 +1135,7 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
+                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -1270,9 +1273,9 @@
                 "zero_values_filter_stats.csv:md5,e3f9e9e8b5c6b6e90e57444d438de219"
             ]
         ],
-        "timestamp": "2026-03-30T12:50:35.580272727",
+        "timestamp": "2026-04-03T12:13:41.83268288",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
         }
     },
@@ -1313,6 +1316,7 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
+                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -1329,9 +1333,9 @@
                 "zero_values_filter_stats.csv:md5,ebad5386e7c670ff04887eff67c8faae"
             ]
         ],
-        "timestamp": "2026-03-29T14:46:58.081207316",
+        "timestamp": "2026-04-03T12:06:12.142641367",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
         }
     },
@@ -1573,6 +1577,7 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
+                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -1694,9 +1699,9 @@
                 "zero_values_filter_stats.csv:md5,a4a1e6b5e88fc2226c01f237b90214db"
             ]
         ],
-        "timestamp": "2026-03-29T14:12:07.597296294",
+        "timestamp": "2026-04-03T11:42:18.193551949",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
         }
     },
@@ -2061,6 +2066,7 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
+                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -2177,9 +2183,9 @@
                 "zero_values_filter_stats.csv:md5,766d888e41179e8a785f634b3b606bc9"
             ]
         ],
-        "timestamp": "2026-03-29T14:45:11.705713295",
+        "timestamp": "2026-04-03T12:05:13.603927696",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
         }
     },
@@ -2367,6 +2373,7 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
+                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -2488,9 +2495,9 @@
                 "zero_values_filter_stats.csv:md5,17fc6d525450d34445bf9cc25defe18a"
             ]
         ],
-        "timestamp": "2026-03-29T14:25:41.575250542",
+        "timestamp": "2026-04-03T11:51:42.423855816",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
         }
     },
@@ -2734,6 +2741,7 @@
                 "statistics/ratio_nulls.csv",
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
+                "statistics/skewness.csv",
                 "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
@@ -2855,9 +2863,9 @@
                 "zero_values_filter_stats.csv:md5,a4a1e6b5e88fc2226c01f237b90214db"
             ]
         ],
-        "timestamp": "2026-03-29T15:07:53.783250807",
+        "timestamp": "2026-04-03T12:19:34.33969826",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
         }
     }
