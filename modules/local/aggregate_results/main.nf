@@ -1,5 +1,5 @@
 process AGGREGATE_RESULTS {
-
+    debug true
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"

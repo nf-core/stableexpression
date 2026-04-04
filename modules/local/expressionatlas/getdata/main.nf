@@ -1,5 +1,5 @@
 process EXPRESSIONATLAS_GETDATA {
-    debug true
+
     label 'process_single'
     label 'can_fail'
 

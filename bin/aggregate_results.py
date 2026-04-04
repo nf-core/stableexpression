@@ -290,8 +290,10 @@ def search_target_genes(df: pl.DataFrame, target_genes: list[str]) -> list[dict]
         )
         unique_gene_ids |= set(original_gene_ids)
 
+    # putting all unique gene IDs, gene names and original gene IDs into single list
     all_unique_gene_ids = [gene for gene in unique_gene_ids if gene is not None]
 
+    # formatting all gene IDs found
     formated_gene_ids_df = pl.DataFrame({"gene": all_unique_gene_ids}).with_columns(
         pl.col("gene")
         .map_batches(
@@ -301,6 +303,7 @@ def search_target_genes(df: pl.DataFrame, target_genes: list[str]) -> list[dict]
         .alias("formatted_gene")
     )
 
+    # formatting target genes
     formated_target_genes_df = pl.DataFrame({"target_gene": target_genes}).with_columns(
         pl.col("target_gene")
         .map_batches(
@@ -315,6 +318,7 @@ def search_target_genes(df: pl.DataFrame, target_genes: list[str]) -> list[dict]
             formated_target_genes_df, on="formatted_gene", how="inner"
         )
         .select(["target_gene", "gene"])
+        .sort("target_gene")
         .to_dicts()
     )
 
@@ -428,7 +432,7 @@ def main():
     all_genes_summary_df = complement_gene_summary_table(
         stat_score_df, *additional_data_dfs
     )
-    print(additional_data_dfs)
+
     logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
     # sorting values in order to having consistent output
     all_genes_summary_df.sort(by=config.GENE_ID_COLNAME).write_csv(

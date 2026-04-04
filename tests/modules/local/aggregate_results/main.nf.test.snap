@@ -18,7 +18,7 @@
                     ]
                 ],
                 "3": [
-                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109"
+                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
                 ],
                 "4": [
                     [
@@ -45,7 +45,7 @@
                     "all_genes_summary.csv:md5,67da835eca8de21309e7b3ec0f6a31f7"
                 ],
                 "custom_content_multiqc_config": [
-                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109"
+                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
                 ],
                 "most_stable_genes_summary": [
                     [
@@ -61,11 +61,11 @@
                 ]
             }
         ],
-        "timestamp": "2026-04-03T12:20:06.316942755",
         "meta": {
-            "nf-test": "0.9.5",
+            "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-04-04T09:38:02.365611798"
     },
     "Without microarray": {
         "content": [
@@ -129,11 +129,11 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-30T14:06:37.615799808",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-03-30T14:06:37.615799808"
     },
     "One invalid target gene": {
         "content": [
@@ -197,11 +197,11 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-30T14:47:07.501875225",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-03-30T14:47:07.501875225"
     },
     "One section": {
         "content": [
@@ -253,11 +253,11 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-30T14:47:13.474058057",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-03-30T14:47:13.474058057"
     },
     "With microarray": {
         "content": [
@@ -321,10 +321,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-30T14:46:55.231695582",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-03-30T14:46:55.231695582"
     }
 }
