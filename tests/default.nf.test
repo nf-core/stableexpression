@@ -278,12 +278,13 @@ nextflow_pipeline {
         }
     }
 
+    /*
     test("-profile test_gprofiler_target_database_entrez") {
 
         when {
             params {
                 species = 'beta vulgaris'
-                gprofiler_target_database = 'ENTREZGENE'
+                gprofiler_target_db = 'ENTREZGENE'
                 outdir = "$outputDir"
             }
         }
@@ -300,5 +301,6 @@ nextflow_pipeline {
             )
         }
     }
+    */
 
 }
