@@ -10,6 +10,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Install Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: 22
+
     - name: Setup Nextflow
       uses: nf-core/setup-nextflow@v2
       with:
@@ -20,11 +25,13 @@ runs:
       with:
         python-version: "3.14"
 
+    - name: Debug tool cache
+      run: ls /opt/hostedtoolcache/ || echo "empty"
+
     - name: Install nf-test
-      uses: nf-core/setup-nf-test@v1
-      with:
-        version: "${{ env.NFT_VER }}"
-        install-pdiff: true
+      run: |
+        wget -qO- https://get.nf-test.com | bash
+        mv nf-test /usr/local/bin
 
     - name: Setup apptainer
       if: contains(inputs.profile, 'singularity')
