@@ -40,6 +40,10 @@ def compute_dataset_statistics(df: pl.DataFrame) -> dict:
     return dict(skewness=list(skewness))
 
 
+def format_value(value: float) -> str:
+    return f"{value:.{FLOAT_PRECISION}f}" if value != 0 else "0"
+
+
 def export_count_data(stats: dict):
     """
     Export dataset statistics to CSV files.
@@ -48,9 +52,7 @@ def export_count_data(stats: dict):
     for key, outfile_name in KEY_TO_OUTFILE.items():
         logger.info(f"Exporting dataset statistics {key} to: {outfile_name}")
         with open(outfile_name, "w") as outfile:
-            outfile.write(
-                ",".join([f"{val:.{FLOAT_PRECISION}f}" for val in stats[key]])
-            )
+            outfile.write(",".join([format_value(val) for val in stats[key]]))
 
 
 #####################################################
