@@ -328,7 +328,7 @@ workflow REPORTING {
                             )
 
     // ------------------------------------------------------------------------------------
-    // CONFIG
+    // PREPARE MULTIQC INPUT
     // ------------------------------------------------------------------------------------
 
     ch_multiqc_config        = channel.fromPath(
@@ -340,7 +340,7 @@ workflow REPORTING {
 
     ch_multiqc_logo          = multiqc_logo ?
         channel.fromPath(multiqc_logo, checkIfExists: true) :
-        channel.empty()
+        channel.of([])
 
     summary_params      = paramsSummaryMap(
         workflow,
@@ -359,25 +359,40 @@ workflow REPORTING {
         methodsDescriptionText(ch_multiqc_custom_methods_description)
     )
 
-    ch_multiqc_files = ch_multiqc_files
-        .mix( ch_collated_versions )
-        .mix(
-            ch_methods_description.collectFile(
-                name: 'methods_description_mqc.yaml',
-                sort: true
-            )
-        )
+    // ------------------------------------------------------------------------------------
+    // ADDING KEY TO JOIN ON
+    // ------------------------------------------------------------------------------------
 
-    ch_multiqc_custom_config = ch_multiqc_custom_config.mix( ch_custom_content_multiqc_config )
+    ch_multiqc_file_list = ch_multiqc_files
+                            .mix( ch_collated_versions )
+                            .mix(
+                                ch_methods_description.collectFile(
+                                    name: 'methods_description_mqc.yaml',
+                                    sort: true
+                                )
+                            )
+                            .flatten()
+                            .toSortedList()
+                            .map{ list -> [ [id: 'Final report'], list ] }
 
-    MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
-    )
+    ch_multiqc_config_list = ch_multiqc_config
+                                .mix( ch_multiqc_custom_config )
+                                .mix( ch_custom_content_multiqc_config )
+                                .toSortedList()
+                                .map{ list -> [ [id: 'Final report'], list ] }
+
+    ch_multiqc_logo = ch_multiqc_logo.map{ file -> [ [id: 'Final report'], file ] }
+
+    // ------------------------------------------------------------------------------------
+    // MULTIQC
+    // ------------------------------------------------------------------------------------
+
+    ch_multiqc_input = ch_multiqc_file_list
+                        .join( ch_multiqc_config_list )
+                        .join( ch_multiqc_logo )
+                        .map { meta, files, configs, logo -> [ meta, files, configs, logo , [], [] ] }
+
+    MULTIQC ( ch_multiqc_input )
 
     emit:
     multiqc_report          = MULTIQC.out.report
