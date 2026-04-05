@@ -16,3 +16,4 @@ modules/nf-core/
 subworkflows/nf-core/
 galaxy/
 docs/
+tests/act
