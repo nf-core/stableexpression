@@ -25,17 +25,28 @@ runs:
       with:
         python-version: "3.14"
 
-    - name: Debug tool cache
-      run: ls /opt/hostedtoolcache/ || echo "empty"
-
     - name: Install nf-test
       run: |
         wget -qO- https://get.nf-test.com | bash
         mv nf-test /usr/local/bin
 
+    - uses: actions/cache@v5
+      with:
+        path: /var/cache/apt/archives
+        key: apt-deps-${{ runner.os }}
+
+    - name: Install apptainer dependencies
+      if: contains(inputs.profile, 'apptainer')
+      shell: bash
+      run: |
+        apt update
+        apt install -y libfuse3-3 uidmap fakeroot
+
     - name: Setup apptainer
-      if: contains(inputs.profile, 'singularity')
-      uses: eWaterCycle/setup-apptainer@main
+      if: contains(inputs.profile, 'apptainer')
+      uses: eWaterCycle/setup-apptainer@v2
+      with:
+        apptainer-version: 1.4.5
 
     - name: Set up Singularity
       if: contains(inputs.profile, 'singularity')
@@ -62,3 +73,13 @@ runs:
         nf-test test \
           --profile ${{ inputs.profile }} \
           ${{ inputs.args }}
+
+    - name: Upload nf-test artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: nf-test-artifacts
+        path: .nf-test/tests
+        include-hidden-files: true
+        overwrite: true
+        compression-level: 0
