@@ -3,23 +3,45 @@
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "section": "section_1",
+                            "index_1": 0,
+                            "index_2": 1
+                        },
+                        "ratios.0.1.parquet:md5,dd929c967bc78a650c33eb0885544f50"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        "EXPRESSION_RATIO",
+                        "python",
+                        "3.14.3"
+                    ]
                 ],
                 "2": [
-                    
+                    [
+                        "EXPRESSION_RATIO",
+                        "polars",
+                        "1.39.2"
+                    ]
                 ],
                 "data": [
-                    
+                    [
+                        {
+                            "section": "section_1",
+                            "index_1": 0,
+                            "index_2": 1
+                        },
+                        "ratios.0.1.parquet:md5,dd929c967bc78a650c33eb0885544f50"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-04-01T09:41:39.459415462",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2025-12-03T18:55:17.991614786"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
     }
 }

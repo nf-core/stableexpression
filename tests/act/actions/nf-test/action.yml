@@ -1,0 +1,85 @@
+name: "nf-test Action"
+description: "Runs nf-test with common setup steps"
+inputs:
+  profile:
+    description: "Profile(s) to use for nf-test"
+    required: true
+  args:
+    description: "Arguments to pass to nf-test"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: 22
+
+    - name: Setup Nextflow
+      uses: nf-core/setup-nextflow@v2
+      with:
+        version: "${{ env.NXF_VERSION }}"
+
+    - name: Set up Python
+      uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6
+      with:
+        python-version: "3.14"
+
+    - name: Install nf-test
+      run: |
+        wget -qO- https://get.nf-test.com | bash
+        mv nf-test /usr/local/bin
+
+    - uses: actions/cache@v5
+      with:
+        path: /var/cache/apt/archives
+        key: apt-deps-${{ runner.os }}
+
+    - name: Install apptainer dependencies
+      if: contains(inputs.profile, 'apptainer')
+      shell: bash
+      run: |
+        apt update
+        apt install -y libfuse3-3 uidmap fakeroot
+
+    - name: Setup apptainer
+      if: contains(inputs.profile, 'apptainer')
+      uses: eWaterCycle/setup-apptainer@v2
+      with:
+        apptainer-version: 1.4.5
+
+    - name: Set up Singularity
+      if: contains(inputs.profile, 'singularity')
+      shell: bash
+      run: |
+        mkdir -p $NXF_SINGULARITY_CACHEDIR
+        mkdir -p $NXF_SINGULARITY_LIBRARYDIR
+
+    - name: Conda setup
+      if: contains(inputs.profile, 'conda')
+      uses: conda-incubator/setup-miniconda@505e6394dae86d6a5c7fbb6e3fb8938e3e863830 # v3
+      with:
+        auto-update-conda: true
+        conda-solver: libmamba
+        channels: conda-forge
+        channel-priority: strict
+        conda-remove-defaults: true
+
+    - name: Run nf-test
+      shell: bash
+      env:
+        NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
+      run: |
+        nf-test test \
+          --profile ${{ inputs.profile }} \
+          ${{ inputs.args }}
+
+    - name: Upload nf-test artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: nf-test-artifacts
+        path: .nf-test/tests
+        include-hidden-files: true
+        overwrite: true
+        compression-level: 0

@@ -49,7 +49,7 @@ workflow REPORTING {
                         .toSortedList()
 
     ch_custom_content_multiqc_config_template = channel.fromPath(
-                                                    "${projectDir}/assets/custom_content_multiqc_config.template.yaml",
+                                                    "${projectDir}/assets/multiqc_config.custom_content.template.yaml",
                                                     checkIfExists: true
                                                 )
 
@@ -271,21 +271,19 @@ workflow REPORTING {
     // ------------------------------------------------------------------------------------
 
     ch_multiqc_files = channel.empty()
-                        .mix( ch_most_stable_genes_summary.collect() )
-                        .mix( ch_all_genes_summary.collect() )
-                        .mix( ch_most_stable_genes_transposed_counts.collect() )
-                        .mix( channel.topic('eatlas_all_datasets').collect() ) // single item
-                        .mix( channel.topic('eatlas_selected_datasets').collect() ) // single item
-                        .mix( channel.topic('geo_all_datasets').collect() ) // single item
-                        .mix( channel.topic('geo_selected_datasets').collect() ) // single item
-                        .mix( channel.topic('geo_rejected_datasets').collect() ) // single item
+                        .mix( ch_most_stable_genes_summary.collect() )                          // single item
+                        .mix( ch_all_genes_summary.collect() )                                  // single item
+                        .mix( ch_most_stable_genes_transposed_counts.collect() )                // single item
+                        .mix( channel.topic('eatlas_all_datasets').toSortedList() )
+                        .mix( channel.topic('eatlas_selected_datasets').toSortedList() )
+                        .mix( channel.topic('geo_all_datasets').toSortedList() )
+                        .mix( channel.topic('geo_selected_datasets').toSortedList() )
+                        .mix( channel.topic('geo_rejected_datasets').toSortedList() )
+                        .mix( channel.topic('total_gene_id_occurrence_quantiles').toSortedList() )
                         .mix( COLLECT_STATISTICS.out.csv )
                         .mix( ch_id_mapping_stats )
                         .mix( ch_missing_values_filter_stats )
                         .mix( ch_zero_values_filter_stats )
-                        .mix( channel.topic('total_gene_id_occurrence_quantiles').collect() ) // single item
-                        .mix( channel.topic('mqc_stats_zero_values_filter').collect() ) // single item
-                        .mix( channel.topic('mqc_stats_missing_values_filter').collect() ) // single item
                         .mix( ch_eatlas_failure_reasons )
                         .mix( ch_eatlas_warning_reasons )
                         .mix( ch_geo_failure_reasons )
@@ -295,6 +293,7 @@ workflow REPORTING {
                         .mix( ch_id_mapping_failure_reasons )
                         .mix( ch_normalisation_failure_reasons )
                         .mix( ch_normalisation_warning_reasons )
+
 
     // ------------------------------------------------------------------------------------
     // VERSIONS
@@ -329,7 +328,7 @@ workflow REPORTING {
                             )
 
     // ------------------------------------------------------------------------------------
-    // CONFIG
+    // PREPARE MULTIQC INPUT
     // ------------------------------------------------------------------------------------
 
     ch_multiqc_config        = channel.fromPath(
@@ -341,7 +340,7 @@ workflow REPORTING {
 
     ch_multiqc_logo          = multiqc_logo ?
         channel.fromPath(multiqc_logo, checkIfExists: true) :
-        channel.empty()
+        channel.of([])
 
     summary_params      = paramsSummaryMap(
         workflow,
@@ -360,25 +359,40 @@ workflow REPORTING {
         methodsDescriptionText(ch_multiqc_custom_methods_description)
     )
 
-    ch_multiqc_files = ch_multiqc_files
-        .mix( ch_collated_versions )
-        .mix(
-            ch_methods_description.collectFile(
-                name: 'methods_description_mqc.yaml',
-                sort: true
-            )
-        )
+    // ------------------------------------------------------------------------------------
+    // ADDING KEY TO JOIN ON
+    // ------------------------------------------------------------------------------------
 
-    ch_multiqc_custom_config = ch_multiqc_custom_config.mix( ch_custom_content_multiqc_config )
+    ch_multiqc_file_list = ch_multiqc_files
+                            .mix( ch_collated_versions )
+                            .mix(
+                                ch_methods_description.collectFile(
+                                    name: 'methods_description_mqc.yaml',
+                                    sort: true
+                                )
+                            )
+                            .flatten()
+                            .toSortedList()
+                            .map{ list -> [ [id: 'Final report'], list ] }
 
-    MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
-    )
+    ch_multiqc_config_list = ch_multiqc_config
+                                .mix( ch_multiqc_custom_config )
+                                .mix( ch_custom_content_multiqc_config )
+                                .toSortedList()
+                                .map{ list -> [ [id: 'Final report'], list ] }
+
+    ch_multiqc_logo = ch_multiqc_logo.map{ file -> [ [id: 'Final report'], file ] }
+
+    // ------------------------------------------------------------------------------------
+    // MULTIQC
+    // ------------------------------------------------------------------------------------
+
+    ch_multiqc_input = ch_multiqc_file_list
+                        .join( ch_multiqc_config_list )
+                        .join( ch_multiqc_logo )
+                        .map { meta, files, configs, logo -> [ meta, files, configs, logo , [], [] ] }
+
+    MULTIQC ( ch_multiqc_input )
 
     emit:
     multiqc_report          = MULTIQC.out.report

@@ -16,7 +16,7 @@ run_modules:
 
 disable_version_detection: true
 
-max_table_rows: 5000
+max_table_rows: 100000
 
 table_cond_formatting_colours:
   - first: "#ffd700"

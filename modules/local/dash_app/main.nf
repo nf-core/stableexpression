@@ -4,8 +4,8 @@ process DASH_APP {
 
     conda "${moduleDir}/app/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/4e/4eec747f2063edcc2d1b64e3b84a6b154fde1b9cd9d698446321b4a535432272/data':
-        'community.wave.seqera.io/library/dash-ag-grid_dash-extensions_dash-iconify_dash-mantine-components_pruned:7cf6396dd8cd850e' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/fc/fc4abd76b9424d5f5397a6c97e8ed8c2e3a5a454773595204ceb55b39057d812/data':
+        'community.wave.seqera.io/library/dash-ag-grid_dash-extensions_dash-iconify_dash-mantine-components_pruned:be6021fe1944629c' }"
 
     errorStrategy {
         if (task.exitStatus == 100) {

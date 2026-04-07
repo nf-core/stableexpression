@@ -3,46 +3,124 @@
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,05b3b9508930923bd86c281e8febe6b6"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        "NORMFINDER",
+                        "python",
+                        "3.14.3"
+                    ]
                 ],
                 "2": [
-                    
+                    [
+                        "NORMFINDER",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "3": [
+                    [
+                        "NORMFINDER",
+                        "tqdm",
+                        "4.67.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMFINDER",
+                        "numpy",
+                        "2.4.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "NORMFINDER",
+                        "numba",
+                        "0.64.0"
+                    ]
                 ],
                 "stability_values": [
-                    
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,05b3b9508930923bd86c281e8febe6b6"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-03-30T15:45:00.995645591",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2025-12-03T18:59:42.999801136"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
     },
     "Very small dataset - Cq values": {
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,a7c936faa9135439fd1b86c195f60414"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        "NORMFINDER",
+                        "python",
+                        "3.14.3"
+                    ]
                 ],
                 "2": [
-                    
+                    [
+                        "NORMFINDER",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "3": [
+                    [
+                        "NORMFINDER",
+                        "tqdm",
+                        "4.67.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMFINDER",
+                        "numpy",
+                        "2.4.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "NORMFINDER",
+                        "numba",
+                        "0.64.0"
+                    ]
                 ],
                 "stability_values": [
-                    
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,a7c936faa9135439fd1b86c195f60414"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-03-30T15:44:51.060894512",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2025-12-03T18:59:29.818592345"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
     }
 }

@@ -178,7 +178,7 @@ nextflow run nf-core/stableexpression \
 > - a custom gene id mapping might help merging datasets properly
 > - custom gene metadata (association between gene id, gene name and gene description) will supply relevant metadata in the final MultiQC report
 >
-> See [next section](#5-custom-gene-id-mapping-and-metadata) for further details.
+> See [next section](#5-custom-gene-id-mapping--metadata) for further details.
 
 > [!TIP]
 > You can check if your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).

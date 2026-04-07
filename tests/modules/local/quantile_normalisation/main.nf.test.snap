@@ -7,21 +7,21 @@
                         {
                             "dataset": "test"
                         },
-                        "count.raw.cpm.quant_norm.parquet:md5,57629ccf12df0e16a39281dfe02df4bc"
+                        "count.raw.cpm.quant_norm.parquet:md5,4ceb116e0a52b92ab31ec4e122ed12a1"
                     ]
                 ],
                 "1": [
                     [
                         "QUANTILE_NORMALISATION",
                         "python",
-                        "3.14.2"
+                        "3.14.3"
                     ]
                 ],
                 "2": [
                     [
                         "QUANTILE_NORMALISATION",
                         "polars",
-                        "1.36.1"
+                        "1.39.2"
                     ]
                 ],
                 "3": [
@@ -36,16 +36,16 @@
                         {
                             "dataset": "test"
                         },
-                        "count.raw.cpm.quant_norm.parquet:md5,57629ccf12df0e16a39281dfe02df4bc"
+                        "count.raw.cpm.quant_norm.parquet:md5,4ceb116e0a52b92ab31ec4e122ed12a1"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-04-02T15:07:43.185701068",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-02-21T09:56:51.559770587"
+        }
     },
     "Normal target distribution": {
         "content": [
@@ -55,21 +55,21 @@
                         {
                             "dataset": "test"
                         },
-                        "count.raw.cpm.quant_norm.parquet:md5,93484b73e81c9e3a6138aaddc1f79c41"
+                        "count.raw.cpm.quant_norm.parquet:md5,10c118fd62dad210b585f30620679732"
                     ]
                 ],
                 "1": [
                     [
                         "QUANTILE_NORMALISATION",
                         "python",
-                        "3.14.2"
+                        "3.14.3"
                     ]
                 ],
                 "2": [
                     [
                         "QUANTILE_NORMALISATION",
                         "polars",
-                        "1.36.1"
+                        "1.39.2"
                     ]
                 ],
                 "3": [
@@ -84,15 +84,15 @@
                         {
                             "dataset": "test"
                         },
-                        "count.raw.cpm.quant_norm.parquet:md5,93484b73e81c9e3a6138aaddc1f79c41"
+                        "count.raw.cpm.quant_norm.parquet:md5,10c118fd62dad210b585f30620679732"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-04-02T15:07:51.53574005",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-02-21T09:57:03.814875185"
+        }
     }
 }

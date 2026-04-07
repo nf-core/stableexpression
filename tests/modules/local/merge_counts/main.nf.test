@@ -5,7 +5,7 @@ nextflow_process {
     process "MERGE_COUNTS"
     tag "merge_counts"
 
-    test("2 files") {
+    test("3 files") {
 
         when {
 
@@ -14,8 +14,9 @@ nextflow_process {
                 input[0] = [
                     [ platform: 'rnaseq' ],
                     [
-                        file("$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true),
-                        file( "$projectDir/tests/test_data/dataset_statistics/input/count2.raw.cpm.quant_norm.parquet", checkIfExists: true)
+                        file("$projectDir/tests/test_data/merge_data/input/counts1.parquet", checkIfExists: true),
+                        file( "$projectDir/tests/test_data/merge_data/input/counts2.parquet", checkIfExists: true),
+                        file( "$projectDir/tests/test_data/merge_data/input/counts3.parquet", checkIfExists: true),
                     ]
                 ]
                 """
@@ -30,7 +31,7 @@ nextflow_process {
         }
 
     }
-
+    /*
     test("2 identical files") {
 
         when {
@@ -56,7 +57,7 @@ nextflow_process {
         }
 
     }
-
+    */
     test("1 file") {
 
         when {

@@ -3,58 +3,130 @@
         "content": [
             {
                 "0": [
-                    
+                    [
+                        "section_1.candidate_counts.parquet:md5,7d1a1996214fb07741f2ad5c286fbc69",
+                        "section_2.candidate_counts.parquet:md5,9e2de0ea75c3f839e38690f3d9a57b0b",
+                        "section_3.candidate_counts.parquet:md5,860cdeb5dbfe7d24b2c12635ea85c10e"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        "section_1.stats.parquet:md5,3414fd57e9bf4f221b2df93be2e890a2",
+                        "section_2.stats.parquet:md5,99b7bcc7944c77eb569b688c640d70f2",
+                        "section_3.stats.parquet:md5,752dbfb5699fbe6847ac17a4fb6da51a"
+                    ]
                 ],
                 "2": [
-                    
+                    [
+                        "GET_CANDIDATE_GENES",
+                        "python",
+                        "3.14.3"
+                    ]
                 ],
                 "3": [
-                    
+                    [
+                        "GET_CANDIDATE_GENES",
+                        "polars",
+                        "1.39.2"
+                    ]
                 ],
                 "counts": [
-                    
+                    [
+                        "section_1.candidate_counts.parquet:md5,7d1a1996214fb07741f2ad5c286fbc69",
+                        "section_2.candidate_counts.parquet:md5,9e2de0ea75c3f839e38690f3d9a57b0b",
+                        "section_3.candidate_counts.parquet:md5,860cdeb5dbfe7d24b2c12635ea85c10e"
+                    ]
                 ],
                 "section_stats": [
-                    
+                    [
+                        "section_1.stats.parquet:md5,3414fd57e9bf4f221b2df93be2e890a2",
+                        "section_2.stats.parquet:md5,99b7bcc7944c77eb569b688c640d70f2",
+                        "section_3.stats.parquet:md5,752dbfb5699fbe6847ac17a4fb6da51a"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-03-30T17:07:03.292271274",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-02-19T11:08:18.393343254"
+        }
     },
     "Too many sections": {
         "content": [
             {
                 "0": [
-                    
+                    [
+                        "section_12.candidate_counts.parquet:md5,df8b5a6629b2b84b4c73156bbf261a92",
+                        "section_14.candidate_counts.parquet:md5,1ef1a4e6cef6dd6b04ca28a505985bb5",
+                        "section_16.candidate_counts.parquet:md5,f246e9291457873463ba3bff49e07b9d",
+                        "section_18.candidate_counts.parquet:md5,f67b1be510bd1b41f58088ae08cc494c",
+                        "section_20.candidate_counts.parquet:md5,3349d94fa3b42a917704c7abc2d807f9",
+                        "section_3.candidate_counts.parquet:md5,2ddf5f2e7cca3e8df9930520b3131495",
+                        "section_5.candidate_counts.parquet:md5,179d419cc48a36a991fbe74e4dcb28fa",
+                        "section_7.candidate_counts.parquet:md5,41f08e512f5d44eff8fa0ce3d49ac0f4",
+                        "section_9.candidate_counts.parquet:md5,85c942fa7ec2f2b4e5af6149de007328"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        "section_12.stats.parquet:md5,069d23175be9d1a733b4996895d4a3ce",
+                        "section_14.stats.parquet:md5,73e852a1083f86d2d99d4f93ab6228c0",
+                        "section_16.stats.parquet:md5,6aa616308faf4403194f18fae7cd1024",
+                        "section_18.stats.parquet:md5,0b17005fab7582663111ea77cefca427",
+                        "section_20.stats.parquet:md5,03c52c419ff94b63d0b16b2e9e87fa26",
+                        "section_3.stats.parquet:md5,14a121ecab4116935fa9df136afc997a",
+                        "section_5.stats.parquet:md5,3a3700641343056feabac2aa76626556",
+                        "section_7.stats.parquet:md5,d6af8c940d55e449397b7fc0c428fedf",
+                        "section_9.stats.parquet:md5,eb375761c7111b78bf8779bf71f876ef"
+                    ]
                 ],
                 "2": [
-                    
+                    [
+                        "GET_CANDIDATE_GENES",
+                        "python",
+                        "3.14.3"
+                    ]
                 ],
                 "3": [
-                    
+                    [
+                        "GET_CANDIDATE_GENES",
+                        "polars",
+                        "1.39.2"
+                    ]
                 ],
                 "counts": [
-                    
+                    [
+                        "section_12.candidate_counts.parquet:md5,df8b5a6629b2b84b4c73156bbf261a92",
+                        "section_14.candidate_counts.parquet:md5,1ef1a4e6cef6dd6b04ca28a505985bb5",
+                        "section_16.candidate_counts.parquet:md5,f246e9291457873463ba3bff49e07b9d",
+                        "section_18.candidate_counts.parquet:md5,f67b1be510bd1b41f58088ae08cc494c",
+                        "section_20.candidate_counts.parquet:md5,3349d94fa3b42a917704c7abc2d807f9",
+                        "section_3.candidate_counts.parquet:md5,2ddf5f2e7cca3e8df9930520b3131495",
+                        "section_5.candidate_counts.parquet:md5,179d419cc48a36a991fbe74e4dcb28fa",
+                        "section_7.candidate_counts.parquet:md5,41f08e512f5d44eff8fa0ce3d49ac0f4",
+                        "section_9.candidate_counts.parquet:md5,85c942fa7ec2f2b4e5af6149de007328"
+                    ]
                 ],
                 "section_stats": [
-                    
+                    [
+                        "section_12.stats.parquet:md5,069d23175be9d1a733b4996895d4a3ce",
+                        "section_14.stats.parquet:md5,73e852a1083f86d2d99d4f93ab6228c0",
+                        "section_16.stats.parquet:md5,6aa616308faf4403194f18fae7cd1024",
+                        "section_18.stats.parquet:md5,0b17005fab7582663111ea77cefca427",
+                        "section_20.stats.parquet:md5,03c52c419ff94b63d0b16b2e9e87fa26",
+                        "section_3.stats.parquet:md5,14a121ecab4116935fa9df136afc997a",
+                        "section_5.stats.parquet:md5,3a3700641343056feabac2aa76626556",
+                        "section_7.stats.parquet:md5,d6af8c940d55e449397b7fc0c428fedf",
+                        "section_9.stats.parquet:md5,eb375761c7111b78bf8779bf71f876ef"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-03-30T17:07:09.643611957",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-02-19T11:08:33.796603056"
+        }
     }
 }

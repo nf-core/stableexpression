@@ -5,20 +5,22 @@
                 "0": [
                     "E-GEOD-61690",
                     "E-MTAB-552",
+                    "E-MTAB-8187",
                     "E-PROT-138"
                 ],
                 "accessions": [
                     "E-GEOD-61690",
                     "E-MTAB-552",
+                    "E-MTAB-8187",
                     "E-PROT-138"
                 ]
             }
         ],
+        "timestamp": "2026-04-01T14:49:26.109506348",
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2025-12-11T11:13:39.15754592"
+            "nextflow": "25.10.4"
+        }
     },
     "No GEO + accessions provided": {
         "content": [
@@ -26,39 +28,41 @@
                 "0": [
                     "E-GEOD-61690",
                     "E-MTAB-552",
+                    "E-MTAB-8187",
                     "E-PROT-138"
                 ],
                 "accessions": [
                     "E-GEOD-61690",
                     "E-MTAB-552",
+                    "E-MTAB-8187",
                     "E-PROT-138"
                 ]
             }
         ],
+        "timestamp": "2026-04-01T14:49:15.733265214",
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2025-12-11T11:13:13.734553188"
+            "nextflow": "25.10.4"
+        }
     },
     "Fetch eatlas accessions without keywords": {
         "content": [
             {
                 "0": [
-                    
+                    "E-MTAB-8187"
                 ],
                 "accessions": [
-                    
+                    "E-MTAB-8187"
                 ]
             }
         ],
+        "timestamp": "2026-04-01T14:48:43.670211053",
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2025-12-11T11:12:37.434155203"
+            "nextflow": "25.10.4"
+        }
     },
-    "Fetch public accessions with keywords": {
+    "With samplling size": {
         "content": [
             {
                 "0": [
@@ -69,10 +73,37 @@
                 ]
             }
         ],
+        "timestamp": "2026-04-01T14:53:02.05138484",
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2025-12-11T14:12:14.94130631"
+            "nextflow": "25.10.4"
+        }
+    },
+    "Fetch public accessions with keywords": {
+        "content": [
+            {
+                "0": [
+                    "E-MTAB-8187",
+                    "GSE107627",
+                    "GSE114968",
+                    "GSE269454",
+                    "GSE281272",
+                    "GSE79526"
+                ],
+                "accessions": [
+                    "E-MTAB-8187",
+                    "GSE107627",
+                    "GSE114968",
+                    "GSE269454",
+                    "GSE281272",
+                    "GSE79526"
+                ]
+            }
+        ],
+        "timestamp": "2026-04-01T14:49:04.709620479",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
     }
 }

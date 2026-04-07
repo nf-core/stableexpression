@@ -1,11 +1,11 @@
 process AGGREGATE_RESULTS {
-
+    debug true
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/a0/a040ba30cbb433a3a6e84ca9881dce77e23762a2b860bdea21b252296a366d20/data':
-        'community.wave.seqera.io/library/polars_python_pyyaml:8b53cd142171d9f8' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/7e/7e08ea26f496697870f6afe87a9def87c1038c000306c9280719d40ee9797293/data':
+        'community.wave.seqera.io/library/polars_python_pyyaml:0d7b8bed8db11ef1' }"
 
     input:
     path count_file

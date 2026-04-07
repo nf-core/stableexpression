@@ -87,7 +87,7 @@ workflow STABLEEXPRESSION {
 
         ch_counts = ch_input_datasets.mix( ch_downloaded_datasets )
         // returns an error with a message if no dataset was found
-        checkCounts( ch_counts )
+        checkCounts( ch_counts, params.fetch_geo_accessions )
 
         // -----------------------------------------------------------------
         // IDMAPPING

@@ -50,15 +50,15 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) **microarray** dataset accessions corresponding to the provided species (and optionally keywords)
   This is optional and **NOT** run by default. Set `--fetch_geo_accessions` to run it.
 
-#### 2. Download data (see [usage](conf/usage.md#3-provide-your-own-accessions))
+#### 2. Download data (see [usage](./conf/usage.md#3-provide-your-own-accessions))
 
 - Download [Expression Atlas](https://www.ebi.ac.uk/gxa/home) data if any
 - Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data if any
 
 > [!NOTE]
-> At this point, datasets downloaded from public databases are merged with datasets provided by the user using the `--datasets` parameter. See [usage](conf/usage.md#4-use-your-own-expression-datasets) for more information about local datasets.
+> At this point, datasets downloaded from public databases are merged with datasets provided by the user using the `--datasets` parameter. See [usage](./conf/usage.md#4-use-your-own-expression-datasets) for more information about local datasets.
 
-#### 3. ID Mapping (see [usage](conf/usage.md#5-custom-gene-id-mapping--metadata))
+#### 3. ID Mapping (see [usage](./conf/usage.md#5-custom-gene-id-mapping--metadata))
 
 - Gene IDs are cleaned
 - Map gene IDS to NCBI Entrez Gene IDS (or Ensembl IDs) for standardisation among datasets using [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
@@ -99,6 +99,14 @@ Base statistics are computed for each gene, platform-wide and for each platform 
 - Make [`MultiQC`](http://multiqc.info/) report
 - Prepare [Dash Plotly](https://dash.plotly.com/) app for further investigation of gene / sample counts
 
+## Test pipeline
+
+You can test the execution of the pipeline locally with:
+
+```bash
+nextflow run nf-core/stableexpression -profile test,<docker/apptainer/conda/micromamba/...>
+```
+
 ## Basic usage
 
 > [!NOTE]
@@ -125,7 +133,7 @@ please refer to the [usage documentation](https://nf-co.re/stableexpression/usag
 
 ## Resource allocation
 
-For setting pipeline CPU / memory usage, see [here](docs/configuration.md).
+For setting pipeline CPU / memory usage, see [here](./docs/configuration.md).
 
 ## Profiles
 
@@ -150,6 +158,8 @@ nf-core/stableexpression was originally written by Olivier Coen.
 We thank the following people for their assistance in the development of this pipeline:
 
 - Rémy Costa
+- Shaheen Acheche
+- Janine Soares
 
 ## Contributions and Support
 

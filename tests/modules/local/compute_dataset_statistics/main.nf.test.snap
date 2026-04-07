@@ -5,7 +5,7 @@
                 "0": [
                     [
                         "test",
-                        "skewness.txt:md5,3f2c6b786ec7344d8d21444cfd3714c5"
+                        "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
                     ]
                 ],
                 "1": [
@@ -19,15 +19,15 @@
                     [
                         "COMPUTE_DATASET_STATISTICS",
                         "polars",
-                        "1.17.1"
+                        "1.37.1"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-04-02T14:11:44.847136183",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-02-21T09:28:11.849318168"
+        }
     }
 }

@@ -9,21 +9,21 @@
                             "index_1": 0,
                             "index_2": 1
                         },
-                        "cross_join.0.1.parquet:md5,ef1d4777f59bf8c52f05fa37d638989f"
+                        "cross_join.0.1.parquet:md5,10d5591947a85f788dd6db61a1486f14"
                     ]
                 ],
                 "1": [
                     [
                         "CROSS_JOIN",
                         "python",
-                        "3.12.8"
+                        "3.14.3"
                     ]
                 ],
                 "2": [
                     [
                         "CROSS_JOIN",
                         "polars",
-                        "1.17.1"
+                        "1.39.2"
                     ]
                 ],
                 "data": [
@@ -33,15 +33,15 @@
                             "index_1": 0,
                             "index_2": 1
                         },
-                        "cross_join.0.1.parquet:md5,ef1d4777f59bf8c52f05fa37d638989f"
+                        "cross_join.0.1.parquet:md5,10d5591947a85f788dd6db61a1486f14"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-03-30T15:40:29.248178717",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-02-19T10:41:20.934881638"
+        }
     }
 }

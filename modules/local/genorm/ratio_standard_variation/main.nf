@@ -5,8 +5,8 @@ process RATIO_STANDARD_VARIATION {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f8a5d02e7b31980c887253a9f118da0ef91ead1c7b158caf855199e5c5d5473/data':
-        'community.wave.seqera.io/library/polars_python:cab787b788e5eba7' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/00/00f1434368763cebf37466cfaaaf069f971f7eae65b010169975c50d084e5af3/data':
+        'community.wave.seqera.io/library/polars_python:1a4a3322c56bfeb9' }"
 
     input:
     tuple val(meta), path(file)
