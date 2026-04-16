@@ -1,4 +1,4 @@
-include { EXPRESSIONATLAS_GETDATA as EXPRESSION_ATLAS     } from '../../../modules/local/expressionatlas/getdata'
+include { EXPRESSIONATLAS_GETDATA as EXPRESSION_ATLAS    } from '../../../modules/local/expressionatlas/getdata'
 include { GEO_GETDATA as GEO                             } from '../../../modules/local/geo/getdata'
 
 include { addDatasetIdToMetadata                        } from '../utils_nfcore_stableexpression_pipeline'
@@ -7,7 +7,7 @@ include { augmentMetadata                               } from '../utils_nfcore_
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO DOWNLOAD GEO ACCESSIONS AND DATASETS
+    SUBWORKFLOW TO DOWNLOAD EXPRESSION ATLAS AND NCBI GEO DATASETS
 ========================================================================================
 */
 

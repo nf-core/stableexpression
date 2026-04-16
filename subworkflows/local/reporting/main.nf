@@ -11,7 +11,7 @@ include { paramsSummaryMap                       } from 'plugin/nf-schema'
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
+    SUBWORKFLOW DEDICATED TO AGGREGATION OF RESULTS AND REPORTING (DASH APP AND MULTIQC)
 ========================================================================================
 */
 

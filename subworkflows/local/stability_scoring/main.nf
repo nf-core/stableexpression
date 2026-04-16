@@ -6,7 +6,7 @@ include { GENORM                             } from '../genorm'
 
 /*
 ========================================================================================
-    COMPUTE STABILITY SCORES
+    SUBWORKFLOW TO COMPUTE STABILITY SCORES
 ========================================================================================
 */
 
@@ -61,7 +61,7 @@ workflow STABILITY_SCORING {
     // -----------------------------------------------------------------
     // AGGREGATION AND FINAL STABILITY SCORE
     // -----------------------------------------------------------------
- //ch_normfinder_stabilities.join( ch_genorm_stability ).join( ch_section_stats ),
+
     COMPUTE_STABILITY_SCORES (
         ch_normfinder_stabilities.join( ch_genorm_stability ).join( ch_section_stats ),
         stability_score_weights

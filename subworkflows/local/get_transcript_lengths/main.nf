@@ -4,7 +4,7 @@ include { DOWNLOAD_ENSEMBL_ANNOTATION                  } from '../../../modules/
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
+    SUBWORKFLOW TO GET TRANSCRIPT LENGTHS FROM GENOME ANNOTATION
 ========================================================================================
 */
 

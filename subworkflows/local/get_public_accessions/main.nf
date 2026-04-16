@@ -3,7 +3,7 @@ include { GEO_GETACCESSIONS as GEO                                   } from '../
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
+    SUBWORKFLOW TO FETCH EXPRESSION ATLAS AND NCBI GEO ACCESSIONS
 ========================================================================================
 */
 

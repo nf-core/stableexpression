@@ -1,9 +1,9 @@
-include { COMPUTE_GENE_STATISTICS as GLOBAL                      } from '../../../modules/local/compute_gene_statistics'
-include { COMPUTE_GENE_STATISTICS as PLATFORM                    } from '../../../modules/local/compute_gene_statistics'
+include { COMPUTE_GENE_STATISTICS as GLOBAL       } from '../../../modules/local/compute_gene_statistics'
+include { COMPUTE_GENE_STATISTICS as PLATFORM     } from '../../../modules/local/compute_gene_statistics'
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
+    SUBWORKFLOW TO COMPUTE STATISTICS FOR ALL GENES
 ========================================================================================
 */
 

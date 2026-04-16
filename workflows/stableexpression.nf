@@ -36,14 +36,10 @@ workflow STABLEEXPRESSION {
     ch_all_counts                          = channel.empty()
     ch_all_imputed_counts                  = channel.empty()
     ch_whole_design                        = channel.empty()
-    ch_whole_design                        = channel.empty()
     ch_stats_all_genes_with_scores         = channel.empty()
     ch_platform_statistics                 = channel.empty()
     ch_whole_gene_metadata                 = channel.empty()
     ch_whole_gene_id_mapping               = channel.empty()
-    ch_most_stable_genes_summary           = channel.empty()
-    ch_all_genes_statistics                = channel.empty()
-    ch_most_stable_genes_transposed_counts = channel.empty()
 
     def species = params.species.split(' ').join('_').toLowerCase()
 
