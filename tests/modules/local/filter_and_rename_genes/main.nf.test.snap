@@ -7,7 +7,15 @@
                 ],
                 "1": [
                     [
-                        "test",
+                        [
+                            [
+                                "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                            ],
+                            [
+                                "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                            ]
+                        ],
                         "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e"
                     ]
                 ],
@@ -16,7 +24,15 @@
                 ],
                 "3": [
                     [
-                        "test",
+                        [
+                            [
+                                "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                            ],
+                            [
+                                "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                            ]
+                        ],
                         "0",
                         "0",
                         "3",
@@ -42,11 +58,11 @@
                 ]
             }
         ],
-        "timestamp": "2026-04-02T15:03:17.972937783",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-04-02T15:03:17.972937783"
     },
     "Map Ensembl IDs": {
         "content": [
@@ -54,7 +70,15 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                    "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                                ],
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                                ]
+                            ]
                         },
                         "counts.ensembl_ids.renamed.parquet:md5,1fe83a8ee993d02c9df18f7412d20f0f"
                     ]
@@ -67,7 +91,15 @@
                 ],
                 "3": [
                     [
-                        "test",
+                        [
+                            [
+                                "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                            ],
+                            [
+                                "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                            ]
+                        ],
                         "2",
                         "1",
                         "1",
@@ -91,18 +123,26 @@
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                    "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                                ],
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                                ]
+                            ]
                         },
                         "counts.ensembl_ids.renamed.parquet:md5,1fe83a8ee993d02c9df18f7412d20f0f"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-04-02T15:03:06.767979138",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-04-02T15:03:06.767979138"
     },
     "No valid gene": {
         "content": [
@@ -112,7 +152,15 @@
                 ],
                 "1": [
                     [
-                        "test",
+                        [
+                            [
+                                "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                            ],
+                            [
+                                "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                            ]
+                        ],
                         "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e"
                     ]
                 ],
@@ -121,7 +169,15 @@
                 ],
                 "3": [
                     [
-                        "test",
+                        [
+                            [
+                                "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                            ],
+                            [
+                                "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                            ]
+                        ],
                         "0",
                         "0",
                         "3",
@@ -147,10 +203,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-04-02T15:03:12.057594832",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-04-02T15:03:12.057594832"
     }
 }

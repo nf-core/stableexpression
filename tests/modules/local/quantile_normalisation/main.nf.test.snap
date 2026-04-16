@@ -5,7 +5,15 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                    "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                                ],
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                                ]
+                            ]
                         },
                         "count.raw.cpm.quant_norm.parquet:md5,4ceb116e0a52b92ab31ec4e122ed12a1"
                     ]
@@ -34,18 +42,26 @@
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                    "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                                ],
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                                ]
+                            ]
                         },
                         "count.raw.cpm.quant_norm.parquet:md5,4ceb116e0a52b92ab31ec4e122ed12a1"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-04-02T15:07:43.185701068",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-04-02T15:07:43.185701068"
     },
     "Normal target distribution": {
         "content": [
@@ -53,7 +69,15 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                    "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                                ],
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                                ]
+                            ]
                         },
                         "count.raw.cpm.quant_norm.parquet:md5,10c118fd62dad210b585f30620679732"
                     ]
@@ -82,17 +106,25 @@
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
+                                    "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                                ],
+                                [
+                                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
+                                ]
+                            ]
                         },
                         "count.raw.cpm.quant_norm.parquet:md5,10c118fd62dad210b585f30620679732"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-04-02T15:07:51.53574005",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-04-02T15:07:51.53574005"
     }
 }

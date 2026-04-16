@@ -9,7 +9,7 @@ nextflow_pipeline {
 
         when {
             params {
-                species = 'beta vulgaris'
+                species = 'prunus persica'
                 outdir = "$outputDir"
             }
         }
@@ -110,7 +110,7 @@ nextflow_pipeline {
 
         when {
             params {
-                species = 'beta vulgaris'
+                species = 'arabidopsis lyrata'
                 accessions_only = true
                 outdir = "$outputDir"
             }
@@ -140,7 +140,7 @@ nextflow_pipeline {
 
         when {
             params {
-                species = 'beta vulgaris'
+                species = 'aspergillus fumigatus'
                 download_only = true
                 outdir = "$outputDir"
             }

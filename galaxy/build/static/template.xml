@@ -109,7 +109,7 @@ INPUTS
         </test>
         <test>
             <section name="input_output_options">
-                <param name="species" value="beta vulgaris" />
+                <param name="species" value="prunus persica" />
                 <conditional name="datasets">
                     <param name="provide_datasets" value="false" />
                 </conditional>
@@ -128,7 +128,7 @@ INPUTS
         </test>
         <test>
             <section name="input_output_options">
-                <param name="species" value="beta vulgaris" />
+                <param name="species" value="prunus persica" />
                 <conditional name="datasets">
                     <param name="provide_datasets" value="true" />
                     <param name="samplesheet" value="test_data/input.csv" />
