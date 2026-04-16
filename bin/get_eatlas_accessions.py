@@ -108,7 +108,7 @@ def get_data(url: str) -> dict:
     return response.json()
 
 
-def get_experiment_description(exp_dict: dict):
+def get_experiment_description(exp_dict: dict) -> str:
     """
     Gets the description from an experiment dictionary
 
@@ -138,7 +138,7 @@ def get_experiment_description(exp_dict: dict):
         raise KeyError(f"Could not find description field in {exp_dict}")
 
 
-def get_experiment_accession(exp_dict: dict):
+def get_experiment_accession(exp_dict: dict) -> str:
     """
     Gets the accession from an experiment dictionary
 
@@ -168,7 +168,7 @@ def get_experiment_accession(exp_dict: dict):
         raise KeyError(f"Could not find accession field in {exp_dict}")
 
 
-def get_properties_values(exp_dict: dict):
+def get_properties_values(exp_dict: dict) -> list:
     """
     Gets all values from properties from an experiment dictionary
 
@@ -199,7 +199,7 @@ def get_properties_values(exp_dict: dict):
     return list(set(values))
 
 
-def get_eatlas_experiments():
+def get_eatlas_experiments() -> list[dict]:
     """
     Gets all experiments from Expression Atlas
 
@@ -215,7 +215,7 @@ def get_eatlas_experiments():
     return data["experiments"]
 
 
-def filter_by_platform(experiments: list[dict], platform: str | None):
+def filter_by_platform(experiments: list[dict], platform: str | None) -> list[dict]:
     """
     Gets all experiments for a given platform from Expression Atlas
     Possible platforms in Expression Atlas are 'rnaseq', 'microarray', 'proteomics'
@@ -258,7 +258,15 @@ def filter_by_platform(experiments: list[dict], platform: str | None):
     return platform_experiments
 
 
-def get_species_experiments(experiments: list[dict], species: str):
+def get_species_name_without_subspecies(species: str) -> str:
+    """
+    Returns the species name without the subspecies part.
+    Ex: Hordeum vulgare subsp. vulgare -> Hordeum vulgare
+    """
+    return " ".join(species.split(" ")[:2])
+
+
+def get_species_experiments(experiments: list[dict], species: str) -> list[dict]:
     """
     Gets all experiments for a given species from Expression Atlas
 
@@ -275,12 +283,14 @@ def get_species_experiments(experiments: list[dict], species: str):
     """
     species_experiments = []
     for exp_dict in experiments:
-        if exp_dict["species"] == species:
+        # in case the species name contains a subspecies part, we only use the first two words
+        exp_species = get_species_name_without_subspecies(exp_dict["species"])
+        if exp_species == species:
             species_experiments.append(exp_dict)
     return species_experiments
 
 
-def get_experiment_data(exp_dict: dict):
+def get_experiment_data(exp_dict: dict) -> dict:
     """
     Gets the full data for an experiment given its dictionary
 
@@ -312,7 +322,7 @@ def filter_out_excluded_accessions(experiments: list[dict]) -> list[dict]:
     return valid_experiments
 
 
-def parse_experiment(exp_dict: dict):
+def parse_experiment(exp_dict: dict) -> dict:
     # getting accession and description
     accession = get_experiment_accession(exp_dict)
     description = get_experiment_description(exp_dict)
