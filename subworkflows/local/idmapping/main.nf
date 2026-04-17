@@ -7,7 +7,7 @@ include { FILTER_AND_RENAME_GENES                } from '../../../modules/local/
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
+    SUBWORKFLOW TO MAP GENE IDS TO COMMON IDS AMONG ALL DATASETS AND TO REMOVE RARE GENES
 ========================================================================================
 */
 

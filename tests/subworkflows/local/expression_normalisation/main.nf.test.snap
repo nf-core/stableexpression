@@ -44,11 +44,11 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-19T12:27:13.766132141",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-03-19T12:27:13.766132141"
     },
     "No rnaseq normalisation": {
         "content": [
@@ -77,11 +77,11 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-19T12:27:25.897836784",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-03-19T12:27:25.897836784"
     },
     "TPM Normalisation with gene length": {
         "content": [
@@ -128,11 +128,11 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-19T12:27:00.268510601",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-03-19T12:27:00.268510601"
     },
     "TPM Normalisation": {
         "content": [
@@ -179,10 +179,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-19T12:26:44.852023368",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        }
+        },
+        "timestamp": "2026-03-19T12:26:44.852023368"
     }
 }

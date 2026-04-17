@@ -50,7 +50,7 @@ workflow MERGE_DATA {
                                     .collect( sort: true )
                                     .map { files -> [ [ platform: "all" ], files ] }
 
-    GLOBAL( ch_collected_merged_counts.collect() )
+    GLOBAL( ch_collected_merged_counts )
     ch_all_counts = GLOBAL.out.counts
 
     // -----------------------------------------------------------------

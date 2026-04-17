@@ -16,7 +16,7 @@ include { COMPUTE_M_MEASURE            } from '../../../modules/local/genorm/com
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO COMPUTE PAIRWISE GENE VARIATION
+    SUBWORKFLOW TO COMPUTE PAIRWISE GENE VARIATION (ADAPTED VERSION OF GENORM)
 ========================================================================================
 */
 
