@@ -5,15 +5,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                [
-                                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
-                                    "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
-                                ],
-                                [
-                                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
-                                ]
-                            ]
+                            "dataset": "test"
                         },
                         "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
                     ]
@@ -41,15 +33,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                [
-                                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
-                                    "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
-                                ],
-                                [
-                                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
-                                ]
-                            ]
+                            "dataset": "test"
                         },
                         "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
                     ]
@@ -57,10 +41,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.5",
+            "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-04-02T15:06:33.626810331"
+        "timestamp": "2026-04-17T09:07:24.246785277"
     },
     "One group": {
         "content": [
@@ -162,15 +146,7 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                [
-                                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
-                                    "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
-                                ],
-                                [
-                                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
-                                ]
-                            ]
+                            "dataset": "test"
                         },
                         "counts.cpm.parquet:md5,ab2596a5bb8b3b2e39754191a2dce2aa"
                     ]
@@ -198,15 +174,7 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                [
-                                    "custom_content_multiqc_config.yaml:md5,abaf7086fcc1d3979b04ed3c6ecc7109",
-                                    "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
-                                ],
-                                [
-                                    "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
-                                ]
-                            ]
+                            "dataset": "test"
                         },
                         "counts.cpm.parquet:md5,ab2596a5bb8b3b2e39754191a2dce2aa"
                     ]
@@ -214,9 +182,9 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.5",
+            "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-04-02T15:06:39.394957809"
+        "timestamp": "2026-04-17T09:07:34.001566313"
     }
 }
