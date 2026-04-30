@@ -16,7 +16,7 @@ lint:
     - tests/test_data/genorm/compute_m_measure/input/std.0.0.parquet
     - tests/test_data/genorm/compute_m_measure/input/std.1.2.parquet
     - tests/test_data/genorm/compute_m_measure/input/std.1.2.parquet
-nf_core_version: 4.0.0
+nf_core_version: 4.0.2
 repository_type: pipeline
 template:
   author: Olivier Coen
