@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 # outfile names
 ALL_GENES_RESULT_OUTFILE_SUFFIX = "stats_all_genes.csv"
 
-RCV_MULTIFILER = 1.4826  # see https://pmc.ncbi.nlm.nih.gov/articles/PMC9196089/
+RCV_MULTIPLIER = 1.4826  # see https://pmc.ncbi.nlm.nih.gov/articles/PMC9196089/
 
 # quantile intervals
 NB_QUANTILES = 100
@@ -95,9 +95,9 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_counts(file: Path) -> pl.DataFrame:
+def get_counts(file: Path) -> pl.LazyFrame:
     # sorting dataframe (necessary to get consistent output)
-    return pl.read_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
+    return pl.scan_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
 
 
 def get_colname(colname: str, platform: str | None) -> str:
@@ -125,29 +125,37 @@ def get_valid_samples(
 
 
 def compute_ratios_null_values(
-    df: pl.DataFrame, valid_samples: list[str], platform: str | None
-) -> pl.DataFrame:
+    lf: pl.LazyFrame, valid_samples: list[str], platform: str | None
+) -> pl.LazyFrame:
+    
+    samples_cols = [col for col in lf.collect_schema().names() if col != config.GENE_ID_COLNAME]
+    nb_samples = len(samples_cols) - 1
+    found_valid_samples = [sample for sample in valid_samples if sample in samples_cols]
+    
     # the samples showing a low gene count will not be taken into account for the zero count penalty
-    nb_nulls = df.select(pl.exclude(config.GENE_ID_COLNAME).is_null()).sum_horizontal()
-
-    found_valid_samples = [sample for sample in valid_samples if sample in df.columns]
-
+    nb_nulls = (
+        lf
+        .select(pl.exclude(config.GENE_ID_COLNAME).is_null()) # select all columns except GENE_ID_COLNAME and check if they are null
+        .select(pl.sum_horizontal(pl.all()).alias("nb_nulls_all_samples")) # sum the number of null values across all columns
+        .collect()
+        .to_series()
+    )
+    
     if found_valid_samples:
-        nb_nulls_valid_samples = df.select(
-            pl.col(found_valid_samples).is_null()
-        ).sum_horizontal()
+        nb_nulls_valid_samples = (
+            lf
+            .select(pl.col(found_valid_samples).is_null()) # select all columns in valid_samples and check if they are null
+            .select(pl.sum_horizontal(pl.all()).alias("nb_nulls_valid_samples")) # sum the number of null values across all columns
+            .collect()
+            .to_series()
+        )
     else:
         nb_nulls_valid_samples = nb_nulls
-
-    nb_samples = len(df.columns) - 1
-    return df.select(
+    
+    return lf.select(
         pl.col(config.GENE_ID_COLNAME),
-        (nb_nulls / nb_samples).alias(
-            get_colname(config.RATIO_NULLS_COLNAME, platform)
-        ),
-        (nb_nulls_valid_samples / len(found_valid_samples)).alias(
-            get_colname(config.RATIO_NULLS_VALID_SAMPLES_COLNAME, platform)
-        ),
+        (nb_nulls / nb_samples).alias(get_colname(config.RATIO_NULLS_COLNAME, platform)),
+        (nb_nulls_valid_samples / len(found_valid_samples)).alias(get_colname(config.RATIO_NULLS_VALID_SAMPLES_COLNAME, platform)),
     )
 
 
@@ -174,7 +182,7 @@ def get_main_statistics(lf: pl.LazyFrame, platform: str | None) -> pl.LazyFrame:
         (pl.col("std") / pl.col("mean")).alias(
             get_colname(config.COEFFICIENT_OF_VARIATION_COLNAME, platform)
         ),
-        (pl.col("mad") / pl.col("median") * RCV_MULTIFILER).alias(
+        (pl.col("mad") / pl.col("median") * RCV_MULTIPLIER).alias(
             get_colname(config.ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME, platform)
         ),
     )
@@ -244,14 +252,11 @@ def main():
     )
 
     logger.info("Loading count data (before missing value imputation)")
-    non_imputed_count_df = get_counts(args.count_file)
+    non_imputed_count_lf = get_counts(args.count_file)
 
-    ratio_nulls_df = compute_ratios_null_values(
-        non_imputed_count_df, valid_samples, args.platform
+    ratio_nulls_lf = compute_ratios_null_values(
+        non_imputed_count_lf, valid_samples, args.platform
     )
-
-    # deleting non_imputed_count_df in order to free unused memory
-    del non_imputed_count_df
 
     # if the user provided an imputed count file, use it; otherwise, use the original count file
     if args.imputed_count_file:
@@ -262,19 +267,15 @@ def main():
         count_file = args.count_file
 
     logger.info("Loading count data...")
-    count_df = get_counts(count_file)
-    logger.info(
-        f"Loaded count data with {count_df.shape[0]} rows and {count_df.shape[1]} columns"
-    )
+    count_lf = get_counts(count_file)
 
     logger.info("Computing statistics and stability score")
-    count_lf = count_df.lazy()
     # getting expression statistics
     stat_lf = get_main_statistics(count_lf, args.platform)
 
     # adding column for nb of null values for each gene
     stat_lf = stat_lf.join(
-        ratio_nulls_df.lazy(), on=config.GENE_ID_COLNAME, how="inner"
+        ratio_nulls_lf, on=config.GENE_ID_COLNAME, how="inner"
     )
 
     # adding a column for the frequency of zero values
