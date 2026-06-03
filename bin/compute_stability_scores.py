@@ -120,7 +120,7 @@ class StabilityScorer:
             pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME)
             * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
         )
-
+        
         for col, weight in self.weights.items():
             if col not in self.df.columns:
                 logger.warning(f"Column {col} not found in dataframe")
@@ -133,7 +133,7 @@ class StabilityScorer:
                     pl.col(normalised_col).is_not_null()
                     & pl.col(normalised_col).is_not_nan()
                 )
-                .then(pl.col(normalised_col))
+                .then(pl.col(normalised_col) * weight)
                 .otherwise(pl.lit(0))
             )
 
