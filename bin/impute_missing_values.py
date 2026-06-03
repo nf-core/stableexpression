@@ -69,6 +69,7 @@ def apply_knn_imputer(df: pl.DataFrame) -> pl.DataFrame:
 def apply_iterative_imputer(df: pl.DataFrame) -> pl.DataFrame:
     imputer = IterativeImputer(
         max_iter=MAX_ITERATIONS,
+        sample_posterior=True,
         n_nearest_features=N_NEAREST_FEATURES,
         random_state=0,
         initial_strategy="mean",
