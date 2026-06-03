@@ -126,10 +126,9 @@ def formating_counts(lf: pl.LazyFrame):
     The config.GENE_ID_COLNAME column is cast
     to String, and all other columns are cast to Float64.
     """
-
     # casting count columns to Float64
-    # casting gene id column to Stringcount_files
-    # casting nans to nulls
+    # casting gene id column to String
+    # replacing nans with nulls
     logger.info("Cleaning merged lazyframe")
     return lf.select(
         [pl.col(config.GENE_ID_COLNAME).cast(pl.String)]
