@@ -44,6 +44,7 @@ workflow SAMPLE_FILTERING {
 
     ch_ratio_nulls_per_sample_file = TOO_MANY_MISSING_VALUES.out.ratio_nulls_per_sample
                                     .splitCsv( header: true )
+                                    .map { item -> "${item["sample"]},${item["ratio"]}" }
                                     .collectFile(
                                         name: 'ratio_nulls_per_sample.csv',
                                         seed: "sample,ratio",
@@ -51,9 +52,7 @@ workflow SAMPLE_FILTERING {
                                         storeDir: "${outdir}/statistics/",
                                         sort: true
                                     )
-                                    {
-                                        item -> "${item["sample"]},${item["ratio"]}"
-                                    }
+                                    
 
     emit:
     counts                         = TOO_MANY_MISSING_VALUES.out.counts
