@@ -1,0 +1,172 @@
+nextflow_workflow {
+
+    name "Test Workflow EXPRESSION_NORMALISATION"
+    script "subworkflows/local/expression_normalisation/main.nf"
+    workflow "EXPRESSION_NORMALISATION"
+    tag "subworkflow_expression_normalisation"
+    tag "subworkflow"
+
+    test("TPM Normalisation") {
+
+        when {
+            workflow {
+                """
+                input[0] = "solanum_tuberosum"
+                input[1] = channel.of(
+                    [
+                        [
+                            normalised: false,
+                            design: file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.design.csv', checkIfExists: true ),
+                            dataset: "rnaseq_raw",
+                            platform: "rnaseq"
+                        ],
+                        file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.csv', checkIfExists: true )
+                    ],
+                    [
+                        [
+                            normalised: true,
+                            design: file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true ),
+                            dataset: "microarray_normalised",
+                            platform: "microarray"
+                        ],
+                        file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                    ]
+                )
+                input[2] = "tpm"
+                input[3] = "uniform"
+                input[4] = null
+                input[5] = null
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("TPM Normalisation with gene length") {
+
+        when {
+            workflow {
+                """
+                input[0] = "solanum_tuberosum"
+                input[1] = channel.of(
+                    [
+                        [
+                            normalised: false,
+                            design: file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.design.csv', checkIfExists: true ),
+                            dataset: "rnaseq_raw",
+                            platform: "rnaseq"
+                        ],
+                        file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.csv', checkIfExists: true )
+                    ],
+                    [
+                        [
+                            normalised: true,
+                            design: file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true ),
+                            dataset: "microarray_normalised",
+                            platform: "microarray"
+                        ],
+                        file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                    ]
+                )
+                input[2] = "tpm"
+                input[3] = "uniform"
+                input[4] = null
+                input[5] = file( '$projectDir/tests/test_data/input_datasets/gene_lengths.csv', checkIfExists: true )
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("CPM Normalisation") {
+
+        when {
+            workflow {
+                """
+                input[0] = "solanum_tuberosum"
+                input[1] = channel.of(
+                    [
+                        [
+                            normalised: false,
+                            design: file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.design.csv', checkIfExists: true ),
+                            dataset: "rnaseq_raw",
+                            platform: "rnaseq"
+                        ],
+                        file( '$projectDir/tests/test_data/input_datasets/rnaseq.raw.csv', checkIfExists: true )
+                    ],
+                    [
+                        [
+                            normalised: true,
+                            design: file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true ),
+                            dataset: "microarray_normalised",
+                            platform: "microarray"
+                        ],
+                        file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                    ]
+                )
+                input[2] = "cpm"
+                input[3] = "uniform"
+                input[4] = null
+                input[5] = null
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("No rnaseq normalisation") {
+
+        when {
+            workflow {
+                """
+                input[0] = "solanum_tuberosum"
+                input[1] = channel.of(
+                    [
+                        [
+                            normalised: true,
+                            design: file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.design.csv', checkIfExists: true ),
+                            dataset: "microarray_normalised",
+                            platform: "microarray"
+                        ],
+                        file( '$projectDir/tests/test_data/input_datasets/microarray.normalised.csv', checkIfExists: true )
+                    ]
+                )
+                input[2] = "tpm "
+                input[3] = "uniform"
+                input[4] = null
+                input[5] = null
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+}

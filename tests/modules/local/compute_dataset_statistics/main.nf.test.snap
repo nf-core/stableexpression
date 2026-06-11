@@ -1,0 +1,33 @@
+{
+    "Should not fail": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "test",
+                        "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "COMPUTE_DATASET_STATISTICS",
+                        "python",
+                        "3.12.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_DATASET_STATISTICS",
+                        "polars",
+                        "1.37.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-04-02T14:11:44.847136183",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    }
+}

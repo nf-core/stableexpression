@@ -1,0 +1,54 @@
+nextflow_process {
+
+    name "Test Process GET_CANDIDATE_GENES"
+    script "modules/local/get_candidate_genes/main.nf"
+    process "GET_CANDIDATE_GENES"
+    tag "get_candidate_genes"
+
+    test("Nb sections & candidates per section lower than total nb genes") {
+
+        when {
+
+            process {
+                """
+                input[0] = file('$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[1] = file('$projectDir/tests/test_data/base_statistics/output/stats_all_genes.csv', checkIfExists: true)
+                input[2] = "2"
+                input[3] = 3
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Too many sections") {
+
+        when {
+
+            process {
+                """
+                input[0] = file('$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[1] = file('$projectDir/tests/test_data/base_statistics/output/stats_all_genes.csv', checkIfExists: true)
+                input[2] = "50"
+                input[3] = 20
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

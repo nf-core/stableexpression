@@ -1,0 +1,64 @@
+{
+    "With Genorm": {
+        "content": [
+            {
+                "0": [
+                    "section_1.stats_with_scores.csv:md5,7b1dd3c6e4a666561ca6ebe14aae7b74"
+                ],
+                "1": [
+                    [
+                        "COMPUTE_STABILITY_SCORES",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_STABILITY_SCORES",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats_with_stability_scores": [
+                    "section_1.stats_with_scores.csv:md5,7b1dd3c6e4a666561ca6ebe14aae7b74"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-03-30T15:20:22.075756497"
+    },
+    "Without Genorm": {
+        "content": [
+            {
+                "0": [
+                    "section_1.stats_with_scores.csv:md5,bdf823d07ed6fed0313e5cf2ce1811a6"
+                ],
+                "1": [
+                    [
+                        "COMPUTE_STABILITY_SCORES",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_STABILITY_SCORES",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats_with_stability_scores": [
+                    "section_1.stats_with_scores.csv:md5,bdf823d07ed6fed0313e5cf2ce1811a6"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-03-30T15:20:28.206402711"
+    }
+}

@@ -1,0 +1,13 @@
+categories:
+  - Transcriptomics
+  - RNA
+  - Micro-array Analysis
+description: Pipeline dedicated to finding the most stable genes across count datasets
+homepage_url: https://nf-co.re/stableexpression/
+long_description: |
+  nf-core/stableexpression is a bioinformatics pipeline that aims at finding the most stable genes among a single or multiple public / local count datasets.
+  It takes as input a species name (mandatory), keywords for expression atlas search (optional) and / or a CSV input file listing local raw / normalised count datasets (optional).
+  A typical usage is to find the most suitable qPCR housekeeping genes for a specific species (and optionally specific conditions).
+name: nf_core_stableexpression
+owner: ocoen
+remote_repository_url: https://github.com/nf-core/stableexpression/

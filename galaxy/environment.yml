@@ -1,0 +1,10 @@
+name: planemo
+channels:
+  - defaults
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - python=3.12
+  - pip:
+      - planemo==0.75.33

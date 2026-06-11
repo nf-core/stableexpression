@@ -1,0 +1,43 @@
+{
+    "Four initial chunk files": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "m_measures.csv:md5,2119b16fe13e2d0bc0fedc3c9d3d1733"
+                    ]
+                ],
+                "1": [
+                    [
+                        "COMPUTE_M_MEASURE",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_M_MEASURE",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "m_measures": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "m_measures.csv:md5,2119b16fe13e2d0bc0fedc3c9d3d1733"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-03-30T15:40:23.09370734"
+    }
+}

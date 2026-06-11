@@ -15,9 +15,10 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { STABLEEXPRESSION  } from './workflows/stableexpression'
+include { STABLEEXPRESSION        } from './workflows/stableexpression'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_stableexpression_pipeline'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -30,20 +31,15 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_stab
 workflow NFCORE_STABLEEXPRESSION {
 
     take:
-    samplesheet // channel: samplesheet read in from --input
+    input_datasets
 
     main:
 
     //
     // WORKFLOW: Run pipeline
     //
-    STABLEEXPRESSION (
-        samplesheet,
-        params.multiqc_config,
-        params.multiqc_logo,
-        params.multiqc_methods_description,
-        params.outdir,
-    )
+    STABLEEXPRESSION( input_datasets )
+
     emit:
     multiqc_report = STABLEEXPRESSION.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
@@ -65,7 +61,7 @@ workflow {
         params.monochrome_logs,
         args,
         params.outdir,
-        params.input,
+        params.datasets,
         params.help,
         params.help_full,
         params.show_hidden
@@ -75,7 +71,7 @@ workflow {
     // WORKFLOW: Run main workflow
     //
     NFCORE_STABLEEXPRESSION (
-        PIPELINE_INITIALISATION.out.samplesheet
+        PIPELINE_INITIALISATION.out.input_datasets
     )
     //
     // SUBWORKFLOW: Run completion tasks

@@ -1,0 +1,43 @@
+{
+    "ENSG - Mapping found": {
+        "content": [
+            {
+                "0": [
+                    "mapped_gene_ids.csv:md5,c4ef4df6530509b486662a107ba8de44"
+                ],
+                "1": [
+                    "gene_metadata.csv:md5,f4dad0185e6f2d780f561d3efc301562"
+                ],
+                "2": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "3": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "pandas",
+                        "3.0.1"
+                    ]
+                ],
+                "4": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "httpx",
+                        "0.28.1"
+                    ]
+                ],
+                "metadata": [
+                    "gene_metadata.csv:md5,f4dad0185e6f2d780f561d3efc301562"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-02-19T10:26:01.249646558"
+    }
+}

@@ -1,0 +1,47 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1",
+                            "index_1": 0,
+                            "index_2": 1
+                        },
+                        "ratios.0.1.parquet:md5,dd929c967bc78a650c33eb0885544f50"
+                    ]
+                ],
+                "1": [
+                    [
+                        "EXPRESSION_RATIO",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "EXPRESSION_RATIO",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "data": [
+                    [
+                        {
+                            "section": "section_1",
+                            "index_1": 0,
+                            "index_2": 1
+                        },
+                        "ratios.0.1.parquet:md5,dd929c967bc78a650c33eb0885544f50"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-04-01T09:41:39.459415462"
+    }
+}

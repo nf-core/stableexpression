@@ -1,0 +1,171 @@
+<tool id="nf_core_stableexpression" name="nf-core/stableexpression" version="PIPELINE_VERSION">
+    <description>DESCRIPTION</description>
+    <requirements>
+        <requirement type="package" version="25.10.04">nextflow</requirement>
+        <requirement type="package" version="2.3.3">micromamba</requirement>
+        <requirement type="package" version="17.0.10">openjdk</requirement>
+    </requirements>
+    <version_command><![CDATA[
+VERSION="PIPELINE_VERSION"; echo "$VERSION"
+    ]]></version_command>
+    <command
+        detect_errors="exit_code"
+    ><![CDATA[
+
+        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ## Building new samplesheet with renamed files
+        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        #if $input_output_options.datasets.provide_datasets == "true":
+
+            #set $count_filenames = ''
+            #for $count_dataset in $input_output_options.datasets.count_datasets
+                #set $count_filenames += ' ' + str($count_dataset.name)
+            #end for
+
+            #set $design_filenames = ''
+            #for $experimental_design in $input_output_options.datasets.experimental_designs
+                #set $design_filenames += ' ' + str($experimental_design.name)
+            #end for
+
+            python '${__tool_directory__}/rebuild_samplesheet.py'
+                --in $input_output_options.datasets.samplesheet
+                --out renamed_samplesheet.csv
+                --count-files $input_output_options.datasets.count_datasets
+                --count-filenames $count_filenames
+                --design-files $input_output_options.datasets.experimental_designs
+                --design-filenames $design_filenames
+
+        #else:
+            echo "No user dataset provided"
+
+        #end if
+
+        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ## Running pipeline
+        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        && nextflow run OlivierCoen/stableexpression
+            -r dev -latest
+            -profile micromamba
+            -ansi-log false
+            --outdir ./results
+PARAMETERS
+
+        && zip -r results.zip results
+
+    ]]>
+    </command>
+    <inputs>
+INPUTS
+    </inputs>
+    <outputs>
+        <data
+            name="multiqc_report"
+            label="MultiQC report"
+            from_work_dir="results/multiqc/multiqc_report.html"
+            format="html"
+        />
+        <data
+            name="gene_stats"
+            label="Gene scores and statistics"
+            from_work_dir="results/aggregated/all_genes_summary.csv"
+            format="csv"
+        />
+        <data
+            name="pipeline_results"
+            label="${tool.name} on ${input_output_options.species}"
+            from_work_dir="results.zip"
+            format="zip"
+        />
+    </outputs>
+    <tests>
+        <test>
+            <section name="input_output_options">
+                <param name="species" value="solanum_tuberosum" />
+                <conditional name="datasets">
+                    <param name="provide_datasets" value="true" />
+                    <param name="samplesheet" value="test_data/input.csv" />
+                    <param name="count_datasets" value="test_data/microarray.normalised.csv,test_data/rnaseq.raw.csv" />
+                    <param
+                        name="experimental_designs"
+                        value="test_data/microarray.normalised.design.csv,test_data/rnaseq.raw.design.csv"
+                    />
+                </conditional>
+            </section>
+            <section name="public_data_options">
+                <param name="skip_fetch_eatlas_accessions" value="true" />
+            </section>
+            <output name="gene_stats">
+                <assert_contents>
+                    <has_text text="gene_id" />
+                </assert_contents>
+            </output>
+            <output name="multiqc_report">
+                <assert_contents>
+                    <has_text text="Data was processed using nf-core/stableexpression" />
+                </assert_contents>
+            </output>
+        </test>
+        <test>
+            <section name="input_output_options">
+                <param name="species" value="prunus persica" />
+                <conditional name="datasets">
+                    <param name="provide_datasets" value="false" />
+                </conditional>
+                <param name="keywords" value="leaf" />
+            </section>
+            <output name="gene_stats">
+                <assert_contents>
+                    <has_text text="gene_id" />
+                </assert_contents>
+            </output>
+            <output name="multiqc_report">
+                <assert_contents>
+                    <has_text text="Data was processed using nf-core/stableexpression" />
+                </assert_contents>
+            </output>
+        </test>
+        <test>
+            <section name="input_output_options">
+                <param name="species" value="prunus persica" />
+                <conditional name="datasets">
+                    <param name="provide_datasets" value="true" />
+                    <param name="samplesheet" value="test_data/input.csv" />
+                    <param name="count_datasets" value="test_data/microarray.normalised.csv,test_data/rnaseq.raw.csv" />
+                    <param
+                        name="experimental_designs"
+                        value="test_data/microarray.normalised.design.csv,test_data/rnaseq.raw.design.csv"
+                    />
+                </conditional>
+            </section>
+            <output name="gene_stats">
+                <assert_contents>
+                    <has_text text="gene_id" />
+                </assert_contents>
+            </output>
+            <output name="multiqc_report">
+                <assert_contents>
+                    <has_text text="Data was processed using nf-core/stableexpression" />
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+
+See https://nf-co.re/stableexpression/ for detailed documentation
+
+     ]]></help>
+    <citations>
+        <citation type="bibtex">
+            @misc{nf-core/stableexpression,
+              author = {Coen, Olivier},
+              year = {2025},
+              title = {nf-core/stableexpression},
+              publisher = {GitHub},
+              journal = {GitHub repository},
+              url = {https://github.com/OlivierCoen/stableexpression},
+            }
+        </citation>
+    </citations>
+</tool>

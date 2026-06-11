@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+ARGS="$@"
+
+GALAXY_DIR="$(dirname $(readlink -f "$0"))"
+TOOL_FOLDER="${GALAXY_DIR}/tool_shed/tool"
+TOOL_FILE="${TOOL_FOLDER}/nf_core_stableexpression.xml"
+
+
+TEST_OUTDIR="test_output"
+mkdir -p $TEST_OUTDIR
+
+OUTPUT_REPORT="${TEST_OUTDIR}/report.html"
+OUTPUT_JSON="${TEST_OUTDIR}/report.json"
+
+# add --update_test_data to create output file
+planemo test \
+    $TOOL_FILE \
+    --install_galaxy \
+    --job_output_files $TEST_OUTDIR \
+    --test_output $OUTPUT_REPORT \
+    --test_output_json $OUTPUT_JSON \
+    --tool_data $TOOL_FOLDER \
+    --update_test_data \
+    $ARGS

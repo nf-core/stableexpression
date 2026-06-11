@@ -1,0 +1,65 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        [
+                            "count_chunk.0.parquet:md5,2b49edb51f57065edec0dbbc3b50cd03",
+                            "count_chunk.1.parquet:md5,a229839cc11b60b51d75e69bda1b079e",
+                            "count_chunk.2.parquet:md5,79e06a8d5438a1fd8c35bb7e861bbb2f",
+                            "count_chunk.3.parquet:md5,b4b75fd8c257684914ea81acec63c7b2",
+                            "count_chunk.4.parquet:md5,938d6eb757a2114fba7c37cb79917fdb",
+                            "count_chunk.5.parquet:md5,7de0a7158eaf28de2728ad10ed68fea3",
+                            "count_chunk.6.parquet:md5,b7bb9a8ed8578bbf661d60dc0cc43a09",
+                            "count_chunk.7.parquet:md5,d424e46fbcab660f7994086d95d83955",
+                            "count_chunk.8.parquet:md5,5411ffdabeda55de3d67ae8cc32e0276",
+                            "count_chunk.9.parquet:md5,484ecc44837b0a0f3098bff5a8144853"
+                        ]
+                    ]
+                ],
+                "1": [
+                    [
+                        "MAKE_CHUNKS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "MAKE_CHUNKS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "chunks": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        [
+                            "count_chunk.0.parquet:md5,2b49edb51f57065edec0dbbc3b50cd03",
+                            "count_chunk.1.parquet:md5,a229839cc11b60b51d75e69bda1b079e",
+                            "count_chunk.2.parquet:md5,79e06a8d5438a1fd8c35bb7e861bbb2f",
+                            "count_chunk.3.parquet:md5,b4b75fd8c257684914ea81acec63c7b2",
+                            "count_chunk.4.parquet:md5,938d6eb757a2114fba7c37cb79917fdb",
+                            "count_chunk.5.parquet:md5,7de0a7158eaf28de2728ad10ed68fea3",
+                            "count_chunk.6.parquet:md5,b7bb9a8ed8578bbf661d60dc0cc43a09",
+                            "count_chunk.7.parquet:md5,d424e46fbcab660f7994086d95d83955",
+                            "count_chunk.8.parquet:md5,5411ffdabeda55de3d67ae8cc32e0276",
+                            "count_chunk.9.parquet:md5,484ecc44837b0a0f3098bff5a8144853"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-03-30T15:40:46.563584649"
+    }
+}

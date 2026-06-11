@@ -1,0 +1,29 @@
+nextflow_process {
+
+    name "Test Process CROSS_JOIN"
+    script "modules/local/genorm/cross_join/main.nf"
+    process "CROSS_JOIN"
+    tag "cross_join"
+
+    test("Should run without failures") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [section: "section_1", index_1: 0, index_2: 1],
+                    file( '$projectDir/tests/test_data/genorm/make_chunks/output/count_chunk.0.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/genorm/make_chunks/output/count_chunk.1.parquet', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}
