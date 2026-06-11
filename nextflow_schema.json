@@ -330,7 +330,7 @@
                     "fa_icon": "fas fa-balance-scale",
                     "help_text": "Weights for Normfinder / Genorm / Coefficient of Variation (CV) / Robust Coefficient of Variation on Median (RCVM) respectively. Must be a comma-separated string. Example: 0.5,0.5,0.0,0",
                     "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$",
-                    "default": "0.5,0.5,0,0"
+                    "default": "0.25,0.25,0.25,0.25"
                 }
             }
         },
