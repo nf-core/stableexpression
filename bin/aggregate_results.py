@@ -115,7 +115,7 @@ def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.DataFrame
 def cast_count_columns_to_float(df: pl.DataFrame) -> pl.DataFrame:
     return df.select(
         pl.col(config.GENE_ID_COLNAME),
-        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64),
+        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float32),
     )
 
 

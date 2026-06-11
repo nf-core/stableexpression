@@ -124,15 +124,15 @@ def make_tmp_sorted_dataframes(
 def formating_counts(lf: pl.LazyFrame):
     """
     The config.GENE_ID_COLNAME column is cast
-    to String, and all other columns are cast to Float64.
+    to String, and all other columns are cast to Float32.
     """
-    # casting count columns to Float64
+    # casting count columns to Float32
     # casting gene id column to String
     # replacing nans with nulls
     logger.info("Cleaning merged lazyframe")
     return lf.select(
         [pl.col(config.GENE_ID_COLNAME).cast(pl.String)]
-        + [pl.col(column).cast(pl.Float64) for column in get_count_columns(lf)]
+        + [pl.col(column).cast(pl.Float32) for column in get_count_columns(lf)]
     ).fill_nan(None)
 
 

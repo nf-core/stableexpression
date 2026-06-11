@@ -52,7 +52,7 @@ def parse_count_table(file: Path):
     # whatever the name of the first col, rename it to "gene_id"
     return df.rename({first_col: config.GENE_ID_COLNAME}).select(
         pl.col(config.GENE_ID_COLNAME).cast(pl.String()),
-        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64()),
+        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float32()),
     )
 
 

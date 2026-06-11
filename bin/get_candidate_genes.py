@@ -62,7 +62,7 @@ def parse_args():
 def parse_stats(file: Path) -> pl.DataFrame:
     return pl.read_csv(file).select(
         pl.col(config.GENE_ID_COLNAME).cast(pl.String()),
-        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64()),
+        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float32()),
     )
 
 

@@ -66,7 +66,7 @@ def compute_minvars(z: np.ndarray, target_idx: np.ndarray) -> np.ndarray:
     if nsamples < 2:
         raise ValueError("Number of samples must be at least 2")
 
-    minvars = np.empty(len(target_idx), dtype=np.float64)
+    minvars = np.empty(len(target_idx), dtype=np.float32)
     for k in prange(len(target_idx)):
         i = target_idx[k]
         # checking if counts for this gene are all nans
@@ -305,7 +305,7 @@ class NormFinder:
 
         # cast all values to float (to avoid issues when concat)
         unbiased_intragroup_variance_dfs = [
-            df.select([pl.col(col).cast(pl.Float64) for col in df.columns])
+            df.select([pl.col(col).cast(pl.Float32) for col in df.columns])
             for df in unbiased_intragroup_variance_dfs
         ]
 

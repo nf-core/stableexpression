@@ -56,7 +56,7 @@ def quantile_normalise(df: pl.DataFrame, target_distribution: str):
     return df.with_columns(
         pl.exclude(config.GENE_ID_COLNAME).map_batches(
             lambda x: quantile_transform(x.to_frame(), **kwargs).flatten(),
-            return_dtype=pl.Float64,
+            return_dtype=pl.Float32,
         )
     )
 
