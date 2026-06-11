@@ -46,7 +46,7 @@
                 "target_genes": {
                     "type": "string",
                     "description": "Target genes",
-                    "fa_icon": "fas fa-arrows-alt-h",
+                    "fa_icon": "fas fa-bullseye",
                     "help_text": "One or multiple target genes (separated by commas). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols."
                 },
                 "target_gene_file": {
@@ -54,26 +54,26 @@
                     "description": "File containing target genes",
                     "format": "file-path",
                     "exists": true,
-                    "fa_icon": "fas fa-arrows-alt-h",
+                    "fa_icon": "fas fa-file-word",
                     "help_text": "File containing one or multiple target genes (one ID per line). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols."
                 },
                 "platform": {
                     "type": "string",
                     "enum": ["rnaseq", "microarray"],
                     "description": "Only download from this platform",
-                    "fa_icon": "fas fa-arrows-alt-h",
+                    "fa_icon": "fas fa-caravan",
                     "help_text": "By default, data from both RNA-seq and Microarray platforms are downloaded. Setting this parameter applies a filter to get data from only one of the two platforms. This filter is only used while fetching appropriate Expression atlas / GEO accessions. It will not filter accessions provided directly by the user."
                 },
                 "accessions_only": {
                     "type": "boolean",
                     "description": "Only get accessions from Expression Atlas / GEO and exit.",
-                    "fa_icon": "far fa-stop-circle",
+                    "fa_icon": "fas fa-align-center",
                     "help_text": "Use this option if you only want to get Expression Atlas accessions and skip the rest of the pipeline."
                 },
                 "download_only": {
                     "type": "boolean",
                     "description": "Only get accessions from Expression Atlas / GEO and download the selected datasets.",
-                    "fa_icon": "far fa-stop-circle",
+                    "fa_icon": "fas fa-download",
                     "help_text": "Use this option if you only want to get Expression Atlas / GEO accessions, download the selected data, and skip the rest of the pipeline."
                 },
                 "email": {
@@ -98,13 +98,13 @@
             "properties": {
                 "skip_fetch_eatlas_accessions": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-cloud-arrow-down",
+                    "fa_icon": "fas fa-ban",
                     "description": "Skip fetching Expression Atlas accessions",
                     "help_text": "Expression Atlas accessions are automatically fetched by default. Set this parameter to skip this step."
                 },
                 "fetch_geo_accessions": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-cloud-arrow-down",
+                    "fa_icon": "fas fa-cloud-download-alt",
                     "description": "Fetch GEO accessions from NCBI [Experimental]",
                     "help_text": "Set this parameter to fetch GEO accessions from NCBI. **This feature is experimental and may not work as expected**. Please report any issues to https://github.com/nf-core/stableexpression/issues."
                 },
@@ -120,7 +120,7 @@
                     "format": "file-path",
                     "exists": true,
                     "description": "File containing Expression Atlas / GEO accession(s) to download",
-                    "fa_icon": "fas fa-file",
+                    "fa_icon": "fas fa-file-alt",
                     "help_text": "File containing Expression Atlas / GEO accession(s) that you want to download. One accession per line. Example: `--accessions_file included_accessions.txt`. Combine with --skip_fetch_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions."
                 },
                 "excluded_accessions": {
@@ -135,7 +135,7 @@
                     "format": "file-path",
                     "exists": true,
                     "description": "File containing Expression Atlas accession(s) to exclude",
-                    "fa_icon": "fas fa-file",
+                    "fa_icon": "fas fa-file-alt",
                     "help_text": "File containing Expression Atlas / GEO accession(s) that you want to exclude. One accession per line. Example: `--excluded_accessions_file excluded_accessions.txt`."
                 }
             }
@@ -161,7 +161,7 @@
                 "gprofiler_target_db": {
                     "type": "string",
                     "description": "Experimental: target database for g:Profiler",
-                    "fa_icon": "fas fa-divide",
+                    "fa_icon": "far fa-dot-circle",
                     "enum": ["ENSG", "ENTREZGENE", "UNIPROTSPTREMBL", "UNIPROTSWISSPROT"],
                     "default": "ENSG",
                     "help_text": "Experimental: target database for g:Profiler. You can see the full list of available target databases at https://biit.cs.ut.ee/gprofiler/convert."
@@ -175,7 +175,7 @@
                     "pattern": "^\\S+\\.(csv|dat)$",
                     "description": "Custom gene id mapping file",
                     "help_text": "Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to a prefered gene ID. The mapping file should be a comma-separated file with 2 columns (original_gene_id and gene_id) and a header row.",
-                    "fa_icon": "fas fa-file"
+                    "fa_icon": "fas fa-file-alt"
                 },
                 "gene_metadata": {
                     "type": "string",
@@ -186,12 +186,12 @@
                     "pattern": "^\\S+\\.(csv|dat)$",
                     "description": "Custom gene metadata file",
                     "help_text": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (gene_id, name and description) and a header row.",
-                    "fa_icon": "fas fa-file"
+                    "fa_icon": "fas fa-file-alt"
                 },
                 "min_occurrence_quantile": {
                     "type": "number",
                     "description": "Minimum quantile for the frequency of occurrence",
-                    "fa_icon": "fas fa-battery-three-quarters",
+                    "fa_icon": "far fa-chart-bar",
                     "minimum": 0,
                     "maximum": 1,
                     "default": 0.2,
@@ -200,7 +200,7 @@
                 "min_occurrence_freq": {
                     "type": "number",
                     "description": "Minimum frequency of occurrence among all datasets",
-                    "fa_icon": "fas fa-battery-three-quarters",
+                    "fa_icon": "fas fa-chart-bar",
                     "minimum": 0,
                     "maximum": 1,
                     "default": 0.1,
@@ -217,7 +217,7 @@
                 "max_zero_ratio": {
                     "type": "number",
                     "description": "Maximum ratio of zero counts to total counts",
-                    "fa_icon": "fas fa-divide",
+                    "fa_icon": "fab fa-creative-commons-zero",
                     "minimum": 0,
                     "maximum": 1,
                     "default": 0.9,
@@ -226,7 +226,7 @@
                 "max_null_ratio": {
                     "type": "number",
                     "description": "Maximum ratio of null values",
-                    "fa_icon": "fas fa-divide",
+                    "fa_icon": "fas fa-dizzy",
                     "minimum": 0,
                     "maximum": 1,
                     "default": 0.9,
@@ -235,7 +235,7 @@
                 "max_null_ratio_valid_sample": {
                     "type": "number",
                     "description": "Maximum ratio of null values in a sample for it to be considered in the computation of the null value malus",
-                    "fa_icon": "fas fa-divide",
+                    "fa_icon": "far fa-dizzy",
                     "minimum": 0,
                     "maximum": 1,
                     "default": 0.75,
@@ -265,7 +265,7 @@
                     "pattern": "^\\S+\\.(gff|dat)$",
                     "description": "Genome annotation file (GFF format)",
                     "help_text": "Path to genome annotation file (GFF format). Cannot be compressed.",
-                    "fa_icon": "fas fa-file"
+                    "fa_icon": "fas fa-file-alt"
                 },
                 "gene_length": {
                     "type": "string",
@@ -276,7 +276,7 @@
                     "pattern": "^\\S+\\.(csv|tsv|dat)$",
                     "description": "Gene length file",
                     "help_text": "Path to comma-separated file containing gene lengths. Each row represents a gene and gives the length of its longest transcript. The file should be a comma-separated file with 2 columns (gene_id and length) and a header row.",
-                    "fa_icon": "fas fa-file"
+                    "fa_icon": "fas fa-file-alt"
                 },
                 "quantile_norm_target_distrib": {
                     "type": "string",
@@ -289,7 +289,7 @@
                 "missing_value_imputer": {
                     "type": "string",
                     "description": "Type of imputation method to use for missing values",
-                    "fa_icon": "fas fa-battery-three-quarters",
+                    "fa_icon": "fas fa-bezier-curve",
                     "enum": ["iterative", "knn", "gene_mean"],
                     "default": "iterative",
                     "help_text": "The pipeline provides three options for imputing missing values: iterative, k-nearest neighbors, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Gene mean imputation is a very basic method that replaces missing values with the mean expression level of the gene across all samples."
@@ -305,21 +305,23 @@
                 "nb_sections": {
                     "type": "integer",
                     "description": "Number of sections to divide genes into for stability scoring.",
-                    "fa_icon": "fas fa-sort-numeric-up-alt",
+                    "fa_icon": "fas fa-list-ol",
                     "minimum": 1,
-                    "help_text": "All genes are divided into sections based on their expression levels. Set this parameter to modify the number of sections."
+                    "help_text": "All genes are divided into sections based on their expression levels. Set this parameter to modify the number of sections.",
+                    "default": 20
                 },
                 "nb_candidates_per_section": {
                     "type": "integer",
                     "description": "Number of candidate genes to keep for stability scoring in each section",
-                    "fa_icon": "fas fa-sort-numeric-up-alt",
+                    "fa_icon": "fas fa-sort-numeric-down",
                     "minimum": 1,
-                    "help_text": "Number of candidate genes to keep in each section for stability scoring. Within each section, the top candidates are selected based on the descriptor chosen with `--candidate_selection_descriptor`."
+                    "help_text": "Number of candidate genes to keep in each section for stability scoring. Within each section, the top candidates are selected based on the descriptor chosen with `--candidate_selection_descriptor`.",
+                    "default": 250
                 },
                 "skip_genorm": {
                     "type": "boolean",
                     "description": "Run Genorm",
-                    "fa_icon": "fas fa-check",
+                    "fa_icon": "fas fa-ban",
                     "help": "Skip Genorm by setting this parameter to true. In this case, by default, only Normfinder will participate in the stability score."
                 },
                 "stability_score_weights": {
@@ -327,7 +329,8 @@
                     "description": "Weights for stability score calculation",
                     "fa_icon": "fas fa-balance-scale",
                     "help_text": "Weights for Normfinder / Genorm / Coefficient of Variation (CV) / Robust Coefficient of Variation on Median (RCVM) respectively. Must be a comma-separated string. Example: 0.5,0.5,0.0,0",
-                    "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$"
+                    "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$",
+                    "default": "0.5,0.5,0,0"
                 }
             }
         },
@@ -340,16 +343,18 @@
                 "random_sampling_size": {
                     "type": "integer",
                     "description": "Number of public dataset samples to choose randomly before downloading.",
-                    "fa_icon": "fas fa-sort-numeric-up-alt",
+                    "fa_icon": "fas fa-random",
                     "minimum": 1,
-                    "help_text": "When dealing with species for which there is a large number (eg. >10000) of samples considering all the downloaded datasets, users may encounter RAM issues (eg. errors with `137` exit codes). In such cases, it is recommended to sample a random subset of these datasets to reduce the computational load. A first subsampling is performedduring the search for Expression Atlas accessions. In case there is still room for datasets and if the `--fetch_geo_accessions` flag was set, a second ssubsampling is performed during the search for NCBI GEO accessions."
+                    "help_text": "When dealing with species for which there is a large number (eg. >10000) of samples considering all the downloaded datasets, users may encounter RAM issues (eg. errors with `137` exit codes). In such cases, it is recommended to sample a random subset of these datasets to reduce the computational load. A first subsampling is performedduring the search for Expression Atlas accessions. In case there is still room for datasets and if the `--fetch_geo_accessions` flag was set, a second ssubsampling is performed during the search for NCBI GEO accessions.",
+                    "default": 5000
                 },
                 "random_sampling_seed": {
                     "type": "integer",
                     "description": "Seed for dataset random sampling.",
-                    "fa_icon": "fas fa-sort-numeric-up-alt",
+                    "fa_icon": "fas fa-random",
                     "minimum": 0,
-                    "help_text": "Seed for dataset random sampling. This ensures reproducibility of the random sampling process. Changing the seed will result in a different random sample being selected."
+                    "help_text": "Seed for dataset random sampling. This ensures reproducibility of the random sampling process. Changing the seed will result in a different random sample being selected.",
+                    "default": 42
                 }
             }
         },
