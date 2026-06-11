@@ -7,7 +7,9 @@
                 ],
                 "1": [
                     [
-                        "test",
+                        [
+                            
+                        ],
                         "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e"
                     ]
                 ],
@@ -16,7 +18,9 @@
                 ],
                 "3": [
                     [
-                        "test",
+                        [
+                            
+                        ],
                         "0",
                         "0",
                         "3",
@@ -42,11 +46,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-04-17T09:04:45.840061804",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:04:45.840061804"
+        }
     },
     "Map Ensembl IDs": {
         "content": [
@@ -54,7 +58,9 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.ensembl_ids.renamed.parquet:md5,1fe83a8ee993d02c9df18f7412d20f0f"
                     ]
@@ -67,7 +73,9 @@
                 ],
                 "3": [
                     [
-                        "test",
+                        [
+                            
+                        ],
                         "2",
                         "1",
                         "1",
@@ -91,18 +99,20 @@
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.ensembl_ids.renamed.parquet:md5,1fe83a8ee993d02c9df18f7412d20f0f"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-04-17T09:04:26.849187591",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:04:26.849187591"
+        }
     },
     "No valid gene": {
         "content": [
@@ -112,7 +122,9 @@
                 ],
                 "1": [
                     [
-                        "test",
+                        [
+                            
+                        ],
                         "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e"
                     ]
                 ],
@@ -121,7 +133,9 @@
                 ],
                 "3": [
                     [
-                        "test",
+                        [
+                            
+                        ],
                         "0",
                         "0",
                         "3",
@@ -147,10 +161,10 @@
                 ]
             }
         ],
+        "timestamp": "2026-04-17T09:04:36.329611443",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:04:36.329611443"
+        }
     }
 }

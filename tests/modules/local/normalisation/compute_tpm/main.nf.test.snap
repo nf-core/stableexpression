@@ -5,7 +5,9 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
                     ]
@@ -33,18 +35,20 @@
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-04-17T09:08:02.882187442",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:08:02.882187442"
+        }
     },
     "One group": {
         "content": [
@@ -52,7 +56,9 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.tpm.parquet:md5,2bb5797b24bcd02a06b2794c94567638"
                     ]
@@ -80,18 +86,20 @@
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.tpm.parquet:md5,2bb5797b24bcd02a06b2794c94567638"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-04-17T09:08:21.950858405",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:08:21.950858405"
+        }
     },
     "TSV files": {
         "content": [
@@ -99,7 +107,9 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
                     ]
@@ -127,18 +137,20 @@
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-04-17T09:08:31.427239077",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:08:31.427239077"
+        }
     },
     "Rows with many zeros": {
         "content": [
@@ -146,7 +158,9 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.tpm.parquet:md5,95563b1ba1083cfc31c2b9c18c5aeaaa"
                     ]
@@ -174,17 +188,19 @@
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.tpm.parquet:md5,95563b1ba1083cfc31c2b9c18c5aeaaa"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-04-17T09:08:12.502224484",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:08:12.502224484"
+        }
     }
 }

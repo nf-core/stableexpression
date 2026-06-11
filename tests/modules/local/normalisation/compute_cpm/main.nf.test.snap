@@ -5,7 +5,9 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
                     ]
@@ -33,18 +35,20 @@
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-04-17T09:07:24.246785277",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:07:24.246785277"
+        }
     },
     "One group": {
         "content": [
@@ -87,11 +91,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-19T12:23:45.874853063",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-19T12:23:45.874853063"
+        }
     },
     "TSV files": {
         "content": [
@@ -134,11 +138,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-03-19T12:23:54.407797312",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-19T12:23:54.407797312"
+        }
     },
     "Rows with many zeros": {
         "content": [
@@ -146,7 +150,9 @@
                 "0": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.cpm.parquet:md5,ab2596a5bb8b3b2e39754191a2dce2aa"
                     ]
@@ -174,17 +180,19 @@
                 "counts": [
                     [
                         {
-                            "dataset": "test"
+                            "dataset": [
+                                
+                            ]
                         },
                         "counts.cpm.parquet:md5,ab2596a5bb8b3b2e39754191a2dce2aa"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-04-17T09:07:34.001566313",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:07:34.001566313"
+        }
     }
 }
