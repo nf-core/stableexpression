@@ -10,6 +10,9 @@ process IMPUTE_MISSING_VALUES {
     input:
     tuple val(meta), path(count_file)
     val missing_value_imputer
+    val knn_n_neighbours
+    val iterative_max_iter
+    val iterative_n_nearest_features
 
     output:
     tuple val(meta), path('*.imputed.parquet'),                                                                         emit: counts
@@ -21,7 +24,10 @@ process IMPUTE_MISSING_VALUES {
     """
     impute_missing_values.py \\
         --counts $count_file \\
-        --imputer $missing_value_imputer
+        --imputer $missing_value_imputer \\
+        --knn-n-neighbours $knn_n_neighbours \\
+        --iterative-max-iter $iterative_max_iter \\
+        --iterative-n-nearest-features $iterative_n_nearest_features
     """
 
 }

@@ -17,8 +17,6 @@ logger = logging.getLogger(__name__)
 
 OUTFILE_SUFFIX = ".imputed.parquet"
 
-THRESHOLD_RATIO_ZEROS = 0.9
-
 # KNN
 N_NEIGHBORS = 10
 
@@ -39,9 +37,37 @@ IMPUTERS = ["knn", "iterative", "gene_mean"]
 def parse_args():
     parser = argparse.ArgumentParser(description="Perform KNN imputation on count data")
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts", 
+        type=Path, 
+        dest="count_file", 
+        required=True, 
+        help="Count file"
     )
-    parser.add_argument("--imputer", choices=IMPUTERS, required=True, dest="imputer")
+    parser.add_argument(
+        "--imputer", 
+        choices=IMPUTERS, 
+        required=True, 
+        dest="imputer",
+        help="Imputer to use"
+    )    
+    parser.add_argument(
+        "--knn-n-neighbours", 
+        type=int, 
+        dest="knn_n_neighbours", 
+        help="Number of neighbours to use for KNN imputation"
+    )
+    parser.add_argument(
+        "--iterative-max-iter", 
+        type=int, 
+        dest="iterative_max_iter", 
+        help="Number of iterations to use for iterative imputation"
+    )
+    parser.add_argument(
+        "--iterative-n-nearest-features", 
+        type=int, 
+        dest="iterative_n_nearest_features", 
+        help="Number of nearest features to use for iterative imputation"
+    )
     return parser.parse_args()
 
 
@@ -61,16 +87,16 @@ def apply_simle_imputer(df: pl.DataFrame):
     return apply_imputer(df, imputer)
 
 
-def apply_knn_imputer(df: pl.DataFrame) -> pl.DataFrame:
-    imputer = KNNImputer(n_neighbors=N_NEIGHBORS, weights="distance")
+def apply_knn_imputer(df: pl.DataFrame, n_neighbours: int) -> pl.DataFrame:
+    imputer = KNNImputer(n_neighbors=n_neighbours, weights="distance")
     return apply_imputer(df, imputer)
 
 
-def apply_iterative_imputer(df: pl.DataFrame) -> pl.DataFrame:
+def apply_iterative_imputer(df: pl.DataFrame, max_iter: int, n_nearest_features: int) -> pl.DataFrame:
     imputer = IterativeImputer(
-        max_iter=MAX_ITERATIONS,
+        max_iter=max_iter,
         sample_posterior=True,
-        n_nearest_features=N_NEAREST_FEATURES,
+        n_nearest_features=n_nearest_features,
         random_state=0,
         initial_strategy="mean",
         min_value=0,
@@ -97,12 +123,19 @@ def main():
     # logger.info("Separating genes with high number of zeros")
     # df, high_zero_genes_df = separate_genes_with_high_number_of_zeros(count_df)
 
-    if args.imputer == "iterative":
-        logger.info("Applying iterative imputation")
-        df = apply_iterative_imputer(df)
-    elif args.imputer == "knn":
+    if args.imputer == "knn":
         logger.info("Applying KNN imputation")
-        df = apply_knn_imputer(df)
+        df = apply_knn_imputer(
+            df, 
+            args.knn_n_neighbours
+        )
+    elif args.imputer == "iterative":
+        logger.info("Applying iterative imputation")
+        df = apply_iterative_imputer(
+            df, 
+            args.iterative_max_iter, 
+            args.iterative_n_nearest_features
+        )
     elif args.imputer == "gene_mean":
         logger.info("Applying simple imputation")
         df = apply_simle_imputer(df)
