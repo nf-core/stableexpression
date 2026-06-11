@@ -127,35 +127,46 @@ def get_valid_samples(
 def compute_ratios_null_values(
     lf: pl.LazyFrame, valid_samples: list[str], platform: str | None
 ) -> pl.LazyFrame:
-    
-    samples_cols = [col for col in lf.collect_schema().names() if col != config.GENE_ID_COLNAME]
+    samples_cols = [
+        col for col in lf.collect_schema().names() if col != config.GENE_ID_COLNAME
+    ]
     nb_samples = len(samples_cols) - 1
     found_valid_samples = [sample for sample in valid_samples if sample in samples_cols]
-    
+
     # the samples showing a low gene count will not be taken into account for the zero count penalty
     nb_nulls = (
-        lf
-        .select(pl.exclude(config.GENE_ID_COLNAME).is_null()) # select all columns except GENE_ID_COLNAME and check if they are null
-        .select(pl.sum_horizontal(pl.all()).alias("nb_nulls_all_samples")) # sum the number of null values across all columns
+        lf.select(
+            pl.exclude(config.GENE_ID_COLNAME).is_null()
+        )  # select all columns except GENE_ID_COLNAME and check if they are null
+        .select(
+            pl.sum_horizontal(pl.all()).alias("nb_nulls_all_samples")
+        )  # sum the number of null values across all columns
         .collect()
         .to_series()
     )
-    
+
     if found_valid_samples:
         nb_nulls_valid_samples = (
-            lf
-            .select(pl.col(found_valid_samples).is_null()) # select all columns in valid_samples and check if they are null
-            .select(pl.sum_horizontal(pl.all()).alias("nb_nulls_valid_samples")) # sum the number of null values across all columns
+            lf.select(
+                pl.col(found_valid_samples).is_null()
+            )  # select all columns in valid_samples and check if they are null
+            .select(
+                pl.sum_horizontal(pl.all()).alias("nb_nulls_valid_samples")
+            )  # sum the number of null values across all columns
             .collect()
             .to_series()
         )
     else:
         nb_nulls_valid_samples = nb_nulls
-    
+
     return lf.select(
         pl.col(config.GENE_ID_COLNAME),
-        (nb_nulls / nb_samples).alias(get_colname(config.RATIO_NULLS_COLNAME, platform)),
-        (nb_nulls_valid_samples / len(found_valid_samples)).alias(get_colname(config.RATIO_NULLS_VALID_SAMPLES_COLNAME, platform)),
+        (nb_nulls / nb_samples).alias(
+            get_colname(config.RATIO_NULLS_COLNAME, platform)
+        ),
+        (nb_nulls_valid_samples / len(found_valid_samples)).alias(
+            get_colname(config.RATIO_NULLS_VALID_SAMPLES_COLNAME, platform)
+        ),
     )
 
 
@@ -274,9 +285,7 @@ def main():
     stat_lf = get_main_statistics(count_lf, args.platform)
 
     # adding column for nb of null values for each gene
-    stat_lf = stat_lf.join(
-        ratio_nulls_lf, on=config.GENE_ID_COLNAME, how="inner"
-    )
+    stat_lf = stat_lf.join(ratio_nulls_lf, on=config.GENE_ID_COLNAME, how="inner")
 
     # adding a column for the frequency of zero values
     stat_lf = compute_ratio_zeros(count_lf, stat_lf, args.platform)

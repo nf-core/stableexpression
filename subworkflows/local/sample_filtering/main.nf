@@ -52,7 +52,7 @@ workflow SAMPLE_FILTERING {
                                         storeDir: "${outdir}/statistics/",
                                         sort: true
                                     )
-                                    
+
 
     emit:
     counts                         = TOO_MANY_MISSING_VALUES.out.counts
