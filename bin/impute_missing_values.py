@@ -44,19 +44,15 @@ KEEP_EMPTY_FEATURES = True
 def parse_args():
     parser = argparse.ArgumentParser(description="Perform KNN imputation on count data")
     parser.add_argument(
-        "--counts", 
-        type=Path, 
-        dest="count_file", 
-        required=True, 
-        help="Count file"
+        "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
     parser.add_argument(
-        "--imputer", 
-        choices=IMPUTERS, 
-        required=True, 
+        "--imputer",
+        choices=IMPUTERS,
+        required=True,
         dest="imputer",
-        help="Imputer to use"
-    )    
+        help="Imputer to use",
+    )
     return parser.parse_args()
 
 
@@ -70,8 +66,8 @@ def apply_imputer(df: pl.DataFrame, imputer):
     # this is so that the imputer can use the gene expression values as features
     # we transpose once it is a numpy array because numpty transposition is zero-copy transpose (just changes memory strides)
     # the to_numpy method should be zero copy too, since all count columns have a float dtype
-    count_matrix = df.select(get_count_columns(df)).to_numpy().T # (n_samples, n_genes)
-    imputed_array = imputer.fit_transform(count_matrix)   
+    count_matrix = df.select(get_count_columns(df)).to_numpy().T  # (n_samples, n_genes)
+    imputed_array = imputer.fit_transform(count_matrix)
     return df.with_columns(pl.DataFrame(imputed_array.T, schema=get_count_columns(df)))
 
 
@@ -87,7 +83,7 @@ def apply_simle_imputer(df: pl.DataFrame):
 def get_number_of_neighbours(df: pl.DataFrame, k_min: int, k_max: int) -> int:
     """
     Returns the number of neighbours to use for KNN-imputation based on the number of samples and missing values.
-    
+
     Parameters
     ----------
     df : pl.DataFrame
@@ -96,7 +92,7 @@ def get_number_of_neighbours(df: pl.DataFrame, k_min: int, k_max: int) -> int:
         The minimum number of neighbours.
     k_max : int
         The maximum number of neighbours.
-    
+
     Returns
     -------
     int
@@ -113,16 +109,19 @@ def get_number_of_neighbours(df: pl.DataFrame, k_min: int, k_max: int) -> int:
     n_samples = df.select(pl.exclude(config.GENE_ID_COLNAME)).width
     missing_fraction = nb_missing_values / (n_genes * n_samples)
     # return k as a function of the number of samples and missing values, with bounds
-    return int(np.clip(
-        int(np.sqrt(n_samples) / FACTOR_N_SAMPLES_TO_K * (1 + missing_fraction)),
-        k_min, k_max
-    ))
+    return int(
+        np.clip(
+            int(np.sqrt(n_samples) / FACTOR_N_SAMPLES_TO_K * (1 + missing_fraction)),
+            k_min,
+            k_max,
+        )
+    )
 
 
 def cluster_dataframe(df: pl.DataFrame, n_clusters: int) -> pl.Series:
     """
     Cluster the dataframe using MiniBatchKMeans.
-    
+
     Returns
     -------
     pl.Series
@@ -131,13 +130,11 @@ def cluster_dataframe(df: pl.DataFrame, n_clusters: int) -> pl.Series:
     # replace missing values with mean values accross samples (for clustering only)
     df_for_clustering = (
         df.select(pl.exclude(config.GENE_ID_COLNAME))
-        .with_columns(
-            mean_expression=pl.mean_horizontal(pl.all())
-        )
+        .with_columns(mean_expression=pl.mean_horizontal(pl.all()))
         .fill_null(pl.col("mean_expression"))
         .drop("mean_expression")
     )
-    
+
     # cluster — MiniBatchKMeans scales well
     kmeans = MiniBatchKMeans(
         n_clusters=n_clusters,
@@ -156,7 +153,7 @@ def get_number_of_clusters(df: pl.DataFrame) -> int:
     ----------
     df : pl.DataFrame
         The input dataframe.
-    
+
     Returns
     -------
     int
@@ -169,7 +166,7 @@ def apply_knn_imputer(df: pl.DataFrame) -> pl.DataFrame:
     n_neighbours = get_number_of_neighbours(df, MIN_NEIGHBOURS, MAX_NEIGHBOURS)
     logger.info(f"Using {n_neighbours} neighbours")
     imputer = KNNImputer(
-        n_neighbors=n_neighbours, 
+        n_neighbors=n_neighbours,
         weights="distance",
         copy=False,
         keep_empty_features=KEEP_EMPTY_FEATURES,
@@ -188,7 +185,9 @@ def apply_knn_imputer(df: pl.DataFrame) -> pl.DataFrame:
         imputed_cluster_df.write_parquet(f"imputed_cluster_{label}.parquet")
 
     del df
-    return pl.concat([pl.read_parquet(f"imputed_cluster_{label}.parquet") for label in unique_labels])
+    return pl.concat(
+        [pl.read_parquet(f"imputed_cluster_{label}.parquet") for label in unique_labels]
+    )
 
 
 def apply_iterative_imputer(df: pl.DataFrame) -> pl.DataFrame:
