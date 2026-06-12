@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,2119b16fe13e2d0bc0fedc3c9d3d1733"
+                        "m_measures.csv:md5,3d6a1e0b6884f140ed9b8b0a3bbfc42d"
                     ]
                 ],
                 "m_measures": [
@@ -15,15 +15,15 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,2119b16fe13e2d0bc0fedc3c9d3d1733"
+                        "m_measures.csv:md5,3d6a1e0b6884f140ed9b8b0a3bbfc42d"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-04-01T09:56:47.48692894",
+        "timestamp": "2026-06-12T08:18:09.899448871",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "25.04.0"
         }
     },
     "10 genes": {

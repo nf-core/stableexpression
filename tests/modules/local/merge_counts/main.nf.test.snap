@@ -7,7 +7,7 @@
                         {
                             "platform": "microarray"
                         },
-                        "all_counts.parquet:md5,4ceb116e0a52b92ab31ec4e122ed12a1"
+                        "all_counts.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
                     ]
                 ],
                 "1": [
@@ -29,15 +29,15 @@
                         {
                             "platform": "microarray"
                         },
-                        "all_counts.parquet:md5,4ceb116e0a52b92ab31ec4e122ed12a1"
+                        "all_counts.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-03-30T16:41:25.646239587",
+        "timestamp": "2026-06-12T08:12:20.187397045",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "25.04.0"
         }
     },
     "3 files": {
@@ -48,7 +48,7 @@
                         {
                             "platform": "rnaseq"
                         },
-                        "all_counts.parquet:md5,c519c7936217c9399081069a48539c07"
+                        "all_counts.parquet:md5,e64b6447f373377c507ae4136228ffbb"
                     ]
                 ],
                 "1": [
@@ -70,15 +70,15 @@
                         {
                             "platform": "rnaseq"
                         },
-                        "all_counts.parquet:md5,c519c7936217c9399081069a48539c07"
+                        "all_counts.parquet:md5,e64b6447f373377c507ae4136228ffbb"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-03-30T16:39:46.447995126",
+        "timestamp": "2026-06-12T08:12:10.754546152",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "25.04.0"
         }
     }
 }

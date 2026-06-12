@@ -5,11 +5,9 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                
-                            ]
+                            "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
+                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ],
                 "1": [
@@ -35,19 +33,17 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                
-                            ]
+                            "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
+                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-04-17T09:07:24.246785277",
+        "timestamp": "2026-06-12T08:12:29.209053648",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "25.04.0"
         }
     },
     "One group": {
@@ -58,7 +54,7 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,c8855975f68aad3c3bb060a23c14e2f9"
+                        "counts.cpm.parquet:md5,92565ffdb68131e1e218dfcc04a0a056"
                     ]
                 ],
                 "1": [
@@ -86,15 +82,15 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,c8855975f68aad3c3bb060a23c14e2f9"
+                        "counts.cpm.parquet:md5,92565ffdb68131e1e218dfcc04a0a056"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-03-19T12:23:45.874853063",
+        "timestamp": "2026-06-12T08:12:47.72673362",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "25.04.0"
         }
     },
     "TSV files": {
@@ -105,7 +101,7 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
+                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ],
                 "1": [
@@ -133,15 +129,15 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
+                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-03-19T12:23:54.407797312",
+        "timestamp": "2026-06-12T08:12:56.469186276",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "25.04.0"
         }
     },
     "Rows with many zeros": {
@@ -150,11 +146,9 @@
                 "0": [
                     [
                         {
-                            "dataset": [
-                                
-                            ]
+                            "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,ab2596a5bb8b3b2e39754191a2dce2aa"
+                        "counts.cpm.parquet:md5,b30ef63196202a42a06593b353f13891"
                     ]
                 ],
                 "1": [
@@ -180,19 +174,17 @@
                 "counts": [
                     [
                         {
-                            "dataset": [
-                                
-                            ]
+                            "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,ab2596a5bb8b3b2e39754191a2dce2aa"
+                        "counts.cpm.parquet:md5,b30ef63196202a42a06593b353f13891"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-04-17T09:07:34.001566313",
+        "timestamp": "2026-06-12T08:12:38.39403833",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "25.04.0"
         }
     }
 }
