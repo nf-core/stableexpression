@@ -298,33 +298,9 @@
                     "type": "string",
                     "description": "Type of imputation method to use for missing values",
                     "fa_icon": "fas fa-cogs",
-                    "enum": ["knn", "iterative", "gene_mean"],
+                    "enum": ["knn", "iterative", "simple"],
                     "default": "knn",
-                    "help_text": "The pipeline provides three options for imputing missing values: iterative, k-nearest neighbors, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Gene mean imputation is a very basic method that replaces missing values with the mean expression level of the gene across all samples."
-                },
-                "knn_imputer_n_neighbours": {
-                    "type": "integer",
-                    "description": "Number of neighbors for KNN imputation",
-                    "fa_icon": "fas fa-people-arrows",
-                    "minimum": 1,
-                    "help_text": "Number of neighbors for KNN imputation.",
-                    "default": 20
-                },
-                "iterative_imputer_max_iter": {
-                    "type": "integer",
-                    "description": "Number of iterations for iterative imputation",
-                    "fa_icon": "fas fa-undo",
-                    "minimum": 1,
-                    "help_text": "Number of iterations for iterative imputation. Increasing this value may improve imputation quality but will also increase runtime.",
-                    "default": 10
-                },
-                "iterative_imputer_n_nearest_features": {
-                    "type": "integer",
-                    "description": "Number of nearest features for iterative imputation",
-                    "fa_icon": "fas fa-users",
-                    "minimum": 1,
-                    "help_text": "Number of nearest features for iterative imputation.",
-                    "default": 100
+                    "help_text": "The pipeline provides three options for imputing missing values: iterative, k-nearest neighbours, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Simple imputation is a very basic method that replaces missing values with the median expression level of the gene across all samples. In terms of memory usage, iterative >> knn x > simple. In cases where memory usage is a concern, consider decreasing the number of neighbours for KNN imputation or the number of nearest features for iterative imputation. On the contrary, you may want to increase these parameters if you want more accuracy."
                 }
             }
         },

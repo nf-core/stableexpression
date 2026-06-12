@@ -13,9 +13,6 @@ workflow MERGE_DATA {
     take:
     ch_normalised_counts
     missing_value_imputer
-    knn_imputer_n_neighbours
-    iterative_imputer_max_iter
-    iterative_imputer_n_nearest_features
     outdir
 
     main:
@@ -62,10 +59,7 @@ workflow MERGE_DATA {
 
     IMPUTE_MISSING_VALUES(
         ch_all_counts.collect(),
-        missing_value_imputer,
-        knn_imputer_n_neighbours,
-        iterative_imputer_max_iter,
-        iterative_imputer_n_nearest_features
+        missing_value_imputer
     )
 
     // -----------------------------------------------------------------

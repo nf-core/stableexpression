@@ -152,9 +152,6 @@ workflow STABLEEXPRESSION {
         MERGE_DATA (
             ch_normalised_counts,
             params.missing_value_imputer,
-            params.knn_imputer_n_neighbours,
-            params.iterative_imputer_max_iter,
-            params.iterative_imputer_n_nearest_features,
             params.outdir
         )
 

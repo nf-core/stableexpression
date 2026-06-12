@@ -469,7 +469,7 @@ VERSION="1.1dev"; echo "$VERSION"
                 name="missing_value_imputer"
                 type="select"
                 label="Type of imputation method to use for missing values"
-                help="The pipeline provides three options for imputing missing values: iterative, k-nearest neighbors, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Gene mean imputation is a very basic method that replaces missing values with the mean expression level of the gene across all samples."
+                help="The pipeline provides three options for imputing missing values: iterative, k-nearest neighbours, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Gene mean imputation is a very basic method that replaces missing values with the mean expression level of the gene across all samples."
                 optional="true"
             >
 				<option value="iterative" selected="true">Iterative</option>
