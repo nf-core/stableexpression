@@ -29,7 +29,7 @@ MAX_NEIGHBOURS = 50
 
 FACTOR_N_SAMPLES_TO_K = 2
 
-N_CLUSTERS = 10
+BASE_N_CLUSTERS = 10
 
 KEEP_EMPTY_FEATURES = True
 
@@ -85,6 +85,23 @@ def apply_simle_imputer(df: pl.DataFrame):
 
 
 def get_number_of_neighbours(df: pl.DataFrame, k_min: int, k_max: int) -> int:
+    """
+    Returns the number of neighbours to use for KNN-imputation based on the number of samples and missing values.
+    
+    Parameters
+    ----------
+    df : pl.DataFrame
+        The input dataframe.
+    k_min : int
+        The minimum number of neighbours.
+    k_max : int
+        The maximum number of neighbours.
+    
+    Returns
+    -------
+    int
+        The number of neighbours to use for KNN-imputation.
+    """
     # proportion of missing values in the dataframe
     nb_missing_values = (
         df.select(pl.exclude(config.GENE_ID_COLNAME))
@@ -130,6 +147,24 @@ def cluster_dataframe(df: pl.DataFrame, n_clusters: int) -> pl.Series:
     return pl.Series(kmeans.fit_predict(df_for_clustering))
 
 
+def get_number_of_clusters(df: pl.DataFrame) -> int:
+    """
+    Returns the number of clusters to use for KNN-imputation based on the number of samples and missing values.
+    In the very rare case where the number of samples is less than the base number of clusters, the number of clusters is set to the number of samples.
+    This is especially useful for some specific test cases where the number of samples is very small.
+    Parameters
+    ----------
+    df : pl.DataFrame
+        The input dataframe.
+    
+    Returns
+    -------
+    int
+        The number of clusters to use for KNN-imputation.
+    """
+    return min(BASE_N_CLUSTERS, df.height)
+
+
 def apply_knn_imputer(df: pl.DataFrame) -> pl.DataFrame:
     n_neighbours = get_number_of_neighbours(df, MIN_NEIGHBOURS, MAX_NEIGHBOURS)
     logger.info(f"Using {n_neighbours} neighbours")
@@ -140,8 +175,9 @@ def apply_knn_imputer(df: pl.DataFrame) -> pl.DataFrame:
         keep_empty_features=KEEP_EMPTY_FEATURES,
     )
 
-    logger.info(f"Making {N_CLUSTERS} clusters using MiniBatchKMeans")
-    labels = cluster_dataframe(df, n_clusters=N_CLUSTERS)
+    n_clusters = get_number_of_clusters(df)
+    logger.info(f"Making {n_clusters} clusters using MiniBatchKMeans")
+    labels = cluster_dataframe(df, n_clusters=n_clusters)
 
     unique_labels = labels.unique()
     for label in unique_labels:
