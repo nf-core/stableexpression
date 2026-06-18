@@ -316,7 +316,7 @@
                     "fa_icon": "fas fa-list-ol",
                     "minimum": 1,
                     "help_text": "All genes are divided into sections based on their expression levels. Set this parameter to modify the number of sections.",
-                    "default": 20
+                    "default": 10
                 },
                 "nb_candidates_per_section": {
                     "type": "integer",
