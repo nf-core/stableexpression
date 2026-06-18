@@ -33,13 +33,6 @@ def parse_args():
         required=True,
         help="File containing normalised counts for all genes and all samples",
     )
-    parser.add_argument(
-        "--task-attempts",
-        dest="task_attempts",
-        type=int,
-        default=1,
-        help="Number of task attempts",
-    )
     return parser.parse_args()
 
 
@@ -47,8 +40,8 @@ def get_nb_rows(lf: pl.LazyFrame):
     return lf.select(pl.len()).collect().item()
 
 
-def parse_count_dataset(file: Path, low_memory: bool) -> pl.LazyFrame:
-    lf = pl.scan_parquet(file, low_memory=low_memory).fill_null(0).fill_nan(0)
+def parse_count_dataset(file: Path) -> pl.LazyFrame:
+    lf = pl.scan_parquet(file).fill_null(0).fill_nan(0)
     count_columns = get_count_columns(lf)
     cols = [pl.col(config.GENE_ID_COLNAME)] + [
         pl.col(column).replace({0: ZERO_REPLACE_VALUE}).cast(pl.Float32)
@@ -99,9 +92,8 @@ def split_count_summary_in_chunks(lf: pl.LazyFrame):
 def main():
     args = parse_args()
 
-    low_memory = True if args.task_attempts > 1 else False
     logger.info("Parsing count file")
-    lf = parse_count_dataset(args.count_file, low_memory)
+    lf = parse_count_dataset(args.count_file)
 
     logger.info("Splitting count file into chunks")
     split_count_summary_in_chunks(lf)

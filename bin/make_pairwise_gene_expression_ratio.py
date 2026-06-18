@@ -7,6 +7,7 @@ import logging
 from pathlib import Path
 
 import config
+from common import get_nb_rows
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
@@ -28,13 +29,6 @@ def parse_args():
         required=True,
         help="File where each row contains counts for two genes",
     )
-    parser.add_argument(
-        "--task-attempts",
-        dest="task_attempts",
-        type=int,
-        default=1,
-        help="Number of task attempts",
-    )
     return parser.parse_args()
 
 
@@ -50,9 +44,9 @@ def get_count_columns(lf: pl.LazyFrame) -> list[str]:
     ]
 
 
-def compute_ratios(file: Path, low_memory: bool) -> pl.LazyFrame:
+def compute_ratios(file: Path) -> pl.LazyFrame:
     # getting ratios for each sample
-    cross_join_lf = pl.scan_parquet(file, low_memory=low_memory)
+    cross_join_lf = pl.scan_parquet(file)
     column_pairs = {
         col: f"{col}_other"
         for col in get_count_columns(cross_join_lf)
@@ -77,18 +71,18 @@ def compute_ratios(file: Path, low_memory: bool) -> pl.LazyFrame:
 def main():
     args = parse_args()
 
-    low_memory = True if args.task_attempts > 1 else False
-    ratios_lf = compute_ratios(args.cross_joined_file, low_memory)
+    logger.info(f"Computing ratios for {str(args.cross_joined_file)}")
+    ratios_lf = compute_ratios(args.cross_joined_file)
 
-    ratios_df = ratios_lf.collect()
-
-    if len(ratios_df) == 0:
+    if get_nb_rows(ratios_lf) == 0:
         raise ValueError(
             f"No output following treatment of file {str(args.cross_joined_file)}"
         )
 
     outfilename = args.cross_joined_file.name.replace("cross_join", "ratios")
-    ratios_df.write_parquet(outfilename)
+    ratios_lf.sink_parquet(outfilename)
+
+    logger.info(f"Wrote ratios to {outfilename}")
 
 
 if __name__ == "__main__":

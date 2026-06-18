@@ -63,9 +63,7 @@ workflow GENORM {
                         .map{ meta, file -> [ [ section: meta.section ], file ] }
                         .groupTuple()
 
-    COMPUTE_M_MEASURE(
-        ch_counts.join( ch_ratio_files )
-    )
+    COMPUTE_M_MEASURE( ch_ratio_files )
 
     emit:
     m_measures = COMPUTE_M_MEASURE.out.m_measures

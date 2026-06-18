@@ -7,6 +7,8 @@ import logging
 from pathlib import Path
 
 import config
+from common import get_nb_rows
+
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
@@ -32,18 +34,7 @@ def parse_args():
         required=True,
         help="File log of pairwise expression ratios",
     )
-    parser.add_argument(
-        "--task-attempts",
-        dest="task_attempts",
-        type=int,
-        default=1,
-        help="Number of task attempts",
-    )
     return parser.parse_args()
-
-
-def get_nb_rows(lf: pl.LazyFrame):
-    return lf.select(pl.len()).collect().item()
 
 
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
@@ -58,8 +49,8 @@ def get_count_columns(lf: pl.LazyFrame) -> list[str]:
     ]
 
 
-def compute_standard_deviations(file: Path, low_memory: bool) -> pl.LazyFrame:
-    ratios_lf = pl.scan_parquet(file, low_memory=low_memory)
+def compute_standard_deviations(file: Path) -> pl.LazyFrame:
+    ratios_lf = pl.scan_parquet(file)
     ratio_columns = [
         col for col in ratios_lf.collect_schema().names() if col.endswith("_log_ratio")
     ]
@@ -125,21 +116,24 @@ def group_standard_deviations(std_lf: pl.LazyFrame) -> pl.LazyFrame:
 def main():
     args = parse_args()
 
-    low_memory = True if args.task_attempts > 1 else False
-    std_lf = compute_standard_deviations(args.ratio_file, low_memory)
+    logger.info(f"Computing standard deviations for {str(args.ratio_file)}")
+    std_lf = compute_standard_deviations(args.ratio_file)
     std_lf = group_standard_deviations(std_lf)
 
     # when the ratio file corresponds to the same gene ids cross joined with themselves (i == i)
     # then we want only only one row per gene id
-
-    std_df = std_lf.collect()
-    if len(std_df) == 0:
+    if get_nb_rows(std_lf) == 0:
         raise ValueError(
             f"No output following treatment of file {str(args.ratio_file)}"
         )
 
+    # sort items in each list
+    std_lf = std_lf.with_columns(pl.col(config.RATIOS_STD_COLNAME).list.sort())
+
     outfile = args.ratio_file.name.replace("ratios", "std")
-    std_df.write_parquet(outfile)
+    std_lf.sink_parquet(outfile)
+
+    logger.info(f"Wrote standard deviations to {outfile}")
 
 
 if __name__ == "__main__":

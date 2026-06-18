@@ -46,6 +46,10 @@ def parse_table(file: Path):
         raise ValueError(f"Unsupported file format: {file.suffix}")
 
 
+def get_nb_rows(lf: pl.LazyFrame):
+    return lf.select(pl.len()).collect().item()
+
+
 def parse_count_table(file: Path):
     df = parse_table(file)
     first_col = df.columns[0]
