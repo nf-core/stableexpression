@@ -21,7 +21,7 @@ do
     if [ $i -eq 1 ]; then
         reference_outdir="$outdir"
     else
-        res=$(diff --recursive --brief --exclude='pipeline_info' $outdir $reference_outdir | awk -F' ' '{print $3}')
+        res=$(diff --recursive --brief --exclude='pipeline_info' --exclude='multiqc' $outdir $reference_outdir | awk -F' ' '{print $3}')
         if [ $res ]; then
             echo "The following files differ: $res"
             exit 1

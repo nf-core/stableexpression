@@ -3,7 +3,7 @@
         "content": [
             {
                 "0": [
-                    "rnaseq.stats_all_genes.csv:md5,e2a15d08a3ada8daba6d5b834dbe1de7"
+                    "rnaseq.stats_all_genes.csv:md5,9944aa2a366b7647be87134a4f45ad5d"
                 ],
                 "1": [
                     [
@@ -20,21 +20,21 @@
                     ]
                 ],
                 "stats": [
-                    "rnaseq.stats_all_genes.csv:md5,e2a15d08a3ada8daba6d5b834dbe1de7"
+                    "rnaseq.stats_all_genes.csv:md5,9944aa2a366b7647be87134a4f45ad5d"
                 ]
             }
         ],
-        "timestamp": "2026-03-30T14:48:46.011713833",
+        "timestamp": "2026-06-16T15:41:20.924690922",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
         }
     },
     "No platform": {
         "content": [
             {
                 "0": [
-                    "stats_all_genes.csv:md5,42e9e52c43527e80489294a2c2dbbec0"
+                    "stats_all_genes.csv:md5,7bd63edd3b80decff114f5dc7e7b0384"
                 ],
                 "1": [
                     [
@@ -51,21 +51,21 @@
                     ]
                 ],
                 "stats": [
-                    "stats_all_genes.csv:md5,42e9e52c43527e80489294a2c2dbbec0"
+                    "stats_all_genes.csv:md5,7bd63edd3b80decff114f5dc7e7b0384"
                 ]
             }
         ],
-        "timestamp": "2026-03-30T14:48:33.525954126",
+        "timestamp": "2026-06-16T15:41:02.798127853",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
         }
     },
     "RNAseq platform": {
         "content": [
             {
                 "0": [
-                    "rnaseq.stats_all_genes.csv:md5,e2a15d08a3ada8daba6d5b834dbe1de7"
+                    "rnaseq.stats_all_genes.csv:md5,9944aa2a366b7647be87134a4f45ad5d"
                 ],
                 "1": [
                     [
@@ -82,14 +82,14 @@
                     ]
                 ],
                 "stats": [
-                    "rnaseq.stats_all_genes.csv:md5,e2a15d08a3ada8daba6d5b834dbe1de7"
+                    "rnaseq.stats_all_genes.csv:md5,9944aa2a366b7647be87134a4f45ad5d"
                 ]
             }
         ],
-        "timestamp": "2026-03-30T14:48:39.77826003",
+        "timestamp": "2026-06-16T15:41:12.049719767",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
         }
     }
 }

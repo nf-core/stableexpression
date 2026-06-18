@@ -9,7 +9,7 @@
                             "index_1": 0,
                             "index_2": 1
                         },
-                        "std.0.1.parquet:md5,10e262fc1dff8efe522a2efcee6ccb87"
+                        "std.0.1.parquet:md5,3b7f7bca32f49e59bc9683e47dbb8550"
                     ]
                 ],
                 "1": [
@@ -33,15 +33,15 @@
                             "index_1": 0,
                             "index_2": 1
                         },
-                        "std.0.1.parquet:md5,10e262fc1dff8efe522a2efcee6ccb87"
+                        "std.0.1.parquet:md5,3b7f7bca32f49e59bc9683e47dbb8550"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-04-01T09:41:51.590963847",
+        "timestamp": "2026-06-18T18:15:25.820090001",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
         }
     }
 }

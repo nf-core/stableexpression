@@ -3,7 +3,7 @@
         "content": [
             {
                 "0": [
-                    "section_1.stats_with_scores.csv:md5,e78b6a9fdc451be6c6c6831d9885078a"
+                    "section_1.stats_with_scores.csv:md5,22ea4f444a2972d5f107abc26cd417ec"
                 ],
                 "1": [
                     [
@@ -20,11 +20,11 @@
                     ]
                 ],
                 "stats_with_stability_scores": [
-                    "section_1.stats_with_scores.csv:md5,e78b6a9fdc451be6c6c6831d9885078a"
+                    "section_1.stats_with_scores.csv:md5,22ea4f444a2972d5f107abc26cd417ec"
                 ]
             }
         ],
-        "timestamp": "2026-06-10T20:55:21.077439961",
+        "timestamp": "2026-06-16T15:41:29.684036082",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.3"
@@ -34,7 +34,7 @@
         "content": [
             {
                 "0": [
-                    "section_1.stats_with_scores.csv:md5,227d924080d1115b380328d6d9f50456"
+                    "section_1.stats_with_scores.csv:md5,cdd1e28e31dc0bc592cb36557f5e5a69"
                 ],
                 "1": [
                     [
@@ -51,11 +51,11 @@
                     ]
                 ],
                 "stats_with_stability_scores": [
-                    "section_1.stats_with_scores.csv:md5,227d924080d1115b380328d6d9f50456"
+                    "section_1.stats_with_scores.csv:md5,cdd1e28e31dc0bc592cb36557f5e5a69"
                 ]
             }
         ],
-        "timestamp": "2026-06-10T20:55:30.462849706",
+        "timestamp": "2026-06-16T15:41:38.574352608",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.3"

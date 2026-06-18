@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,05b3b9508930923bd86c281e8febe6b6"
+                        "stability_values.normfinder.csv:md5,9feb77b35b597334e978b8db48fad80c"
                     ]
                 ],
                 "1": [
@@ -50,15 +50,15 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,05b3b9508930923bd86c281e8febe6b6"
+                        "stability_values.normfinder.csv:md5,9feb77b35b597334e978b8db48fad80c"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-03-30T15:45:00.995645591",
+        "timestamp": "2026-06-16T15:49:44.122013283",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
         }
     },
     "Very small dataset - Cq values": {
@@ -69,7 +69,7 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,a7c936faa9135439fd1b86c195f60414"
+                        "stability_values.normfinder.csv:md5,23af9fdc4bf6805666657b08f9a9de50"
                     ]
                 ],
                 "1": [
@@ -112,15 +112,15 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,a7c936faa9135439fd1b86c195f60414"
+                        "stability_values.normfinder.csv:md5,23af9fdc4bf6805666657b08f9a9de50"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-03-30T15:44:51.060894512",
+        "timestamp": "2026-06-16T15:49:30.601400305",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
         }
     }
 }

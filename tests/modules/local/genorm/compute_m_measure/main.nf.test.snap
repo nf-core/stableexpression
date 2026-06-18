@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,2119b16fe13e2d0bc0fedc3c9d3d1733"
+                        "m_measures.csv:md5,48e7d6e3338f60468bf5ade2361eccd4"
                     ]
                 ],
                 "1": [
@@ -21,7 +21,7 @@
                     [
                         "COMPUTE_M_MEASURE",
                         "polars",
-                        "1.39.2"
+                        "1.41.2"
                     ]
                 ],
                 "m_measures": [
@@ -29,15 +29,15 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,2119b16fe13e2d0bc0fedc3c9d3d1733"
+                        "m_measures.csv:md5,48e7d6e3338f60468bf5ade2361eccd4"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-03-30T15:40:23.09370734",
+        "timestamp": "2026-06-18T18:14:52.007426435",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
         }
     }
 }

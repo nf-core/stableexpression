@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,3d6a1e0b6884f140ed9b8b0a3bbfc42d"
+                        "m_measures.csv:md5,8aa2220a4aaf776c98b5348c6c03ce17"
                     ]
                 ],
                 "m_measures": [
@@ -15,15 +15,15 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,3d6a1e0b6884f140ed9b8b0a3bbfc42d"
+                        "m_measures.csv:md5,8aa2220a4aaf776c98b5348c6c03ce17"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:18:09.899448871",
+        "timestamp": "2026-06-18T18:22:25.511162076",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.04.3"
         }
     },
     "10 genes": {
@@ -34,7 +34,7 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,8bfea16844f247e2b871a8f559a3dd73"
+                        "m_measures.csv:md5,6fcefb6d5314e83ecca3f448e29475d8"
                     ]
                 ],
                 "m_measures": [
@@ -42,15 +42,15 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,8bfea16844f247e2b871a8f559a3dd73"
+                        "m_measures.csv:md5,6fcefb6d5314e83ecca3f448e29475d8"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-04-01T09:55:53.207791305",
+        "timestamp": "2026-06-16T15:54:47.330224093",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
         }
     }
 }
