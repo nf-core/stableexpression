@@ -36,6 +36,7 @@ nextflow_workflow {
                 input[3] = "uniform"
                 input[4] = null
                 input[5] = null
+                input[6] = null
                 """
             }
         }
@@ -78,7 +79,8 @@ nextflow_workflow {
                 input[2] = "tpm"
                 input[3] = "uniform"
                 input[4] = null
-                input[5] = file( '$projectDir/tests/test_data/input_datasets/gene_lengths.csv', checkIfExists: true )
+                input[5] = null
+                input[6] = file( '$projectDir/tests/test_data/input_datasets/gene_lengths.csv', checkIfExists: true )
                 """
             }
         }
@@ -122,6 +124,7 @@ nextflow_workflow {
                 input[3] = "uniform"
                 input[4] = null
                 input[5] = null
+                input[6] = null
                 """
             }
         }
@@ -156,6 +159,7 @@ nextflow_workflow {
                 input[3] = "uniform"
                 input[4] = null
                 input[5] = null
+                input[6] = null
                 """
             }
         }
