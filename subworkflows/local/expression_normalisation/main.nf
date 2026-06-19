@@ -18,6 +18,7 @@ workflow EXPRESSION_NORMALISATION {
     normalisation_method
     quantile_norm_target_distrib
     gff_file
+    gff_url
     gene_length_file
 
     main:
@@ -47,7 +48,8 @@ workflow EXPRESSION_NORMALISATION {
             // and computing length of the longest transcript gene per gene
             GET_TRANSCRIPT_LENGTHS(
                 species,
-                gff_file
+                gff_file,
+                gff_url
             )
             ch_gene_length_file = GET_TRANSCRIPT_LENGTHS.out.csv
 

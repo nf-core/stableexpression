@@ -262,9 +262,16 @@
                     "format": "file-path",
                     "exists": true,
                     "mimetype": "text/tsv",
-                    "pattern": "^\\S+\\.(gff|dat)$",
+                    "pattern": "^\\S+\\.(gff|gff3|dat)(\\.gz)?$",
                     "description": "Genome annotation file (GFF format)",
                     "help_text": "Path to genome annotation file (GFF format). Cannot be compressed.",
+                    "fa_icon": "fas fa-file-alt"
+                },
+                "gff_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL to genome annotation file (GFF format)",
+                    "help_text": "URL to genome annotation file (GFF format). Cannot be compressed.",
                     "fa_icon": "fas fa-file-alt"
                 },
                 "gene_length": {

@@ -209,6 +209,10 @@ def validateInputParameters(params) {
         log.warn "Ignoring keywords as accessions will not be fetched from Expression Atlas or GEO"
     }
 
+    if ( params.gff && params.gff_url ) {
+        log.warn "Both gff and gff_url parameters are provided. Using gff."
+    }
+
 }
 
 //

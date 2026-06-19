@@ -132,6 +132,7 @@ workflow STABLEEXPRESSION {
             params.normalisation_method,
             params.quantile_norm_target_distrib,
             params.gff,
+            params.gff_url,
             params.gene_length
         )
 

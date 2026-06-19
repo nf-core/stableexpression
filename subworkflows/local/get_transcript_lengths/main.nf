@@ -13,11 +13,14 @@ workflow GET_TRANSCRIPT_LENGTHS {
     take:
     species
     gff_file
+    gff_url
 
     main:
 
     if ( gff_file ) {
         ch_annotation = channel.fromPath( gff_file, checkIfExists: true )
+    } else if ( gff_url ) {
+        ch_annotation = channel.fromPath( gff_url, checkIfExists: true )
     } else {
         DOWNLOAD_ENSEMBL_ANNOTATION( species )
         ch_annotation = DOWNLOAD_ENSEMBL_ANNOTATION.out.gff3
