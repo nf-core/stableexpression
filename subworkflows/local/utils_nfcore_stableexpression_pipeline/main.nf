@@ -433,3 +433,15 @@ def checkCounts(ch_counts, fetch_geo_accessions) {
         }
     }
 }
+
+/*
+========================================================================================
+    FUNCTION FOR FORMATING OUTPUT FOLDERS
+========================================================================================
+*/
+
+def getOutputFolder(meta, subfolder) {
+    def normalised_status = meta.normalised ? "normalised" : "raw"
+    def subfoldername = subfolder ? "${subfolder}/" : ""
+    return "datasets/${meta.platform}/${normalised_status}/${meta.dataset}/${subfoldername}"
+}

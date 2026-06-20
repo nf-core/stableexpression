@@ -31,7 +31,9 @@ workflow GET_TRANSCRIPT_LENGTHS {
 
 
     emit:
-    csv = COMPUTE_GENE_TRANSCRIPT_LENGTHS.out.csv
+    csv        = COMPUTE_GENE_TRANSCRIPT_LENGTHS.out.csv
+    annotation = ch_annotation
+
 
 
 

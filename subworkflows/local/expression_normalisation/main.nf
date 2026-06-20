@@ -23,6 +23,9 @@ workflow EXPRESSION_NORMALISATION {
 
     main:
 
+    ch_gene_length_file = channel.empty()
+    ch_annotation       = channel.empty()
+
     //
     // MODULE: normalisation of raw count datasets (including downloaded RNA-seq datasets)
     // at the same time, removing genes that show only zero counts
@@ -52,12 +55,13 @@ workflow EXPRESSION_NORMALISATION {
                 gff_url
             )
             ch_gene_length_file = GET_TRANSCRIPT_LENGTHS.out.csv
+            ch_annotation       = GET_TRANSCRIPT_LENGTHS.out.annotation
 
         }
 
         COMPUTE_TPM(
             ch_raw_rnaseq_datasets_to_normalise,
-            ch_gene_length_file
+            ch_gene_length_file.collect()
         )
         ch_raw_rnaseq_datasets_normalised = COMPUTE_TPM.out.counts
 
@@ -68,18 +72,23 @@ workflow EXPRESSION_NORMALISATION {
 
     }
 
+    ch_counts_after_first_normalisation = ch_datasets.normalised.mix( ch_raw_rnaseq_datasets_normalised )
+
     //
     // MODULE: Quantile normalisation
     //
 
     // putting all normalised count datasets together and performing quantile normalisation
     QUANTILE_NORMALISATION (
-        ch_datasets.normalised.mix( ch_raw_rnaseq_datasets_normalised ),
+        ch_counts_after_first_normalisation,
         quantile_norm_target_distrib
     )
 
 
     emit:
-    counts                   = QUANTILE_NORMALISATION.out.counts
+    normalised_once              = ch_counts_after_first_normalisation
+    quantile_normalised_counts   = QUANTILE_NORMALISATION.out.counts
+    annotation                  = ch_annotation
+    gene_length_file            = ch_gene_length_file
 
 }

@@ -77,7 +77,8 @@ workflow REPORTING {
         ch_whole_design.collect(),
         ch_all_genes_summary.collect()
     )
-    ch_versions = ch_versions.mix ( DASH_APP.out.versions )
+    ch_dash_app        = DASH_APP.out.app
+    ch_versions        = ch_versions.mix ( DASH_APP.out.versions )
 
     // ------------------------------------------------------------------------------------
     // PREPARING BAR PLOTS
@@ -395,5 +396,6 @@ workflow REPORTING {
 
     emit:
     multiqc_report          = MULTIQC.out.report
+    dash_app                = ch_dash_app
     all_genes_summary       = ch_all_genes_summary
 }

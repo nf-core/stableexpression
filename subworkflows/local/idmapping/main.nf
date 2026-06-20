@@ -63,9 +63,9 @@ workflow ID_MAPPING {
                                 .map { it.trim() }
                                 .unique()
                                 .collectFile(
-                                    name: 'gene_ids.txt',
+                                    name: 'unique_gene_ids.txt',
                                     newLine: true,
-                                    storeDir: "${outdir}/idmapping/",
+                                    storeDir: "${outdir}/id_mapping/",
                                     sort: true
                                 )
 
@@ -103,7 +103,17 @@ workflow ID_MAPPING {
             min_occurrence_freq,
             min_occurrence_quantile
         )
+
         ch_valid_gene_ids = DETECT_RARE_GENES.out.valid_gene_ids
+                                .collectFile(
+                                    name: 'valid_gene_ids.txt',
+                                    newLine: true,
+                                    storeDir: "${outdir}/id_mapping/",
+                                    sort: true
+                                )
+
+
+
     }
 
     // -----------------------------------------------------------------
@@ -122,7 +132,7 @@ workflow ID_MAPPING {
                                         name: 'global_gene_id_mapping.csv',
                                         seed: "original_gene_id,gene_id",
                                         newLine: true,
-                                        storeDir: "${outdir}/idmapping/",
+                                        storeDir: "${outdir}/id_mapping/",
                                         sort: true
                                     ) {
                                         item -> "${item["original_gene_id"]},${item["gene_id"]}"
@@ -140,7 +150,7 @@ workflow ID_MAPPING {
                                     name: 'global_gene_metadata.csv',
                                     seed: "gene_id,name,description",
                                     newLine: true,
-                                    storeDir: "${outdir}/idmapping/",
+                                    storeDir: "${outdir}/id_mapping/",
                                     sort: true
                                 ) {
                                     item -> "${item["gene_id"]},${item["name"]},${item["description"]}"

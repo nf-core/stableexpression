@@ -23,7 +23,7 @@ process DASH_APP {
     path all_genes_summary
 
     output:
-    path("*"), emit: app
+    path("versions.yml"), emit: app
     path "versions.yml", emit: versions
 
     script:

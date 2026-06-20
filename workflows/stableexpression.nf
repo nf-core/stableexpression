@@ -17,6 +17,7 @@ include { REPORTING                              } from '../subworkflows/local/r
 
 include { checkCounts                            } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -33,6 +34,12 @@ workflow STABLEEXPRESSION {
 
     ch_accessions                          = channel.empty()
     ch_downloaded_datasets                 = channel.empty()
+    ch_counts_ids_filtered_renamed         = channel.empty()
+    ch_counts_samples_filtered             = channel.empty()
+    ch_counts_first_normalissation         = channel.empty()
+    ch_normalised_counts                   = channel.empty()
+    ch_annotation                          = channel.empty()
+    ch_gene_length_file                    = channel.empty()
     ch_all_counts                          = channel.empty()
     ch_all_imputed_counts                  = channel.empty()
     ch_whole_design                        = channel.empty()
@@ -103,10 +110,12 @@ workflow STABLEEXPRESSION {
             params.outdir
         )
 
-        ch_counts                = ID_MAPPING.out.counts
-        ch_whole_gene_id_mapping = ID_MAPPING.out.mapping
-        ch_whole_gene_metadata   = ID_MAPPING.out.metadata
-        ch_valid_gene_ids        = ID_MAPPING.out.valid_gene_ids
+        ch_counts_ids_filtered_renamed    = ID_MAPPING.out.counts
+        ch_whole_gene_id_mapping          = ID_MAPPING.out.mapping
+        ch_whole_gene_metadata            = ID_MAPPING.out.metadata
+        ch_valid_gene_ids                 = ID_MAPPING.out.valid_gene_ids
+
+        ch_counts = ch_counts_ids_filtered_renamed
 
         // -----------------------------------------------------------------
         // FILTER OUT SAMPLES NOT VALID
@@ -120,6 +129,7 @@ workflow STABLEEXPRESSION {
             params.outdir
         )
 
+        ch_counts_samples_filtered     = SAMPLE_FILTERING.out.counts
         ch_ratio_nulls_per_sample_file = SAMPLE_FILTERING.out.ratio_nulls_per_sample_file
 
         // -----------------------------------------------------------------
@@ -128,7 +138,7 @@ workflow STABLEEXPRESSION {
 
         EXPRESSION_NORMALISATION(
             species,
-            SAMPLE_FILTERING.out.counts,
+            ch_counts_samples_filtered,
             params.normalisation_method,
             params.quantile_norm_target_distrib,
             params.gff,
@@ -136,7 +146,10 @@ workflow STABLEEXPRESSION {
             params.gene_length
         )
 
-        ch_normalised_counts = EXPRESSION_NORMALISATION.out.counts
+        ch_counts_first_normalissation         = EXPRESSION_NORMALISATION.out.normalised_once
+        ch_normalised_counts                   = EXPRESSION_NORMALISATION.out.quantile_normalised_counts
+        ch_annotation                          = EXPRESSION_NORMALISATION.out.annotation
+        ch_gene_length_file                    = EXPRESSION_NORMALISATION.out.gene_length_file
 
         // -----------------------------------------------------------------
         // ANALYSIS OF NORMALISED DATASETS
@@ -215,13 +228,19 @@ workflow STABLEEXPRESSION {
 
 
     emit:
-    multiqc_report    = REPORTING.out.multiqc_report.toList()
-    all_genes_summary = REPORTING.out.all_genes_summary
+    accessions                             = GET_PUBLIC_ACCESSIONS.out.raw_accessions
+    input                                  = ch_input_datasets
+    downloaded                             = ch_downloaded_datasets
+    id_filtered_renamed                    = ch_counts_ids_filtered_renamed
+    samples_filtered                       = ch_counts_samples_filtered
+    first_normalisation                    = ch_counts_first_normalissation
+    quantile_normalisaed                   = ch_normalised_counts
+    annotation                             = ch_annotation
+    gene_length_file                       = ch_gene_length_file
+    merged                                 = ch_all_counts
+    imputed                                = ch_all_imputed_counts
+    all_genes_summary                      = REPORTING.out.all_genes_summary
+    multiqc_report                         = REPORTING.out.multiqc_report.toList()
+    dash_app                               = REPORTING.out.dash_app
 
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
