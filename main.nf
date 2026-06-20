@@ -102,7 +102,6 @@ workflow {
         imputed                               = NFCORE_STABLEEXPRESSION.out.imputed
         all_genes_summary                     = NFCORE_STABLEEXPRESSION.out.all_genes_summary
         multiqc_report                        = NFCORE_STABLEEXPRESSION.out.multiqc_report
-        dash_app                              = NFCORE_STABLEEXPRESSION.out.dash_app
 }
 
 
@@ -194,9 +193,4 @@ output {
         }
     }
 
-    dash_app {
-        path { app_folder ->
-            app_folder >> "reporting/"
-        }
-    }
 }
