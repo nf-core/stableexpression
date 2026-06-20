@@ -11,7 +11,7 @@
                 "type": "string",
                 "format": "file-path",
                 "exists": true,
-                "pattern": "^\\S+\\.(csv|tsv|dat)$",
+                "pattern": "^\\S+\\.(csv|tsv|dat)(\\.gz)?$",
                 "errorMessage": "You must provide a count dataset file"
             },
             "design": {

@@ -254,6 +254,10 @@ def validateInputSamplesheet( ch_datasets ) {
     // checking that all count files are well formated (same number of columns in header and rows)
     ch_datasets
         .map { meta, file ->
+            if (file.name.endsWith('.gz')) {
+                // TODO: implement this check also for gzipped files
+                return
+            }
             def header = file.withReader { reader -> reader.readLine() }
             def separator = header.contains(',') ? "," :
                             header.contains('\t') ? "\t" :

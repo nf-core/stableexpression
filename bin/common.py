@@ -3,6 +3,7 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import logging
+import gzip
 from pathlib import Path
 
 import config
@@ -13,9 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 def parse_header(file: Path, sep: str):
-    with open(file, "r") as fin:
-        header = fin.readline().strip().split(sep)
-        first_row = fin.readline().strip().split(sep)
+    if file.suffix == ".gz":
+        fin = gzip.open(file, "rt")
+    else:
+        fin = open(file, "r")
+    header = fin.readline().strip().split(sep)
+    first_row = fin.readline().strip().split(sep)
+
+    fin.close()
+
     if len(header) == len(first_row):
         return header
     elif len(header) == len(first_row) - 1:
@@ -28,9 +35,13 @@ def parse_header(file: Path, sep: str):
 
 def parse_table(file: Path):
     # parsing header first
-    if file.suffix in [".csv", ".tsv"]:
+    if file.suffix == ".gz":
+        ext = file.suffixes[-2]
+    else:
+        ext = file.suffix
+    if ext in [".csv", ".tsv"]:
         # parsing header manually
-        sep = "," if file.suffix == ".csv" else "\t"
+        sep = "," if ext == ".csv" else "\t"
         header = parse_header(file, sep)
         return pl.read_csv(
             file,
@@ -40,10 +51,10 @@ def parse_table(file: Path):
             new_columns=header,
             null_values=["NA", "N/A", "na", "n/a"],
         )
-    elif file.suffix == ".parquet":
+    elif ext == ".parquet":
         return pl.read_parquet(file)
     else:
-        raise ValueError(f"Unsupported file format: {file.suffix}")
+        raise ValueError(f"Unsupported file format: {ext}")
 
 
 def get_nb_rows(lf: pl.LazyFrame):
