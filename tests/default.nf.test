@@ -10,6 +10,7 @@ nextflow_pipeline {
         when {
             params {
                 species = 'prunus persica'
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/prunus_persica/Prunus_persica.Prunus_persica_NCBIv2.63.gff3.gz'
                 outdir = "$outputDir"
             }
         }
@@ -35,6 +36,7 @@ nextflow_pipeline {
                 species = 'mus musculus'
                 datasets = "https://raw.githubusercontent.com/nf-core/test-datasets/stableexpression/test_data/input_datasets/input_big.yaml"
                 skip_fetch_eatlas_accessions = true
+                gff_url = 'https://ftp.ensembl.org/pub/release-116/gff3/mus_musculus/Mus_musculus.GRCm39.116.gff3.gz'
                 outdir = "$outputDir"
             }
         }
@@ -61,6 +63,7 @@ nextflow_pipeline {
                 species = 'beta vulgaris'
                 keywords = "leaf"
                 datasets = "https://raw.githubusercontent.com/nf-core/test-datasets/stableexpression/test_data/input_datasets/input_beta_vulgaris.csv"
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/beta_vulgaris/Beta_vulgaris.RefBeet-1.2.2.63.gff3.gz'
                 outdir = "$outputDir"
             }
         }
@@ -112,6 +115,7 @@ nextflow_pipeline {
             params {
                 species = 'arabidopsis lyrata'
                 accessions_only = true
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/arabidopsis_lyrata/Arabidopsis_lyrata.v.1.0.63.gff3.gz'
                 outdir = "$outputDir"
             }
         }
@@ -142,6 +146,7 @@ nextflow_pipeline {
             params {
                 species = 'aspergillus fumigatus'
                 download_only = true
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/fungi/gff3/aspergillus_fumigatus/Aspergillus_fumigatus.GCA000002655v1.63.gff3.gz'
                 outdir = "$outputDir"
             }
         }
@@ -173,6 +178,7 @@ nextflow_pipeline {
                 species = 'arabidopsis thaliana'
                 accessions = "E-GEOD-51720"
                 skip_fetch_eatlas_accessions = true
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/arabidopsis_thaliana/Arabidopsis_thaliana.TAIR10.63.gff3.gz'
                 outdir = "$outputDir"
             }
         }
@@ -200,6 +206,7 @@ nextflow_pipeline {
                 datasets = "${projectDir}/tests/test_data/input_datasets/input.csv"
                 skip_id_mapping = true
                 skip_fetch_eatlas_accessions = true
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/solanum_tuberosum/Solanum_tuberosum.SolTub_3.0.63.gff3.gz'
                 outdir = "$outputDir"
             }
         }
@@ -221,7 +228,7 @@ nextflow_pipeline {
         tag "test_dataset_custom_mapping_and_gene_length"
 
         when {
-            params {
+            params {https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/prunus_persica/Prunus_persica.Prunus_persica_NCBIv2.63.gff3.gz
                 species = 'solanum tuberosum'
                 datasets = "${projectDir}/tests/test_data/input_datasets/input.csv"
                 skip_id_mapping = true
