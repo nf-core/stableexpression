@@ -43,7 +43,20 @@ workflow NFCORE_STABLEEXPRESSION {
     STABLEEXPRESSION( input_datasets )
 
     emit:
-    multiqc_report = STABLEEXPRESSION.out.multiqc_report // channel: /path/to/multiqc_report.html
+    accessions                            = STABLEEXPRESSION.out.accessions
+    input                                 = STABLEEXPRESSION.out.input
+    downloaded                            = STABLEEXPRESSION.out.downloaded
+    id_filtered_renamed                   = STABLEEXPRESSION.out.id_filtered_renamed
+    samples_filtered                      = STABLEEXPRESSION.out.samples_filtered
+    first_normalisation                   = STABLEEXPRESSION.out.first_normalisation
+    quantile_normalised                   = STABLEEXPRESSION.out.quantile_normalised
+    annotation                            = STABLEEXPRESSION.out.annotation
+    gene_length_file                      = STABLEEXPRESSION.out.gene_length_file
+    merged                                = STABLEEXPRESSION.out.merged
+    imputed                               = STABLEEXPRESSION.out.imputed
+    all_genes_summary                     = STABLEEXPRESSION.out.all_genes_summary
+    dash_app                              = STABLEEXPRESSION.out.dash_app
+    multiqc_report                        = STABLEEXPRESSION.out.multiqc_report
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,19 +102,20 @@ workflow {
     )
 
     publish:
-        accessions                            = NFCORE_STABLEEXPRESSION.out.accessions
-        input                                 = NFCORE_STABLEEXPRESSION.out.input
-        downloaded                            = NFCORE_STABLEEXPRESSION.out.downloaded
-        id_filtered_renamed                   = NFCORE_STABLEEXPRESSION.out.id_filtered_renamed
-        samples_filtered                      = NFCORE_STABLEEXPRESSION.out.samples_filtered
-        first_normalisation                   = NFCORE_STABLEEXPRESSION.out.first_normalisation
-        quantile_normalised                   = NFCORE_STABLEEXPRESSION.out.quantile_normalised
-        annotation                            = NFCORE_STABLEEXPRESSION.out.annotation
-        gene_length_file                      = NFCORE_STABLEEXPRESSION.out.gene_length_file
-        merged                                = NFCORE_STABLEEXPRESSION.out.merged
-        imputed                               = NFCORE_STABLEEXPRESSION.out.imputed
-        all_genes_summary                     = NFCORE_STABLEEXPRESSION.out.all_genes_summary
-        multiqc_report                        = NFCORE_STABLEEXPRESSION.out.multiqc_report
+    accessions                            = NFCORE_STABLEEXPRESSION.out.accessions
+    input                                 = NFCORE_STABLEEXPRESSION.out.input
+    downloaded                            = NFCORE_STABLEEXPRESSION.out.downloaded
+    id_filtered_renamed                   = NFCORE_STABLEEXPRESSION.out.id_filtered_renamed
+    samples_filtered                      = NFCORE_STABLEEXPRESSION.out.samples_filtered
+    first_normalisation                   = NFCORE_STABLEEXPRESSION.out.first_normalisation
+    quantile_normalised                   = NFCORE_STABLEEXPRESSION.out.quantile_normalised
+    annotation                            = NFCORE_STABLEEXPRESSION.out.annotation
+    gene_length_file                      = NFCORE_STABLEEXPRESSION.out.gene_length_file
+    merged                                = NFCORE_STABLEEXPRESSION.out.merged
+    imputed                               = NFCORE_STABLEEXPRESSION.out.imputed
+    all_genes_summary                     = NFCORE_STABLEEXPRESSION.out.all_genes_summary
+    dash_app                              = NFCORE_STABLEEXPRESSION.out.dash_app
+    multiqc_report                        = NFCORE_STABLEEXPRESSION.out.multiqc_report
 }
 
 
@@ -164,7 +178,7 @@ output {
     }
 
     gene_length_file {
-        path { meta, file ->
+        path { file ->
             file >> "annotation/"
         }
     }
@@ -182,8 +196,14 @@ output {
     }
 
     all_genes_summary {
-        path { meta, file ->
+        path { file ->
             file >> "merged_data/"
+        }
+    }
+
+    dash_app {
+        path { file ->
+            file >> "reporting/"
         }
     }
 

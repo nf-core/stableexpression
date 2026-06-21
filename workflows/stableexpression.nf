@@ -226,7 +226,6 @@ workflow STABLEEXPRESSION {
         params.outdir
     )
 
-
     emit:
     accessions                             = GET_PUBLIC_ACCESSIONS.out.raw_accessions
     input                                  = ch_input_datasets
@@ -234,7 +233,7 @@ workflow STABLEEXPRESSION {
     id_filtered_renamed                    = ch_counts_ids_filtered_renamed
     samples_filtered                       = ch_counts_samples_filtered
     first_normalisation                    = ch_counts_first_normalissation
-    quantile_normalisaed                   = ch_normalised_counts
+    quantile_normalised                    = ch_normalised_counts
     annotation                             = ch_annotation
     gene_length_file                       = ch_gene_length_file
     merged                                 = ch_all_counts

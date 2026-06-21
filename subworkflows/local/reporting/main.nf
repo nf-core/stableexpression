@@ -394,8 +394,10 @@ workflow REPORTING {
 
     MULTIQC ( ch_multiqc_input )
 
+    ch_multiqc_report = MULTIQC.out.report.map { meta, file -> file }
+
     emit:
-    multiqc_report          = MULTIQC.out.report
+    multiqc_report          = ch_multiqc_report
     dash_app                = ch_dash_app
     all_genes_summary       = ch_all_genes_summary
 }
