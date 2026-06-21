@@ -79,7 +79,7 @@ All datasets are merged into one single dataframe.
 
 #### 7. Imputation of missing values
 
-Missing values are replaced by imputed values using a specific algorithm provided by [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html). The user can choose the method of imputation with the `--missing_value_imputer` parameter.
+Missing values are replaced by imputed values using a specific algorithm provided by [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html). The user can choose the method of imputation with the `--missing_value_imputer` parameter.
 
 #### 8. General statistics for each gene
 
@@ -147,13 +147,13 @@ For more details about the output files and reports, please refer to the
 
 ## Support us
 
-If you like nf-core/stableexpression, please make sure you give it a star on GitHub!
+If you like nf-core/stableexpression, share it to the community and give it a star on GitHub!
 
 [![stars - stableexpression](https://img.shields.io/github/stars/nf-core/stableexpression?style=social)](https://github.com/nf-core/stableexpression)
 
 ## Credits
 
-nf-core/stableexpression was originally written by Olivier Coen.
+nf-core/stableexpression was originally written and is currently developed by Olivier Coen, first as a personal project and then as a postdoctoral researcher at the [EGCE](https://www.egce.universite-paris-saclay.fr/) ([Université Paris-Saclay](https://www.universite-paris-saclay.fr/), [CNRS](https://www.cnrs.fr/fr)).
 
 We thank the following people for their assistance in the development of this pipeline:
 
