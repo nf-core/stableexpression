@@ -10,6 +10,26 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
+                        "rnaseq.raw.cpm.parquet:md5,722b549db708e0f1d9eab2d220a986c1"
+                    ],
+                    [
+                        {
+                            "normalised": true,
+                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
+                            "dataset": "microarray_normalised",
+                            "platform": "microarray"
+                        },
+                        "microarray.normalised.csv:md5,4ad38f1a970aa90f64435787fd7f977b"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
                         "rnaseq.raw.cpm.quant_norm.parquet:md5,cb63fdfcfad72d54f1bbef526674fa68"
                     ],
                     [
@@ -22,7 +42,39 @@
                         "microarray.normalised.quant_norm.parquet:md5,362b17780fe521129f49a7e040beee64"
                     ]
                 ],
-                "counts": [
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "annotation": [
+                    
+                ],
+                "gene_length_file": [
+                    
+                ],
+                "normalised_once": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.cpm.parquet:md5,722b549db708e0f1d9eab2d220a986c1"
+                    ],
+                    [
+                        {
+                            "normalised": true,
+                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
+                            "dataset": "microarray_normalised",
+                            "platform": "microarray"
+                        },
+                        "microarray.normalised.csv:md5,4ad38f1a970aa90f64435787fd7f977b"
+                    ]
+                ],
+                "quantile_normalised_counts": [
                     [
                         {
                             "normalised": false,
@@ -44,10 +96,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:16:13.228280816",
+        "timestamp": "2026-06-21T12:38:40.453170028",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.04.4"
         }
     },
     "No rnaseq normalisation": {
@@ -61,10 +113,44 @@
                             "dataset": "microarray_normalised",
                             "platform": "microarray"
                         },
+                        "microarray.normalised.csv:md5,4ad38f1a970aa90f64435787fd7f977b"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "normalised": true,
+                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
+                            "dataset": "microarray_normalised",
+                            "platform": "microarray"
+                        },
                         "microarray.normalised.quant_norm.parquet:md5,362b17780fe521129f49a7e040beee64"
                     ]
                 ],
-                "counts": [
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "annotation": [
+                    
+                ],
+                "gene_length_file": [
+                    
+                ],
+                "normalised_once": [
+                    [
+                        {
+                            "normalised": true,
+                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
+                            "dataset": "microarray_normalised",
+                            "platform": "microarray"
+                        },
+                        "microarray.normalised.csv:md5,4ad38f1a970aa90f64435787fd7f977b"
+                    ]
+                ],
+                "quantile_normalised_counts": [
                     [
                         {
                             "normalised": true,
@@ -77,10 +163,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:16:26.345933821",
+        "timestamp": "2026-06-21T12:38:53.537012277",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.04.4"
         }
     },
     "TPM Normalisation with gene length": {
@@ -94,6 +180,26 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
+                        "rnaseq.raw.tpm.parquet:md5,f857d2f4b54c70fdcacb96a2d67bc27f"
+                    ],
+                    [
+                        {
+                            "normalised": true,
+                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
+                            "dataset": "microarray_normalised",
+                            "platform": "microarray"
+                        },
+                        "microarray.normalised.csv:md5,4ad38f1a970aa90f64435787fd7f977b"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
                         "rnaseq.raw.tpm.quant_norm.parquet:md5,f5ab4840f0313d30d51d5029f6f69c2d"
                     ],
                     [
@@ -106,7 +212,39 @@
                         "microarray.normalised.quant_norm.parquet:md5,362b17780fe521129f49a7e040beee64"
                     ]
                 ],
-                "counts": [
+                "2": [
+                    
+                ],
+                "3": [
+                    "gene_lengths.csv:md5,71ee1b5976759cad7da18f611c4bfb24"
+                ],
+                "annotation": [
+                    
+                ],
+                "gene_length_file": [
+                    "gene_lengths.csv:md5,71ee1b5976759cad7da18f611c4bfb24"
+                ],
+                "normalised_once": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.tpm.parquet:md5,f857d2f4b54c70fdcacb96a2d67bc27f"
+                    ],
+                    [
+                        {
+                            "normalised": true,
+                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
+                            "dataset": "microarray_normalised",
+                            "platform": "microarray"
+                        },
+                        "microarray.normalised.csv:md5,4ad38f1a970aa90f64435787fd7f977b"
+                    ]
+                ],
+                "quantile_normalised_counts": [
                     [
                         {
                             "normalised": false,
@@ -128,10 +266,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:15:58.461993083",
+        "timestamp": "2026-06-21T12:38:26.40019687",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.04.4"
         }
     },
     "TPM Normalisation": {
@@ -145,6 +283,26 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
+                        "rnaseq.raw.tpm.parquet:md5,bbee0410478c6ffcf57609478cdb6ab5"
+                    ],
+                    [
+                        {
+                            "normalised": true,
+                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
+                            "dataset": "microarray_normalised",
+                            "platform": "microarray"
+                        },
+                        "microarray.normalised.csv:md5,4ad38f1a970aa90f64435787fd7f977b"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
                         "rnaseq.raw.tpm.quant_norm.parquet:md5,e6b853e4614ac4de5f4d00f657189355"
                     ],
                     [
@@ -157,7 +315,39 @@
                         "microarray.normalised.quant_norm.parquet:md5,362b17780fe521129f49a7e040beee64"
                     ]
                 ],
-                "counts": [
+                "2": [
+                    "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744"
+                ],
+                "3": [
+                    "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
+                ],
+                "annotation": [
+                    "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744"
+                ],
+                "gene_length_file": [
+                    "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
+                ],
+                "normalised_once": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.tpm.parquet:md5,bbee0410478c6ffcf57609478cdb6ab5"
+                    ],
+                    [
+                        {
+                            "normalised": true,
+                            "design": "microarray.normalised.design.csv:md5,9662cc2f58d86cc552d6ff9cf094dd67",
+                            "dataset": "microarray_normalised",
+                            "platform": "microarray"
+                        },
+                        "microarray.normalised.csv:md5,4ad38f1a970aa90f64435787fd7f977b"
+                    ]
+                ],
+                "quantile_normalised_counts": [
                     [
                         {
                             "normalised": false,
@@ -179,10 +369,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:15:43.823757671",
+        "timestamp": "2026-06-21T12:38:11.701442195",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.04.4"
         }
     }
 }

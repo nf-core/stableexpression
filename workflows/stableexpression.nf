@@ -228,7 +228,6 @@ workflow STABLEEXPRESSION {
 
     emit:
     accessions                             = GET_PUBLIC_ACCESSIONS.out.raw_accessions
-    input                                  = ch_input_datasets
     downloaded                             = ch_downloaded_datasets
     id_filtered_renamed                    = ch_counts_ids_filtered_renamed
     samples_filtered                       = ch_counts_samples_filtered

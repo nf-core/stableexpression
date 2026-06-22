@@ -103,7 +103,6 @@ workflow {
 
     publish:
     accessions                            = NFCORE_STABLEEXPRESSION.out.accessions
-    input                                 = NFCORE_STABLEEXPRESSION.out.input
     downloaded                            = NFCORE_STABLEEXPRESSION.out.downloaded
     id_filtered_renamed                   = NFCORE_STABLEEXPRESSION.out.id_filtered_renamed
     samples_filtered                      = NFCORE_STABLEEXPRESSION.out.samples_filtered
@@ -130,13 +129,6 @@ output {
     accessions {
         path { source, file ->
             file >> "accessions/${source}/"
-        }
-    }
-
-    input {
-        path { meta, file ->
-            file        >> getOutputFolder(meta, "0.provided_by_user")
-            meta.design >> getOutputFolder(meta, null)
         }
     }
 
@@ -197,7 +189,7 @@ output {
 
     all_genes_summary {
         path { file ->
-            file >> "merged_data/"
+            file >> "reporting/"
         }
     }
 
