@@ -72,9 +72,7 @@ All individual datasets are also stored at each step of the pipelines, with the 
 <details markdown="1">
 <summary>Sub sections</summary>
 
-- `0.`: raw data
-  - `0.downloaded/`: raw datasets downloaded from public databases
-  - `0.provided_by_user/`: datasets provided by the user
+- `0.downloaded/`: raw datasets downloaded from public databases
 - `1.id_filtered_renamed/`: datasets with filtered and renamed gene IDs
 - `2.samples_filtered/`: datasets with filtered samples
 - `3.`: `TPM` / `CPM` normalisation
