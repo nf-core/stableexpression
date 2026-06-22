@@ -89,7 +89,6 @@ nextflow_pipeline {
             params {
                 species = 'arabidopsis lyrata'
                 accessions_only = true
-                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/arabidopsis_lyrata/Arabidopsis_lyrata.v.1.0.63.gff3.gz'
                 outdir = "$outputDir"
             }
         }

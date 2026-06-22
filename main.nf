@@ -44,7 +44,6 @@ workflow NFCORE_STABLEEXPRESSION {
 
     emit:
     accessions                            = STABLEEXPRESSION.out.accessions
-    input                                 = STABLEEXPRESSION.out.input
     downloaded                            = STABLEEXPRESSION.out.downloaded
     id_filtered_renamed                   = STABLEEXPRESSION.out.id_filtered_renamed
     samples_filtered                      = STABLEEXPRESSION.out.samples_filtered
