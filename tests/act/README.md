@@ -31,7 +31,7 @@ Example:
 
 ```.env
 #params.env
-NXF_VER=25.04.0
+NXF_VER=25.10.0
 PROFILE=conda
 ```
 
