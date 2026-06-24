@@ -81,7 +81,13 @@ workflow STABILITY_SCORING {
 def splitBySection( ch_files ) {
     return ch_files
             .map { files ->
-                files.collect { file -> [ [ section: file.name.tokenize(".")[0] ], file ] }
+                // if one file, wrap it in a list
+                // otherwise, the collect operator separates the file path into its components,
+                def fileList = files instanceof List ? files : [files]
+                fileList.collect {
+                    file ->
+                        [ [ section: file.name.tokenize(".")[0] ], file ]
+                    }
             }
             .flatMap{ n -> n } // turns a channel of one list of n files into a channel of n files
 }
