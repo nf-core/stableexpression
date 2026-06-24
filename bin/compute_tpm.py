@@ -55,7 +55,7 @@ def try_cast_to_int(df: pl.DataFrame) -> pl.DataFrame:
     for col in count_columns:
         is_all_integers = df.select(pl.col(col).round().eq(pl.col(col)).all()).item()
         if is_all_integers:
-            df = df.with_columns(pl.col(col).cast(pl.Int64()))
+            df = df.with_columns(pl.col(col).cast(pl.Int32()))
     return df
 
 
