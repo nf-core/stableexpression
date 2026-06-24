@@ -167,6 +167,7 @@ nextflow_pipeline {
             params {
                 species = 'arabidopsis lyrata'
                 accessions_only = true
+                platform = 'rnaseq'
                 outdir = "$outputDir"
             }
         }
@@ -315,6 +316,13 @@ nextflow_pipeline {
                 excluded_accessions = "E-MTAB-4251"
                 accessions_file = "${projectDir}/tests/test_data/workflows/misc/accessions_to_include.txt"
                 excluded_accessions_file = "${projectDir}/tests/test_data/workflows/misc/excluded_accessions.txt"
+                normalisation_method = "cpm"
+                quantile_norm_target_distrib = "normal"
+                min_occurrence_quantile = 0.15
+                min_occurrence_freq = 0.08
+                max_zero_ratio = 0.8
+                max_null_ratio = 0.85
+                max_null_ratio_valid_sample = 0.7
                 outdir = "$outputDir"
             }
         }
