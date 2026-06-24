@@ -54,13 +54,13 @@ workflow REPORTING {
                                                 )
 
     AGGREGATE_RESULTS (
-        ch_all_counts.map{ meta, file -> file }.collect(),
-        ch_stats_all_genes_with_scores.collect(),
-        ch_platform_statistics.collect(),
+        ch_all_counts.map{ meta, file -> file }.collect(), // 1 file
+        ch_stats_all_genes_with_scores.toSortedList().filter{ file -> file != [] }, // as many file as sections; make sure that at least one stat file is present
+        ch_platform_statistics.toSortedList(), // as many file as different platforms
         ch_target_gene_list,
-        ch_whole_gene_metadata.collect().ifEmpty([]), // handle case where there are no mappings
-        ch_whole_gene_id_mapping.collect().ifEmpty([]), // handle case where there are no mappings
-        ch_custom_content_multiqc_config_template.collect()
+        ch_whole_gene_metadata.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
+        ch_whole_gene_id_mapping.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
+        ch_custom_content_multiqc_config_template.collect() // 1 file
     )
 
     ch_all_genes_summary                   = AGGREGATE_RESULTS.out.all_genes_summary
