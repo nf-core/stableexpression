@@ -25,6 +25,69 @@ nextflow_pipeline {
                     stable_path
                 ).match() }
             )
+            // checking that the gene summary file keeps the same number of rows, columns
+            // and that some specific genes have the expected values
+            def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
+            with( path(gene_summary_file).csv ) {
+                assert rowCount == 27849
+                assert columnCount == 35
+            }
+            def table = path(gene_summary_file).csv.table
+            with( table ) {
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSRNA050004025")).doubleColumn("stability_score").get(0) == 0.0427
+                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G169400")).doubleColumn("stability_score").get(0) == 0.359
+                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G195800")).doubleColumn("stability_score").get(0) == 0.6240
+            }
+        }
+    }
+
+    test("-profile test_datasets_dsim") {
+        tag "test_datasets_dsim"
+
+        when {
+            params {
+                species = 'drosophila simulans'
+                datasets = "${projectDir}/tests/test_data/workflows/drosophila_simulans/samplesheet.yaml"
+                skip_fetch_eatlas_accessions = true
+                skip_id_mapping = true
+                target_genes = "FBgn0268332"
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-62/metazoa/gff3/drosophila_simulans/Drosophila_simulans.ASM75419v3.62.gff3.gz'
+                nb_sections = 20
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+            // checking that the gene summary file keeps the same number of rows, columns
+            // and that some specific genes have the expected values
+            def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
+            with( path(gene_summary_file).csv ) {
+                assert rowCount == 15079
+                assert columnCount == 32
+            }
+            def table = path(gene_summary_file).csv.table
+            // the candidate genes used in publications must have the expected stability scores
+            with( table ) {
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0182068")).doubleColumn("stability_score").get(0) == 0.074900
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0186743")).doubleColumn("stability_score").get(0) == 0.098700
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0194689")).doubleColumn("stability_score").get(0) == 0.110100
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0193626")).doubleColumn("stability_score").get(0) == 0.114000
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0181924")).doubleColumn("stability_score").get(0) == 0.114500
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0184651")).doubleColumn("stability_score").get(0) == 0.117100
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0196300")).doubleColumn("stability_score").get(0) == 0.129000
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0185678")).doubleColumn("stability_score").get(0) == 0.137900
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0188440")).doubleColumn("stability_score").get(0) == 0.141900
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0189846")).doubleColumn("stability_score").get(0) == 0.145900
+            }
         }
     }
 
@@ -34,6 +97,8 @@ nextflow_pipeline {
         when {
             params {
                 species = 'mus musculus'
+                nb_sections = 1
+                nb_candidates_per_section = 1000
                 datasets = "https://raw.githubusercontent.com/nf-core/test-datasets/stableexpression/test_data/mus_musculus/samplesheet.yaml"
                 skip_fetch_eatlas_accessions = true
                 gff_url = 'https://ftp.ensembl.org/pub/release-116/gff3/mus_musculus/Mus_musculus.GRCm39.116.gff3.gz'
@@ -52,6 +117,19 @@ nextflow_pipeline {
                     stable_path
                 ).match() }
             )
+            // checking that the gene summary file keeps the same number of rows, columns
+            // and that some specific genes have the expected values
+            def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
+            with( path(gene_summary_file).csv ) {
+                assert rowCount == 975
+                assert columnCount == 35
+            }
+            def table = path(gene_summary_file).csv.table
+            with( table ) {
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000000305")).doubleColumn("stability_score").get(0) == 0.1093
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000034187")).doubleColumn("stability_score").get(0) == 0.0046
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000107358")).doubleColumn("stability_score").get(0) == 0.5805
+            }
         }
     }
 
@@ -176,7 +254,7 @@ nextflow_pipeline {
         when {
             params {
                 species = 'solanum tuberosum'
-                datasets = "${projectDir}/tests/test_data/input_datasets/sampled/solanum_tuberosum/samplesheet.csv"
+                datasets = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/samplesheet.csv"
                 skip_id_mapping = true
                 skip_fetch_eatlas_accessions = true
                 gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/solanum_tuberosum/Solanum_tuberosum.SolTub_3.0.63.gff3.gz'
@@ -203,12 +281,12 @@ nextflow_pipeline {
         when {
             params {
                 species = 'solanum tuberosum'
-                datasets = "${projectDir}/tests/test_data/input_datasets/sampled/solanum_tuberosum/samplesheet.csv"
+                datasets = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/samplesheet.csv"
                 skip_id_mapping = true
                 skip_fetch_eatlas_accessions = true
-                gene_id_mapping = "${projectDir}/tests/test_data/input_datasets/sampled/solanum_tuberosum/mapping.csv"
-                gene_metadata = "${projectDir}/tests/test_data/input_datasets/sampled/solanum_tuberosum/metadata.csv"
-                gene_length = "${projectDir}/tests/test_data/input_datasets/sampled/solanum_tuberosum/gene_lengths.csv"
+                gene_id_mapping = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/mapping.csv"
+                gene_metadata = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/metadata.csv"
+                gene_length = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/gene_lengths.csv"
                 outdir = "$outputDir"
             }
         }
@@ -235,8 +313,8 @@ nextflow_pipeline {
                 species = "solanum tuberosum"
                 accessions = "E-MTAB-552,E-GEOD-61690"
                 excluded_accessions = "E-MTAB-4251"
-                accessions_file = "${projectDir}/tests/test_data/misc/accessions_to_include.txt"
-                excluded_accessions_file = "${projectDir}/tests/test_data/misc/excluded_accessions.txt"
+                accessions_file = "${projectDir}/tests/test_data/workflows/misc/accessions_to_include.txt"
+                excluded_accessions_file = "${projectDir}/tests/test_data/workflows/misc/excluded_accessions.txt"
                 outdir = "$outputDir"
             }
         }
@@ -249,7 +327,7 @@ nextflow_pipeline {
             assertAll(
                 { assert workflow.success},
                 { assert snapshot(
-                    // pipeline versions.yml file for multiqc from which Nextflow version is removed because we test pipelines on multiple Nextflow versions
+                    // pipeline versions.yml file for multiqc from which Nextflow ve== 0.074900rsion is removed because we test pipelines on multiple Nextflow versions
                     removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
                     // All stable path name, with a relative path
                     stable_name,
