@@ -11,8 +11,8 @@ nextflow_process {
 
             process {
                 """
-                input[0] = file('$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = file('$projectDir/tests/test_data/base_statistics/output/stats_all_genes.csv', checkIfExists: true)
+                input[0] = file('$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[1] = file('$projectDir/tests/test_data/modules/compute_gene_statistics/output/stats_all_genes.csv', checkIfExists: true)
                 input[2] = "2"
                 input[3] = 3
                 """
@@ -34,8 +34,8 @@ nextflow_process {
 
             process {
                 """
-                input[0] = file('$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = file('$projectDir/tests/test_data/base_statistics/output/stats_all_genes.csv', checkIfExists: true)
+                input[0] = file('$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[1] = file('$projectDir/tests/test_data/modules/compute_gene_statistics/output/stats_all_genes.csv', checkIfExists: true)
                 input[2] = "50"
                 input[3] = 20
                 """

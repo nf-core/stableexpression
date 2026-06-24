@@ -12,7 +12,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [section: "section_1"],
-                    file( '$projectDir/tests/test_data/genorm/compute_m_measure/input/std.*.parquet', checkIfExists: true).collect()
+                    file( '$projectDir/tests/test_data/modules/genorm/compute_m_measure/input/std.*.parquet', checkIfExists: true).collect()
                 ]
                 """
             }

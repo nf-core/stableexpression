@@ -16,20 +16,20 @@ nextflow_workflow {
                     [
                         [
                             normalised: false,
-                            design: file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
                             dataset: "rnaseq_raw",
                             platform: "rnaseq"
                         ],
-                        file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
                     ],
                     [
                         [
                             normalised: true,
-                            design: file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
                             dataset: "microarray_normalised",
                             platform: "microarray"
                         ],
-                        file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
                 input[2] = "tpm"
@@ -60,27 +60,27 @@ nextflow_workflow {
                     [
                         [
                             normalised: false,
-                            design: file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
                             dataset: "rnaseq_raw",
                             platform: "rnaseq"
                         ],
-                        file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
                     ],
                     [
                         [
                             normalised: true,
-                            design: file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
                             dataset: "microarray_normalised",
                             platform: "microarray"
                         ],
-                        file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
                 input[2] = "tpm"
                 input[3] = "uniform"
                 input[4] = null
                 input[5] = null
-                input[6] = file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/gene_lengths.csv', checkIfExists: true )
+                input[6] = file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/gene_lengths.csv', checkIfExists: true )
                 """
             }
         }
@@ -104,20 +104,20 @@ nextflow_workflow {
                     [
                         [
                             normalised: false,
-                            design: file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
                             dataset: "rnaseq_raw",
                             platform: "rnaseq"
                         ],
-                        file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
                     ],
                     [
                         [
                             normalised: true,
-                            design: file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
                             dataset: "microarray_normalised",
                             platform: "microarray"
                         ],
-                        file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
                 input[2] = "cpm"
@@ -148,11 +148,11 @@ nextflow_workflow {
                     [
                         [
                             normalised: true,
-                            design: file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
                             dataset: "microarray_normalised",
                             platform: "microarray"
                         ],
-                        file( '$projectDir/tests/test_data/input_datasets/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
                 input[2] = "tpm "

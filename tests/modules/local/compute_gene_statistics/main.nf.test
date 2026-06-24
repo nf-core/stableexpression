@@ -12,10 +12,10 @@ nextflow_process {
                 """
                 input[0] = [
                     [ platform: 'all' ],
-                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 ]
-                input[1] = file( '$projectDir/tests/test_data/compute_gene_statistics/input/ratio_nulls_per_sample.csv', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/modules/compute_gene_statistics/input/ratio_nulls_per_sample.csv', checkIfExists: true)
                 input[2] = 0.2
                 """
             }
@@ -37,10 +37,10 @@ nextflow_process {
                 """
                 input[0] = [
                     [ platform: 'rnaseq' ],
-                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 ]
-                input[1] = file( '$projectDir/tests/test_data/compute_gene_statistics/input/ratio_nulls_per_sample.csv', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/modules/compute_gene_statistics/input/ratio_nulls_per_sample.csv', checkIfExists: true)
                 input[2] = 0.2
                 """
             }
@@ -62,10 +62,10 @@ nextflow_process {
                 """
                 input[0] = [
                     [ platform: 'rnaseq' ],
-                    file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
                     []
                 ]
-                input[1] = file( '$projectDir/tests/test_data/compute_gene_statistics/input/ratio_nulls_per_sample.csv', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/modules/compute_gene_statistics/input/ratio_nulls_per_sample.csv', checkIfExists: true)
                 input[2] = 0.2
                 """
             }
