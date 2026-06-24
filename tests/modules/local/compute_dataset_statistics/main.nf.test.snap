@@ -5,7 +5,7 @@
                 "0": [
                     [
                         "test",
-                        "skewness.txt:md5,0503443761b306e254ac1c0075ea267e"
+                        "skewness.txt:md5,877cf0bfb40bd59c9d7568077e9f8fc1"
                     ]
                 ],
                 "1": [
@@ -24,10 +24,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-04-02T14:11:44.847136183",
+        "timestamp": "2026-06-24T18:47:25.426907242",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.10.4"
+            "nextflow": "26.04.4"
         }
     }
 }

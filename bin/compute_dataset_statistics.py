@@ -14,7 +14,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 KEY_TO_OUTFILE = {"skewness": "skewness.txt"}
-FLOAT_PRECISION = 6
 
 
 #####################################################
@@ -41,7 +40,7 @@ def compute_dataset_statistics(df: pl.DataFrame) -> dict:
 
 
 def format_value(value: float) -> str:
-    return f"{value:.{FLOAT_PRECISION}f}" if value != 0 else "0"
+    return f"{value:.{config.CSV_FLOAT_PRECISION}f}" if value != 0 else "0"
 
 
 def export_count_data(stats: dict):
