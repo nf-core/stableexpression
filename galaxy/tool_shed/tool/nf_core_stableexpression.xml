@@ -2,7 +2,7 @@
     <description
     >This pipeline is dedicated to identifying the most stable genes within a single or multiple expression dataset(s). This is particularly useful for identifying the most suitable RT-qPCR reference genes for a specific species.</description>
     <requirements>
-        <requirement type="package" version="25.10.04">nextflow</requirement>
+        <requirement type="package" version="26.04.4">nextflow</requirement>
         <requirement type="package" version="2.3.3">micromamba</requirement>
         <requirement type="package" version="17.0.10">openjdk</requirement>
     </requirements>

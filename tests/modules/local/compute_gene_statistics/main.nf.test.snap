@@ -27,7 +27,7 @@
         "timestamp": "2026-06-16T15:41:20.924690922",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     },
     "No platform": {
@@ -58,7 +58,7 @@
         "timestamp": "2026-06-16T15:41:02.798127853",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     },
     "RNAseq platform": {
@@ -89,7 +89,7 @@
         "timestamp": "2026-06-16T15:41:12.049719767",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     }
 }

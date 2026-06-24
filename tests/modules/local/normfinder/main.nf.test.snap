@@ -58,7 +58,7 @@
         "timestamp": "2026-06-16T15:49:44.122013283",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     },
     "Very small dataset - Cq values": {
@@ -120,7 +120,7 @@
         "timestamp": "2026-06-16T15:49:30.601400305",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     }
 }

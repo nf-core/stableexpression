@@ -64,7 +64,7 @@
         "timestamp": "2026-06-16T15:40:35.527804728",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     },
     "Without microarray": {
@@ -132,7 +132,7 @@
         "timestamp": "2026-06-16T15:40:17.55580834",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     },
     "One invalid target gene": {
@@ -200,7 +200,7 @@
         "timestamp": "2026-06-16T15:40:44.846750227",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     },
     "One section": {
@@ -256,7 +256,7 @@
         "timestamp": "2026-06-16T15:40:53.924180048",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     },
     "With microarray": {
@@ -324,7 +324,7 @@
         "timestamp": "2026-06-16T15:40:26.501568291",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     }
 }

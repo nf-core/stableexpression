@@ -27,7 +27,7 @@
         "timestamp": "2026-06-16T15:41:29.684036082",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     },
     "Without Genorm": {
@@ -58,7 +58,7 @@
         "timestamp": "2026-06-16T15:41:38.574352608",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.4"
         }
     }
 }
