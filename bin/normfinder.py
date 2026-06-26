@@ -57,7 +57,7 @@ class StatsExtension:
 def compute_minvars(z: np.ndarray, target_idx: np.ndarray) -> np.ndarray:
     """
     z: (ngenes, nsamples) array
-    target_idx: 1D array of indices (int64) for which to compute minvar
+    target_idx: 1D array of indices (uint32) for which to compute minvar
     returns: 1D array of length len(target_idx)
     """
     ngenes, nsamples = z.shape
@@ -160,7 +160,7 @@ class NormFinder:
                 for i, gene in enumerate(self.genes)
                 if gene in genes_with_negative_values
             ],
-            dtype=np.int64,
+            dtype=np.uint32,
         )
 
         minvars = compute_minvars(

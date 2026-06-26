@@ -7,7 +7,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
+                        "counts.tpm.parquet:md5,e2ca853659dd5a3b46cda16cc960823c"
                     ]
                 ],
                 "1": [
@@ -35,15 +35,15 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
+                        "counts.tpm.parquet:md5,e2ca853659dd5a3b46cda16cc960823c"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:13:05.279065574",
+        "timestamp": "2026-06-26T09:13:01.247095255",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.04.4"
         }
     },
     "One group": {
@@ -54,7 +54,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,2bb5797b24bcd02a06b2794c94567638"
+                        "counts.tpm.parquet:md5,12e82766ef25f47f802ef977126814f4"
                     ]
                 ],
                 "1": [
@@ -82,15 +82,15 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,2bb5797b24bcd02a06b2794c94567638"
+                        "counts.tpm.parquet:md5,12e82766ef25f47f802ef977126814f4"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:13:22.770937523",
+        "timestamp": "2026-06-26T09:13:18.796978368",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.04.4"
         }
     },
     "TSV files": {
@@ -101,7 +101,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
+                        "counts.tpm.parquet:md5,e2ca853659dd5a3b46cda16cc960823c"
                     ]
                 ],
                 "1": [
@@ -129,15 +129,15 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,e8e08e6af6b76fe41793259203925e37"
+                        "counts.tpm.parquet:md5,e2ca853659dd5a3b46cda16cc960823c"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:13:33.01260406",
+        "timestamp": "2026-06-26T09:13:27.427673033",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.04.4"
         }
     },
     "Rows with many zeros": {
@@ -148,7 +148,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,95563b1ba1083cfc31c2b9c18c5aeaaa"
+                        "counts.tpm.parquet:md5,2a3972909ea355f637605cd097ab69f3"
                     ]
                 ],
                 "1": [
@@ -176,15 +176,15 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.tpm.parquet:md5,95563b1ba1083cfc31c2b9c18c5aeaaa"
+                        "counts.tpm.parquet:md5,2a3972909ea355f637605cd097ab69f3"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:13:13.960170504",
+        "timestamp": "2026-06-26T09:13:09.92647484",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.04.4"
         }
     }
 }

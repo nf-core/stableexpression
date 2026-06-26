@@ -8,6 +8,7 @@ from pathlib import Path
 
 import config
 import polars as pl
+import polars.selectors as cs
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -67,7 +68,7 @@ def parse_count_table(file: Path):
     # whatever the name of the first col, rename it to "gene_id"
     return df.rename({first_col: config.GENE_ID_COLNAME}).select(
         pl.col(config.GENE_ID_COLNAME).cast(pl.String()),
-        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float32()),
+        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float32),
     )
 
 
@@ -81,11 +82,16 @@ def compute_log2(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def export_parquet(df: pl.DataFrame, count_file: Path, suffix: str):
-    outfilename = count_file.with_suffix(suffix).name
+def export_parquet(df: pl.DataFrame, outfilename: str):
     logger.info(f"Exporting processed counts to: {outfilename}")
-    df.write_parquet(outfilename)
+    # round all float columns to avoid inconsistencies during subsequent computations
+    # cast float columns to Float32 to fix the
+    df.with_columns(cs.float().round(8).cast(pl.Float32)).write_parquet(outfilename)
 
 
-def write_float_csv(df: pl.DataFrame, outfilename: str):
-    df.write_csv(outfilename, float_precision=config.CSV_FLOAT_PRECISION)
+def write_float_csv(
+    df: pl.DataFrame,
+    outfilename: str,
+    float_precision: int = config.DEFAULT_CSV_FLOAT_PRECISION,
+):
+    df.write_csv(outfilename, float_precision=float_precision)

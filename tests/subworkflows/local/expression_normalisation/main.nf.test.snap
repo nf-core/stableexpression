@@ -96,7 +96,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-21T12:38:40.453170028",
+        "timestamp": "2026-06-26T09:16:07.541265081",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -163,7 +163,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-21T12:38:53.537012277",
+        "timestamp": "2026-06-26T09:16:20.722684766",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -180,7 +180,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.tpm.parquet:md5,f857d2f4b54c70fdcacb96a2d67bc27f"
+                        "rnaseq.raw.tpm.parquet:md5,67b700781b8fd6b24f1a7c6ab10e79b9"
                     ],
                     [
                         {
@@ -232,7 +232,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.tpm.parquet:md5,f857d2f4b54c70fdcacb96a2d67bc27f"
+                        "rnaseq.raw.tpm.parquet:md5,67b700781b8fd6b24f1a7c6ab10e79b9"
                     ],
                     [
                         {
@@ -266,7 +266,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-21T12:38:26.40019687",
+        "timestamp": "2026-06-26T09:15:52.557289256",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -283,7 +283,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.tpm.parquet:md5,bbee0410478c6ffcf57609478cdb6ab5"
+                        "rnaseq.raw.tpm.parquet:md5,cb6ac5b7a2e2917beae36fd77ec7c07f"
                     ],
                     [
                         {
@@ -335,7 +335,7 @@
                             "dataset": "rnaseq_raw",
                             "platform": "rnaseq"
                         },
-                        "rnaseq.raw.tpm.parquet:md5,bbee0410478c6ffcf57609478cdb6ab5"
+                        "rnaseq.raw.tpm.parquet:md5,cb6ac5b7a2e2917beae36fd77ec7c07f"
                     ],
                     [
                         {
@@ -369,7 +369,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-21T12:38:11.701442195",
+        "timestamp": "2026-06-26T09:15:38.096838691",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"

@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,8aa2220a4aaf776c98b5348c6c03ce17"
+                        "m_measures.csv:md5,bbe0e1b4d902e2247a64565f199009f2"
                     ]
                 ],
                 "m_measures": [
@@ -15,12 +15,12 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,8aa2220a4aaf776c98b5348c6c03ce17"
+                        "m_measures.csv:md5,bbe0e1b4d902e2247a64565f199009f2"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-18T18:22:25.511162076",
+        "timestamp": "2026-06-26T09:18:05.775959767",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -34,7 +34,7 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,6fcefb6d5314e83ecca3f448e29475d8"
+                        "m_measures.csv:md5,edc5ff35b0cd2e2506b02b6bc8b27944"
                     ]
                 ],
                 "m_measures": [
@@ -42,12 +42,12 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,6fcefb6d5314e83ecca3f448e29475d8"
+                        "m_measures.csv:md5,edc5ff35b0cd2e2506b02b6bc8b27944"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-16T15:54:47.330224093",
+        "timestamp": "2026-06-26T09:16:39.946294063",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"

@@ -8,6 +8,8 @@ from math import ceil
 from pathlib import Path
 
 import config
+from common import export_parquet
+
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
@@ -79,7 +81,7 @@ def split_count_summary_in_chunks(lf: pl.LazyFrame):
             .collect()
         )
         outfile = f"count_chunk.{i}.parquet"
-        partition.write_parquet(outfile)
+        export_parquet(partition, outfile)
 
 
 #####################################################

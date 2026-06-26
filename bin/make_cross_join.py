@@ -7,6 +7,8 @@ import logging
 from pathlib import Path
 
 import polars as pl
+from common import export_parquet
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -77,7 +79,7 @@ def main():
         )
 
     outfile = f"cross_join.{args.count_file_1_index}.{args.count_file_2_index}.parquet"
-    df.write_parquet(outfile)
+    export_parquet(df, outfile)
 
 
 if __name__ == "__main__":

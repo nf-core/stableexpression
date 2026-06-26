@@ -4,16 +4,16 @@
             {
                 "0": [
                     [
-                        "section_1.candidate_counts.parquet:md5,7d1a1996214fb07741f2ad5c286fbc69",
-                        "section_2.candidate_counts.parquet:md5,9e2de0ea75c3f839e38690f3d9a57b0b",
-                        "section_3.candidate_counts.parquet:md5,860cdeb5dbfe7d24b2c12635ea85c10e"
+                        "section_1.candidate_counts.parquet:md5,061816e634eafd95cfdc09d586f226ec",
+                        "section_2.candidate_counts.parquet:md5,74c0b7e6e08990e97f02799e91dd1fa2",
+                        "section_3.candidate_counts.parquet:md5,a64221eb6e8376068089f29b16b2f068"
                     ]
                 ],
                 "1": [
                     [
-                        "section_1.stats.parquet:md5,d487f854f64ce2b01a6e6dd255b760b6",
-                        "section_2.stats.parquet:md5,6dcd4004f6e4b39714955d64b1ffe420",
-                        "section_3.stats.parquet:md5,f69355ed9438b82d054f4e5cbcc807c0"
+                        "section_1.stats.parquet:md5,4d803c86f29e749be2228e8937ab949e",
+                        "section_2.stats.parquet:md5,04bbc879fcfa84728b1267b780dffa6a",
+                        "section_3.stats.parquet:md5,73b8479ff9e27141620386500ae83db6"
                     ]
                 ],
                 "2": [
@@ -32,21 +32,21 @@
                 ],
                 "counts": [
                     [
-                        "section_1.candidate_counts.parquet:md5,7d1a1996214fb07741f2ad5c286fbc69",
-                        "section_2.candidate_counts.parquet:md5,9e2de0ea75c3f839e38690f3d9a57b0b",
-                        "section_3.candidate_counts.parquet:md5,860cdeb5dbfe7d24b2c12635ea85c10e"
+                        "section_1.candidate_counts.parquet:md5,061816e634eafd95cfdc09d586f226ec",
+                        "section_2.candidate_counts.parquet:md5,74c0b7e6e08990e97f02799e91dd1fa2",
+                        "section_3.candidate_counts.parquet:md5,a64221eb6e8376068089f29b16b2f068"
                     ]
                 ],
                 "section_stats": [
                     [
-                        "section_1.stats.parquet:md5,d487f854f64ce2b01a6e6dd255b760b6",
-                        "section_2.stats.parquet:md5,6dcd4004f6e4b39714955d64b1ffe420",
-                        "section_3.stats.parquet:md5,f69355ed9438b82d054f4e5cbcc807c0"
+                        "section_1.stats.parquet:md5,4d803c86f29e749be2228e8937ab949e",
+                        "section_2.stats.parquet:md5,04bbc879fcfa84728b1267b780dffa6a",
+                        "section_3.stats.parquet:md5,73b8479ff9e27141620386500ae83db6"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-23T08:30:35.910733339",
+        "timestamp": "2026-06-26T09:11:32.809905407",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -57,28 +57,28 @@
             {
                 "0": [
                     [
-                        "section_12.candidate_counts.parquet:md5,df8b5a6629b2b84b4c73156bbf261a92",
-                        "section_14.candidate_counts.parquet:md5,1ef1a4e6cef6dd6b04ca28a505985bb5",
-                        "section_16.candidate_counts.parquet:md5,f246e9291457873463ba3bff49e07b9d",
-                        "section_18.candidate_counts.parquet:md5,f67b1be510bd1b41f58088ae08cc494c",
-                        "section_20.candidate_counts.parquet:md5,3349d94fa3b42a917704c7abc2d807f9",
-                        "section_3.candidate_counts.parquet:md5,2ddf5f2e7cca3e8df9930520b3131495",
-                        "section_5.candidate_counts.parquet:md5,179d419cc48a36a991fbe74e4dcb28fa",
-                        "section_7.candidate_counts.parquet:md5,41f08e512f5d44eff8fa0ce3d49ac0f4",
-                        "section_9.candidate_counts.parquet:md5,85c942fa7ec2f2b4e5af6149de007328"
+                        "section_12.candidate_counts.parquet:md5,93fafe6b1b67be5c77f87a6ed59dd5f7",
+                        "section_14.candidate_counts.parquet:md5,664c0ccb85addf66ba02f0c1d51275d1",
+                        "section_16.candidate_counts.parquet:md5,acd64b1b485854ad35b7e177e72f08b5",
+                        "section_18.candidate_counts.parquet:md5,5e7bbaab8e787d7f2bc30e31691c7a4f",
+                        "section_20.candidate_counts.parquet:md5,8018785c254112e6dd097af783afdd98",
+                        "section_3.candidate_counts.parquet:md5,f9bf681ee165ffc8bc52f2da46d669a6",
+                        "section_5.candidate_counts.parquet:md5,c458f82606fea41b4c5e90df3d6c3b0a",
+                        "section_7.candidate_counts.parquet:md5,769296732439e729273303f2f05f1aed",
+                        "section_9.candidate_counts.parquet:md5,168e7ae463aab1dc99bf417d9d9dd8a3"
                     ]
                 ],
                 "1": [
                     [
-                        "section_12.stats.parquet:md5,fb4b2180a8814488cf9bc0e0b0cbb0bf",
-                        "section_14.stats.parquet:md5,c4c5420d2097643f1b501599c7ea2313",
-                        "section_16.stats.parquet:md5,eaab929d8e085aecdd7f896bcb0556ac",
-                        "section_18.stats.parquet:md5,8bf510663d700900fda943b028b93a11",
-                        "section_20.stats.parquet:md5,a2b607d8c16362f7d7edaa971106811e",
-                        "section_3.stats.parquet:md5,c224ee2861966e04bba67626aa23c3f8",
-                        "section_5.stats.parquet:md5,f965b8acfdd5368c16cfc94eb2eb10c6",
-                        "section_7.stats.parquet:md5,425a5a9cd47ea0694688789e22e18335",
-                        "section_9.stats.parquet:md5,f898aa017c0babd634043172d8e8bf41"
+                        "section_12.stats.parquet:md5,37a9c893882779164c1f24090be03c6d",
+                        "section_14.stats.parquet:md5,f7d996cb686863c3d84ff3276c373e17",
+                        "section_16.stats.parquet:md5,4cce3721422f071322b29f69721aac31",
+                        "section_18.stats.parquet:md5,9a520f38ca6e6105060a56f2327977c6",
+                        "section_20.stats.parquet:md5,cf45dbca1d2c35c70e160f139be49bca",
+                        "section_3.stats.parquet:md5,0d0007304b13a7eb941ee2cc1c8e39f8",
+                        "section_5.stats.parquet:md5,f28aef4d13633de7f87bb5f08fb6a2f4",
+                        "section_7.stats.parquet:md5,6c900d815d8b8b2299ea43ead4fece76",
+                        "section_9.stats.parquet:md5,7b178b1913ddf5f70cc16f7a17854a4f"
                     ]
                 ],
                 "2": [
@@ -97,33 +97,33 @@
                 ],
                 "counts": [
                     [
-                        "section_12.candidate_counts.parquet:md5,df8b5a6629b2b84b4c73156bbf261a92",
-                        "section_14.candidate_counts.parquet:md5,1ef1a4e6cef6dd6b04ca28a505985bb5",
-                        "section_16.candidate_counts.parquet:md5,f246e9291457873463ba3bff49e07b9d",
-                        "section_18.candidate_counts.parquet:md5,f67b1be510bd1b41f58088ae08cc494c",
-                        "section_20.candidate_counts.parquet:md5,3349d94fa3b42a917704c7abc2d807f9",
-                        "section_3.candidate_counts.parquet:md5,2ddf5f2e7cca3e8df9930520b3131495",
-                        "section_5.candidate_counts.parquet:md5,179d419cc48a36a991fbe74e4dcb28fa",
-                        "section_7.candidate_counts.parquet:md5,41f08e512f5d44eff8fa0ce3d49ac0f4",
-                        "section_9.candidate_counts.parquet:md5,85c942fa7ec2f2b4e5af6149de007328"
+                        "section_12.candidate_counts.parquet:md5,93fafe6b1b67be5c77f87a6ed59dd5f7",
+                        "section_14.candidate_counts.parquet:md5,664c0ccb85addf66ba02f0c1d51275d1",
+                        "section_16.candidate_counts.parquet:md5,acd64b1b485854ad35b7e177e72f08b5",
+                        "section_18.candidate_counts.parquet:md5,5e7bbaab8e787d7f2bc30e31691c7a4f",
+                        "section_20.candidate_counts.parquet:md5,8018785c254112e6dd097af783afdd98",
+                        "section_3.candidate_counts.parquet:md5,f9bf681ee165ffc8bc52f2da46d669a6",
+                        "section_5.candidate_counts.parquet:md5,c458f82606fea41b4c5e90df3d6c3b0a",
+                        "section_7.candidate_counts.parquet:md5,769296732439e729273303f2f05f1aed",
+                        "section_9.candidate_counts.parquet:md5,168e7ae463aab1dc99bf417d9d9dd8a3"
                     ]
                 ],
                 "section_stats": [
                     [
-                        "section_12.stats.parquet:md5,fb4b2180a8814488cf9bc0e0b0cbb0bf",
-                        "section_14.stats.parquet:md5,c4c5420d2097643f1b501599c7ea2313",
-                        "section_16.stats.parquet:md5,eaab929d8e085aecdd7f896bcb0556ac",
-                        "section_18.stats.parquet:md5,8bf510663d700900fda943b028b93a11",
-                        "section_20.stats.parquet:md5,a2b607d8c16362f7d7edaa971106811e",
-                        "section_3.stats.parquet:md5,c224ee2861966e04bba67626aa23c3f8",
-                        "section_5.stats.parquet:md5,f965b8acfdd5368c16cfc94eb2eb10c6",
-                        "section_7.stats.parquet:md5,425a5a9cd47ea0694688789e22e18335",
-                        "section_9.stats.parquet:md5,f898aa017c0babd634043172d8e8bf41"
+                        "section_12.stats.parquet:md5,37a9c893882779164c1f24090be03c6d",
+                        "section_14.stats.parquet:md5,f7d996cb686863c3d84ff3276c373e17",
+                        "section_16.stats.parquet:md5,4cce3721422f071322b29f69721aac31",
+                        "section_18.stats.parquet:md5,9a520f38ca6e6105060a56f2327977c6",
+                        "section_20.stats.parquet:md5,cf45dbca1d2c35c70e160f139be49bca",
+                        "section_3.stats.parquet:md5,0d0007304b13a7eb941ee2cc1c8e39f8",
+                        "section_5.stats.parquet:md5,f28aef4d13633de7f87bb5f08fb6a2f4",
+                        "section_7.stats.parquet:md5,6c900d815d8b8b2299ea43ead4fece76",
+                        "section_9.stats.parquet:md5,7b178b1913ddf5f70cc16f7a17854a4f"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-23T08:30:43.623825085",
+        "timestamp": "2026-06-26T09:11:41.442628072",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"

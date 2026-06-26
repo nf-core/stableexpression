@@ -7,6 +7,8 @@ import logging
 from pathlib import Path
 
 import config
+from common import export_parquet
+
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
@@ -62,7 +64,7 @@ def parse_args():
 def parse_stats(file: Path) -> pl.DataFrame:
     return pl.read_csv(file).select(
         pl.col(config.GENE_ID_COLNAME).cast(pl.String()),
-        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float32()),
+        pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float32),
     )
 
 
@@ -79,7 +81,7 @@ def add_sections(stat_df: pl.DataFrame, nb_sections: int):
             + pl.lit(1)
         )
         .floor()
-        .cast(pl.Int8)
+        .cast(pl.UInt8)
         # we want the only value at <nb_sections +1> to be at <nb_sections>
         .replace({nb_sections + 1: nb_sections})
         .alias("section")
@@ -143,12 +145,13 @@ def main():
             args.count_file, best_candidates
         )
         # exporting count data for the best candidates for this section
-        candidate_gene_count_lf.write_parquet(
-            CANDIDATE_COUNTS_OUTFILENAME.format(section)
+        export_parquet(
+            candidate_gene_count_lf, CANDIDATE_COUNTS_OUTFILENAME.format(section)
         )
         # exporting statistics for all genes in this section
-        stat_df.filter(pl.col("section") == section).write_parquet(
-            STATS_WITH_SECTION_OUTFILENAME.format(section)
+        export_parquet(
+            stat_df.filter(pl.col("section") == section),
+            STATS_WITH_SECTION_OUTFILENAME.format(section),
         )
 
 

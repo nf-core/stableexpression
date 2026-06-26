@@ -82,7 +82,8 @@ def main():
         logger.info("Computing log2 values")
         count_df = compute_log2(count_df)
 
-        export_parquet(count_df, args.count_file, OUTFILE_SUFFIX)
+        outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
+        export_parquet(count_df, outfilename)
 
     except Exception as e:
         logger.error(f"Error occurred while normalising data: {e}")

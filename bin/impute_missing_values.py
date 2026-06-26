@@ -232,7 +232,8 @@ def main():
         logger.info("Applying simple imputation")
         df = apply_simle_imputer(df)
 
-    export_parquet(df, args.count_file, OUTFILE_SUFFIX)
+    outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
+    export_parquet(df, outfilename)
 
     logger.info("Done")
 

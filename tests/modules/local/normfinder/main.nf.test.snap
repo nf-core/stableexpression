@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,9feb77b35b597334e978b8db48fad80c"
+                        "stability_values.normfinder.csv:md5,05b3b9508930923bd86c281e8febe6b6"
                     ]
                 ],
                 "1": [
@@ -50,12 +50,12 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,9feb77b35b597334e978b8db48fad80c"
+                        "stability_values.normfinder.csv:md5,05b3b9508930923bd86c281e8febe6b6"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-16T15:49:44.122013283",
+        "timestamp": "2026-06-25T18:57:35.453630947",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -69,7 +69,7 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,23af9fdc4bf6805666657b08f9a9de50"
+                        "stability_values.normfinder.csv:md5,a7c936faa9135439fd1b86c195f60414"
                     ]
                 ],
                 "1": [
@@ -112,12 +112,12 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,23af9fdc4bf6805666657b08f9a9de50"
+                        "stability_values.normfinder.csv:md5,a7c936faa9135439fd1b86c195f60414"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-16T15:49:30.601400305",
+        "timestamp": "2026-06-25T18:57:22.089805173",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"

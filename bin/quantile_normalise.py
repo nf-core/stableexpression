@@ -77,7 +77,8 @@ def main():
     logger.info(f"Quantile normalising {args.count_file.name}")
     quantile_normalized_counts = quantile_normalise(count_df, args.target_distribution)
 
-    export_parquet(quantile_normalized_counts, args.count_file, OUTFILE_SUFFIX)
+    outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
+    export_parquet(quantile_normalized_counts, outfilename)
 
 
 if __name__ == "__main__":

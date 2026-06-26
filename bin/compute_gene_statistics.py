@@ -227,7 +227,7 @@ def get_quantile_intervals(lf: pl.LazyFrame, platform: str) -> pl.LazyFrame:
             * NB_QUANTILES
         )
         .floor()
-        .cast(pl.Int8)
+        .cast(pl.UInt8)
         # we want the only value = NB_QUANTILES to be NB_QUANTILES - 1
         # because the last quantile interval is [NB_QUANTILES - 1, NB_QUANTILES]
         .replace({NB_QUANTILES: NB_QUANTILES - 1})
@@ -243,7 +243,7 @@ def export_data(lf: pl.LazyFrame, platform: str | None):
         else ALL_GENES_RESULT_OUTFILE_SUFFIX
     )
     logger.info(f"Exporting statistics for all genes to: {outfile}")
-    lf.sink_csv(outfile, float_precision=config.CSV_FLOAT_PRECISION)
+    lf.sink_csv(outfile, float_precision=config.DEFAULT_CSV_FLOAT_PRECISION)
     logger.info("Done")
 
 

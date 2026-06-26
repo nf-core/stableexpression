@@ -111,7 +111,7 @@ def main():
         raise ValueError("Duplicate values found for gene IDs!")
 
     m_measure_lf.sink_csv(
-        M_MEASURE_OUTFILE_NAME, float_precision=config.CSV_FLOAT_PRECISION
+        M_MEASURE_OUTFILE_NAME, float_precision=config.DEFAULT_CSV_FLOAT_PRECISION
     )
 
 

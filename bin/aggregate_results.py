@@ -24,6 +24,8 @@ CUSTOM_CONTENT_MULTIQC_CONFIG_FILE = "custom_content_multiqc_config.yaml"
 NB_EXPRESSION_QUANTILES = 100
 NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS = 25
 
+GENE_SUMMARY_FLOAT_PRECISION = 4
+
 #####################################################
 #####################################################
 # FUNCTIONS
@@ -435,8 +437,9 @@ def main():
 
     logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
     # sorting values in order to having consistent output
-    all_genes_summary_df.sort(by=config.GENE_ID_COLNAME).write_csv(
-        ALL_GENE_SUMMARY_OUTFILENAME, float_precision=config.CSV_FLOAT_PRECISION
+    write_float_csv(
+        all_genes_summary_df.sort(by=config.GENE_ID_COLNAME),
+        ALL_GENE_SUMMARY_OUTFILENAME,
     )
 
     # --------------------------------------------------

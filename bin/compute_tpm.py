@@ -55,7 +55,7 @@ def try_cast_to_int(df: pl.DataFrame) -> pl.DataFrame:
     for col in count_columns:
         is_all_integers = df.select(pl.col(col).round().eq(pl.col(col)).all()).item()
         if is_all_integers:
-            df = df.with_columns(pl.col(col).cast(pl.Int32()))
+            df = df.with_columns(pl.col(col).cast(pl.UInt32))
     return df
 
 
@@ -134,6 +134,11 @@ def compute_tpm(df: pl.DataFrame, cdna_length_df: pl.DataFrame) -> pl.DataFrame:
         return compute_tpm_from_rpkm(df)
 
 
+def parse_gene_length(file: Path) -> pl.DataFrame:
+    df = parse_table(file)
+    return df.with_columns(pl.col(config.CDNA_LENGTH_COLNAME).cast(pl.UInt32))
+
+
 #####################################################
 #####################################################
 # MAIN
@@ -147,7 +152,12 @@ def main():
     try:
         logger.info("Parsing data")
         count_df = parse_count_table(args.count_file)
-        cdna_length_df = parse_table(args.gene_lengths_file)
+        cdna_length_df = parse_gene_length(args.gene_lengths_file)
+
+        # casting to Float64 to avoid inconsistency during the subsequent computations
+        count_df = count_df.with_columns(
+            pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64)
+        )
 
         logger.info("Converting data types")
         count_df = try_cast_to_int(count_df)
@@ -158,7 +168,8 @@ def main():
         logger.info("Computing log2 values")
         count_df = compute_log2(count_df)
 
-        export_parquet(count_df, args.count_file, OUTFILE_SUFFIX)
+        outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
+        export_parquet(count_df, outfilename)
 
     except Exception as e:
         logger.error(f"Error occurred while normalising data: {e}")
