@@ -110,7 +110,7 @@
                 },
                 "accessions": {
                     "type": "string",
-                    "pattern": "([A-Z0-9-]+,?)+",
+                    "pattern": "([A-Z0-9-]+,?)*",
                     "description": "Expression Atlas / GEO accession(s) to include",
                     "fa_icon": "fas fa-address-card",
                     "help_text": "Provide Expression Atlas / GEO accession(s) that you want to download. The accessions should be comma-separated. Example: `--accessions E-MTAB-552,E-GEOD-61690,GSE8165,GSE8161`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions."
@@ -125,7 +125,7 @@
                 },
                 "excluded_accessions": {
                     "type": "string",
-                    "pattern": "([A-Z0-9-]+,?)+",
+                    "pattern": "([A-Z0-9-]+,?)*",
                     "description": "Expression Atlas accession(s) to exclude",
                     "fa_icon": "fas fa-id-card",
                     "help_text": "Provide Expression Atlas / GEO accession(s) that you want to exclude. The accessions should be comma-separated. Example: `--excluded_accessions E-MTAB-552,E-GEOD-61690`"
