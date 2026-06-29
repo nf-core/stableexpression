@@ -138,6 +138,7 @@ workflow PIPELINE_COMPLETION {
     //
     // Completion email and summary
     //
+    
     workflow.onComplete {
         if (email || email_on_fail) {
             completionEmail(
