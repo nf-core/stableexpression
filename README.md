@@ -61,7 +61,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 #### 3. ID Mapping (see [usage](./conf/usage.md#5-custom-gene-id-mapping--metadata))
 
 - Gene IDs are cleaned
-- Map gene IDS to NCBI Entrez Gene IDS (or Ensembl IDs) for standardisation among datasets using [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
+- Map gene IDS to NCBI Entrez Gene IDS (or Ensembl IDs) for standardisation among datasets using [`g:Profiler`](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
 - Rare genes are filtered out
 
 #### 4. Sample filtering
