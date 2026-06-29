@@ -78,7 +78,9 @@ def main():
         valid_count_df = count_df.select(
             pl.col(config.GENE_ID_COLNAME), pl.col(valid_samples)
         )
-        export_parquet(valid_count_df, args.count_file, OUTFILE_SUFFIX)
+
+        outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
+        export_parquet(valid_count_df, outfilename)
     else:
         logger.error("No valid columns remaining")
 

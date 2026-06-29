@@ -18,11 +18,9 @@ process RATIO_STANDARD_VARIATION {
 
 
     script:
-    def args = "--task-attempts ${task.attempt}"
     """
     get_ratio_standard_variation.py \\
-        --file $file \\
-        ${args}
+        --file $file
     """
 
 }

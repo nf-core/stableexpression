@@ -5,11 +5,11 @@ process COMPUTE_M_MEASURE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/00/00f1434368763cebf37466cfaaaf069f971f7eae65b010169975c50d084e5af3/data':
-        'community.wave.seqera.io/library/polars_python:1a4a3322c56bfeb9' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/83/83ffc025ce0d913f9eaa4e786c9ebd2817ddc57f85d6596663f0e8a290872fab/data':
+        'community.wave.seqera.io/library/polars_python:e0e89fee0d134a04' }"
 
     input:
-    tuple val(meta), path(count_file), path(ratio_files)
+    tuple val(meta), path(ratio_files)
 
     output:
     tuple val(meta), path("m_measures.csv"),                                                                      emit: m_measures
@@ -17,12 +17,9 @@ process COMPUTE_M_MEASURE {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
-    def args = "--task-attempts ${task.attempt}"
     """
     compute_m_measures.py \\
-        --counts $count_file \\
-        --std-files "$ratio_files" \\
-        $args
+        --std-files "$ratio_files"
     """
 
 }

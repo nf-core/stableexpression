@@ -158,7 +158,7 @@ nextflow_workflow {
                 accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
                 accessions_file = null
                 excluded_accessions = ""
-                excluded_accessions_file = file( '$projectDir/tests/test_data/public_accessions/exclude_one_two_accessions.txt', checkIfExists: true )
+                excluded_accessions_file = file( '$projectDir/tests/test_data/workflows/public_accessions/exclude_one_two_accessions.txt', checkIfExists: true )
                 random_sampling_size = null
                 random_sampling_seed = 42
                 outdir = "$outputDir"

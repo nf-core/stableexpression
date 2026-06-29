@@ -123,7 +123,9 @@ def main():
     if valid_samples:
         logger.info(f"Filtered out {count_df.shape[1] - len(valid_samples)} columns")
         valid_count_df = count_df.select([config.GENE_ID_COLNAME] + valid_samples)
-        export_parquet(valid_count_df, args.count_file, OUTFILE_SUFFIX)
+
+        outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
+        export_parquet(valid_count_df, outfilename)
     else:
         logger.error("No valid columns remaining")
 

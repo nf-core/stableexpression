@@ -28,6 +28,7 @@ workflow GET_PUBLIC_ACCESSIONS {
     ch_fetched_eatlas_accessions = channel.empty()
     ch_fetched_geo_accessions    = channel.empty()
     ch_sampling_quota            = channel.of( "ok" )
+    ch_raw_accessions            = channel.empty()
 
     // -----------------------------------------------------------------
     // GET EATLAS ACCESSIONS
@@ -48,6 +49,7 @@ workflow GET_PUBLIC_ACCESSIONS {
 
         ch_fetched_eatlas_accessions = EXPRESSION_ATLAS.out.accessions.splitText()
         ch_sampling_quota            = EXPRESSION_ATLAS.out.sampling_quota
+        ch_raw_accessions            = EXPRESSION_ATLAS.out.accessions.map { file -> [ "expression_atlas", file ] }
 
     }
 
@@ -88,7 +90,8 @@ workflow GET_PUBLIC_ACCESSIONS {
             random_sampling_seed?: []
         )
 
-        ch_fetched_geo_accessions = GEO.out.accessions.splitText()
+        ch_fetched_geo_accessions    = GEO.out.accessions.splitText()
+        ch_raw_accessions            = ch_raw_accessions.mix( GEO.out.accessions.map { file -> [ "geo", file ] } )
     }
 
     // -----------------------------------------------------------------
@@ -131,7 +134,14 @@ workflow GET_PUBLIC_ACCESSIONS {
                         .unique()
                         .map { acc -> acc.trim() }
 
+    // -----------------------------------------------------------------
+    // FORMATING RAW ACCESSIONS FOR WORKFLOW OUTPUTS
+    // -----------------------------------------------------------------
+
+
+
     emit:
     accessions          = ch_all_accessions
+    raw_accessions      = ch_raw_accessions
 
 }

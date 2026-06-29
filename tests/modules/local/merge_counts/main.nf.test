@@ -14,9 +14,9 @@ nextflow_process {
                 input[0] = [
                     [ platform: 'rnaseq' ],
                     [
-                        file("$projectDir/tests/test_data/merge_data/input/counts1.parquet", checkIfExists: true),
-                        file( "$projectDir/tests/test_data/merge_data/input/counts2.parquet", checkIfExists: true),
-                        file( "$projectDir/tests/test_data/merge_data/input/counts3.parquet", checkIfExists: true),
+                        file("$projectDir/tests/test_data/modules/merge_data/input/counts1.parquet", checkIfExists: true),
+                        file( "$projectDir/tests/test_data/modules/merge_data/input/counts2.parquet", checkIfExists: true),
+                        file( "$projectDir/tests/test_data/modules/merge_data/input/counts3.parquet", checkIfExists: true),
                     ]
                 ]
                 """
@@ -41,8 +41,8 @@ nextflow_process {
                 input[0] = [
                     [ platform: 'rnaseq' ],
                     [
-                        file("$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true),
-                        file( "$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true)
+                        file("$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true),
+                        file( "$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true)
                     ]
                 ]
                 """
@@ -67,7 +67,7 @@ nextflow_process {
                 input[0] = [
                     [ platform: 'microarray' ],
                     [
-                        file("$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true)
+                        file("$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet", checkIfExists: true)
                     ]
                 ]
                 """

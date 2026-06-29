@@ -3,7 +3,7 @@
         "content": [
             {
                 "0": [
-                    "section_1.stats_with_scores.csv:md5,7b1dd3c6e4a666561ca6ebe14aae7b74"
+                    "section_1.stats_with_scores.csv:md5,e78b6a9fdc451be6c6c6831d9885078a"
                 ],
                 "1": [
                     [
@@ -20,21 +20,21 @@
                     ]
                 ],
                 "stats_with_stability_scores": [
-                    "section_1.stats_with_scores.csv:md5,7b1dd3c6e4a666561ca6ebe14aae7b74"
+                    "section_1.stats_with_scores.csv:md5,e78b6a9fdc451be6c6c6831d9885078a"
                 ]
             }
         ],
+        "timestamp": "2026-06-25T18:46:44.286585424",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T15:20:22.075756497"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     },
     "Without Genorm": {
         "content": [
             {
                 "0": [
-                    "section_1.stats_with_scores.csv:md5,bdf823d07ed6fed0313e5cf2ce1811a6"
+                    "section_1.stats_with_scores.csv:md5,227d924080d1115b380328d6d9f50456"
                 ],
                 "1": [
                     [
@@ -51,14 +51,14 @@
                     ]
                 ],
                 "stats_with_stability_scores": [
-                    "section_1.stats_with_scores.csv:md5,bdf823d07ed6fed0313e5cf2ce1811a6"
+                    "section_1.stats_with_scores.csv:md5,227d924080d1115b380328d6d9f50456"
                 ]
             }
         ],
+        "timestamp": "2026-06-25T18:46:53.291455976",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T15:20:28.206402711"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     }
 }

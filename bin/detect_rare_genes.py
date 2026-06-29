@@ -121,6 +121,7 @@ def main():
         .select(config.GENE_ID_COLNAME)
         .unique()
         .to_series()
+        .sort()
         .to_list()
     )
 

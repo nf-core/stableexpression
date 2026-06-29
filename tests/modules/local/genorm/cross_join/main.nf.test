@@ -12,8 +12,8 @@ nextflow_process {
                 """
                 input[0] = [
                     [section: "section_1", index_1: 0, index_2: 1],
-                    file( '$projectDir/tests/test_data/genorm/make_chunks/output/count_chunk.0.parquet', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/genorm/make_chunks/output/count_chunk.1.parquet', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/genorm/make_chunks/output/count_chunk.0.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/genorm/make_chunks/output/count_chunk.1.parquet', checkIfExists: true)
                 ]
                 """
             }

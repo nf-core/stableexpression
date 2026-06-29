@@ -14,7 +14,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [ dataset: "test" ],
-                    file('$projectDir/tests/test_data/normalisation/base/counts.csv')
+                    file('$projectDir/tests/test_data/modules/normalisation/base/counts.csv')
                 ]
                 """
             }
@@ -37,7 +37,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [ dataset: "test"],
-                    file('$projectDir/tests/test_data/normalisation/many_zeros/counts.csv')
+                    file('$projectDir/tests/test_data/modules/normalisation/many_zeros/counts.csv')
                 ]
                 """
             }
@@ -60,7 +60,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [ dataset: "accession" ],
-                    file('$projectDir/tests/test_data/normalisation/one_group/counts.csv')
+                    file('$projectDir/tests/test_data/modules/normalisation/one_group/counts.csv')
                 ]
                 """
             }
@@ -83,7 +83,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [ dataset: "accession" ],
-                    file('$projectDir/tests/test_data/normalisation/base/counts.tsv')
+                    file('$projectDir/tests/test_data/modules/normalisation/base/counts.tsv')
                 ]
                 """
             }

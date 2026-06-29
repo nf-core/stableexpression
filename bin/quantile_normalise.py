@@ -56,7 +56,7 @@ def quantile_normalise(df: pl.DataFrame, target_distribution: str):
     return df.with_columns(
         pl.exclude(config.GENE_ID_COLNAME).map_batches(
             lambda x: quantile_transform(x.to_frame(), **kwargs).flatten(),
-            return_dtype=pl.Float64,
+            return_dtype=pl.Float32,
         )
     )
 
@@ -77,7 +77,8 @@ def main():
     logger.info(f"Quantile normalising {args.count_file.name}")
     quantile_normalized_counts = quantile_normalise(count_df, args.target_distribution)
 
-    export_parquet(quantile_normalized_counts, args.count_file, OUTFILE_SUFFIX)
+    outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
+    export_parquet(quantile_normalized_counts, outfilename)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
     <description
     >This pipeline is dedicated to identifying the most stable genes within a single or multiple expression dataset(s). This is particularly useful for identifying the most suitable RT-qPCR reference genes for a specific species.</description>
     <requirements>
-        <requirement type="package" version="25.10.04">nextflow</requirement>
+        <requirement type="package" version="26.04.4">nextflow</requirement>
         <requirement type="package" version="2.3.3">micromamba</requirement>
         <requirement type="package" version="17.0.10">openjdk</requirement>
     </requirements>
@@ -469,7 +469,7 @@ VERSION="1.1dev"; echo "$VERSION"
                 name="missing_value_imputer"
                 type="select"
                 label="Type of imputation method to use for missing values"
-                help="The pipeline provides three options for imputing missing values: iterative, k-nearest neighbors, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Gene mean imputation is a very basic method that replaces missing values with the mean expression level of the gene across all samples."
+                help="The pipeline provides three options for imputing missing values: iterative, k-nearest neighbours, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Gene mean imputation is a very basic method that replaces missing values with the mean expression level of the gene across all samples."
                 optional="true"
             >
 				<option value="iterative" selected="true">Iterative</option>

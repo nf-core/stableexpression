@@ -134,7 +134,6 @@ workflow PIPELINE_COMPLETION {
     main:
     summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
     def multiqc_reports = multiqc_report.toList()
-
     //
     // Completion email and summary
     //
@@ -212,6 +211,10 @@ def validateInputParameters(params) {
         log.warn "Ignoring keywords as accessions will not be fetched from Expression Atlas or GEO"
     }
 
+    if ( params.gff && params.gff_url ) {
+        log.warn "Both gff and gff_url parameters are provided. Using gff."
+    }
+
 }
 
 //
@@ -253,6 +256,10 @@ def validateInputSamplesheet( ch_datasets ) {
     // checking that all count files are well formated (same number of columns in header and rows)
     ch_datasets
         .map { meta, file ->
+            if (file.name.endsWith('.gz')) {
+                // TODO: implement this check also for gzipped files
+                return
+            }
             def header = file.withReader { reader -> reader.readLine() }
             def separator = header.contains(',') ? "," :
                             header.contains('\t') ? "\t" :
@@ -431,4 +438,16 @@ def checkCounts(ch_counts, fetch_geo_accessions) {
             error(msg)
         }
     }
+}
+
+/*
+========================================================================================
+    FUNCTION FOR FORMATING OUTPUT FOLDERS
+========================================================================================
+*/
+
+def getOutputFolder(meta, subfolder) {
+    def normalised_status = meta.normalised ? "normalised" : "raw"
+    def subfoldername = subfolder ? "${subfolder}/" : ""
+    return "datasets/${meta.platform}/${normalised_status}/${meta.dataset}/${subfoldername}"
 }

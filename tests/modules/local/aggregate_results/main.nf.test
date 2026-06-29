@@ -10,15 +10,15 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = [
-                    file( '$projectDir/tests/test_data/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
                 ]
-                input[2] = [ file( '$projectDir/tests/test_data/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true) ]
+                input[2] = [ file( '$projectDir/tests/test_data/modules/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true) ]
                 input[3] = []
-                input[4] = file( '$projectDir/tests/test_data/aggregate_results/metadata.csv', checkIfExists: true)
-                input[5] = file( '$projectDir/tests/test_data/aggregate_results/mapping.csv', checkIfExists: true)
+                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
                 input[6] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
                 """
             }
@@ -38,18 +38,18 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = [
-                    file( '$projectDir/tests/test_data/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
                 ]
                 input[2] = [
-                    file( '$projectDir/tests/test_data/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/aggregate_results/microarray_stats_all_genes.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/aggregate_results/microarray_stats_all_genes.csv', checkIfExists: true)
                 ]
                 input[3] = []
-                input[4] = file( '$projectDir/tests/test_data/aggregate_results/metadata.csv', checkIfExists: true)
-                input[5] = file( '$projectDir/tests/test_data/aggregate_results/mapping.csv', checkIfExists: true)
+                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
                 input[6] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
                 """
             }
@@ -69,18 +69,18 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = [
-                    file( '$projectDir/tests/test_data/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
                 ]
                 input[2] = [
-                    file( '$projectDir/tests/test_data/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/aggregate_results/microarray_stats_all_genes.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/aggregate_results/microarray_stats_all_genes.csv', checkIfExists: true)
                 ]
                 input[3] = ["ENSRNA049454747", "ENSRNA049434246"]
-                input[4] = file( '$projectDir/tests/test_data/aggregate_results/metadata.csv', checkIfExists: true)
-                input[5] = file( '$projectDir/tests/test_data/aggregate_results/mapping.csv', checkIfExists: true)
+                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
                 input[6] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
                 """
             }
@@ -100,18 +100,18 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = [
-                    file( '$projectDir/tests/test_data/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
                 ]
                 input[2] = [
-                    file( '$projectDir/tests/test_data/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/aggregate_results/microarray_stats_all_genes.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/aggregate_results/microarray_stats_all_genes.csv', checkIfExists: true)
                 ]
                 input[3] = ["ENSRNA049454747", "UNKNOWNGENEID1234"]
-                input[4] = file( '$projectDir/tests/test_data/aggregate_results/metadata.csv', checkIfExists: true)
-                input[5] = file( '$projectDir/tests/test_data/aggregate_results/mapping.csv', checkIfExists: true)
+                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
                 input[6] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
                 """
             }
@@ -131,12 +131,12 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = file( '$projectDir/tests/test_data/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = file( '$projectDir/tests/test_data/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true)
-                input[2] = [ file( '$projectDir/tests/test_data/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true) ]
+                input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true)
+                input[2] = [ file( '$projectDir/tests/test_data/modules/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true) ]
                 input[3] = []
-                input[4] = file( '$projectDir/tests/test_data/aggregate_results/metadata.csv', checkIfExists: true)
-                input[5] = file( '$projectDir/tests/test_data/aggregate_results/mapping.csv', checkIfExists: true)
+                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
                 input[6] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
                 """
             }
