@@ -7,7 +7,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
+                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ],
                 "1": [
@@ -35,16 +35,16 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
+                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-06-26T09:12:26.560422115",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:07:24.246785277"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     },
     "One group": {
         "content": [
@@ -54,7 +54,7 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,c8855975f68aad3c3bb060a23c14e2f9"
+                        "counts.cpm.parquet:md5,92565ffdb68131e1e218dfcc04a0a056"
                     ]
                 ],
                 "1": [
@@ -82,16 +82,16 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,c8855975f68aad3c3bb060a23c14e2f9"
+                        "counts.cpm.parquet:md5,92565ffdb68131e1e218dfcc04a0a056"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-06-26T09:12:44.004103015",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-19T12:23:45.874853063"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     },
     "TSV files": {
         "content": [
@@ -101,7 +101,7 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
+                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ],
                 "1": [
@@ -129,16 +129,16 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,8802fdfa77c0da39062bf357dccdd3cd"
+                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-06-26T09:12:52.517087858",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-19T12:23:54.407797312"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     },
     "Rows with many zeros": {
         "content": [
@@ -148,7 +148,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,ab2596a5bb8b3b2e39754191a2dce2aa"
+                        "counts.cpm.parquet:md5,b30ef63196202a42a06593b353f13891"
                     ]
                 ],
                 "1": [
@@ -176,15 +176,15 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,ab2596a5bb8b3b2e39754191a2dce2aa"
+                        "counts.cpm.parquet:md5,b30ef63196202a42a06593b353f13891"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-06-26T09:12:35.379374173",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-17T09:07:34.001566313"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     }
 }

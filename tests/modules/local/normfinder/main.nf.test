@@ -12,9 +12,9 @@ nextflow_process {
                 """
                 input[0] = [
                     [section: "section_1"],
-                    file( '$projectDir/tests/test_data/normfinder/very_small_cq/all_counts.normalised.parquet', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/normfinder/very_small_cq/all_counts.normalised.parquet', checkIfExists: true)
                 ]
-                input[1] = file( '$projectDir/tests/test_data/normfinder/very_small_cq/design.csv', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/modules/normfinder/very_small_cq/design.csv', checkIfExists: true)
                 """
             }
         }
@@ -33,9 +33,9 @@ nextflow_process {
                 """
                 input[0] = [
                     [section: "section_1"],
-                    file( '$projectDir/tests/test_data/normfinder/small_normalised/all_counts.normalised.parquet', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/normfinder/small_normalised/all_counts.normalised.parquet', checkIfExists: true)
                 ]
-                input[1] = file( '$projectDir/tests/test_data/normfinder/small_normalised/design.csv', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/modules/normfinder/small_normalised/design.csv', checkIfExists: true)
                 """
             }
         }

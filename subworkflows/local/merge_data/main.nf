@@ -84,7 +84,7 @@ workflow MERGE_DATA {
                             seed: "batch,condition,sample",
                             newLine: true,
                             sort: true,
-                            storeDir: "${outdir}/merged_datasets/"
+                            storeDir: "${outdir}/merged_data/"
                         ) {
                             item -> "${item.batch},${item.condition},${item.sample}"
                         }

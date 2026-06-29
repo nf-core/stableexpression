@@ -7,6 +7,8 @@ import logging
 from pathlib import Path
 
 import polars as pl
+from common import export_parquet
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,13 +51,6 @@ def parse_args():
         required=True,
         help="Index of chunk count file 2",
     )
-    parser.add_argument(
-        "--task-attempts",
-        dest="task_attempts",
-        type=int,
-        default=1,
-        help="Number of task attempts",
-    )
     return parser.parse_args()
 
 
@@ -69,9 +64,8 @@ def parse_args():
 def main():
     args = parse_args()
 
-    low_memory = True if args.task_attempts > 1 else False
-    lf = pl.scan_parquet(args.count_file_1, low_memory=low_memory)
-    lf_other = pl.scan_parquet(args.count_file_2, low_memory=low_memory)
+    lf = pl.scan_parquet(args.count_file_1)
+    lf_other = pl.scan_parquet(args.count_file_2)
 
     logger.info("Computing cross join data")
     lf = lf.join(
@@ -85,7 +79,7 @@ def main():
         )
 
     outfile = f"cross_join.{args.count_file_1_index}.{args.count_file_2_index}.parquet"
-    df.write_parquet(outfile)
+    export_parquet(df, outfile)
 
 
 if __name__ == "__main__":

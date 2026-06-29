@@ -133,7 +133,7 @@ class StabilityScorer:
                     pl.col(normalised_col).is_not_null()
                     & pl.col(normalised_col).is_not_nan()
                 )
-                .then(pl.col(normalised_col))
+                .then(pl.col(normalised_col) * weight)
                 .otherwise(pl.lit(0))
             )
 

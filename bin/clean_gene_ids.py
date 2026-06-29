@@ -9,7 +9,7 @@ from pathlib import Path
 
 import config
 import polars as pl
-from common import parse_count_table
+from common import parse_count_table, export_parquet
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -102,7 +102,7 @@ def main():
     count_outfile = args.count_file.with_name(
         args.count_file.stem + CLEANED_COUNTS_SUFFIX
     )
-    df.write_parquet(count_outfile)
+    export_parquet(df, count_outfile)
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import config
 import polars as pl
-from common import parse_count_table, parse_table
+from common import parse_count_table, parse_table, export_parquet
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -214,7 +214,7 @@ def main():
 
     logger.info("Writing output file")
     outfilename = args.count_file.with_suffix(RENAMED_FILE_SUFFIX).name
-    df.write_parquet(outfilename)
+    export_parquet(df, outfilename)
 
 
 if __name__ == "__main__":

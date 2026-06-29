@@ -61,11 +61,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-06-25T18:45:43.155310059",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-04-04T09:38:02.365611798"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     },
     "Without microarray": {
         "content": [
@@ -129,11 +129,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-06-25T18:45:25.464644135",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:06:37.615799808"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     },
     "One invalid target gene": {
         "content": [
@@ -197,11 +197,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-06-25T18:45:51.972049684",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:47:07.501875225"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     },
     "One section": {
         "content": [
@@ -253,11 +253,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-06-25T18:46:00.915395578",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:47:13.474058057"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     },
     "With microarray": {
         "content": [
@@ -321,10 +321,10 @@
                 ]
             }
         ],
+        "timestamp": "2026-06-25T18:45:34.206082027",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-03-30T14:46:55.231695582"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
     }
 }

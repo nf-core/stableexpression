@@ -20,6 +20,7 @@ from tenacity import (
 )
 
 logging.basicConfig(level=logging.INFO)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 ALLOWED_PLATFORMS = ["rnaseq", "microarray"]
@@ -103,7 +104,8 @@ def get_data(url: str) -> dict:
     RuntimeError
         If the query fails
     """
-    response = httpx.get(url)
+    # timeout of 10 minutes since the EBI may take a while to respond
+    response = httpx.get(url, timeout=360.0)
     response.raise_for_status()
     return response.json()
 
@@ -427,7 +429,7 @@ def main():
     species_name = format_species_name(args.species)
     keywords = args.keywords
 
-    logger.info(f"Getting experiments corresponding to species {species_name}")
+    logger.info("Getting all Expression Atlas experiments")
     experiments = get_eatlas_experiments()
 
     logger.info("Filtering on species name")

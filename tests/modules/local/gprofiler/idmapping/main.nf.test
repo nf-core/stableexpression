@@ -11,7 +11,7 @@ nextflow_process {
 
             process {
                 """
-                input[0] = file("$projectDir/tests/test_data/idmapping/gene_ids/gene_ids.txt", checkIfExists: true)
+                input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/gene_ids.txt", checkIfExists: true)
                 input[1] = "Solanum tuberosum"
                 input[2] = "ENSG"
                 """
@@ -26,14 +26,14 @@ nextflow_process {
             )
         }
     }
-    /*
+
     test("Entrez - No mapping found") {
 
         when {
 
             process {
                 """
-                input[0] = file("$projectDir/tests/test_data/idmapping/gene_ids/gene_ids.txt", checkIfExists: true)
+                input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/gene_ids.txt", checkIfExists: true)
                 input[1] = "Solanum tuberosum"
                 input[2] = "ENTREZGENE"
                 """
@@ -46,6 +46,5 @@ nextflow_process {
             )
         }
     }
-    */
 
 }

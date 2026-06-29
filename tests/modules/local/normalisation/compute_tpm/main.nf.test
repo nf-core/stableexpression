@@ -14,9 +14,9 @@ nextflow_process {
                 """
                 input[0] = [
                     [ dataset: "test" ],
-                    file('$projectDir/tests/test_data/normalisation/base/counts.csv')
+                    file('$projectDir/tests/test_data/modules/normalisation/base/counts.csv')
                 ]
-                input[1] = file('$projectDir/tests/test_data/normalisation/base/gene_lengths.csv')
+                input[1] = file('$projectDir/tests/test_data/modules/normalisation/base/gene_lengths.csv')
                 """
             }
         }
@@ -38,9 +38,9 @@ nextflow_process {
                 """
                 input[0] = [
                     [ dataset: "test"],
-                    file('$projectDir/tests/test_data/normalisation/many_zeros/counts.csv')
+                    file('$projectDir/tests/test_data/modules/normalisation/many_zeros/counts.csv')
                 ]
-                input[1] = file('$projectDir/tests/test_data/normalisation/many_zeros/gene_lengths.csv')
+                input[1] = file('$projectDir/tests/test_data/modules/normalisation/many_zeros/gene_lengths.csv')
                 """
             }
         }
@@ -62,9 +62,9 @@ nextflow_process {
                 """
                 input[0] = [
                     [ dataset: "test" ],
-                    file('$projectDir/tests/test_data/normalisation/one_group/counts.csv')
+                    file('$projectDir/tests/test_data/modules/normalisation/one_group/counts.csv')
                 ]
-                input[1] = file('$projectDir/tests/test_data/normalisation/one_group/gene_lengths.csv')
+                input[1] = file('$projectDir/tests/test_data/modules/normalisation/one_group/gene_lengths.csv')
                 """
             }
         }
@@ -86,9 +86,9 @@ nextflow_process {
                 """
                 input[0] = [
                     [ dataset: "test" ],
-                    file('$projectDir/tests/test_data/normalisation/base/counts.tsv')
+                    file('$projectDir/tests/test_data/modules/normalisation/base/counts.tsv')
                 ]
-                input[1] = file('$projectDir/tests/test_data/normalisation/base/gene_lengths.csv')
+                input[1] = file('$projectDir/tests/test_data/modules/normalisation/base/gene_lengths.csv')
                 """
             }
         }

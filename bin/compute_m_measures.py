@@ -14,9 +14,6 @@ logger = logging.getLogger(__name__)
 
 M_MEASURE_OUTFILE_NAME = "m_measures.csv"
 
-DEFAULT_CHUNKSIZE = 300
-NB_GENE_ID_CHUNK_FOLDERS = 100
-
 
 #####################################################
 #####################################################
@@ -28,25 +25,11 @@ NB_GENE_ID_CHUNK_FOLDERS = 100
 def parse_args():
     parser = argparse.ArgumentParser(description="Compute M-measure for each gene")
     parser.add_argument(
-        "--counts",
-        type=Path,
-        dest="count_file",
-        required=True,
-        help="File containing std of lof expression ratios",
-    )
-    parser.add_argument(
         "--std-files",
         type=str,
         dest="std_files",
         required=True,
         help="File containing std of lof expression ratios",
-    )
-    parser.add_argument(
-        "--task-attempts",
-        dest="task_attempts",
-        type=int,
-        default=1,
-        help="Number of task attempts",
     )
     return parser.parse_args()
 
@@ -55,8 +38,22 @@ def get_nb_rows(lf: pl.LazyFrame):
     return lf.select(pl.len()).collect().item()
 
 
-def concat_all_std_data(files: list[Path], low_memory: bool) -> pl.LazyFrame:
-    lfs = [pl.scan_parquet(file, low_memory=low_memory) for file in files]
+def concat_all_std_data(files: list[Path]) -> pl.LazyFrame:
+    """
+    Concatenate all std data from the given files into a single LazyFrame.
+    Explode the ratios_stds column to get one row per gene_id and ratio_std,
+    then group by gene_id again to aggregate all ratio values per gene_id.
+    Each file in files is like:
+    ┌────────────────┬─────────────────────────────────┐
+    │ gene_id        ┆ ratios_stds                     │
+    │ ---            ┆ ---                             │
+    │ str            ┆ list[f32]                       │
+    ╞════════════════╪═════════════════════════════════╡
+    │ PRUPE_1G033600 ┆ [14.52564, 10.279425, … 10.209… │
+    │ PRUPE_1G176100 ┆ [10.240738, 10.267249, … 14.51… │
+    └────────────────┴─────────────────────────────────┘
+    """
+    lfs = [pl.scan_parquet(file) for file in files]
     lf = pl.concat(lfs)
     return (
         lf.explode(config.RATIOS_STD_COLNAME)
@@ -66,6 +63,10 @@ def concat_all_std_data(files: list[Path], low_memory: bool) -> pl.LazyFrame:
 
 
 def compute_m_measures(lf: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Compute the m-measure for each gene.
+    The m-measure is the sum of the ratios standard deviations divided by the number of ratios minus 1.
+    """
     return lf.select(
         pl.col(config.GENE_ID_COLNAME),
         (
@@ -91,128 +92,27 @@ def get_chunks(lst: list, chunksize: int):
 def main():
     args = parse_args()
 
-    low_memory = True if args.task_attempts > 1 else False
     files = [Path(file) for file in args.std_files.split(" ")]
 
-    logger.info("Getting list of gene IDs")
-    count_lf = pl.scan_parquet(args.count_file, low_memory=low_memory)
+    # parsing files and making concatenation
+    concat_lf = concat_all_std_data(files)
 
-    #############################################################################
-    # MAKING A FOLDER FOR EACH CHUNK OF GENE IDS
-    #############################################################################
-    gene_ids = count_lf.select(config.GENE_ID_COLNAME).collect().to_series().to_list()
-    gene_ids = sorted(gene_ids)
-
-    chunksize = max(
-        1, int(len(gene_ids) / NB_GENE_ID_CHUNK_FOLDERS)
-    )  # 1 if len(gene_ids) < NB_GENE_ID_CHUNK_FOLDERS
-    gene_id_list_chunks = list(get_chunks(gene_ids, chunksize=chunksize))
-
-    gene_id_chunk_folders = []
-    for i in range(len(gene_id_list_chunks)):
-        gene_id_chunk_folder = Path(f"gene_ids_{i}")
-        gene_id_chunk_folder.mkdir(exist_ok=True)
-        gene_id_chunk_folders.append(gene_id_chunk_folder)
-
-    #############################################################################
-    # EXPORTING GENE DATA TO THEIR RESPECTIVE CHUNK FOLDER
-    #############################################################################
-    # progressively decreasing the chunksize if OOM
-    chunksize = int(DEFAULT_CHUNKSIZE / args.task_attempts)
-    chunk_files_list = [
-        files[i : i + chunksize] for i in range(0, len(files), chunksize)
-    ]
-
-    logger.info("Parsing std data by chunks")
-    for i, chunk_files in enumerate(chunk_files_list):
-        # parsing files and making a first list concatenation
-        concat_lf = concat_all_std_data(chunk_files, low_memory)
-
-        # looping through each group of gene IDs
-        for j, (gene_id_list_chunk, gene_id_chunk_folder) in enumerate(
-            zip(gene_id_list_chunks, gene_id_chunk_folders)
-        ):
-            # writing all data corresponding to this group of gene IDs in a specific folder
-            outfile = gene_id_chunk_folder / f"chunk.{i}.parquet"
-            concat_df = concat_lf.filter(
-                pl.col(config.GENE_ID_COLNAME).is_in(gene_id_list_chunk)
-            ).collect()
-            concat_df.write_parquet(outfile)
-
-    #############################################################################
-    # GATHERING ALL DATA CHUNK BY CHUNK AND COMPUTING M MEASURE FOR EACH GENE
-    #############################################################################
-    computed_genes = 0
-    nb_ratios_per_gene = set()
-    logger.info(
-        "Concatenating all std data by chunk of gene IDs and computing M measures"
+    # sort everything
+    # this is very weird, but if we do not sort the ratios_std list, the M measure computation may be slightly inconsistent
+    # the ratios lists should be already sorted, but if they are not, we sort them here to ensure consistency
+    concat_lf = concat_lf.sort(config.GENE_ID_COLNAME).with_columns(
+        pl.col(config.RATIOS_STD_COLNAME).list.sort()
     )
-    with open(M_MEASURE_OUTFILE_NAME, "a") as fout:
-        for i, gene_id_chunk_folder in enumerate(gene_id_chunk_folders):
-            chunk_files = list(gene_id_chunk_folder.iterdir())
 
-            concat_lf = concat_all_std_data(chunk_files, low_memory).sort(
-                config.GENE_ID_COLNAME
-            )
+    # computing M measures for these gene IDs
+    m_measure_lf = compute_m_measures(concat_lf)
 
-            # computing M measures for these gene IDs
-            m_measure_lf = compute_m_measures(concat_lf)
-            m_measure_df = m_measure_lf.collect()
+    if m_measure_lf.select(config.GENE_ID_COLNAME).collect().is_duplicated().any():
+        raise ValueError("Duplicate values found for gene IDs!")
 
-            #################################################
-            # checks
-            #################################################
-            if m_measure_df[config.GENE_ID_COLNAME].is_duplicated().any():
-                raise ValueError("Duplicate values found for gene IDs!")
-
-            process_gene_ids = sorted(
-                m_measure_df.select(config.GENE_ID_COLNAME).to_series().to_list()
-            )
-            if process_gene_ids != gene_id_list_chunks[i]:
-                raise ValueError("Incorrect gene IDs found!")
-
-            computed_genes += len(m_measure_df)
-
-            unique_nb_ratios = (
-                concat_lf.with_columns(
-                    pl.col(config.RATIOS_STD_COLNAME).list.len().alias("length")
-                )
-                .select("length")
-                .unique()
-                .collect()
-                .to_series()
-                .to_list()
-            )
-            nb_ratios_per_gene.update(unique_nb_ratios)
-
-            #################################################
-            #################################################
-
-            # appending to output file
-            if i == 0:
-                m_measure_df.write_csv(
-                    fout,
-                    include_header=True,
-                    float_precision=config.CSV_FLOAT_PRECISION,
-                )
-            else:
-                m_measure_df.write_csv(
-                    fout,
-                    include_header=False,
-                    float_precision=config.CSV_FLOAT_PRECISION,
-                )
-
-    logger.info(f"Number of gene IDs: {len(gene_ids)}")
-    logger.info(f"Number of computed genes: {computed_genes}")
-    if computed_genes != len(gene_ids):
-        raise ValueError(
-            f"Number of computed genes: {computed_genes} != number of gene IDs: {len(gene_ids)}"
-        )
-
-    if len(nb_ratios_per_gene) > 1:
-        logger.warning(
-            f"Got multiple number of std ratios to compute: {list(nb_ratios_per_gene)}"
-        )
+    m_measure_lf.sink_csv(
+        M_MEASURE_OUTFILE_NAME, float_precision=config.DEFAULT_CSV_FLOAT_PRECISION
+    )
 
 
 if __name__ == "__main__":

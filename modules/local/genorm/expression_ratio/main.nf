@@ -18,11 +18,9 @@ process EXPRESSION_RATIO {
 
 
     script:
-    def args = "--task-attempts ${task.attempt}"
     """
     make_pairwise_gene_expression_ratio.py \\
-        --file $file \\
-        ${args}
+        --file $file
     """
 
 }

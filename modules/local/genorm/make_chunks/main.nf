@@ -18,11 +18,9 @@ process MAKE_CHUNKS {
 
 
     script:
-    def args = "--task-attempts ${task.attempt}"
     """
     make_parquet_chunks.py \\
-        --counts $count_file \\
-        ${args}
+        --counts $count_file
     """
 
 }

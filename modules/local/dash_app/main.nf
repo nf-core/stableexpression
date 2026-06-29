@@ -23,7 +23,7 @@ process DASH_APP {
     path all_genes_summary
 
     output:
-    path("*"), emit: app
+    path("dash_app/"), emit: app
     path "versions.yml", emit: versions
 
     script:
@@ -32,9 +32,9 @@ process DASH_APP {
     export POLARS_MAX_THREADS=${task.cpus}
     export OMP_NUM_THREADS=${task.cpus}
 
-    mkdir -p data
-    mv ${all_counts} ${whole_design} ${all_genes_summary} data/
-    cp -r ${moduleDir}/app/* .
+    mkdir -p dash_app/data
+    mv ${all_counts} ${whole_design} ${all_genes_summary} dash_app/data
+    cp -r ${moduleDir}/app/* dash_app/
 
     # as of Nextflow version 25.04.8, having these versions sent to the versions topic channel
     # results in ERROR ~ No such file or directory: <task workdir>/.command.env
@@ -53,6 +53,7 @@ process DASH_APP {
 
     # trying to launch the app
     # if the resulting exit code is not 124 (exit code of timeout) then there is an error
+    cd dash_app
     timeout 10 python -B app.py || exit_code=\$?; [ "\$exit_code" -eq 124 ] && exit 0 || exit 100
     """
 
