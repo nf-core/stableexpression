@@ -223,7 +223,7 @@ workflow STABLEEXPRESSION {
         params.multiqc_methods_description,
         params.outdir
     )
-    
+
     emit:
     accessions                             = GET_PUBLIC_ACCESSIONS.out.raw_accessions
     downloaded                             = ch_downloaded_datasets
