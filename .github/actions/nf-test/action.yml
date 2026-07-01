@@ -58,8 +58,8 @@ runs:
 
     - name: Run nf-test
       shell: bash
-      env:
-        NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
+      #env:
+      #  NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
       run: |
         nf-test test \
           --profile=+${{ inputs.profile }} \
@@ -68,7 +68,7 @@ runs:
           --changed-since HEAD^ \
           --verbose \
           --tap=test.tap \
-          --shard ${{ inputs.shard }}/${{ inputs.total_shards }} --debug
+          --shard ${{ inputs.shard }}/${{ inputs.total_shards }} --debug --tag test_included_and_excluded_accessions
 
           # Save the absolute path of the test.tap file to the output
           echo "tap_file_path=$(realpath test.tap)" >> $GITHUB_OUTPUT
@@ -104,17 +104,17 @@ runs:
           echo "| ⚠️ | No test results found | ${{ inputs.profile }} | ${{ inputs.shard }}/${{ inputs.total_shards }} |" >> $GITHUB_STEP_SUMMARY
         fi
 
-    #- name: Upload files for inspection
-    ###### NB: comment the lines above to make it work:
-    ###### env:
-    ######  NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
-    #  if: always()
-    #  uses: actions/upload-artifact@v4
-    #  with:
-    #    name: output
-    #    path: |
-    #      .nf-test/tests
-    #    retention-days: 7
+    - name: Upload files for inspection
+      ###### NB: comment the lines above to make it work:
+      ###### env:
+      ######  NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: output
+        path: |
+          .nf-test/tests
+        retention-days: 7
 
     - name: Clean up
       if: always()
