@@ -25,7 +25,7 @@
 **nf-core/stableexpression** is a bioinformatics pipeline aiming to aggregate multiple count datasets for a specific species and find the most stable genes. The datasets can be either downloaded from public databases (EBI, NCBI) or provided directly by the user. Both RNA-seq and Microarray count datasets can be utilised.
 
 <p align="center">
-    <img title="Stableexpression Workflow" src="docs/images/nf_core_stableexpression.metromap.png" width=100%>
+    <img title="Stableexpression Workflow" src="docs/images/metromap/nf_core_stableexpression.metromap.png" width=100%>
 </p>
 
 It takes as main inputs :
@@ -56,7 +56,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data if any
 
 > [!NOTE]
-> At this point, datasets downloaded from public databases are merged with datasets provided by the user using the `--datasets` parameter. See [usage](./conf/usage.md#4-use-your-own-expression-datasets) for more information about local datasets.
+> At this step, datasets downloaded from public databases are merged with datasets provided by the user using the `--datasets` parameter. See [usage](./conf/usage.md#4-use-your-own-expression-datasets) for more information about local datasets.
 
 #### 3. ID Mapping (see [usage](./conf/usage.md#5-custom-gene-id-mapping--metadata))
 
