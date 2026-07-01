@@ -48,9 +48,7 @@ def register_callbacks():
     @callback(
         Output("sample-graph", "figure"),
         Output("sample-graph", "style"),
-        Output("sample_stats_display_accordion_control", "disabled"),
-        Output("sample_points_display_accordion_control", "disabled"),
-        Output("sample_plot_customisation_accordion_control", "disabled"),
+        Output("boxplot_customisation_accordion_control", "disabled"),
         Input("sample-counts", "data"),
         Input("curve-type", "value"),
         Input("sample-graph-jitter", "value"),
@@ -60,7 +58,7 @@ def register_callbacks():
         State("sample-graph", "style"),
         # prevent_initial_call=True,
     )
-    def update_sample_histogram(
+    def update_sample_graph(
         sample_counts: dict,
         curve_type: str,
         jitter: float,
@@ -77,9 +75,7 @@ def register_callbacks():
 
         fig = go.Figure()
 
-        sample_stats_display_ac_disabled = True
-        sample_points_display_ac_disabled = True
-        sample_plot_customisation_ac_disabled = True
+        boxplot_customisation_ac_disabled = True
 
         # we need to use the reversed order, otherwise the last traced added is at the top of the graph
         for sample, sample_data in reversed(sample_counts.items()):
@@ -111,16 +107,15 @@ def register_callbacks():
                 # update the layout to remove y-axis labels
                 fig.update_layout(yaxis=dict(showticklabels=False))
 
-                sample_stats_display_ac_disabled = False
-                sample_points_display_ac_disabled = False
-                sample_plot_customisation_ac_disabled = False
+                boxplot_customisation_ac_disabled = False
 
-        fig.update_layout(xaxis=dict(range=[0, 1]), yaxis=dict(ticklabelstandoff=10))
+        fig.update_layout(
+            xaxis=dict(range=[0, 1]),
+            yaxis=dict(ticklabelstandoff=10),
+        )
 
         return (
             fig,
             graph_style,
-            sample_stats_display_ac_disabled,
-            sample_points_display_ac_disabled,
-            sample_plot_customisation_ac_disabled,
+            boxplot_customisation_ac_disabled,
         )
