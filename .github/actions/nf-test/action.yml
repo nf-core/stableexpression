@@ -73,6 +73,12 @@ runs:
           # Save the absolute path of the test.tap file to the output
           echo "tap_file_path=$(realpath test.tap)" >> $GITHUB_OUTPUT
 
+          echo "ls"
+          ls
+
+          echo "ls .nf-test/tests"
+          ls .nf-test/tests 
+
     - name: Generate test summary
       if: always()
       shell: bash
