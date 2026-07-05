@@ -2,3 +2,4 @@
 reporting/multiqc_report.html
 **.py
 pipeline_info/*.{html,json,txt,yml}
+**all_genes_summary.csv
