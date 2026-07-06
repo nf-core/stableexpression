@@ -49,7 +49,6 @@ workflow NFCORE_STABLEEXPRESSION {
     samples_filtered                      = STABLEEXPRESSION.out.samples_filtered
     first_normalisation                   = STABLEEXPRESSION.out.first_normalisation
     quantile_normalised                   = STABLEEXPRESSION.out.quantile_normalised
-    annotation                            = STABLEEXPRESSION.out.annotation
     gene_length_file                      = STABLEEXPRESSION.out.gene_length_file
     merged                                = STABLEEXPRESSION.out.merged
     imputed                               = STABLEEXPRESSION.out.imputed
@@ -96,7 +95,6 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        params.hook_url,
         NFCORE_STABLEEXPRESSION.out.multiqc_report
     )
 
@@ -107,7 +105,6 @@ workflow {
     samples_filtered                      = NFCORE_STABLEEXPRESSION.out.samples_filtered
     first_normalisation                   = NFCORE_STABLEEXPRESSION.out.first_normalisation
     quantile_normalised                   = NFCORE_STABLEEXPRESSION.out.quantile_normalised
-    annotation                            = NFCORE_STABLEEXPRESSION.out.annotation
     gene_length_file                      = NFCORE_STABLEEXPRESSION.out.gene_length_file
     merged                                = NFCORE_STABLEEXPRESSION.out.merged
     imputed                               = NFCORE_STABLEEXPRESSION.out.imputed
@@ -159,12 +156,6 @@ output {
     quantile_normalised {
         path { meta, file ->
             file >> getOutputFolder(meta, "4.quantile_normalised")
-        }
-    }
-
-    annotation {
-        path { file ->
-            file >> "annotation/"
         }
     }
 

@@ -4,8 +4,8 @@ from src.components import graphs, tables
 from src.utils import style
 
 gene_icon = DashIconify(icon="material-symbols:genetics", width=20)
-
-sample_icon = DashIconify(icon="ic:baseline-dashboard-customize", width=20)
+sample_icon = DashIconify(icon="healthicons:medical-sample", width=20)
+gene_table_icon = DashIconify(icon="ic:baseline-dashboard-customize", width=20)
 
 
 tabs = dmc.Tabs(
@@ -30,7 +30,7 @@ tabs = dmc.Tabs(
                 ),
                 dmc.TabsTab(
                     dmc.Text("Statistics - all genes", fw=500),
-                    leftSection=sample_icon,
+                    leftSection=gene_table_icon,
                     value="gene_stats",
                     color="orange",
                     style=style.HEADER_TABLIST_ITEM,
@@ -40,7 +40,6 @@ tabs = dmc.Tabs(
         ),
         dmc.TabsPanel(
             children=[
-                dmc.Text("dhkhg"),
                 graphs.gene_graph,
             ],
             style=style.TABS_PANEL,

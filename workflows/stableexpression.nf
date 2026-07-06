@@ -38,7 +38,6 @@ workflow STABLEEXPRESSION {
     ch_counts_samples_filtered             = channel.empty()
     ch_counts_first_normalissation         = channel.empty()
     ch_normalised_counts                   = channel.empty()
-    ch_annotation                          = channel.empty()
     ch_gene_length_file                    = channel.empty()
     ch_all_counts                          = channel.empty()
     ch_all_imputed_counts                  = channel.empty()
@@ -60,9 +59,9 @@ workflow STABLEEXPRESSION {
         params.fetch_geo_accessions,
         params.platform,
         params.keywords,
-        channel.fromList( params.accessions.tokenize(',') ),
+        params.accessions ? channel.fromList( params.accessions.tokenize(',') ) : channel.empty(),
         params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty(),
-        channel.fromList( params.excluded_accessions.tokenize(',') ),
+        params.excluded_accessions ? channel.fromList( params.excluded_accessions.tokenize(',') ) : channel.empty(),
         params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty(),
         params.random_sampling_size,
         params.random_sampling_seed,
@@ -148,7 +147,6 @@ workflow STABLEEXPRESSION {
 
         ch_counts_first_normalissation         = EXPRESSION_NORMALISATION.out.normalised_once
         ch_normalised_counts                   = EXPRESSION_NORMALISATION.out.quantile_normalised_counts
-        ch_annotation                          = EXPRESSION_NORMALISATION.out.annotation
         ch_gene_length_file                    = EXPRESSION_NORMALISATION.out.gene_length_file
 
         // -----------------------------------------------------------------
@@ -233,7 +231,6 @@ workflow STABLEEXPRESSION {
     samples_filtered                       = ch_counts_samples_filtered
     first_normalisation                    = ch_counts_first_normalissation
     quantile_normalised                    = ch_normalised_counts
-    annotation                             = ch_annotation
     gene_length_file                       = ch_gene_length_file
     merged                                 = ch_all_counts
     imputed                                = ch_all_imputed_counts

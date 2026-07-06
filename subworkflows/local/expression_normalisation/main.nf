@@ -24,7 +24,6 @@ workflow EXPRESSION_NORMALISATION {
     main:
 
     ch_gene_length_file = channel.empty()
-    ch_annotation       = channel.empty()
 
     //
     // MODULE: normalisation of raw count datasets (including downloaded RNA-seq datasets)
@@ -55,7 +54,6 @@ workflow EXPRESSION_NORMALISATION {
                 gff_url
             )
             ch_gene_length_file = GET_TRANSCRIPT_LENGTHS.out.csv
-            ch_annotation       = GET_TRANSCRIPT_LENGTHS.out.annotation
 
         }
 
@@ -84,11 +82,9 @@ workflow EXPRESSION_NORMALISATION {
         quantile_norm_target_distrib
     )
 
-
     emit:
     normalised_once              = ch_counts_after_first_normalisation
     quantile_normalised_counts   = QUANTILE_NORMALISATION.out.counts
-    annotation                  = ch_annotation
     gene_length_file            = ch_gene_length_file
 
 }
