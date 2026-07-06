@@ -46,7 +46,7 @@ sample_graph_plot_type_stack = dmc.Stack(
         dmc.Text("Type of plot", style=style.STACK_SUBSECTION_TITLE),
         dmc.SegmentedControl(
             id="curve-type",
-            value="ng",
+            value="kde",
             color="teal",
             data=[
                 {"value": "histogram", "label": "Histogram"},
@@ -61,7 +61,7 @@ sample_graph_plot_type_stack = dmc.Stack(
 )
 
 
-sample_graph_stats_display_stack = dmc.Stack(
+boxplot_customisation_stack = dmc.Stack(
     [
         dmc.Text(
             "Display mean / standard deviation", style=style.STACK_SUBSECTION_TITLE
@@ -77,13 +77,6 @@ sample_graph_stats_display_stack = dmc.Stack(
             ],
             mb=10,
         ),
-    ],
-    align="left",
-    gap="xl",
-)
-
-sample_graph_points_display_stack = dmc.Stack(
-    [
         dmc.Text("Display points", style=style.STACK_SUBSECTION_TITLE),
         dmc.SegmentedControl(
             id="sample-graph-display-points",
@@ -155,21 +148,12 @@ sidebar_stack = dmc.Accordion(
         dmc.AccordionItem(
             [
                 dmc.AccordionControl(
-                    "Statistics display", id="sample_stats_display_accordion_control"
+                    "Boxplot customisation", id="boxplot_customisation_accordion_control"
                 ),
-                dmc.AccordionPanel(sample_graph_stats_display_stack),
+                dmc.AccordionPanel(boxplot_customisation_stack),
             ],
-            value="sample_stats_display",
-        ),
-        dmc.AccordionItem(
-            [
-                dmc.AccordionControl(
-                    "Points display", id="sample_points_display_accordion_control"
-                ),
-                dmc.AccordionPanel(sample_graph_points_display_stack),
-            ],
-            value="sample_points_display",
-        ),
+            value="boxplot_customisation",
+        )
     ],
     id="sidebar-samples-items",
     style={"marginTop": "20px", "display": "none"},

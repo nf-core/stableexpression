@@ -12,15 +12,15 @@ lint:
   nextflow_config:
     - params.input
   template_strings:
-    - tests/test_data/modules/genorm/compute_m_measure/input/std.0.0.parquet
     - tests/test_data/modules/genorm/compute_m_measure/input/std.1.2.parquet
-    - tests/test_data/modules/genorm/compute_m_measure/input/std.1.2.parquet
-
-nf_core_version: 3.5.2
+  container_configs: false
+nf_core_version: 4.0.2
 repository_type: pipeline
 template:
   author: Olivier Coen
-  description: This pipeline is dedicated to identifying the most stable genes within a single or multiple expression dataset(s). This is particularly useful for identifying the most suitable RT-qPCR reference genes for a specific species.
+  description: This pipeline is dedicated to identifying the most stable genes within
+    a single or multiple expression dataset(s). This is particularly useful for identifying
+    the most suitable RT-qPCR reference genes for a specific species.
   force: false
   is_nfcore: true
   name: stableexpression

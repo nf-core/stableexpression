@@ -45,12 +45,6 @@
                 "2": [
                     
                 ],
-                "3": [
-                    
-                ],
-                "annotation": [
-                    
-                ],
                 "gene_length_file": [
                     
                 ],
@@ -96,7 +90,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:16:07.541265081",
+        "timestamp": "2026-06-29T16:39:15.787203733",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -130,12 +124,6 @@
                 "2": [
                     
                 ],
-                "3": [
-                    
-                ],
-                "annotation": [
-                    
-                ],
                 "gene_length_file": [
                     
                 ],
@@ -163,7 +151,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:16:20.722684766",
+        "timestamp": "2026-06-29T16:39:22.759864753",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -213,13 +201,7 @@
                     ]
                 ],
                 "2": [
-                    
-                ],
-                "3": [
                     "gene_lengths.csv:md5,71ee1b5976759cad7da18f611c4bfb24"
-                ],
-                "annotation": [
-                    
                 ],
                 "gene_length_file": [
                     "gene_lengths.csv:md5,71ee1b5976759cad7da18f611c4bfb24"
@@ -266,7 +248,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:15:52.557289256",
+        "timestamp": "2026-06-29T16:39:07.882875354",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -316,13 +298,7 @@
                     ]
                 ],
                 "2": [
-                    "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744"
-                ],
-                "3": [
                     "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
-                ],
-                "annotation": [
-                    "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744"
                 ],
                 "gene_length_file": [
                     "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
@@ -369,7 +345,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:15:38.096838691",
+        "timestamp": "2026-06-29T16:38:59.746351",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
