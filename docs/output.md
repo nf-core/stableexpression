@@ -196,7 +196,7 @@ Users can visualise the distribution of expressions of specific genes.
     <img title="Distribution of gene expressions" src="images/dash_app/test.genes.png" width=100%>
 </p>
 
-To select a gene, just start typing its name and click on it when it appears. 
+To select a gene, just start typing its name and click on it when it appears.
 
 <p align="left">
     <img title="Distribution of gene expressions" src="images/dash_app/button.png" width=40%>
@@ -222,7 +222,7 @@ Scores and statistics for each gene are displayed here.
     <img title="Distribution of all gene expressions" src="images/dash_app/test.table.png" width=100%>
 </p>
 
-**NB:** Users can select a gene directly in the table by ticking the checkbox next to the gene name. This will add the gene to the list of selected genes in the `Counts / gene` tab. 
+**NB:** Users can select a gene directly in the table by ticking the checkbox next to the gene name. This will add the gene to the list of selected genes in the `Counts / gene` tab.
 
 
 </details>
