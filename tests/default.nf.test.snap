@@ -317,10 +317,8 @@
                 "all_counts.imputed.parquet:md5,e16e554ab42428eba9b050bc1c0ecd34",
                 "all_counts.parquet:md5,8c389d47d51a6df74224fdf0643e2f23",
                 "whole_design.csv:md5,cc24405dce8d22b93b9999a2287113ef",
-                "all_genes_summary.csv:md5,2e1ef40eb545f525d11257117331871c",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
                 "all_counts.imputed.parquet:md5,e16e554ab42428eba9b050bc1c0ecd34",
-                "all_genes_summary.csv:md5,2e1ef40eb545f525d11257117331871c",
                 "whole_design.csv:md5,cc24405dce8d22b93b9999a2287113ef",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "2029240f6d1128be89ddc32729463129:md5,5cc6eb1406d6403afe70dd790f5a929b",
@@ -333,7 +331,7 @@
                 "zero_values_filter_stats.csv:md5,e3f9e9e8b5c6b6e90e57444d438de219"
             ]
         ],
-        "timestamp": "2026-07-03T10:45:45.446032737",
+        "timestamp": "2026-07-06T19:00:28.101132414",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -425,10 +423,8 @@
                 "all_counts.imputed.parquet:md5,674b047c409b161909b6dfc88bebcf00",
                 "all_counts.parquet:md5,937a76e3949add72c3ade9d1f92be702",
                 "whole_design.csv:md5,dcca152e11ae0f05de6a1f37d8a8fa64",
-                "all_genes_summary.csv:md5,8696d284cc44deae525b4a2dc6881fa9",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
                 "all_counts.imputed.parquet:md5,674b047c409b161909b6dfc88bebcf00",
-                "all_genes_summary.csv:md5,8696d284cc44deae525b4a2dc6881fa9",
                 "whole_design.csv:md5,dcca152e11ae0f05de6a1f37d8a8fa64",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "2029240f6d1128be89ddc32729463129:md5,5cc6eb1406d6403afe70dd790f5a929b",
@@ -440,7 +436,7 @@
                 "zero_values_filter_stats.csv:md5,116323a0cecd689b5db3610cce629531"
             ]
         ],
-        "timestamp": "2026-07-03T10:21:02.684286254",
+        "timestamp": "2026-07-06T17:42:40.201964999",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -654,10 +650,8 @@
                 "all_counts.imputed.parquet:md5,e9b73fdeb3bf2ce8cdd7f1cc9ed1d88f",
                 "all_counts.parquet:md5,10dc743c550de97d567ec85ea3c82157",
                 "whole_design.csv:md5,e6b2a08b65fa02b470829a652593e161",
-                "all_genes_summary.csv:md5,bdf3b521b36b01c9a4fd3b224a1008c2",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
                 "all_counts.imputed.parquet:md5,e9b73fdeb3bf2ce8cdd7f1cc9ed1d88f",
-                "all_genes_summary.csv:md5,bdf3b521b36b01c9a4fd3b224a1008c2",
                 "whole_design.csv:md5,e6b2a08b65fa02b470829a652593e161",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "2029240f6d1128be89ddc32729463129:md5,5cc6eb1406d6403afe70dd790f5a929b",
@@ -670,7 +664,7 @@
                 "zero_values_filter_stats.csv:md5,a6fdf3c5250dc46a43f79a9ec5a1355d"
             ]
         ],
-        "timestamp": "2026-07-03T10:13:34.409289482",
+        "timestamp": "2026-07-06T17:34:17.315456626",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -928,10 +922,8 @@
                 "all_counts.imputed.parquet:md5,7c5456b1ceca821c29da213e2d8be7b9",
                 "all_counts.parquet:md5,1b03a6a65da5dd96d5d995b9138af5dc",
                 "whole_design.csv:md5,d3aa542c4ad07d0051a84482fe6cd81c",
-                "all_genes_summary.csv:md5,e77189f6855ac1004a0e37e24c260b02",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
                 "all_counts.imputed.parquet:md5,7c5456b1ceca821c29da213e2d8be7b9",
-                "all_genes_summary.csv:md5,e77189f6855ac1004a0e37e24c260b02",
                 "whole_design.csv:md5,d3aa542c4ad07d0051a84482fe6cd81c",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "2029240f6d1128be89ddc32729463129:md5,5cc6eb1406d6403afe70dd790f5a929b",
@@ -944,7 +936,7 @@
                 "zero_values_filter_stats.csv:md5,766d888e41179e8a785f634b3b606bc9"
             ]
         ],
-        "timestamp": "2026-07-03T10:07:53.42532172",
+        "timestamp": "2026-07-06T18:50:31.151291316",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -1099,10 +1091,8 @@
                 "all_counts.imputed.parquet:md5,4de0062e60572148d42386e1b843183e",
                 "all_counts.parquet:md5,aa90efa47083cb64b6146a478812eaac",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
-                "all_genes_summary.csv:md5,9574f0257467d70acbfda3f53251c1f8",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
                 "all_counts.imputed.parquet:md5,4de0062e60572148d42386e1b843183e",
-                "all_genes_summary.csv:md5,9574f0257467d70acbfda3f53251c1f8",
                 "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "2029240f6d1128be89ddc32729463129:md5,5cc6eb1406d6403afe70dd790f5a929b",
@@ -1116,7 +1106,7 @@
                 "geo_warning_reasons.csv:md5,dbbc71e929cf78f07a341ade39cb366b"
             ]
         ],
-        "timestamp": "2026-07-03T10:30:27.94714887",
+        "timestamp": "2026-07-06T18:42:47.055611447",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -1330,10 +1320,8 @@
                 "all_counts.imputed.parquet:md5,2639e4852c292a8581475ebb649e6840",
                 "all_counts.parquet:md5,65a4e6f5c37f73ca0ad13fdd36807913",
                 "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
-                "all_genes_summary.csv:md5,c127a6baa5e56a9c74067b76fecd2d24",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
                 "all_counts.imputed.parquet:md5,2639e4852c292a8581475ebb649e6840",
-                "all_genes_summary.csv:md5,c127a6baa5e56a9c74067b76fecd2d24",
                 "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "2029240f6d1128be89ddc32729463129:md5,5cc6eb1406d6403afe70dd790f5a929b",
@@ -1347,7 +1335,7 @@
                 "renaming_warning_reasons.tsv:md5,0a11a59b5b547a39ab7a0e4dac622173"
             ]
         ],
-        "timestamp": "2026-07-03T10:23:53.823696686",
+        "timestamp": "2026-07-06T18:35:42.265677165",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
