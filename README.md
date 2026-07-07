@@ -161,6 +161,7 @@ nf-core/stableexpression was originally written and is currently developed by Ol
 We thank the following people for their assistance in the development of this pipeline:
 
 - Rémy Costa
+- Gaspard Ichas
 - Shaheen Acheche
 - Janine Soares
 
