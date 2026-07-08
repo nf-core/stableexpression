@@ -7,6 +7,7 @@ import logging
 from pathlib import Path
 
 import config
+from common import sink_csv_with_floats
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
@@ -110,9 +111,7 @@ def main():
     if m_measure_lf.select(config.GENE_ID_COLNAME).collect().is_duplicated().any():
         raise ValueError("Duplicate values found for gene IDs!")
 
-    m_measure_lf.sink_csv(
-        M_MEASURE_OUTFILE_NAME, float_precision=config.DEFAULT_CSV_FLOAT_PRECISION
-    )
+    sink_csv_with_floats(m_measure_lf, M_MEASURE_OUTFILE_NAME)
 
 
 if __name__ == "__main__":

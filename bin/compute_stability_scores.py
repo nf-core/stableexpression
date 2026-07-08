@@ -10,7 +10,7 @@ from typing import ClassVar
 
 import config
 import polars as pl
-from common import write_float_csv
+from common import write_csv_with_floats
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -222,7 +222,7 @@ def get_statistics(stat_files: list[Path]) -> pl.DataFrame:
 def export_data(scored_df: pl.DataFrame):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
-    write_float_csv(scored_df, STATISTICS_WITH_SCORES_OUTFILENAME)
+    write_csv_with_floats(scored_df, STATISTICS_WITH_SCORES_OUTFILENAME)
     logger.info("Done")
 
 

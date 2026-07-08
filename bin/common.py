@@ -86,12 +86,22 @@ def export_parquet(df: pl.DataFrame, outfilename: str):
     logger.info(f"Exporting processed counts to: {outfilename}")
     # round all float columns to avoid inconsistencies during subsequent computations
     # cast float columns to Float32 to fix the
-    df.with_columns(cs.float().round(8).cast(pl.Float32)).write_parquet(outfilename)
+    df.with_columns(
+        cs.float().round(config.NB_DECIMAL_DIGITS).cast(pl.Float32)
+    ).write_parquet(outfilename)
 
 
-def write_float_csv(
+def write_csv_with_floats(
     df: pl.DataFrame,
     outfilename: str,
     float_precision: int = config.DEFAULT_CSV_FLOAT_PRECISION,
 ):
-    df.write_csv(outfilename, float_precision=float_precision)
+    df.with_columns(
+        cs.float().round(float_precision).cast(pl.Float32)
+    ).write_csv(outfilename, float_precision=float_precision)
+
+
+def sink_csv_with_floats(df: pl.LazyFrame, outfilename: str):
+    df.with_columns(
+        cs.float().round(config.DEFAULT_CSV_FLOAT_PRECISION).cast(pl.Float32)
+    ).sink_csv(outfilename, float_precision=config.DEFAULT_CSV_FLOAT_PRECISION)

@@ -7,6 +7,7 @@ import logging
 from pathlib import Path
 
 import config
+from common import sink_csv_with_floats
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
@@ -243,7 +244,7 @@ def export_data(lf: pl.LazyFrame, platform: str | None):
         else ALL_GENES_RESULT_OUTFILE_SUFFIX
     )
     logger.info(f"Exporting statistics for all genes to: {outfile}")
-    lf.sink_csv(outfile, float_precision=config.DEFAULT_CSV_FLOAT_PRECISION)
+    sink_csv_with_floats(lf, outfile)
     logger.info("Done")
 
 
