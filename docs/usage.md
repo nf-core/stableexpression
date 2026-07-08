@@ -71,7 +71,7 @@ nextflow run nf-core/stableexpression \
 > If you want to download only the datasets corresponding to the accessions supplied, you must set the `--skip_fetch_eatlas_accessions` parameter.
 
 > [!NOTE]
-> If you provide accessions through `--eatlas_accessions_file` or `--geo_accessions_file`, there must be one accession per line. The extension of the file does not matter.
+> In the files supplied with `--eatlas_accessions_file` or `--geo_accessions_file`, there should be one accession per line. The extension of the file does not matter.
 
 In case you do not know which accessions you want but you would like to control precisely which datasets are included in you analysis, you may run first:
 
@@ -85,17 +85,18 @@ nextflow run nf-core/stableexpression \
 
 Fetched accessions with their respective metadata will be available in `<OUTDIR>/expression_atlas/accessions/` and `<OUTDIR>/geo/accessions/`
 
+> [!IMPORTANT]
+> For `homo sapiens`, the experiment `E-GTEX-8` comprises 17350 samples :exploding_head: :exploding_head: :exploding_head:... It it therefore excluded by default, but you can include it anyway by setting `--accessions E-GTEX-8`.
+
 ## 4. Use your own expression datasets
 
 You can of course provide your own counts datasets / experimental designs.
 
-> [!NOTE]
+> [!IMPORTANT]
 >
 > - To ensure all RNA-seq datasets are processed the same way, users should provide **raw counts**.
 > - If normalised counts are provided, users should apply the same normalisation process to all of them. **The prefered method is `TPM`**.
-
-> [!WARNING]
-> Microarray data must be already normalised. When mixing your own datasets with public ones in a single run, you should use the `RMA` method in order to be compliant with Expression Atlas and GEO datasets.
+> - Microarray data must be already normalised. When mixing your own datasets with public ones in a single run, you should use the `RMA` method in order to be compliant with Expression Atlas datasets.
 
 First, prepare a CSV samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
 
@@ -140,7 +141,11 @@ gene_1,1,2,3
 gene_2,1,2,3
 ```
 
-While the design should look like:
+> [!WARNING]
+> The count file should not have any column other than the first one (gene IDs) and the sample columns.
+
+
+The design should look like:
 
 ```csv title=design.csv
 sample,condition
@@ -148,11 +153,6 @@ sample_A,condition_1
 sample_B,condition_2
 sample_C,condition_1
 ```
-
-> [!WARNING]
->
-> - In the count file, the first header column (corresponding to gene IDs) should not be empty. However, its name can be anything.
-> - The count file should not have any column other than the first one (gene IDs) and the sample columns.
 
 > [!TIP]
 > Both counts and design files can also be supplied as TSV files.
@@ -172,7 +172,7 @@ nextflow run nf-core/stableexpression \
 > The `--skip_fetch_eatlas_accessions` parameter is supplied here to show how to analyse **only your own dataset**. You may remove this parameter if you want to mix you dataset(s) with public ones.
 
 > [!IMPORTANT]
-> By default, the pipeline tries to map gene IDs to Ensembl gene IDs. **All genes that cannot be mapped are discarded from the analysis**. This ensures  that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think on the contrary that your gene IDs just won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, we recommend users to supply their own gene id mapping and gene metadata files using the `--gene_id_mapping` and `--gene_metadata` parameters respectively.
+> By default, the pipeline tries to map gene IDs to Ensembl gene IDs. **All genes that cannot be mapped are discarded from the analysis**. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think on the contrary that your gene IDs just won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, we recommend users to supply their own gene id mapping and gene metadata files using the `--gene_id_mapping` and `--gene_metadata` parameters respectively.
 >
 > Both files are totally optional, however:
 > - a custom gene id mapping might help merging datasets properly
