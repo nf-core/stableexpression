@@ -69,7 +69,7 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,a7c936faa9135439fd1b86c195f60414"
+                        "stability_values.normfinder.csv:md5,a6075221b28ed8a5599dd8dbd2eecb0c"
                     ]
                 ],
                 "1": [
@@ -112,12 +112,12 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,a7c936faa9135439fd1b86c195f60414"
+                        "stability_values.normfinder.csv:md5,a6075221b28ed8a5599dd8dbd2eecb0c"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-25T18:57:22.089805173",
+        "timestamp": "2026-07-08T15:42:56.711837454",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
