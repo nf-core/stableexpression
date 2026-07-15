@@ -16,6 +16,5 @@ tokenizers/
 corpora/
 .github/act.custom_runner.Dockerfile
 .ruff_cache
-galaxy/test_output/
 TODO
 test/

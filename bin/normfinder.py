@@ -12,7 +12,7 @@ from statistics import mean
 import config
 import numpy as np
 import polars as pl
-from common import write_float_csv
+from common import write_csv_with_floats
 from numba import njit, prange
 from tqdm import tqdm
 
@@ -331,7 +331,7 @@ class NormFinder:
         ]
         return unbiased_intragroup_variance_df.with_columns(
             n_samples=pl.Series(n_samples_list)
-        ).select([(pl.col(c) / pl.col("n_samples")).alias(c) for c in self.genes])
+        ).select([(pl.col(c) / pl.col("n_samples")).cast(pl.Float32).alias(c) for c in self.genes])
 
     def get_unbiased_intergroup_variance(
         self, gene_means_in_groups_df: pl.DataFrame, dataset_overall_mean: float
@@ -382,7 +382,7 @@ class NormFinder:
                 (
                     pl.col("sum_of_squares")
                     / ((self.n_groups - 1) * (self.n_genes - 1))
-                ).alias("normalised_sum_of_squares")
+                ).cast(pl.Float32).alias("normalised_sum_of_squares")
             )
             .item()
         )
@@ -394,7 +394,7 @@ class NormFinder:
             .select("sum")
             .sum()  # sum over rows
             .select(
-                (pl.col("sum") / (self.n_groups * self.n_genes)).alias("normalised_sum")
+                (pl.col("sum") / (self.n_groups * self.n_genes)).cast(pl.Float32).alias("normalised_sum")
             )
             .item()
         )
@@ -407,7 +407,11 @@ class NormFinder:
     ):
         difnew = diff_df * gamma / (gamma + vardiff_df)
         varnew = vardiff_df + gamma * vardiff_df / (gamma + vardiff_df)
-        return difnew, varnew
+
+        return (
+            difnew.with_columns(pl.all().cast(pl.Float32)),
+            varnew.with_columns(pl.all().cast(pl.Float32))
+        )
 
     def apply_shrinkage(
         self, intergroup_variance_df: pl.DataFrame, group_mean_variance_df: pl.DataFrame
@@ -490,7 +494,7 @@ def parse_args():
 def export_stability(stabilities: pl.DataFrame):
     """Export stability values to CSV file."""
     logger.info(f"Exporting stability values to: {STABILITY_OUTFILENAME}")
-    write_float_csv(stabilities, STABILITY_OUTFILENAME)
+    write_csv_with_floats(stabilities, STABILITY_OUTFILENAME)
 
 
 def main():

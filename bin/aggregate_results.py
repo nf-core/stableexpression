@@ -9,7 +9,7 @@ from pathlib import Path
 import config
 import polars as pl
 import yaml
-from common import write_float_csv
+from common import write_csv_with_floats
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -437,7 +437,7 @@ def main():
 
     logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
     # sorting values in order to having consistent output
-    write_float_csv(
+    write_csv_with_floats(
         all_genes_summary_df.sort(by=config.GENE_ID_COLNAME),
         ALL_GENE_SUMMARY_OUTFILENAME,
     )
@@ -470,10 +470,10 @@ def main():
         )
 
         section_summary_outfile = f"{section}.{SUMMARY_OUTFILENAME_SUFFIX}"
-        write_float_csv(section_df, section_summary_outfile)
+        write_csv_with_floats(section_df, section_summary_outfile)
 
         section_counts_outfile = f"{section}.{COUNTS_OUTFILENAME_SUFFIX}"
-        write_float_csv(section_most_stable_genes_counts_df, section_counts_outfile)
+        write_csv_with_floats(section_most_stable_genes_counts_df, section_counts_outfile)
 
         # making new sections in the MultiQC config
         new_mqc_config_sections[f"genes_{section}"] = format_multiqc_section(
