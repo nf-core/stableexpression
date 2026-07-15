@@ -18,3 +18,4 @@ corpora/
 .ruff_cache
 TODO
 test/
+output/
