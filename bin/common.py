@@ -101,7 +101,11 @@ def write_csv_with_floats(
     ).write_csv(outfilename, float_precision=float_precision)
 
 
-def sink_csv_with_floats(df: pl.LazyFrame, outfilename: str):
-    df.with_columns(
-        cs.float().round(config.DEFAULT_CSV_FLOAT_PRECISION).cast(pl.Float32)
-    ).sink_csv(outfilename, float_precision=config.DEFAULT_CSV_FLOAT_PRECISION)
+def sink_csv_with_floats(
+    lf: pl.LazyFrame,
+    outfilename: str,
+    float_precision: int = config.DEFAULT_CSV_FLOAT_PRECISION,
+):
+    lf.with_columns(
+        cs.float().round(float_precision).cast(pl.Float32)
+    ).sink_csv(outfilename, float_precision=float_precision)

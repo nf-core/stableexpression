@@ -111,7 +111,7 @@ def main():
     if m_measure_lf.select(config.GENE_ID_COLNAME).collect().is_duplicated().any():
         raise ValueError("Duplicate values found for gene IDs!")
 
-    sink_csv_with_floats(m_measure_lf, M_MEASURE_OUTFILE_NAME)
+    sink_csv_with_floats(m_measure_lf, M_MEASURE_OUTFILE_NAME, float_precision=5)
 
 
 if __name__ == "__main__":
