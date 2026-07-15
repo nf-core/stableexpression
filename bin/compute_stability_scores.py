@@ -222,7 +222,7 @@ def get_statistics(stat_files: list[Path]) -> pl.DataFrame:
 def export_data(scored_df: pl.DataFrame):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
-    write_csv_with_floats(scored_df, STATISTICS_WITH_SCORES_OUTFILENAME)
+    write_csv_with_floats(scored_df, STATISTICS_WITH_SCORES_OUTFILENAME, float_precision=5)
     logger.info("Done")
 
 
