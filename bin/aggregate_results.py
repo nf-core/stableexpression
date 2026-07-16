@@ -440,6 +440,7 @@ def main():
     write_csv_with_floats(
         all_genes_summary_df.sort(by=config.GENE_ID_COLNAME),
         ALL_GENE_SUMMARY_OUTFILENAME,
+        float_precision=5,
     )
 
     # --------------------------------------------------
@@ -470,7 +471,7 @@ def main():
         )
 
         section_summary_outfile = f"{section}.{SUMMARY_OUTFILENAME_SUFFIX}"
-        write_csv_with_floats(section_df, section_summary_outfile)
+        write_csv_with_floats(section_df, section_summary_outfile, float_precision=5)
 
         section_counts_outfile = f"{section}.{COUNTS_OUTFILENAME_SUFFIX}"
         write_csv_with_floats(section_most_stable_genes_counts_df, section_counts_outfile)

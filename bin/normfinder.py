@@ -494,7 +494,7 @@ def parse_args():
 def export_stability(stabilities: pl.DataFrame):
     """Export stability values to CSV file."""
     logger.info(f"Exporting stability values to: {STABILITY_OUTFILENAME}")
-    write_csv_with_floats(stabilities, STABILITY_OUTFILENAME)
+    write_csv_with_floats(stabilities, STABILITY_OUTFILENAME, float_precision=5)
 
 
 def main():
