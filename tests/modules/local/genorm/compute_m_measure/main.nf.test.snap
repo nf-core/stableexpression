@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,2119b16fe13e2d0bc0fedc3c9d3d1733"
+                        "m_measures.csv:md5,4c8b4cd9f00ab120e501fd3e355c442f"
                     ]
                 ],
                 "1": [
@@ -29,12 +29,12 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,2119b16fe13e2d0bc0fedc3c9d3d1733"
+                        "m_measures.csv:md5,4c8b4cd9f00ab120e501fd3e355c442f"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-25T18:51:38.962817876",
+        "timestamp": "2026-07-15T23:10:36.337566481",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"

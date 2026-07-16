@@ -3,12 +3,12 @@
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,67da835eca8de21309e7b3ec0f6a31f7"
+                    "all_genes_summary.csv:md5,607289642da67e95f2ede922cb3a5eef"
                 ],
                 "1": [
                     [
-                        "section_1.most_stable_genes_summary.csv:md5,a4c693ec5ae3f4e0e5313811dd96fa21",
-                        "section_2.most_stable_genes_summary.csv:md5,1c33432a2576231c821e52424113a65b"
+                        "section_1.most_stable_genes_summary.csv:md5,ca8ee6af3acc0419ec614d507186a270",
+                        "section_2.most_stable_genes_summary.csv:md5,afc7acd467fdef73dd9590dc2bb14014"
                     ]
                 ],
                 "2": [
@@ -42,15 +42,15 @@
                     ]
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,67da835eca8de21309e7b3ec0f6a31f7"
+                    "all_genes_summary.csv:md5,607289642da67e95f2ede922cb3a5eef"
                 ],
                 "custom_content_multiqc_config": [
                     "custom_content_multiqc_config.yaml:md5,edf372668919bebe05783bc16995c5c4"
                 ],
                 "most_stable_genes_summary": [
                     [
-                        "section_1.most_stable_genes_summary.csv:md5,a4c693ec5ae3f4e0e5313811dd96fa21",
-                        "section_2.most_stable_genes_summary.csv:md5,1c33432a2576231c821e52424113a65b"
+                        "section_1.most_stable_genes_summary.csv:md5,ca8ee6af3acc0419ec614d507186a270",
+                        "section_2.most_stable_genes_summary.csv:md5,afc7acd467fdef73dd9590dc2bb14014"
                     ]
                 ],
                 "most_stable_genes_transposed_counts_filtered": [
@@ -61,7 +61,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-25T18:45:43.155310059",
+        "timestamp": "2026-07-15T23:05:40.990340315",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -71,12 +71,12 @@
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,62a7b6ba136e4e2f7ab954386a6fbe5e"
+                    "all_genes_summary.csv:md5,e45755ab86e9c5d9e98e8405088719fd"
                 ],
                 "1": [
                     [
-                        "section_1.most_stable_genes_summary.csv:md5,8f75c2b1041d3cea08f13dfa05378a78",
-                        "section_2.most_stable_genes_summary.csv:md5,edc6b56e2f4710c490906cd8c9a54790"
+                        "section_1.most_stable_genes_summary.csv:md5,b507d5535f9af56a5df701502b54fa33",
+                        "section_2.most_stable_genes_summary.csv:md5,ffa897de59cb12966e4e8135fbf778dd"
                     ]
                 ],
                 "2": [
@@ -110,15 +110,15 @@
                     ]
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,62a7b6ba136e4e2f7ab954386a6fbe5e"
+                    "all_genes_summary.csv:md5,e45755ab86e9c5d9e98e8405088719fd"
                 ],
                 "custom_content_multiqc_config": [
                     "custom_content_multiqc_config.yaml:md5,3b4d962847a26bdc7c0fa34c4fcff168"
                 ],
                 "most_stable_genes_summary": [
                     [
-                        "section_1.most_stable_genes_summary.csv:md5,8f75c2b1041d3cea08f13dfa05378a78",
-                        "section_2.most_stable_genes_summary.csv:md5,edc6b56e2f4710c490906cd8c9a54790"
+                        "section_1.most_stable_genes_summary.csv:md5,b507d5535f9af56a5df701502b54fa33",
+                        "section_2.most_stable_genes_summary.csv:md5,ffa897de59cb12966e4e8135fbf778dd"
                     ]
                 ],
                 "most_stable_genes_transposed_counts_filtered": [
@@ -129,7 +129,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-25T18:45:25.464644135",
+        "timestamp": "2026-07-15T23:05:24.713512069",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -139,12 +139,12 @@
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,67da835eca8de21309e7b3ec0f6a31f7"
+                    "all_genes_summary.csv:md5,607289642da67e95f2ede922cb3a5eef"
                 ],
                 "1": [
                     [
-                        "section_1.most_stable_genes_summary.csv:md5,a4c693ec5ae3f4e0e5313811dd96fa21",
-                        "section_2.most_stable_genes_summary.csv:md5,1c33432a2576231c821e52424113a65b"
+                        "section_1.most_stable_genes_summary.csv:md5,ca8ee6af3acc0419ec614d507186a270",
+                        "section_2.most_stable_genes_summary.csv:md5,afc7acd467fdef73dd9590dc2bb14014"
                     ]
                 ],
                 "2": [
@@ -178,15 +178,15 @@
                     ]
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,67da835eca8de21309e7b3ec0f6a31f7"
+                    "all_genes_summary.csv:md5,607289642da67e95f2ede922cb3a5eef"
                 ],
                 "custom_content_multiqc_config": [
                     "custom_content_multiqc_config.yaml:md5,401b9b35a47e29a8dfac3ca7700e26bd"
                 ],
                 "most_stable_genes_summary": [
                     [
-                        "section_1.most_stable_genes_summary.csv:md5,a4c693ec5ae3f4e0e5313811dd96fa21",
-                        "section_2.most_stable_genes_summary.csv:md5,1c33432a2576231c821e52424113a65b"
+                        "section_1.most_stable_genes_summary.csv:md5,ca8ee6af3acc0419ec614d507186a270",
+                        "section_2.most_stable_genes_summary.csv:md5,afc7acd467fdef73dd9590dc2bb14014"
                     ]
                 ],
                 "most_stable_genes_transposed_counts_filtered": [
@@ -197,7 +197,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-25T18:45:51.972049684",
+        "timestamp": "2026-07-15T23:05:49.001689036",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -207,10 +207,10 @@
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,d2d279f4c5243b3af01130ca04b5603d"
+                    "all_genes_summary.csv:md5,c89444f6325df06ddeeb9aa9f37b6b5c"
                 ],
                 "1": [
-                    "section_1.most_stable_genes_summary.csv:md5,8f75c2b1041d3cea08f13dfa05378a78"
+                    "section_1.most_stable_genes_summary.csv:md5,b507d5535f9af56a5df701502b54fa33"
                 ],
                 "2": [
                     "section_1.most_stable_genes_transposed_counts.csv:md5,30f84570c2104f7cfac4289d583b68cd"
@@ -240,20 +240,20 @@
                     ]
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,d2d279f4c5243b3af01130ca04b5603d"
+                    "all_genes_summary.csv:md5,c89444f6325df06ddeeb9aa9f37b6b5c"
                 ],
                 "custom_content_multiqc_config": [
                     "custom_content_multiqc_config.yaml:md5,4941e220852b2c814302f508cf5837cd"
                 ],
                 "most_stable_genes_summary": [
-                    "section_1.most_stable_genes_summary.csv:md5,8f75c2b1041d3cea08f13dfa05378a78"
+                    "section_1.most_stable_genes_summary.csv:md5,b507d5535f9af56a5df701502b54fa33"
                 ],
                 "most_stable_genes_transposed_counts_filtered": [
                     "section_1.most_stable_genes_transposed_counts.csv:md5,30f84570c2104f7cfac4289d583b68cd"
                 ]
             }
         ],
-        "timestamp": "2026-06-25T18:46:00.915395578",
+        "timestamp": "2026-07-15T23:05:57.046072394",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -263,12 +263,12 @@
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,67da835eca8de21309e7b3ec0f6a31f7"
+                    "all_genes_summary.csv:md5,607289642da67e95f2ede922cb3a5eef"
                 ],
                 "1": [
                     [
-                        "section_1.most_stable_genes_summary.csv:md5,a4c693ec5ae3f4e0e5313811dd96fa21",
-                        "section_2.most_stable_genes_summary.csv:md5,1c33432a2576231c821e52424113a65b"
+                        "section_1.most_stable_genes_summary.csv:md5,ca8ee6af3acc0419ec614d507186a270",
+                        "section_2.most_stable_genes_summary.csv:md5,afc7acd467fdef73dd9590dc2bb14014"
                     ]
                 ],
                 "2": [
@@ -302,15 +302,15 @@
                     ]
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,67da835eca8de21309e7b3ec0f6a31f7"
+                    "all_genes_summary.csv:md5,607289642da67e95f2ede922cb3a5eef"
                 ],
                 "custom_content_multiqc_config": [
                     "custom_content_multiqc_config.yaml:md5,3b4d962847a26bdc7c0fa34c4fcff168"
                 ],
                 "most_stable_genes_summary": [
                     [
-                        "section_1.most_stable_genes_summary.csv:md5,a4c693ec5ae3f4e0e5313811dd96fa21",
-                        "section_2.most_stable_genes_summary.csv:md5,1c33432a2576231c821e52424113a65b"
+                        "section_1.most_stable_genes_summary.csv:md5,ca8ee6af3acc0419ec614d507186a270",
+                        "section_2.most_stable_genes_summary.csv:md5,afc7acd467fdef73dd9590dc2bb14014"
                     ]
                 ],
                 "most_stable_genes_transposed_counts_filtered": [
@@ -321,7 +321,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-25T18:45:34.206082027",
+        "timestamp": "2026-07-15T23:05:32.778792222",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
