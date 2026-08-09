@@ -1,4 +1,5 @@
 lint:
+  container_configs: false
   files_exist:
     - conf/igenomes.config
     - conf/igenomes_ignored.config
@@ -16,8 +17,7 @@ lint:
     - params.input
   template_strings:
     - tests/test_data/modules/genorm/compute_m_measure/input/std.1.2.parquet
-  container_configs: false
-nf_core_version: 4.0.2
+nf_core_version: 4.0.3
 repository_type: pipeline
 template:
   author: Olivier Coen
