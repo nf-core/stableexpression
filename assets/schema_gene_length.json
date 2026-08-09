@@ -1,0 +1,23 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/assets/schema_gene_length.json",
+    "title": "nf-core/stableexpression pipeline - custom mappings schema",
+    "description": "Schema for the file provided with in the design column of the params.gene_length CSV file",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "gene_id": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "You must provide a column for original gene IDs."
+            },
+            "length": {
+                "type": "integer",
+                "minimum": 0,
+                "errorMessage": "You must provide a column for gene lengths."
+            }
+        },
+        "required": ["gene_id", "length"]
+    }
+}

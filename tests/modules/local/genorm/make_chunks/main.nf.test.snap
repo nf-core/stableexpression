@@ -1,0 +1,65 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        [
+                            "count_chunk.0.parquet:md5,22be5d967ebe1fc85ca2ae89b0d4ace8",
+                            "count_chunk.1.parquet:md5,7767448e1420f03dcd5bbecda253a80d",
+                            "count_chunk.2.parquet:md5,c898285b5d27ea91c0623fe944ef199d",
+                            "count_chunk.3.parquet:md5,aa7bac7ac4cbddba4a4dc24c7d27209f",
+                            "count_chunk.4.parquet:md5,7cc111de4bb94ad1b28cf653e263f270",
+                            "count_chunk.5.parquet:md5,0ac9382a38f3c3f588197cdcb5545756",
+                            "count_chunk.6.parquet:md5,9980655eca04ab6f95b2a3e251838d41",
+                            "count_chunk.7.parquet:md5,6981a1560d1aacf69946e9550352fa40",
+                            "count_chunk.8.parquet:md5,8267efdcb52eb358154d3d7fabcce4bd",
+                            "count_chunk.9.parquet:md5,cb0b98b55e25741209f4e8ff06f97c85"
+                        ]
+                    ]
+                ],
+                "1": [
+                    [
+                        "MAKE_CHUNKS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "MAKE_CHUNKS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "chunks": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        [
+                            "count_chunk.0.parquet:md5,22be5d967ebe1fc85ca2ae89b0d4ace8",
+                            "count_chunk.1.parquet:md5,7767448e1420f03dcd5bbecda253a80d",
+                            "count_chunk.2.parquet:md5,c898285b5d27ea91c0623fe944ef199d",
+                            "count_chunk.3.parquet:md5,aa7bac7ac4cbddba4a4dc24c7d27209f",
+                            "count_chunk.4.parquet:md5,7cc111de4bb94ad1b28cf653e263f270",
+                            "count_chunk.5.parquet:md5,0ac9382a38f3c3f588197cdcb5545756",
+                            "count_chunk.6.parquet:md5,9980655eca04ab6f95b2a3e251838d41",
+                            "count_chunk.7.parquet:md5,6981a1560d1aacf69946e9550352fa40",
+                            "count_chunk.8.parquet:md5,8267efdcb52eb358154d3d7fabcce4bd",
+                            "count_chunk.9.parquet:md5,cb0b98b55e25741209f4e8ff06f97c85"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-06-26T09:08:23.244233599",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    }
+}

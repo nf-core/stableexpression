@@ -1,0 +1,5 @@
+gene_id,mean,standard_deviation,median,median_absolute_deviation,coefficient_of_variation,robust_coefficient_of_variation_median,ratio_nulls_in_all_samples,ratio_nulls_in_valid_samples,ratio_zeros,expression_level_quantile_interval,section,normfinder_stability_value,genorm_m_measure,is_candidate,normfinder_stability_value_normalised,genorm_m_measure_normalised,coefficient_of_variation_normalised,robust_coefficient_of_variation_median_normalised,stability_score,rank
+ENSRNA049454963,0.997524,0.000782,0.997419,0.000419,0.000784,0.000622,0.000000,0.000000,0.000000,99.000000,1,0.000125,0.002924,1,0.006574,0.001386,0.177943,0.089186,0.275089,6
+ENSRNA049454974,0.997944,0.000658,0.998069,0.000409,0.000659,0.000607,0.000000,0.000000,0.000000,99.000000,1,0.000185,0.003060,1,0.050402,0.039091,0.143564,0.086399,0.319456,7
+ENSRNA049455639,0.997911,0.000919,0.997909,0.000533,0.000921,0.000791,0.000000,0.000000,0.000000,99.000000,1,0.000116,0.002919,1,0.000000,0.000000,0.215622,0.120587,0.336209,8
+ENSRNA049455690,0.996857,0.000889,0.996528,0.000433,0.000892,0.000645,0.000000,0.000000,0.000000,99.000000,1,0.000155,0.002944,1,0.028488,0.006931,0.207646,0.093460,0.336524,9

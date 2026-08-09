@@ -1,0 +1,56 @@
+{
+    "1000 genes": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "m_measures.csv:md5,bc8c010ec0aea125c901d9ec4f408a0e"
+                    ]
+                ],
+                "m_measures": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "m_measures.csv:md5,bc8c010ec0aea125c901d9ec4f408a0e"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-07-15T23:20:33.074272912",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "10 genes": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "m_measures.csv:md5,12ec461fcf9b58aeeb10c905ab9bf2f7"
+                    ]
+                ],
+                "m_measures": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "m_measures.csv:md5,12ec461fcf9b58aeeb10c905ab9bf2f7"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-07-15T23:19:13.308656977",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    }
+}
