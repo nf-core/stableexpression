@@ -1,0 +1,28 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/assets/schema_gene_metadata.json",
+    "title": "nf-core/stableexpression pipeline - custom mappings schema",
+    "description": "Schema for the file provided with the params.gene_metadata CSV / TSV file",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "gene_id": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "You must provide a column for mapped IDs."
+            },
+            "name": {
+                "type": "string",
+                "pattern": "^[^,]+$",
+                "errorMessage": "You must provide a column for gene names."
+            },
+            "description": {
+                "type": "string",
+                "pattern": "^[^,]+$",
+                "errorMessage": "You must provide a column for gene descriptions."
+            }
+        },
+        "required": ["gene_id", "name", "description"]
+    }
+}

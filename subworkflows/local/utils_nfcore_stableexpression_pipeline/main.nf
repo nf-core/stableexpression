@@ -11,7 +11,6 @@
 include { UTILS_NFSCHEMA_PLUGIN     } from '../../nf-core/utils_nfschema_plugin'
 include { paramsSummaryMap          } from 'plugin/nf-schema'
 include { samplesheetToList         } from 'plugin/nf-schema'
-include { paramsHelp                } from 'plugin/nf-schema'
 include { completionEmail           } from '../../nf-core/utils_nfcore_pipeline'
 include { completionSummary         } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NFCORE_PIPELINE     } from '../../nf-core/utils_nfcore_pipeline'
@@ -37,8 +36,6 @@ workflow PIPELINE_INITIALISATION {
     show_hidden       // boolean: Show hidden parameters in the help message
 
     main:
-
-    ch_versions = channel.empty()
 
     //
     // Print version and exit if required and dump pipeline parameters to JSON file
@@ -77,7 +74,7 @@ workflow PIPELINE_INITIALISATION {
         before_text = before_text.replaceAll(/\033\[[0-9;]*m/, '')
     }
 
-    command = "nextflow run ${workflow.manifest.name} -profile <docker/singularity/.../institute> --input samplesheet.csv --outdir <OUTDIR>"
+    command = "nextflow run ${workflow.manifest.name} -profile <docker/apptainer/singularity/.../institute> --species <species> --outdir <OUTDIR>"
 
     UTILS_NFSCHEMA_PLUGIN (
         workflow,
@@ -88,7 +85,8 @@ workflow PIPELINE_INITIALISATION {
         show_hidden,
         before_text,
         after_text,
-        command
+        command,
+        null
     )
 
     //
@@ -99,32 +97,23 @@ workflow PIPELINE_INITIALISATION {
     )
 
     //
-    // Create channel from input file provided through params.input
+    // Custom validation for pipeline parameters
     //
+    validateInputParameters( params )
 
-    channel
-        .fromList(samplesheetToList(input, "${projectDir}/assets/schema_input.json"))
-        .map {
-            meta, fastq_1, fastq_2 ->
-                if (!fastq_2) {
-                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
-                } else {
-                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
-                }
-        }
-        .groupTuple()
-        .map { samplesheet ->
-            validateInputSamplesheet(samplesheet)
-        }
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
-        }
-        .set { ch_samplesheet }
+    //
+    // Create channel from datasets file provided through params.datasets
+    //
+    if (params.datasets) {
+        ch_input_datasets = parseInputDatasets( params.datasets )
+        validateInputSamplesheet( ch_input_datasets )
+    } else {
+        ch_input_datasets = channel.empty()
+    }
 
     emit:
-    samplesheet = ch_samplesheet
-    versions    = ch_versions
+    input_datasets = ch_input_datasets
+
 }
 
 /*
@@ -146,10 +135,10 @@ workflow PIPELINE_COMPLETION {
     main:
     summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
     def multiqc_reports = multiqc_report.toList()
-
     //
     // Completion email and summary
     //
+
     workflow.onComplete {
         if (email || email_on_fail) {
             completionEmail(
@@ -177,20 +166,110 @@ workflow PIPELINE_COMPLETION {
     FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+//
+// Check and validate pipeline parameters
+//
+
+
+def check_accession(accession) {
+    if ( !( accession.startsWith('E-') || accession.startsWith('GSE') ) ) {
+        error('Accession ' + accession + ' is not well formated. All accessions should start with "E-" or "GSE".')
+    }
+}
+
+
+def check_accession_string(accessions_str) {
+    if ( accessions_str != null && accessions_str != "" ) {
+        accessions_str.tokenize(',').each { accession ->
+            check_accession(accession)
+        }
+    }
+}
+
+def check_accession_file(accession_file) {
+    if ( accession_file != null ) {
+        def lines = new File(accession_file).readLines()
+        lines.each { accession ->
+            check_accession(accession)
+        }
+    }
+}
+
+def validateInputParameters(params) {
+
+    // checking that a species has been provided
+    if ( !params.species ) {
+        error('You must provide a species name')
+    }
+
+    // if accessions are provided or excluded, checking that they are well formated
+    check_accession_string( params.accessions )
+    check_accession_string( params.excluded_accessions )
+
+    check_accession_file( params.accessions_file )
+    check_accession_file( params.excluded_accessions_file )
+
+    if ( params.keywords && params.skip_fetch_eatlas_accessions && !params.fetch_geo_accessions ) {
+        log.warn "Ignoring keywords as accessions will not be fetched from Expression Atlas or GEO"
+    }
+
+    if ( params.gff && params.gff_url ) {
+        log.warn "Both gff and gff_url parameters are provided. Using gff."
+    }
+
+}
+
+//
+// Parses files from input dataset and creates two subchannels raw and normalized
+// with elements like [meta, count_file, normalised]
+def parseInputDatasets(samplesheet) {
+    return channel.fromList( samplesheetToList(samplesheet, "assets/schema_datasets.json") )
+            .map {
+                item ->
+                    def (meta, count_file) = item
+                    def new_meta = meta + [dataset: count_file.getBaseName()]
+                    [new_meta, count_file]
+            }
+}
+
 
 //
 // Validate channels from input samplesheet
 //
-def validateInputSamplesheet(input) {
-    def (metas, fastqs) = input[1..2]
+def validateInputSamplesheet( ch_datasets ) {
+    // checking that all microarray datasets (if any) are normalised
+    ch_datasets
+        .filter {
+            meta, file ->
+                meta.platform == 'microarray' && !meta.normalised
+        }
+        .count()
+        .map { count ->
+            if (count > 0) {
+                def error_text = [
+                    "Error: You provided at least one microarray dataset that is not normalised. ",
+                    "Microarray datasets must already be normalised before being submitted. ",
+                    "Please perform normalisation (typically using RMA for one-colour intensities / LOESS (limma) for two-colour intensities) and run again."
+                ].join(' ').trim()
+                error(error_text)
+            }
+        }
 
-    // Check that multiple runs of the same sample are of the same datatype i.e. single-end / paired-end
-    def endedness_ok = metas.collect{ meta -> meta.single_end }.unique().size == 1
-    if (!endedness_ok) {
-        error("Please check input samplesheet -> Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: ${metas[0].id}")
-    }
+    // checking that all count files are well formated (same number of columns in header and rows)
+    ch_datasets
+        .map { meta, file ->
+            if (file.name.endsWith('.gz')) {
+                // TODO: implement this check also for gzipped files
+                return
+            }
+            def header = file.withReader { reader -> reader.readLine() }
+            def separator = header.contains(',') ? "," :
+                            header.contains('\t') ? "\t" :
+                            " "
+            def first_row = file.splitCsv( header: false, skip: 1, limit: 1, sep: separator )
 
-    return [ metas[0], fastqs ]
+            assert header.split(separator).size() == first_row[0].size() : "Header and first row do not have the same number of columns in file ${file}"
+        }
 }
 //
 // Generate methods description for MultiQC
@@ -254,4 +333,123 @@ def methodsDescriptionText(mqc_methods_yaml) {
     def description_html = engine.createTemplate(methods_text).make(meta)
 
     return description_html.toString()
+}
+
+
+/*
+========================================================================================
+    FUNCTIONS FOR FORMATTING DATA FETCHED FROM EXPRESSION ATLAS / GEO
+========================================================================================
+*/
+
+//
+// Get Expression Atlas Batch ID (accession + data_type) from file stem
+//
+def addDatasetIdToMetadata( ch_files ) {
+    return ch_files
+            .map {
+                file ->
+                    def meta = [ dataset: file.getSimpleName() ]
+                    [meta, file]
+            }
+}
+
+//
+// Groups design and data files by accession and data_type
+// Design and count files have necessarily the same dataset ID (same file stem)
+//
+def groupFilesByDatasetId(ch_design, ch_counts) {
+    return ch_design
+        .concat( ch_counts ) // puts counts at the end of the resulting channel
+        .groupTuple() // groups by dataset ID; design files are necessarily BEFORE count files
+        .filter {
+            it.get(1).size() == 2 // only groups with two files
+        }
+        .filter { // only groups with first file as design file and second one as count fileWARN: java.net.ConnectException: Connexion refusée
+            meta, files ->
+                files.get(0).name.endsWith('.design.csv') && !files.get(1).name.endsWith('.design.csv')
+        }
+        .map { // putting design file in meta
+            meta, files ->
+                def new_meta = meta + [design: files[0]]
+                [new_meta, files[1]]
+        }
+}
+
+def getNthPartFromEnd(String s, int n) {
+    def tokens = s.tokenize('.')
+    return tokens[tokens.size() - n]
+}
+
+//
+// Add normalised: true / false in meta
+//
+def augmentMetadata( ch_files ) {
+    return ch_files
+            .map {
+                meta, file ->
+                    def norm_state = getNthPartFromEnd(file.name, 3)
+                    def normalised = false
+                    if ( norm_state == 'normalised' ) {
+                        normalised = true
+                    } else if ( norm_state == 'raw' ) {
+                        normalised = false
+                    } else {
+                        error("Invalid normalisation state: ${norm_state}")
+                    }
+
+                    def platform = getNthPartFromEnd(file.name, 4)
+                    def new_meta = meta + [normalised: normalised, platform: platform]
+                    [new_meta, file]
+            }
+}
+
+
+/*
+========================================================================================
+    FUNCTIONS FOR CHECKING NB OF DATASETS
+========================================================================================
+*/
+
+def checkCounts(ch_counts, fetch_geo_accessions) {
+
+    ch_counts.count().map { n ->
+        if( n == 0 ) {
+            // display a warning if no datasets are found
+            def msg_lst = []
+            if ( !fetch_geo_accessions ) {
+                msg_lst = [
+                    "Could not find any readily usable public dataset...",
+                    "This might be due to connection issues on the Expression Atlas FTP server.",
+                    "If it is the case, please wait for a couple of minutes and run again.",
+                    "Alternatively, datasets for your species of interest might not exist on Expression Atlas.",
+                    "In this case, you can try to get additional datasets from NCBI GEO Datasets using the --fetch_geo_accessions flag (this feature is still experimental)."
+                ]
+            } else {
+                msg_lst = [
+                    "Could not find any readily usable public dataset...",
+                    "This might be due to connection issues on the Expression Atlas FTP server.",
+                    "If it is the case, please wait for a couple of minutes and run again.",
+                    "You can check directly on NCBI GEO Datasets if there are available datasets for this species that you can prepare yourself:",
+                    "https://www.ncbi.nlm.nih.gov/gds",
+                    "Once you have prepared your own data, you can relaunch the pipeline and provide your prepared count datasets using the --datasets parameter. ",
+                    "For more information, see the online documentation at https://nf-co.re/stableexpression."
+                ]
+            }
+            def msg = msg_lst.join("\n").trim()
+            error(msg)
+        }
+    }
+}
+
+/*
+========================================================================================
+    FUNCTION FOR FORMATING OUTPUT FOLDERS
+========================================================================================
+*/
+
+def getOutputFolder(meta, subfolder) {
+    def normalised_status = meta.normalised ? "normalised" : "raw"
+    def subfoldername = subfolder ? "${subfolder}/" : ""
+    return "datasets/${meta.platform}/${normalised_status}/${meta.dataset}/${subfoldername}"
 }
