@@ -275,20 +275,23 @@ def validateInputSamplesheet( ch_datasets ) {
 // Generate methods description for MultiQC
 //
 def toolCitationText() {
-    // TODO nf-core: Optionally add in-text citation tools to this list.
-    // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "Tool (Foo et al. 2023)" : "",
-    // Uncomment function in methodsDescriptionText to render in MultiQC report
+    def style = 'style="margin-left: 20px;"'
     def citation_text = [
             "Tools used in the workflow included:",
-            "MultiQC (Ewels et al. 2016)",
-            "."
+            "<li ${style}>Expression Atlas (Papatheodorou et al. 2018)</li>",
+            params["fetch_geo_accessions"] ? "<li ${style}>NCBI GEO (Edgar et al. 2002)</li>" : "",
+            params["skip_id_mapping"] ? "" : "<li ${style}>g:Profiler (Reimand et al. 2007)</li>",
+            params["normalisation_method"] == "tpm" && !params["gff"] && !params["gene_length"] ? "<li ${style}>Ensembl (Yates et al. 2026)</li>" : "",
+            "<li ${style}>Scikit-learn (Pedregosa et al. 2011)</li>",
+            "<li ${style}>NormFinder (Andersen et al. 2004)</li>",
+            params["skip_genorm"] ? "" : "<li ${style}>GeNorm (Vandesompele et al. 2002)</li>",
+            "<li ${style}>MultiQC (Ewels et al. 2016)</li>"
         ].join(' ').trim()
 
     return citation_text
 }
 
 def toolBibliographyText() {
-    // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "<li>Author (2023) Pub name, Journal, DOI</li>" : "",
     def reference_text = [
             "<li>Papatheodorou, I., Fonseca, N. A., Keays, M., Tang, Y. A., Barrera, E., Bazant, W., Burke, M., Füllgrabe, A., Fuentes, A. M.-P., George, N., Huerta, L., Koskinen, S., Mohammed, S., Geniza, M., Preece, J., Jaiswal, P., Jarnuczak, A. F., Huber, W., Stegle, O., Vizcaino, J. A., Brazma, A., & Petryszak, R. (2018). Expression Atlas: Gene and protein expression across multiple studies and organisms. Nucleic Acids Research, 46(D1), D246–D251. https://doi.org/10.1093/nar/gkx1158</li>",
             params["fetch_geo_accessions"] ? "<li><Edgar, R., Domrachev, M., & Lash, A. E. (2002). Gene Expression Omnibus: NCBI gene expression and hybridization array data repository. Nucleic Acids Research, 30(1), 207–210. https://doi.org/10.1093/nar/30.1.207</li>" : "",
@@ -324,12 +327,8 @@ def methodsDescriptionText(mqc_methods_yaml) {
     meta["nodoi_text"] = meta.manifest_map.doi ? "" : "<li>If available, make sure to update the text to include the Zenodo DOI of version of the pipeline used. </li>"
 
     // Tool references
-    meta["tool_citations"] = ""
-
-    // TODO nf-core: Only uncomment below if logic in toolCitationText/toolBibliographyText has been filled!
-    // meta["tool_citations"] = toolCitationText().replaceAll(", \\.", ".").replaceAll("\\. \\.", ".").replaceAll(", \\.", ".")
+    meta["tool_citations"] = toolCitationText().replaceAll(", \\.", ".").replaceAll("\\. \\.", ".").replaceAll(", \\.", ".")
     meta["tool_bibliography"] = toolBibliographyText()
-
 
     def methods_text = mqc_methods_yaml.text
 
