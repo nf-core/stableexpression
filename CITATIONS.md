@@ -22,6 +22,10 @@
 
 > Reimand J, Kull M, Peterson H, Hansen J, Vilo J. g:Profiler—a web-based toolset for functional profiling of gene lists from large-scale experiments. Nucleic Acids Res. 2007 May 3;35(Web Server issue):W193–W200. doi:10.1093/nar/gkm226. PubMed PMID: 17478515.
 
+> [Ensembl Genomes](https://ensemblgenomes.org/) and [Ensembl](https://www.ensembl.org/)
+
+> Yates AD, Austine-Orimoloye O, Azov AG, Barba M, Barnes I, Barrera-Enriquez VP, et al. Ensembl 2026. Nucleic Acids Res. 2026 Jan 6;54(D1):D1053–60. doi:10.1093/nar/gkaf1239. PubMed PMID: 41296548.
+
 - [Scikit-learn](https://scikit-learn.org/)
 
 > Pedregosa F, Varoquaux G, Gramfort A, Michel V, Thirion B, Grisel O, Blondel M, Prettenhofer P, Weiss R, Dubourg V, Vanderplas J, Passos A, Cournapeau D, Brucher M, Perrot M, Duchesnay E. Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research. 2011;12(85):2825–30.
