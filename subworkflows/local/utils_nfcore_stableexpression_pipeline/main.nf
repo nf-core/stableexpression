@@ -236,6 +236,12 @@ def parseInputDatasets(samplesheet) {
 //
 // Validate channels from input samplesheet
 //
+
+def getHeaderSeparator(header) {
+    def separator = header.contains(',') ? "," : header.contains('\t') ? "\t" : " "
+    return separator
+}
+
 def validateInputSamplesheet( ch_datasets ) {
     // checking that all microarray datasets (if any) are normalised
     ch_datasets
@@ -258,17 +264,29 @@ def validateInputSamplesheet( ch_datasets ) {
     // checking that all count files are well formated (same number of columns in header and rows)
     ch_datasets
         .map { meta, file ->
-            if (file.name.endsWith('.gz')) {
-                // TODO: implement this check also for gzipped files
-                return
-            }
-            def header = file.withReader { reader -> reader.readLine() }
-            def separator = header.contains(',') ? "," :
-                            header.contains('\t') ? "\t" :
-                            " "
-            def first_row = file.splitCsv( header: false, skip: 1, limit: 1, sep: separator )
 
-            assert header.split(separator).size() == first_row[0].size() : "Header and first row do not have the same number of columns in file ${file}"
+            def header = ""
+            def separator = ""
+            def first_row_components = ""
+
+            if (file.extension == 'gz') {
+                def gzipInput = new java.util.zip.GZIPInputStream(file.newInputStream())
+                def reader = new java.io.BufferedReader(new java.io.InputStreamReader(gzipInput))
+
+                header = reader.readLine()
+                separator = getHeaderSeparator(header)
+                first_row_components = reader.readLine().split(separator)
+
+                reader.close()
+                gzipInput.close()
+            } else {
+                header = file.withReader { reader -> reader.readLine() }
+                separator = getHeaderSeparator(header)
+
+                first_row_components = file.splitCsv( header: false, skip: 1, limit: 1, sep: separator )[0]
+            }
+
+            assert header.split(separator).size() == first_row_components.size() : "Header and first row do not have the same number of columns in file ${file}"
         }
 }
 //
