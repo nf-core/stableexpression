@@ -14,14 +14,14 @@
                 ],
                 "1": [
                     [
-                        "CROSS_JOIN",
+                        "GENORM_CROSS_JOIN",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "2": [
                     [
-                        "CROSS_JOIN",
+                        "GENORM_CROSS_JOIN",
                         "polars",
                         "1.39.2"
                     ]
@@ -38,10 +38,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-30T15:40:29.248178717",
+        "timestamp": "2026-08-11T20:07:09.177233622",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
         }
     }
 }
