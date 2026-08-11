@@ -12,10 +12,9 @@ process CROSS_JOIN {
     tuple val(meta), path("count_chunk_file_1"), path("count_chunk_file_2")
 
     output:
-    tuple val(meta), path('cross_join.*.parquet'),                                                                    emit: data
-    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
-    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
-
+    tuple val(meta), path('cross_join.*.parquet'), emit: data
+    tuple val("GENORM_CROSS_JOIN"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("GENORM_CROSS_JOIN"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     """

@@ -13,9 +13,11 @@ process COMPUTE_GENE_STATISTICS {
     val max_null_ratio_valid_sample
 
     output:
-    path '*stats_all_genes.csv',                                                                                  emit: stats
-    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                 topic: versions
-    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
+    path '*stats_all_genes.csv', emit: stats
+    // not using task.process here as the process is called 'PLATFORM' or 'GLOBAL' in the workflow
+    // which is less informative and creates unnecessary duplicates
+    tuple val("COMPUTE_GENE_STATISTICS"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("COMPUTE_GENE_STATISTICS"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     def args = task.ext.args ?: ''
