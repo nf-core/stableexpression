@@ -243,11 +243,11 @@
                 }
             }
         },
-        "statistical_options": {
-            "title": "Statistics options",
+        "normalisation_options": {
+            "title": "Normalisation options",
             "type": "object",
             "fa_icon": "fas fa-chart-line",
-            "description": "Statistical options for normalisation and calculation of gene expression variation.",
+            "description": "Options for normalisation and calculation of gene expression variation.",
             "properties": {
                 "normalisation_method": {
                     "type": "string",
@@ -538,7 +538,7 @@
             "$ref": "#/$defs/sample_filtering_options"
         },
         {
-            "$ref": "#/$defs/statistical_options"
+            "$ref": "#/$defs/normalisation_options"
         },
         {
             "$ref": "#/$defs/missing_value_imputation_options"
