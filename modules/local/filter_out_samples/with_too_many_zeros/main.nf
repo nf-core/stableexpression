@@ -1,6 +1,6 @@
 process FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS {
 
-    label 'process_single'
+    label 'process_single_cpu'
 
     tag "${meta.dataset}"
 

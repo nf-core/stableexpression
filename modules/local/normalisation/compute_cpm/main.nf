@@ -1,6 +1,6 @@
 process NORMALISATION_COMPUTE_CPM {
 
-    label 'process_single'
+    label 'process_single_cpu'
 
     tag "${meta.dataset}"
 

@@ -1,6 +1,6 @@
 process COMPUTE_GENE_TRANSCRIPT_LENGTHS {
 
-    label 'process_single'
+    label 'process_single_cpu'
 
     tag "${gff3.baseName}"
 

@@ -1,6 +1,6 @@
 process COMPUTE_DATASET_STATISTICS {
 
-    label 'process_single'
+    label 'process_single_cpu'
 
     tag "${meta.dataset}"
 

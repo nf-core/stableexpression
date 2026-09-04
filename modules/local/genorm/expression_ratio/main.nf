@@ -1,7 +1,7 @@
 process EXPRESSION_RATIO {
 
     tag "${meta.section} :: ${meta.index_1} vs ${meta.index_2}"
-    label 'process_low'
+    label 'process_low_requirements'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
