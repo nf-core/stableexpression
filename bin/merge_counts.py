@@ -47,6 +47,22 @@ def get_columns(lf: pl.LazyFrame) -> list[str]:
     return lf.collect_schema().names()
 
 
+def handle_duplicate_columns(lfs: list[pl.LazyFrame]) -> list[pl.LazyFrame]:
+    """Rename duplicate columns accross all LazyFrames to ensure consistency."""
+    all_columns = [col for lf in lfs for col in get_columns(lf)]
+    duplicate_columns = {
+        col for col in all_columns
+        if all_columns.count(col) > 1 and col != config.GENE_ID_COLNAME
+    }
+    for duplicate_column in duplicate_columns:
+        counter = 1
+        for i, lf in enumerate(lfs):
+            if duplicate_column in get_columns(lf):
+                lfs[i] = lf.rename({duplicate_column: f"{duplicate_column}_{counter}"})
+                counter += 1
+    return lfs
+
+
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
     return [col for col in get_columns(lf) if col != config.GENE_ID_COLNAME]
 
@@ -86,9 +102,11 @@ def scan_counts(files: list[Path]) -> list[pl.LazyFrame]:
 
     lfs = get_lazyframes(files)
 
+    # handle duplicate columns
+    lfs = handle_duplicate_columns(lfs)
+
     # sorting dataframes by a hash on column names
-    # this is crucial for consistent output of the script
-    # in case multiple files have the same name
+    # this is crucial for consistent output of the script in case multiple files have the same name
     return sorted(lfs, key=lambda lf: reproducible_hash(lf))
 
 
@@ -101,13 +119,12 @@ def collect_all_gene_ids(lfs: list[pl.LazyFrame]) -> pl.DataFrame:
     for lf in lfs:
         lf_gene_ids = lf.select(config.GENE_ID_COLNAME).collect().to_series().to_list()
         gene_id_set.update(lf_gene_ids)
-    return pl.DataFrame({config.GENE_ID_COLNAME: sorted(list(gene_id_set))})
+    return pl.DataFrame({config.GENE_ID_COLNAME: sorted(gene_id_set)})
 
 
 def make_tmp_sorted_dataframes(
     lfs: list[pl.LazyFrame], gene_id_df: pl.DataFrame
 ) -> list[Path]:
-    """ """
     tmp_files = []
     for i, lf in enumerate(lfs):
         # perform left join from gene ids so that all dataframes can be compared row-wise
@@ -121,7 +138,7 @@ def make_tmp_sorted_dataframes(
     return tmp_files
 
 
-def formating_counts(lf: pl.LazyFrame):
+def clean_counts(lf: pl.LazyFrame):
     """
     The config.GENE_ID_COLNAME column is cast
     to String, and all other columns are cast to Float32.
@@ -178,7 +195,7 @@ def main():
     merged_lf = pl.concat([gene_id_df.lazy()] + lfs, how="horizontal", strict=True)
 
     # performing some cleaning / formating operations
-    merged_lf = formating_counts(merged_lf)
+    merged_lf = clean_counts(merged_lf)
 
     # exporting merged data in streaming mode
     export_data(merged_lf)

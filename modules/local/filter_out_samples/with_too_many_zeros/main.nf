@@ -14,11 +14,11 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS {
     val(max_zero_ratio)
 
     output:
-    tuple val(meta), path("*.zeros_filtered.parquet"), optional: true,                                            emit: counts
-    tuple val(meta.dataset), path("ratio_zeros.csv"),                                                             topic: ratio_zeros
-    tuple val(meta.dataset), env("NB_KEPT_SAMPLES"), env("NB_REJECTED_SAMPLES"),                                  topic: mqc_zero_values_filter_stats
-    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                 topic: versions
-    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
+    tuple val(meta), path("*.zeros_filtered.parquet"), optional: true, emit: counts
+    tuple val(meta.dataset), path("ratio_zeros.csv"),                                                                                  topic: ratio_zeros
+    tuple val(meta.dataset), env("NB_KEPT_SAMPLES"), env("NB_REJECTED_SAMPLES"),                                                       topic: mqc_zero_values_filter_stats
+    tuple val("FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     """

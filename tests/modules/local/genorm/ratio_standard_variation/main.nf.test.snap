@@ -14,14 +14,14 @@
                 ],
                 "1": [
                     [
-                        "RATIO_STANDARD_VARIATION",
+                        "GENORM_RATIO_STANDARD_VARIATION",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "2": [
                     [
-                        "RATIO_STANDARD_VARIATION",
+                        "GENORM_RATIO_STANDARD_VARIATION",
                         "polars",
                         "1.39.2"
                     ]
@@ -38,10 +38,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-18T18:15:25.820090001",
+        "timestamp": "2026-08-11T20:07:34.072653003",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     }
 }

@@ -141,9 +141,11 @@ gene_1,1,2,3
 gene_2,1,2,3
 ```
 
+> [!NOTE]
+> The first column in the counts file must contain gene IDs and can have any name (**as long as there is a comma before the name of the first count column**)
+
 > [!WARNING]
 > The count file should not have any column other than the first one (gene IDs) and the sample columns.
-
 
 The design should look like:
 

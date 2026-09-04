@@ -12,10 +12,9 @@ process RATIO_STANDARD_VARIATION {
     tuple val(meta), path(file)
 
     output:
-    tuple val(meta), path('std.*.parquet'),                                                                           emit: data
-    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
-    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
-
+    tuple val(meta), path('std.*.parquet'), emit: data
+    tuple val("GENORM_RATIO_STANDARD_VARIATION"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("GENORM_RATIO_STANDARD_VARIATION"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     """

@@ -70,22 +70,33 @@ Samples that show too high ratios of zeros or missing values are removed from th
 
 #### 5. Normalisation of expression
 
-- Normalize RNAseq raw data using TPM (necessitates downloading the corresponding genome and computing transcript lengths) or CPM.
+##### Pathway A: TPM (Transcripts Per Million)
+
+- Unless provided by the user: download reference annotation from [Ensembl Genomes](https://ensemblgenomes.org/) or [Ensembl](https://www.ensembl.org/)
+- Compute transcript lengths from the reference annotation
+- Normalize RNAseq raw data using TPM.
+
+##### Pathway B: CPM (Counts Per Million)
+
+- Normalize RNAseq raw data using CPM.
+
+#### 6. Quantile normalisation
+
 - Perform quantile normalisation on each dataset separately using [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html)
 
-#### 6. Merge all data
+#### 7. Merge all data
 
 All datasets are merged into one single dataframe.
 
-#### 7. Imputation of missing values
+#### 8. Imputation of missing values
 
 Missing values are replaced by imputed values using a specific algorithm provided by [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html). The user can choose the method of imputation with the `--missing_value_imputer` parameter.
 
-#### 8. General statistics for each gene
+#### 9. General statistics for each gene
 
 Base statistics are computed for each gene, platform-wide and for each platform (RNAseq and microarray).
 
-#### 9. Scoring
+#### 10. Scoring
 
 - The whole list of genes is divided in multiple sections, based on their expression level.
 - Based on the coefficient of variation, a shortlist of candidates genes is extracted for each section.
@@ -93,7 +104,7 @@ Base statistics are computed for each gene, platform-wide and for each platform 
 - Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034) (run by default; optional)
 - Compute stability scores for each candidate gene
 
-#### 10. Reporting
+#### 11. Reporting
 
 - Result aggregation
 - Make [`MultiQC`](http://multiqc.info/) report

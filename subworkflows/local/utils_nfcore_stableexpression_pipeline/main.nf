@@ -236,6 +236,12 @@ def parseInputDatasets(samplesheet) {
 //
 // Validate channels from input samplesheet
 //
+
+def getHeaderSeparator(header) {
+    def separator = header.contains(',') ? "," : header.contains('\t') ? "\t" : " "
+    return separator
+}
+
 def validateInputSamplesheet( ch_datasets ) {
     // checking that all microarray datasets (if any) are normalised
     ch_datasets
@@ -258,40 +264,60 @@ def validateInputSamplesheet( ch_datasets ) {
     // checking that all count files are well formated (same number of columns in header and rows)
     ch_datasets
         .map { meta, file ->
-            if (file.name.endsWith('.gz')) {
-                // TODO: implement this check also for gzipped files
-                return
-            }
-            def header = file.withReader { reader -> reader.readLine() }
-            def separator = header.contains(',') ? "," :
-                            header.contains('\t') ? "\t" :
-                            " "
-            def first_row = file.splitCsv( header: false, skip: 1, limit: 1, sep: separator )
 
-            assert header.split(separator).size() == first_row[0].size() : "Header and first row do not have the same number of columns in file ${file}"
+            def header = ""
+            def separator = ""
+            def first_row_components = ""
+
+            if (file.extension == 'gz') {
+                def gzipInput = new java.util.zip.GZIPInputStream(file.newInputStream())
+                def reader = new java.io.BufferedReader(new java.io.InputStreamReader(gzipInput))
+
+                header = reader.readLine()
+                separator = getHeaderSeparator(header)
+                first_row_components = reader.readLine().split(separator)
+
+                reader.close()
+                gzipInput.close()
+            } else {
+                header = file.withReader { reader -> reader.readLine() }
+                separator = getHeaderSeparator(header)
+
+                first_row_components = file.splitCsv( header: false, skip: 1, limit: 1, sep: separator )[0]
+            }
+
+            assert header.split(separator).size() == first_row_components.size() : "Header and first row do not have the same number of columns in file ${file}"
         }
 }
 //
 // Generate methods description for MultiQC
 //
 def toolCitationText() {
-    // TODO nf-core: Optionally add in-text citation tools to this list.
-    // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "Tool (Foo et al. 2023)" : "",
-    // Uncomment function in methodsDescriptionText to render in MultiQC report
+    def style = 'style="margin-left: 20px;"'
     def citation_text = [
             "Tools used in the workflow included:",
-            "MultiQC (Ewels et al. 2016)",
-            "."
+            "<li ${style}>Expression Atlas (Papatheodorou et al. 2018)</li>",
+            params["fetch_geo_accessions"] ? "<li ${style}>NCBI GEO (Edgar et al. 2002)</li>" : "",
+            params["skip_id_mapping"] ? "" : "<li ${style}>g:Profiler (Reimand et al. 2007)</li>",
+            params["normalisation_method"] == "tpm" && !params["gff"] && !params["gene_length"] ? "<li ${style}>Ensembl (Yates et al. 2026)</li>" : "",
+            "<li ${style}>Scikit-learn (Pedregosa et al. 2011)</li>",
+            "<li ${style}>NormFinder (Andersen et al. 2004)</li>",
+            params["skip_genorm"] ? "" : "<li ${style}>GeNorm (Vandesompele et al. 2002)</li>",
+            "<li ${style}>MultiQC (Ewels et al. 2016)</li>"
         ].join(' ').trim()
 
     return citation_text
 }
 
 def toolBibliographyText() {
-    // TODO nf-core: Optionally add bibliographic entries to this list.
-    // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "<li>Author (2023) Pub name, Journal, DOI</li>" : "",
-    // Uncomment function in methodsDescriptionText to render in MultiQC report
     def reference_text = [
+            "<li>Papatheodorou, I., Fonseca, N. A., Keays, M., Tang, Y. A., Barrera, E., Bazant, W., Burke, M., Füllgrabe, A., Fuentes, A. M.-P., George, N., Huerta, L., Koskinen, S., Mohammed, S., Geniza, M., Preece, J., Jaiswal, P., Jarnuczak, A. F., Huber, W., Stegle, O., Vizcaino, J. A., Brazma, A., & Petryszak, R. (2018). Expression Atlas: Gene and protein expression across multiple studies and organisms. Nucleic Acids Research, 46(D1), D246–D251. https://doi.org/10.1093/nar/gkx1158</li>",
+            params["fetch_geo_accessions"] ? "<li><Edgar, R., Domrachev, M., & Lash, A. E. (2002). Gene Expression Omnibus: NCBI gene expression and hybridization array data repository. Nucleic Acids Research, 30(1), 207–210. https://doi.org/10.1093/nar/30.1.207</li>" : "",
+            params["skip_id_mapping"] ? "" : "<li>Reimand, J., Kull, M., Peterson, H., Hansen, J., & Vilo, J. (2007). g:Profiler—A web-based toolset for functional profiling of gene lists from large-scale experiments. Nucleic Acids Research, 35(suppl_2), W193–W200. https://doi.org/10.1093/nar/gkm226</li>",
+            params["normalisation_method"] == "tpm" && !params["gff"] && !params["gene_length"] ? "<li>Yates, A. D., Austine-Orimoloye, O., Azov, A. G., Barba, M., Barnes, I., Barrera-Enriquez, V. P., Becker, A., Bennett, R., Berry, A., Bhai, J., Bhurji, S. K., Branco Lins, P. R., Brooks, L., Budhanuru Ramaraju, S., Campbell, L. I., Carbajo Martinez, M., Carpenter, J., Charkhchi, M., Cortes, L. A., … Finn, R. D. (2026). Ensembl 2026. Nucleic Acids Research, 54(D1), D1053–D1060. https://doi.org/10.1093/nar/gkaf1239</li>" : "",
+            "<li>Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., & Duchesnay, É. (2011). Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research, 12(85), 2825–2830.</li>",
+            "<li>Andersen, C. L., Jensen, J. L., & Ørntoft, T. F. (2004). Normalization of Real-Time Quantitative Reverse Transcription-PCR Data: A Model-Based Variance Estimation Approach to Identify Genes Suited for Normalization, Applied to Bladder and Colon Cancer Data Sets. Cancer Research, 64(15), 5245–5250. https://doi.org/10.1158/0008-5472.CAN-04-0496</li>",
+            params["skip_genorm"] ? "" : "<li>Vandesompele, J., De Preter, K., Pattyn, F., Poppe, B., Van Roy, N., De Paepe, A., & Speleman, F. (2002). Accurate normalization of real-time quantitative RT-PCR data by geometric averaging of multiple internal control genes. Genome Biology, 3(7), research0034.1. https://doi.org/10.1186/gb-2002-3-7-research0034</li>",
             "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: /10.1093/bioinformatics/btw354</li>"
         ].join(' ').trim()
 
@@ -319,13 +345,8 @@ def methodsDescriptionText(mqc_methods_yaml) {
     meta["nodoi_text"] = meta.manifest_map.doi ? "" : "<li>If available, make sure to update the text to include the Zenodo DOI of version of the pipeline used. </li>"
 
     // Tool references
-    meta["tool_citations"] = ""
-    meta["tool_bibliography"] = ""
-
-    // TODO nf-core: Only uncomment below if logic in toolCitationText/toolBibliographyText has been filled!
-    // meta["tool_citations"] = toolCitationText().replaceAll(", \\.", ".").replaceAll("\\. \\.", ".").replaceAll(", \\.", ".")
-    // meta["tool_bibliography"] = toolBibliographyText()
-
+    meta["tool_citations"] = toolCitationText().replaceAll(", \\.", ".").replaceAll("\\. \\.", ".").replaceAll(", \\.", ".")
+    meta["tool_bibliography"] = toolBibliographyText()
 
     def methods_text = mqc_methods_yaml.text
 

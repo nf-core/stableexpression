@@ -12,9 +12,9 @@ process COMPUTE_M_MEASURE {
     tuple val(meta), path(ratio_files)
 
     output:
-    tuple val(meta), path("m_measures.csv"),                                                                      emit: m_measures
-    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                 topic: versions
-    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
+    tuple val(meta), path("m_measures.csv"), emit: m_measures
+    tuple val("GENORM_COMPUTE_M_MEASURE"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("GENORM_COMPUTE_M_MEASURE"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     """

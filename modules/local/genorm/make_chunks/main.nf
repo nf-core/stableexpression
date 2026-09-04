@@ -12,10 +12,9 @@ process MAKE_CHUNKS {
     tuple val(meta), path(count_file)
 
     output:
-    tuple val(meta), path('count_chunk.*.parquet'),                                                                   emit: chunks
-    tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
-    tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
-
+    tuple val(meta), path('count_chunk.*.parquet'), emit: chunks
+    tuple val("GENORM_MAKE_CHUNKS"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("GENORM_MAKE_CHUNKS"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     """
