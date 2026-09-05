@@ -44,7 +44,7 @@ def main():
     logger.info(f"Converting IDs for count file {args.count_file.name}...")
 
     df = parse_count_table(args.count_file)
-
+    print(df)
     logger.info("Writing cleaned IDs")
     gene_ids_outfile = args.count_file.with_name(
         args.count_file.stem + CLEANED_GENE_IDS_SUFFIX
