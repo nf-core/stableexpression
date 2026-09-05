@@ -13,6 +13,8 @@ import polars.selectors as cs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+ALLOWED_FILE_FORMATS = [".csv", ".tsv", ".dat"]
+
 
 def parse_header(file: Path, sep: str):
     if file.suffix == ".gz":
@@ -40,7 +42,7 @@ def parse_table(file: Path):
         ext = file.suffixes[-2]
     else:
         ext = file.suffix
-    if ext in [".csv", ".tsv"]:
+    if ext in ALLOWED_FILE_FORMATS:
         # parsing header manually
         sep = "," if ext == ".csv" else "\t"
         header = parse_header(file, sep)
