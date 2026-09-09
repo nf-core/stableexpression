@@ -63,13 +63,4 @@ process GEO_GETACCESSIONS {
         $args \\
         --cpus ${task.cpus}
     """
-
-    stub:
-    """
-    touch accessions.txt \\
-        all_experiments.metadata.tsv \\
-        filtered_experiments.metadata.tsv \\
-        filtered_experiments.keywords.yaml
-    """
-
 }

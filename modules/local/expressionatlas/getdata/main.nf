@@ -27,11 +27,4 @@ process EXPRESSIONATLAS_GETDATA {
     """
     download_eatlas_data.R --accession $accession
     """
-
-    stub:
-    """
-    touch acc.raw.counts.csv
-    touch acc.design.csv
-    """
-
 }

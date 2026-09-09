@@ -28,11 +28,4 @@ process COMPUTE_GENE_TRANSCRIPT_LENGTHS {
     compute_gene_transcript_lengths.py \\
         --annotation ${gff3_name}
     """
-
-
-    stub:
-    """
-    touch gene_transcript_lengths.csv
-    """
-
 }

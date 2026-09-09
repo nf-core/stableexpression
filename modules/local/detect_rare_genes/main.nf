@@ -30,11 +30,4 @@ process DETECT_RARE_GENES {
         --min-occurrence-quantile $min_occurrence_quantile
 
     """
-
-
-    stub:
-    """
-    touch fake.validated_genes.txt
-    """
-
 }

@@ -32,11 +32,4 @@ process GEO_GETDATA {
         --accession $accession \\
         --species $species
     """
-
-    stub:
-    """
-    touch acc.microarray.normalised.counts.csv
-    touch acc.design.csv
-    """
-
 }
