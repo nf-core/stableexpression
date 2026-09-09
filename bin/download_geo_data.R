@@ -131,7 +131,7 @@ download_geo_data_with_retries <- function(accession, max_retries = 3, wait_time
 get_experiment_data <- function(geo_data) {
     data <- geo_data[[1]]
     experiment_data <- experimentData(data)
-    #print(experiment_data)
+
     return(experiment_data)
 }
 
@@ -349,7 +349,7 @@ make_overall_design <- function(geo_data, series) {
     for (i in 1:length(geo_data)) {
         data <- geo_data[[ i ]]
         metadata <- pData(data)
-        #print(metadata)
+
         # make design dataframe
         # keep only samples corresponding to the species of interest
         design_df <- make_design(metadata, series)

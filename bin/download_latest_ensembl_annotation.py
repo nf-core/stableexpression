@@ -247,7 +247,6 @@ def get_candidate_species_folders(
                     "name": folder.text.rstrip("/"),
                 }
                 species_url_records.append(d)
-                print(folder.text)
             elif folder.text.endswith("_collection/"):
                 species_url_records += get_candidate_species_folders(
                     species, folder_url, first_level=False
