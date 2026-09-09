@@ -1,6 +1,6 @@
 process CLEAN_GENE_IDS {
 
-    label 'process_low'
+    label 'process_low_requirements'
 
     tag "${meta.dataset}"
 

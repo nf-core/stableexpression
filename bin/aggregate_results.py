@@ -35,7 +35,7 @@ GENE_SUMMARY_FLOAT_PRECISION = 4
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Get statistics from count data for each gene"
+        description="Aggregate results from count data for each gene"
     )
     parser.add_argument(
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
@@ -83,17 +83,26 @@ def parse_args():
 
 
 def parse_stat_score_file(file: Path) -> pl.DataFrame:
+    """
+    Parse a file containing statistics and scores into a DataFrame.
+    """
     return pl.read_csv(file).with_columns(
         pl.col(config.GENE_ID_COLNAME).cast(pl.String())
     )
 
 
 def get_non_empty_dataframes(files: list[Path]) -> list[pl.DataFrame]:
+    """
+    Read and return non-empty DataFrames from a list of files.
+    """
     dfs = [pl.read_csv(file) for file in files]
     return [df for df in dfs if not df.is_empty()]
 
 
 def cast_cols_to_string(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    Cast all columns in the DataFrame to String.
+    """
     return df.select(
         [pl.col(column).cast(pl.String) for column in df.collect_schema().names()]
     )
@@ -115,6 +124,9 @@ def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.DataFrame
 
 
 def cast_count_columns_to_float(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    Cast count columns (excluding the gene ID column) to Float32.
+    """
     return df.select(
         pl.col(config.GENE_ID_COLNAME),
         pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float32),
@@ -130,6 +142,10 @@ def join_data_on_gene_id(stat_df: pl.DataFrame, *dfs: pl.DataFrame) -> pl.DataFr
 
 
 def get_counts(file: Path) -> pl.DataFrame:
+    """
+    Read and return the counts DataFrame from a Parquet file.
+    Sorts the DataFrame by gene ID in ascending order.
+    """
     # sorting dataframe (necessary to get consistent output)
     return pl.read_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
 
@@ -142,6 +158,10 @@ def get_metadata(metadata_files: list[Path]) -> pl.DataFrame | None:
 
 
 def get_mappings(mapping_files: list[Path]) -> pl.DataFrame | None:
+    """
+    Retrieve and concatenate mappings from a list of mapping files.
+    Aggregates the original gene IDs for each gene ID.
+    """
     if not mapping_files:
         return None
     concat_df = concat_cast_to_string_and_drop_duplicates(mapping_files)
@@ -174,6 +194,9 @@ def get_status(quantile_interval: int) -> str:
 
 
 def add_expression_level_status(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    Add expression level status to the DataFrame based on the quantile interval.
+    """
     logger.info("Adding expression level status")
     mapping_dict = {
         quantile_interval: get_status(quantile_interval)
@@ -201,7 +224,9 @@ def complement_gene_summary_table(
 def get_most_stable_genes_counts(
     log_count_df: pl.DataFrame, stat_summary_df: pl.DataFrame
 ) -> pl.DataFrame:
-    # getting list of top stable genes with their order
+    """
+    Get counts of the most stable genes
+    """
     top_genes_with_order = (
         stat_summary_df.head(NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS)
         .select(config.GENE_ID_COLNAME)
@@ -225,6 +250,9 @@ def get_most_stable_genes_counts(
 def format_multiqc_section(
     section: str, nb_sections: int, template_dict: dict, found_target_genes: list[dict]
 ):
+    """
+    Format the dict for a specific MultiQC section based on the section name, number of sections, and found target genes.
+    """
     section_dict = dict(template_dict)
 
     parent_id = section.replace("_", " ")
@@ -251,12 +279,20 @@ def format_multiqc_section(
 
 
 def format_multiqc_sp(section: str, template_dict: dict):
+    """
+    Modify the dict for a specific MultiQC section in order to update the corresponding file name to search for
+    among all the MultiQC files
+    """
     sp_dict = dict(template_dict)
     sp_dict["fn"] = sp_dict["fn"].replace("SECTION", section)
     return sp_dict
 
 
-def format_genes(genes: list[str]):
+def format_genes(genes: list[str]) -> pl.Series:
+    """
+    Format a list of genes by removing any characters in "-_." and converting to lowercase.
+    Returns as a polars Series.
+    """
     # str.maketrans("", "", "-_.") makes a mapping table for str.translate() that
     # removes all occurrences of any character in "-_." from the input string
     # it's faster than re.sub

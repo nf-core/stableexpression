@@ -13,6 +13,8 @@ import polars.selectors as cs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+ALLOWED_FILE_FORMATS = [".csv", ".tsv", ".dat"]
+
 
 def parse_header(file: Path, sep: str):
     if file.suffix == ".gz":
@@ -30,8 +32,24 @@ def parse_header(file: Path, sep: str):
         return [config.GENE_ID_COLNAME] + header
     else:
         raise ValueError(
-            f"Header has length: {len(header)} while first row has length: {len(first_row)}"
+            f"Header has length: {len(header)} while first row has length: {len(first_row)}. Header: {header} / first row: {first_row}"
         )
+
+
+def detect_separator(file: Path, candidates: list[str]) -> str:
+    best_sep, best_score = None, -1
+    for sep in candidates:
+        try:
+            df = pl.read_csv(file, separator=sep, n_rows=50, infer_schema_length=50)
+        except Exception:
+            continue
+        n_cols = df.width
+        # more columns generally means we found the real separator
+        # (a wrong separator usually collapses everything into 1 column)
+        if n_cols > best_score:
+            best_score = n_cols
+            best_sep = sep
+    return best_sep
 
 
 def parse_table(file: Path):
@@ -40,9 +58,14 @@ def parse_table(file: Path):
         ext = file.suffixes[-2]
     else:
         ext = file.suffix
-    if ext in [".csv", ".tsv"]:
+    if ext in ALLOWED_FILE_FORMATS:
         # parsing header manually
-        sep = "," if ext == ".csv" else "\t"
+        if ext == ".csv":
+            sep = ","
+        elif ext == "\t":
+            sep = "\t"
+        else: # .dat
+            sep = detect_separator(file, candidates=[",", ";", "\t", "|", ":"])
         header = parse_header(file, sep)
         return pl.read_csv(
             file,

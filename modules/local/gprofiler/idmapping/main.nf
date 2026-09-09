@@ -1,5 +1,5 @@
 process GPROFILER_IDMAPPING {
-    label 'process_medium'
+    label 'process_medium_requirements'
 
     tag "${species} IDs to ${gprofiler_target_db}"
 

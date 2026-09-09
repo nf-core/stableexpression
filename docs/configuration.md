@@ -43,13 +43,13 @@ executor {
     memory = 8.GB
 }
 
-withLabel:process_single {
+withLabel:process_single_cpu {
     memory = { 2.GB * task.attempt }
 }
-withLabel:process_low {
+withLabel:process_low_requirements {
     memory = { 2.GB + 1.GB * task.attempt }
 }
-withLabel:process_medium {
+withLabel:process_medium_requirements {
     memory = { 4.GB + 1.GB * task.attempt }
 }
 withLabel:process_high {
