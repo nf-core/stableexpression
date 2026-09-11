@@ -1,0 +1,236 @@
+nextflow_process {
+
+    name "Test Process GEO_GETDATA"
+    script "modules/local/geo/getdata/main.nf"
+    process "GEO_GETDATA"
+    tag "geo_getdata"
+
+
+    // TODO: see why these tests give ".command.run: No such file or directory" errors sometimes, even when running locally with act
+    // since this process is experimental, we can skip it for now
+    test("Beta vulgaris - Small RNA of sugar beet in response to drought stress") {
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE205328"
+                ]
+                input[1] = "beta vulgaris"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.exitStatus == 0 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+    test("Accession does not exist") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ ],
+                    "GSE568945478"
+                ]
+                input[1] = "blabla"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.exitStatus == 0 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Drosophila simulans - Only one sample among several") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE59707"
+                ]
+                input[1] = "drosophila_simulans"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.exitStatus == 0 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Drosophila simulans - No data found") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE124142"
+                ]
+                input[1] = "drosophila_simulans"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.exitStatus == 0 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Drosophila simulans - Expression profiling by array") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE43665"
+                ]
+                input[1] = "drosophila_simulans"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.exitStatus == 0 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Drosophila simulans - Expression profiling by high throughput sequencing / Some raw counts found") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE59707"
+                ]
+                input[1] = "drosophila_simulans"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.exitStatus == 0 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Drosophila simulans - Expression profiling by high throughput sequencing / One raw count found") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE100837"
+                ]
+                input[1] = "drosophila_simulans"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.exitStatus == 0 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Drosophila simulans - Only series suppl data but multiple species") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE274048"
+                ]
+                input[1] = "drosophila_simulans"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.exitStatus == 0 },
+                { assert process.out.counts.size() == 0 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Drosophila simulans - Mismatch in suppl data colnames / design") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ id: "test" ],
+                    "GSE49127"
+                ]
+                input[1] = "drosophila_simulans"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.exitStatus == 0 },
+                { assert process.out.counts.size() == 0 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

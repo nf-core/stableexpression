@@ -1,0 +1,60 @@
+process DASH_APP {
+
+    label 'process_high'
+
+    conda "${moduleDir}/app/environment.yml"
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/fc/fc4abd76b9424d5f5397a6c97e8ed8c2e3a5a454773595204ceb55b39057d812/data':
+        'community.wave.seqera.io/library/dash-ag-grid_dash-extensions_dash-iconify_dash-mantine-components_pruned:be6021fe1944629c' }"
+
+    errorStrategy {
+        if (task.exitStatus == 100) {
+            log.warn("Could not start the Dash application.")
+            return 'ignore' // only report errors but ignores it
+        } else {
+            log.warn("Could not start the Dash application due to unhandled error.")
+            return 'ignore' // ignore anyway
+        }
+    }
+
+    input:
+    path all_counts
+    path whole_design
+    path all_genes_summary
+
+    output:
+    path("dash_app/"), emit: app
+    path "versions.yml", emit: versions
+
+    script:
+    """
+    # limiting number of threads to polars / python
+    export POLARS_MAX_THREADS=${task.cpus}
+    export OMP_NUM_THREADS=${task.cpus}
+
+    mkdir -p dash_app/data
+    mv ${all_counts} ${whole_design} ${all_genes_summary} dash_app/data
+    cp -r ${moduleDir}/app/* dash_app/
+
+    # as of Nextflow version 25.04.8, having these versions sent to the versions topic channel
+    # results in ERROR ~ No such file or directory: <task workdir>/.command.env
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: \$( python3 --version | sed "s/Python //" )
+        dash: \$( python3 -c "import dash; print(dash.__version__)" )
+        dash-extensions: \$( python3 -c "import dash_extensions; print(dash_extensions.__version__)" )
+        dash-mantine-components: \$( python3 -c "import dash_mantine_components; print(dash_mantine_components.__version__)" )
+        dash-ag-grid: \$( python3 -c "import dash_ag_grid; print(dash_ag_grid.__version__)" )
+        polars: \$( python3 -c "import polars; print(polars.__version__)" )
+        pandas: \$( python3 -c "import pandas; print(pandas.__version__)" )
+        pyarrow: \$( python3 -c "import pyarrow; print(pyarrow.__version__)" )
+        scipy: \$( python3 -c "import scipy; print(scipy.__version__)" )
+    END_VERSIONS
+
+    # trying to launch the app
+    # if the resulting exit code is not 124 (exit code of timeout) then there is an error
+    cd dash_app
+    timeout 10 python -B app.py || exit_code=\$?; [ "\$exit_code" -eq 124 ] && exit 0 || exit 100
+    """
+
+}

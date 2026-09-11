@@ -1,0 +1,106 @@
+nextflow_process {
+
+    name "Test Process NORMALISATION_COMPUTE_TPM"
+    script "modules/local/normalisation/compute_tpm/main.nf"
+    process "NORMALISATION_COMPUTE_TPM"
+    tag "tpm_norm"
+
+
+    test("Very small dataset") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ dataset: "test" ],
+                    file('$projectDir/tests/test_data/modules/normalisation/base/counts.csv')
+                ]
+                input[1] = file('$projectDir/tests/test_data/modules/normalisation/base/gene_lengths.csv')
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Rows with many zeros") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ dataset: "test"],
+                    file('$projectDir/tests/test_data/modules/normalisation/many_zeros/counts.csv')
+                ]
+                input[1] = file('$projectDir/tests/test_data/modules/normalisation/many_zeros/gene_lengths.csv')
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("One group") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ dataset: "test" ],
+                    file('$projectDir/tests/test_data/modules/normalisation/one_group/counts.csv')
+                ]
+                input[1] = file('$projectDir/tests/test_data/modules/normalisation/one_group/gene_lengths.csv')
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("TSV files") {
+
+        when {
+
+            process {
+                """
+                input[0] = [
+                    [ dataset: "test" ],
+                    file('$projectDir/tests/test_data/modules/normalisation/base/counts.tsv')
+                ]
+                input[1] = file('$projectDir/tests/test_data/modules/normalisation/base/gene_lengths.csv')
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+
+}

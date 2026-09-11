@@ -1,22 +1,21 @@
-nextflow.enable.dsl = 2
-nextflow.preview.topic = true
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { EXPRESSIONATLAS_GETACCESSIONS          } from '../modules/local/expressionatlas/getaccessions/main'
-include { EXPRESSIONATLAS_GETDATA                } from '../modules/local/expressionatlas/getdata/main'
-include { DESEQ2_NORMALIZE                       } from '../modules/local/deseq2/normalize/main'
-include { EDGER_NORMALIZE                        } from '../modules/local/edger/normalize/main'
-include { GPROFILER_IDMAPPING                    } from '../modules/local/gprofiler/idmapping/main'
-include { VARIATION_COEFFICIENT                  } from '../modules/local/variation_coefficient/main'
+include { GET_PUBLIC_ACCESSIONS                  } from '../subworkflows/local/get_public_accessions'
+include { DOWNLOAD_PUBLIC_DATASETS               } from '../subworkflows/local/download_public_datasets'
+include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
+include { SAMPLE_FILTERING                       } from '../subworkflows/local/sample_filtering'
+include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
+include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
+include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
+include { GENE_STATISTICS                        } from '../subworkflows/local/gene_statistics'
+include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
+include { REPORTING                              } from '../subworkflows/local/reporting'
 
-include { customSoftwareVersionsToYAML           } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
-include { paramsSummaryMap                       } from 'plugin/nf-schema'
-include { samplesheetToList                      } from 'plugin/nf-schema'
+include { checkCounts                            } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
 
 /*
@@ -27,180 +26,216 @@ include { samplesheetToList                      } from 'plugin/nf-schema'
 
 workflow STABLEEXPRESSION {
 
-    //
-    // Checking input parameters
-    //
+    take:
+    ch_input_datasets
 
-    if ( !params.species ) {
-        error('You must provide a species name')
-    }
 
-    if (
-        !params.datasets
-        && !params.eatlas_accessions
-        && !params.fetch_eatlas_accessions
-        ) {
-        error('You must provide at least either --datasets or --fetch_eatlas_accessions or --eatlas_accessions or --eatlas_keywords')
-    }
+    main:
 
-    //
-    // Initializing channels
-    //
+    ch_accessions                          = channel.empty()
+    ch_downloaded_datasets                 = channel.empty()
+    ch_counts_ids_filtered_renamed         = channel.empty()
+    ch_counts_samples_filtered             = channel.empty()
+    ch_counts_first_normalissation         = channel.empty()
+    ch_normalised_counts                   = channel.empty()
+    ch_gene_length_file                    = channel.empty()
+    ch_all_counts                          = channel.empty()
+    ch_all_imputed_counts                  = channel.empty()
+    ch_whole_design                        = channel.empty()
+    ch_stats_all_genes_with_scores         = channel.empty()
+    ch_platform_statistics                 = channel.empty()
+    ch_whole_gene_metadata                 = channel.empty()
+    ch_whole_gene_id_mapping               = channel.empty()
 
-    def species = params.species.split(' ').join('_')
-    ch_species = Channel.value(species)
+    def species = params.species.split(' ').join('_').toLowerCase()
 
-    ch_normalized_datasets = Channel.empty()
-    ch_raw_datasets = Channel.empty()
-    ch_accessions = Channel.empty()
+    // -----------------------------------------------------------------
+    // FETCH PUBLIC ACCESSIONS
+    // -----------------------------------------------------------------
 
-    // if input datasets were provided
-    if ( params.datasets ) {
-
-        //
-        // Parsing input datasets
-        //
-
-        // reads list of input datasets from input file
-        // and splits them in normalized and raw sub-channels
-        Channel.fromList( samplesheetToList(params.datasets, "${projectDir}/assets/schema_input.json") )
-            .map {
-                item ->
-                    def (count_file, design_file, normalized) = item
-                    meta = [accession: count_file.name, design: design_file]
-                    [meta, count_file, normalized]
-            }
-            .branch {
-                item ->
-                    normalized: item[2] == true
-                    raw: item[2] == false
-            }
-            .set { ch_input_datasets }
-
-        // removes the third element ("normalized" column) and adds to the corresponding channel
-        ch_normalized_datasets = ch_normalized_datasets.concat(
-            ch_input_datasets.normalized.map{ it -> it.take(2) }
-        )
-        ch_raw_datasets = ch_raw_datasets.concat(
-            ch_input_datasets.raw.map{ it -> it.take(2) }
+    GET_PUBLIC_ACCESSIONS(
+        species,
+        params.skip_fetch_eatlas_accessions,
+        params.fetch_geo_accessions,
+        params.platform,
+        params.keywords,
+        params.accessions ? channel.fromList( params.accessions.tokenize(',') ) : channel.empty(),
+        params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty(),
+        params.excluded_accessions ? channel.fromList( params.excluded_accessions.tokenize(',') ) : channel.empty(),
+        params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty(),
+        params.random_sampling_size,
+        params.random_sampling_seed,
+        params.outdir
         )
 
-    }
+    ch_accessions = GET_PUBLIC_ACCESSIONS.out.accessions
 
-    // parsing Expression Atlas accessions if provided
-    if ( params.eatlas_accessions ) {
+    // -----------------------------------------------------------------
+    // DOWNLOAD GEO DATASETS IF NEEDED
+    // -----------------------------------------------------------------
 
-        // parsing accessions from provided parameter
-        ch_accessions = Channel.fromList( params.eatlas_accessions.tokenize(',') )
+    if ( !params.accessions_only) {
 
-    }
+        DOWNLOAD_PUBLIC_DATASETS (
+            species,
+            ch_accessions
+        )
 
-
-    // fetching Expression Atlas accessions if applicable
-    if ( params.fetch_eatlas_accessions || params.eatlas_keywords ) {
-
-        //
-        // MODULE: Expression Atlas - Get accessions
-        //
-
-        // keeping the keywords (separated by spaces) as a single string
-        ch_keywords = Channel.value( params.eatlas_keywords )
-
-        // getting Expression Atlas accessions given a species name and keywords
-        // keywords can be an empty string
-        EXPRESSIONATLAS_GETACCESSIONS( ch_species, ch_keywords )
-
-        // appending to accessions provided by the user
-        // ensures that no accessions is present twice (provided by the user and fetched from E. Atlas)
-        ch_accessions = ch_accessions
-                            .concat( EXPRESSIONATLAS_GETACCESSIONS.out.txt.splitText() )
-                            .unique()
+        ch_downloaded_datasets = DOWNLOAD_PUBLIC_DATASETS.out.datasets
 
     }
 
-    // logging accessions if present
-    ch_accessions.collect().map { items -> println "Obtained accessions ${items}"}
+    if ( !params.accessions_only && !params.download_only ) {
 
-    //
-    // MODULE: Expression Atlas - Get data
-    //
+        ch_counts = ch_input_datasets.mix( ch_downloaded_datasets )
+        // returns an error with a message if no dataset was found
+        checkCounts( ch_counts, params.fetch_geo_accessions )
 
-    // Downloading Expression Atlas data for each accession in ch_accessions
-    EXPRESSIONATLAS_GETDATA( ch_accessions )
+        // -----------------------------------------------------------------
+        // IDMAPPING
+        // -----------------------------------------------------------------
 
-    // separating and arranging EXPRESSIONATLAS_GETDATA output in two separate channels (already normalized or raw data)
-    ch_normalized_datasets = ch_normalized_datasets.concat(
-        EXPRESSIONATLAS_GETDATA.out.normalized.map {
-            accession, design_file, count_file ->
-                meta = [accession: accession, design: design_file]
-                [meta, count_file]
-        }
+        // tries to map gene IDs to Ensembl IDs whenever possible
+        ID_MAPPING(
+            ch_counts,
+            species,
+            params.skip_id_mapping,
+            params.skip_cleaning_gene_ids,
+            params.gprofiler_target_db,
+            params.gene_id_mapping,
+            params.gene_metadata,
+            params.min_occurrence_freq,
+            params.min_occurrence_quantile,
+            params.outdir
+        )
+
+        ch_counts_ids_filtered_renamed    = ID_MAPPING.out.counts
+        ch_whole_gene_id_mapping          = ID_MAPPING.out.mapping
+        ch_whole_gene_metadata            = ID_MAPPING.out.metadata
+        ch_valid_gene_ids                 = ID_MAPPING.out.valid_gene_ids
+
+        ch_counts = ch_counts_ids_filtered_renamed
+
+        // -----------------------------------------------------------------
+        // FILTER OUT SAMPLES NOT VALID
+        // -----------------------------------------------------------------
+
+        SAMPLE_FILTERING (
+            ch_counts,
+            ch_valid_gene_ids,
+            params.max_zero_ratio,
+            params.max_null_ratio,
+            params.outdir
+        )
+
+        ch_counts_samples_filtered     = SAMPLE_FILTERING.out.counts
+        ch_ratio_nulls_per_sample_file = SAMPLE_FILTERING.out.ratio_nulls_per_sample_file
+
+        // -----------------------------------------------------------------
+        // NORMALISATION OF RAW COUNT DATASETS (INCLUDING RNA-SEQ DATASETS)
+        // -----------------------------------------------------------------
+
+        EXPRESSION_NORMALISATION(
+            species,
+            ch_counts_samples_filtered,
+            params.normalisation_method,
+            params.quantile_norm_target_distrib,
+            params.gff,
+            params.gff_url,
+            params.gene_length
+        )
+
+        ch_counts_first_normalissation         = EXPRESSION_NORMALISATION.out.normalised_once
+        ch_normalised_counts                   = EXPRESSION_NORMALISATION.out.quantile_normalised_counts
+        ch_gene_length_file                    = EXPRESSION_NORMALISATION.out.gene_length_file
+
+        // -----------------------------------------------------------------
+        // ANALYSIS OF NORMALISED DATASETS
+        // -----------------------------------------------------------------
+
+        DATASET_ANALYSIS(
+            ch_normalised_counts
+        )
+
+        // -----------------------------------------------------------------
+        // MERGE ALL DATASETS INTO ONE SINGLE DATASET
+        // -----------------------------------------------------------------
+
+        MERGE_DATA (
+            ch_normalised_counts,
+            params.missing_value_imputer,
+            params.outdir
+        )
+
+        ch_all_imputed_counts    = MERGE_DATA.out.all_imputed_counts
+        ch_all_counts            = MERGE_DATA.out.all_counts
+        ch_whole_design          = MERGE_DATA.out.whole_design
+        ch_platform_counts       = MERGE_DATA.out.platform_counts
+
+        // -----------------------------------------------------------------
+        // COMPUTE BASE STATISTICS FOR ALL GENES
+        // -----------------------------------------------------------------
+
+        GENE_STATISTICS (
+            ch_all_imputed_counts,
+            ch_all_counts,
+            ch_platform_counts,
+            ch_ratio_nulls_per_sample_file,
+            params.max_null_ratio_valid_sample
+        )
+
+        ch_all_datasets_stats  = GENE_STATISTICS.out.stats
+        ch_platform_statistics = GENE_STATISTICS.out.platform_stats
+
+        // -----------------------------------------------------------------
+        // GET CANDIDATES AS REFERENCE GENE AND COMPUTES VARIOUS STABILITY VALUES
+        // -----------------------------------------------------------------
+
+        STABILITY_SCORING (
+            ch_all_imputed_counts.map{ meta, file -> file },
+            ch_whole_design,
+            ch_all_datasets_stats,
+            params.nb_candidates_per_section,
+            params.nb_sections,
+            params.skip_genorm,
+            params.stability_score_weights
+        )
+
+        ch_stats_all_genes_with_scores = STABILITY_SCORING.out.summary_statistics
+
+    }
+
+    // -----------------------------------------------------------------
+    // REPORTING
+    // -----------------------------------------------------------------
+
+    REPORTING(
+        ch_all_imputed_counts,
+        ch_whole_design,
+        ch_stats_all_genes_with_scores,
+        ch_platform_statistics,
+        ch_whole_gene_metadata,
+        ch_whole_gene_id_mapping,
+        params.target_genes,
+        params.target_gene_file,
+        params.multiqc_config,
+        params.multiqc_logo,
+        params.multiqc_methods_description,
+        params.outdir
     )
 
-    ch_raw_datasets = ch_raw_datasets.concat(
-        EXPRESSIONATLAS_GETDATA.out.raw.map {
-            accession, design_file, count_file ->
-                meta = [accession: accession, design: design_file]
-                [meta, count_file]
-            }
-    )
-
-
-    //
-    // MODULE: Normalization of raw count datasets (including RNA-seq datasets)
-    //
-
-    if ( params.normalization_method == 'deseq2' ) {
-        DESEQ2_NORMALIZE(ch_raw_datasets)
-        ch_raw_datasets_normalized = DESEQ2_NORMALIZE.out.csv
-
-    } else { // 'edger'
-        EDGER_NORMALIZE(ch_raw_datasets)
-        ch_raw_datasets_normalized = EDGER_NORMALIZE.out.csv
-    }
-
-    // putting all normalized count datasets together
-    ch_normalized_datasets.concat( ch_raw_datasets_normalized ).set{ ch_all_normalized }
-
-
-    //
-    // MODULE: ID Mapping
-    //
-
-    // tries to map gene IDs to Ensembl IDs whenever possible
-    GPROFILER_IDMAPPING( ch_all_normalized.combine(ch_species) )
-
-
-    //
-    // MODULE: Merge count files & compute variation coefficient for each gene
-    //
-
-    VARIATION_COEFFICIENT( GPROFILER_IDMAPPING.out.csv.collect() )
-    ch_output_from_variation_coefficient = VARIATION_COEFFICIENT.out.csv
-
-
-    //
-    // Collate and save software versions
-    // TODO: use the nf-core functions when they are adapted to channel topics
-    //
-
-    customSoftwareVersionsToYAML( Channel.topic('versions') )
-        .collectFile(
-            storeDir: "${params.outdir}/pipeline_info",
-            name: 'software_versions.yml',
-            sort: true,
-            newLine: true
-        )
-
-    // only used for nf-test
     emit:
-        ch_output_from_variation_coefficient
-
+    accessions                             = GET_PUBLIC_ACCESSIONS.out.raw_accessions
+    downloaded                             = ch_downloaded_datasets
+    id_filtered_renamed                    = ch_counts_ids_filtered_renamed
+    samples_filtered                       = ch_counts_samples_filtered
+    first_normalisation                    = ch_counts_first_normalissation
+    quantile_normalised                    = ch_normalised_counts
+    gene_length_file                       = ch_gene_length_file
+    merged                                 = ch_all_counts
+    imputed                                = ch_all_imputed_counts
+    all_genes_summary                      = REPORTING.out.all_genes_summary
+    multiqc_report                         = REPORTING.out.multiqc_report.toList()
+    dash_app                               = REPORTING.out.dash_app
 
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/

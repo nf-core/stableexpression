@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/nextflow_schema.json",
+    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/main/nextflow_schema.json",
     "title": "nf-core/stableexpression pipeline parameters",
-    "description": "This pipeline is dedicated to finding the most stable genes across count datasets",
+    "description": "This pipeline is dedicated to identifying the most stable genes within a single or multiple expression dataset(s). This is particularly useful for identifying the most suitable RT-qPCR reference genes for a specific species.",
     "type": "object",
     "$defs": {
         "input_output_options": {
@@ -10,20 +10,71 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["species", "outdir"],
+            "required": ["outdir"],
             "properties": {
                 "species": {
                     "type": "string",
-                    "description": "Species name.",
+                    "description": "Scientifc species name (genus and species)",
                     "fa_icon": "fas fa-hippo",
-                    "pattern": "([a-zA-Z]+)[_ ]([a-zA-Z]+)",
-                    "help_text": "e.g. `--species 'Arabidopsis thaliana'` or `--species 'homo_sapiens'`"
+                    "pattern": "^([a-zA-Z]+)[_ ]([a-zA-Z]+)[_ a-zA-Z]*$",
+                    "help_text": "At least genus and species name should be supplied. Words should be separated by ` ` or `_`. Note that character case is ignored. Examples: `--species 'Arabidopsis thaliana'`, `--species 'homo_sapiens' or `--species MARMOTA_MARMOTA_MARMOTA`."
                 },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
-                    "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
+                    "description": "Output directory",
+                    "help_text": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
                     "fa_icon": "fas fa-folder-open"
+                },
+                "datasets": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_datasets.json",
+                    "pattern": "^\\S+\\.(csv|yaml|yml|dat)$",
+                    "description": "Custom datasets (counts + designs)",
+                    "help_text": "Path to CSV / YAML file listing your own count datasets and their related experimental design. This file should be a comma-separated file with 4 columns (`counts`, `design`, `platform` and `normalised`) with a header row. Before running the pipeline, and for each count dataset provided by you, a design file with information about the samples in your experiment is required. Combine with --skip_fetch_eatlas_accessions if you only want to analyse your own count datasets. Otherwise, accessions from Expression Atlas will be fetched automatically. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input) for more information.",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "keywords": {
+                    "type": "string",
+                    "description": "Keywords used for selecting specific Expression Atlas / GEO accessions",
+                    "fa_icon": "fas fa-font",
+                    "pattern": "(([a-zA-Z,]+))?",
+                    "help_text": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas and / or GEO datasets. The pipeline will select all Expression Atlas experiments / GEO datasets that contain the provided keywords in their description of in one of the condition names. Example: `--keywords 'stress,flowering'`. This parameter is unused if --skip_fetch_eatlas_accessions is set and --fetch_geo_accessions is not set."
+                },
+                "target_genes": {
+                    "type": "string",
+                    "description": "Target genes",
+                    "fa_icon": "fas fa-bullseye",
+                    "help_text": "One or multiple target genes (separated by commas). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols."
+                },
+                "target_gene_file": {
+                    "type": "string",
+                    "description": "File containing target genes",
+                    "format": "file-path",
+                    "exists": true,
+                    "fa_icon": "fas fa-file-word",
+                    "help_text": "File containing one or multiple target genes (one ID per line). These can be gene IDs (as provided in your input datasets), Ensembl gene IDs, or gene symbols."
+                },
+                "platform": {
+                    "type": "string",
+                    "enum": ["rnaseq", "microarray"],
+                    "description": "Only download from this platform",
+                    "fa_icon": "fas fa-caravan",
+                    "help_text": "By default, data from both RNA-seq and Microarray platforms are downloaded. Setting this parameter applies a filter to get data from only one of the two platforms. This filter is only used while fetching appropriate Expression atlas / GEO accessions. It will not filter accessions provided directly by the user."
+                },
+                "accessions_only": {
+                    "type": "boolean",
+                    "description": "Only get accessions from Expression Atlas / GEO and exit.",
+                    "fa_icon": "fas fa-align-center",
+                    "help_text": "Use this option if you only want to get Expression Atlas accessions and skip the rest of the pipeline."
+                },
+                "download_only": {
+                    "type": "boolean",
+                    "description": "Only get accessions from Expression Atlas / GEO and download the selected datasets.",
+                    "fa_icon": "fas fa-download",
+                    "help_text": "Use this option if you only want to get Expression Atlas / GEO accessions, download the selected data, and skip the rest of the pipeline."
                 },
                 "email": {
                     "type": "string",
@@ -31,67 +82,294 @@
                     "fa_icon": "fas fa-envelope",
                     "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                },
+                "multiqc_title": {
+                    "type": "string",
+                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+                    "fa_icon": "fas fa-file-signature"
                 }
             }
         },
-        "local_datasets_options": {
-            "title": "Local datasets options",
+        "public_data_options": {
+            "title": "Public data options",
             "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Options for local count datasets to analyze.",
+            "fa_icon": "fas fa-book-atlas",
+            "description": "Options for fetching experiment data from Expression Atlas / GEO.",
             "properties": {
-                "datasets": {
+                "skip_fetch_eatlas_accessions": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-ban",
+                    "description": "Skip fetching Expression Atlas accessions",
+                    "help_text": "Expression Atlas accessions are automatically fetched by default. Set this parameter to skip this step."
+                },
+                "fetch_geo_accessions": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-cloud-download-alt",
+                    "description": "Fetch GEO accessions from NCBI [Experimental]",
+                    "help_text": "Set this parameter to fetch GEO accessions from NCBI. **This feature is experimental and may not work as expected**. Please report any issues to https://github.com/nf-core/stableexpression/issues."
+                },
+                "accessions": {
+                    "type": "string",
+                    "pattern": "([A-Z0-9-]+,?)*",
+                    "description": "Expression Atlas / GEO accession(s) to include",
+                    "fa_icon": "fas fa-address-card",
+                    "help_text": "Provide Expression Atlas / GEO accession(s) that you want to download. The accessions should be comma-separated. Example: `--accessions E-MTAB-552,E-GEOD-61690,GSE8165,GSE8161`. Combine with --skip_fetch_eatlas_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions."
+                },
+                "accessions_file": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "schema": "assets/schema_input.json",
-                    "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing information about the input count datasets and their related experimental design.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/stableexpression/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
+                    "description": "File containing Expression Atlas / GEO accession(s) to download",
+                    "fa_icon": "fas fa-file-alt",
+                    "help_text": "File containing Expression Atlas / GEO accession(s) that you want to download. One accession per line. Example: `--accessions_file included_accessions.txt`. Combine with --skip_fetch_accessions if you want only these accessions to be used. User provided accessions are prioritised over excluded accessions."
+                },
+                "excluded_accessions": {
+                    "type": "string",
+                    "pattern": "([A-Z0-9-]+,?)*",
+                    "description": "Expression Atlas accession(s) to exclude",
+                    "fa_icon": "fas fa-id-card",
+                    "help_text": "Provide Expression Atlas / GEO accession(s) that you want to exclude. The accessions should be comma-separated. Example: `--excluded_accessions E-MTAB-552,E-GEOD-61690`"
+                },
+                "excluded_accessions_file": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "File containing Expression Atlas accession(s) to exclude",
+                    "fa_icon": "fas fa-file-alt",
+                    "help_text": "File containing Expression Atlas / GEO accession(s) that you want to exclude. One accession per line. Example: `--excluded_accessions_file excluded_accessions.txt`."
                 }
             }
         },
-        "expression_atlas_options": {
-            "title": "Expression Atlas options",
+        "idmapping_options": {
+            "title": "ID mapping options",
             "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Options for fetching datasets from Expression Atlas.",
+            "fa_icon": "fas fa-map",
+            "description": "Options for mapping gene IDs.",
             "properties": {
-                "fetch_eatlas_accessions": {
+                "skip_id_mapping": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-book-atlas",
-                    "description": "Fetch count datasets and experimental designs from Expression Atlas for this species.",
-                    "help_text": "If you want to fetch count data for this species from Expression Atlas, set this parameter to `true`. You do not need to set this parameter if you provide Expression Atlas keywords with `--eatlas_keywords`."
+                    "description": "Skip g:Profiler ID mapping step",
+                    "fa_icon": "fas fa-ban",
+                    "help": "If you don't want to map gene IDs with g:Profiler, you can skip this step by providing `--skip_id_mapping`. It can be in particular useful if the g:Profiler is down and if you already have a custom mapping file."
                 },
-                "eatlas_keywords": {
-                    "type": "string",
-                    "description": "Keywords (separated by commas) to use when retrieving specific experiments from Expression Atlas.",
-                    "fa_icon": "fas fa-book-atlas",
-                    "pattern": "([a-zA-Z,]+)",
-                    "help_text": "e.g. `--eatlas_keywords 'stress,flowering'`"
+                "skip_cleaning_gene_ids": {
+                    "type": "boolean",
+                    "description": "Skip cleaning gene IDs step",
+                    "fa_icon": "fas fa-ban",
+                    "help": "If you don't want to clean gene IDs, you can skip this step by providing `--skip_cleaning_gene_ids`. Note that gene ID cleaning is automatically disabled with `--skip_id_mapping`."
                 },
-                "eatlas_accessions": {
+                "gprofiler_target_db": {
                     "type": "string",
-                    "pattern": "([A-Z0-9-]+,?)+",
-                    "description": "Expression Atlas accession(s), separated by commas.",
-                    "fa_icon": "fas fa-book-atlas",
-                    "help_text": "e.g. `--eatlas_accessions 'E-MTAB-552,E-GEOD-61690'`"
+                    "description": "Experimental: target database for g:Profiler",
+                    "fa_icon": "far fa-dot-circle",
+                    "enum": ["ENSG", "ENTREZGENE", "UNIPROTSPTREMBL", "UNIPROTSWISSPROT"],
+                    "default": "ENSG",
+                    "help_text": "Experimental: target database for g:Profiler. You can see the full list of available target databases at https://biit.cs.ut.ee/gprofiler/convert."
+                },
+                "gene_id_mapping": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_gene_id_mapping.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.(csv|dat)$",
+                    "description": "Custom gene id mapping file",
+                    "help_text": "Path to comma-separated file containing custom gene id mappings. Each row represents a mapping from the original gene ID in your count datasets to a prefered gene ID. The mapping file should be a comma-separated file with 2 columns (original_gene_id and gene_id) and a header row.",
+                    "fa_icon": "fas fa-file-alt"
+                },
+                "gene_metadata": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_gene_metadata.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.(csv|dat)$",
+                    "description": "Custom gene metadata file",
+                    "help_text": "Path to comma-separated file containing custom gene metadata information. Each row represents a gene and links its gene ID to its name and description. The metadata file should be a comma-separated file with 3 columns (gene_id, name and description) and a header row.",
+                    "fa_icon": "fas fa-file-alt"
+                },
+                "min_occurrence_quantile": {
+                    "type": "number",
+                    "description": "Minimum quantile for the frequency of occurrence",
+                    "fa_icon": "far fa-chart-bar",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.2,
+                    "help_text": "To avoid genes that are rarely observed, genes less represented than the specified quantile will be filtered out. For example, value of 0.2 means that the 20% less represented will be filtered out. This filter is applied before using the absolute filter `--min_occurrence_freq`."
+                },
+                "min_occurrence_freq": {
+                    "type": "number",
+                    "description": "Minimum frequency of occurrence among all datasets",
+                    "fa_icon": "fas fa-chart-bar",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.1,
+                    "help_text": "To avoid genes that are rarely observed, genes showing a frequency of occurrence below this threshold will be filtered out."
                 }
             }
         },
-        "normalization_options": {
-            "title": "Normalization options",
+        "sample_filtering_options": {
+            "title": "Sample filtering options",
             "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Options for normalizing datasets.",
+            "fa_icon": "fas fa-chart-line",
+            "description": "Options for filtering samples based on their expression levels.",
             "properties": {
-                "normalization_method": {
+                "max_zero_ratio": {
+                    "type": "number",
+                    "description": "Maximum ratio of zero counts to total counts",
+                    "fa_icon": "fab fa-creative-commons-zero",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.9,
+                    "help_text": "A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
+                },
+                "max_null_ratio": {
+                    "type": "number",
+                    "description": "Maximum ratio of null values",
+                    "fa_icon": "fas fa-dizzy",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.9,
+                    "help_text": "A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
+                },
+                "max_null_ratio_valid_sample": {
+                    "type": "number",
+                    "description": "Maximum ratio of null values in a sample for it to be considered in the computation of the null value malus",
+                    "fa_icon": "far fa-dizzy",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.75,
+                    "help_text": "After filtering out samples with a very high proportion of zero counts (via `--max_null_ratio`), a second filter is set up to avoid samples that contain a substantial proportion of null values to be considered in the malus of null values comprised in the stability score."
+                }
+            }
+        },
+        "normalisation_options": {
+            "title": "Normalisation options",
+            "type": "object",
+            "fa_icon": "fas fa-chart-line",
+            "description": "Options for normalisation and calculation of gene expression variation.",
+            "properties": {
+                "normalisation_method": {
                     "type": "string",
-                    "description": "Tool to use for normalization.",
-                    "fa_icon": "fas fa-chart-simple",
-                    "enum": ["deseq2", "edger"]
+                    "description": "Count normalisation method",
+                    "fa_icon": "fas fa-divide",
+                    "enum": ["tpm", "cpm"],
+                    "default": "tpm",
+                    "help_text": "Raw RNAseq data must be normalised before further processing. `tmp offers a more accurate representation of gene expression levels as it is unbiased toward gene length. However, you can choose `cpm` if you do not have access to a genome annotation."
+                },
+                "gff": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/tsv",
+                    "pattern": "^\\S+\\.(gff|gff3|dat)(\\.gz)?$",
+                    "description": "Genome annotation file (GFF format)",
+                    "help_text": "Path to genome annotation file (GFF format). Cannot be compressed.",
+                    "fa_icon": "fas fa-file-alt"
+                },
+                "gff_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL to genome annotation file (GFF format)",
+                    "help_text": "URL to genome annotation file (GFF format). Cannot be compressed.",
+                    "fa_icon": "fas fa-file-alt"
+                },
+                "gene_length": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_gene_length.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.(csv|tsv|dat)$",
+                    "description": "Gene length file",
+                    "help_text": "Path to comma-separated file containing gene lengths. Each row represents a gene and gives the length of its longest transcript. The file should be a comma-separated file with 2 columns (gene_id and length) and a header row.",
+                    "fa_icon": "fas fa-file-alt"
+                },
+                "quantile_norm_target_distrib": {
+                    "type": "string",
+                    "description": "Target distribution for quantile normalisation",
+                    "fa_icon": "fas fa-chart-bar",
+                    "enum": ["uniform", "normal"],
+                    "default": "uniform",
+                    "help_text": "In order to compare counts between samples and different datasets, all normalised counts are quantile normalised and mapped to a specific distribution. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
+                }
+            }
+        },
+        "missing_value_imputation_options": {
+            "title": "Missing value imputation options",
+            "type": "object",
+            "fa_icon": "fas fa-chart-line",
+            "description": "Options related to missing value imputation.",
+            "properties": {
+                "missing_value_imputer": {
+                    "type": "string",
+                    "description": "Type of imputation method to use for missing values",
+                    "fa_icon": "fas fa-cogs",
+                    "enum": ["knn", "iterative", "simple"],
+                    "default": "knn",
+                    "help_text": "The pipeline provides three options for imputing missing values: iterative, k-nearest neighbours, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Simple imputation is a very basic method that replaces missing values with the median expression level of the gene across all samples. In terms of memory usage, iterative >> knn x > simple. In cases where memory usage is a concern, consider decreasing the number of neighbours for KNN imputation or the number of nearest features for iterative imputation. On the contrary, you may want to increase these parameters if you want more accuracy."
+                }
+            }
+        },
+        "stability_scoring_options": {
+            "title": "Stability scoring options",
+            "type": "object",
+            "fa_icon": "fas fa-chart-line",
+            "description": "Options relative to assessment of stability for each gene.",
+            "properties": {
+                "nb_sections": {
+                    "type": "integer",
+                    "description": "Number of sections to divide genes into for stability scoring.",
+                    "fa_icon": "fas fa-list-ol",
+                    "minimum": 1,
+                    "help_text": "All genes are divided into sections based on their expression levels. Set this parameter to modify the number of sections.",
+                    "default": 10
+                },
+                "nb_candidates_per_section": {
+                    "type": "integer",
+                    "description": "Number of candidate genes to keep for stability scoring in each section",
+                    "fa_icon": "fas fa-sort-numeric-down",
+                    "minimum": 1,
+                    "help_text": "Number of candidate genes to keep in each section for stability scoring. Within each section, the top candidates are selected based on the descriptor chosen with `--candidate_selection_descriptor`.",
+                    "default": 250
+                },
+                "skip_genorm": {
+                    "type": "boolean",
+                    "description": "Run Genorm",
+                    "fa_icon": "fas fa-ban",
+                    "help": "Skip Genorm by setting this parameter to true. In this case, by default, only Normfinder will participate in the stability score."
+                },
+                "stability_score_weights": {
+                    "type": "string",
+                    "description": "Weights for stability score calculation",
+                    "fa_icon": "fas fa-balance-scale",
+                    "help_text": "Weights for Normfinder / Genorm / Coefficient of Variation (CV) / Robust Coefficient of Variation on Median (RCVM) respectively. Must be a comma-separated string. Example: 0.5,0.5,0.0,0",
+                    "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$",
+                    "default": "0.25,0.25,0.25,0.25"
+                }
+            }
+        },
+        "scalability_options": {
+            "title": "Scalability options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Options to improve pipeline scalability and robustness",
+            "properties": {
+                "random_sampling_size": {
+                    "type": "integer",
+                    "description": "Number of public dataset samples to choose randomly before downloading.",
+                    "fa_icon": "fas fa-random",
+                    "minimum": 1,
+                    "help_text": "When dealing with species for which there is a large number (eg. >10000) of samples considering all the downloaded datasets, users may encounter RAM issues (eg. errors with `137` exit codes). In such cases, it is recommended to sample a random subset of these datasets to reduce the computational load. A first subsampling is performedduring the search for Expression Atlas accessions. In case there is still room for datasets and if the `--fetch_geo_accessions` flag was set, a second ssubsampling is performed during the search for NCBI GEO accessions.",
+                    "default": 5000
+                },
+                "random_sampling_seed": {
+                    "type": "integer",
+                    "description": "Seed for dataset random sampling.",
+                    "fa_icon": "fas fa-random",
+                    "minimum": 0,
+                    "help_text": "Seed for dataset random sampling. This ensures reproducibility of the random sampling process. Changing the seed will result in a different random sample being selected.",
+                    "default": 42
                 }
             }
         },
@@ -143,41 +421,6 @@
                 }
             }
         },
-        "max_job_request_options": {
-            "title": "Max job request options",
-            "type": "object",
-            "fa_icon": "fab fa-acquisitions-incorporated",
-            "description": "Set the top limit for requested resources for any single job.",
-            "help_text": "If you are running on a smaller system, a pipeline step requesting more resources than are available may cause the Nextflow to stop the run with an error. These options allow you to cap the maximum resources requested by any single job so that the pipeline will run on your system.\n\nNote that you can not _increase_ the resources requested by any job using these options. For that you will need your own configuration file. See [the nf-core website](https://nf-co.re/usage/configuration) for details.",
-            "properties": {
-                "max_cpus": {
-                    "type": "integer",
-                    "description": "Maximum number of CPUs that can be requested for any single job.",
-                    "default": 16,
-                    "fa_icon": "fas fa-microchip",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`"
-                },
-                "max_memory": {
-                    "type": "string",
-                    "description": "Maximum amount of memory that can be requested for any single job.",
-                    "default": "128.GB",
-                    "fa_icon": "fas fa-memory",
-                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`"
-                },
-                "max_time": {
-                    "type": "string",
-                    "description": "Maximum amount of time that can be requested for any single job.",
-                    "default": "240.h",
-                    "fa_icon": "far fa-clock",
-                    "pattern": "^(\\d+\\.?\\s*(s|m|h|d|day)\\s*)+$",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`"
-                }
-            }
-        },
         "generic_options": {
             "title": "Generic options",
             "type": "object",
@@ -185,12 +428,6 @@
             "description": "Less common options for the pipeline, typically set in a config file.",
             "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
             "properties": {
-                "help": {
-                    "type": "boolean",
-                    "description": "Display help text.",
-                    "fa_icon": "fas fa-question-circle",
-                    "hidden": true
-                },
                 "version": {
                     "type": "boolean",
                     "description": "Display version and exit.",
@@ -220,17 +457,43 @@
                     "fa_icon": "fas fa-remove-format",
                     "hidden": true
                 },
+                "max_multiqc_email_size": {
+                    "type": "string",
+                    "description": "File size limit when attaching MultiQC reports to summary emails.",
+                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
+                    "default": "25.MB",
+                    "fa_icon": "fas fa-file-upload",
+                    "hidden": true
+                },
                 "monochrome_logs": {
                     "type": "boolean",
                     "description": "Do not use coloured log outputs.",
                     "fa_icon": "fas fa-palette",
                     "hidden": true
                 },
-                "hook_url": {
+                "multiqc_config": {
                     "type": "string",
-                    "description": "Incoming hook URL for messaging service",
-                    "fa_icon": "fas fa-people-group",
-                    "help_text": "Incoming hook URL for messaging service. Currently, MS Teams and Slack are supported.",
+                    "format": "file-path",
+                    "description": "Custom config file to supply to MultiQC.",
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
+                },
+                "multiqc_logo": {
+                    "type": "string",
+                    "description": "Custom logo file to supply to MultiQC. File name must also be set in the MultiQC config file",
+                    "fa_icon": "fas fa-image",
+                    "hidden": true
+                },
+                "multiqc_methods_description": {
+                    "type": "string",
+                    "description": "Custom MultiQC yaml file containing HTML including a methods description.",
+                    "fa_icon": "fas fa-cog"
+                },
+                "validate_params": {
+                    "type": "boolean",
+                    "description": "Boolean whether to validate parameters against the schema at runtime",
+                    "default": true,
+                    "fa_icon": "fas fa-check-square",
                     "hidden": true
                 },
                 "pipelines_testdata_base_path": {
@@ -239,6 +502,24 @@
                     "description": "Base URL or local path to location of pipeline test dataset files",
                     "default": "https://raw.githubusercontent.com/nf-core/test-datasets/",
                     "hidden": true
+                },
+                "trace_report_suffix": {
+                    "type": "string",
+                    "fa_icon": "far calendar",
+                    "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
+                    "hidden": true
+                },
+                "help": {
+                    "type": ["boolean", "string"],
+                    "description": "Display the help message."
+                },
+                "help_full": {
+                    "type": "boolean",
+                    "description": "Display the full detailed help message."
+                },
+                "show_hidden": {
+                    "type": "boolean",
+                    "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
                 }
             }
         }
@@ -248,19 +529,28 @@
             "$ref": "#/$defs/input_output_options"
         },
         {
-            "$ref": "#/$defs/local_datasets_options"
+            "$ref": "#/$defs/public_data_options"
         },
         {
-            "$ref": "#/$defs/expression_atlas_options"
+            "$ref": "#/$defs/idmapping_options"
         },
         {
-            "$ref": "#/$defs/normalization_options"
+            "$ref": "#/$defs/sample_filtering_options"
+        },
+        {
+            "$ref": "#/$defs/normalisation_options"
+        },
+        {
+            "$ref": "#/$defs/missing_value_imputation_options"
+        },
+        {
+            "$ref": "#/$defs/stability_scoring_options"
+        },
+        {
+            "$ref": "#/$defs/scalability_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"
-        },
-        {
-            "$ref": "#/$defs/max_job_request_options"
         },
         {
             "$ref": "#/$defs/generic_options"

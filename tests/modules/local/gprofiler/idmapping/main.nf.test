@@ -3,65 +3,48 @@ nextflow_process {
     name "Test Process GPROFILER_IDMAPPING"
     script "modules/local/gprofiler/idmapping/main.nf"
     process "GPROFILER_IDMAPPING"
-    tag "idmapping"
-    tag "module"
+    tag "gprofiler_idmapping"
 
-    test("Map Ensembl IDs to themselves") {
+    test("ENSG - Mapping found") {
 
         when {
+
             process {
                 """
-                meta = []
-                count_file = file("$baseDir/tests/input/idmapping/counts.ensembl_ids.csv")
-                input[0] = [meta, count_file, "Solanum tuberosum"]
+                input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/gene_ids.txt", checkIfExists: true)
+                input[1] = "Solanum tuberosum"
+                input[2] = "ENSG"
                 """
             }
         }
 
         then {
-            assert process.success
-            assert snapshot(process.out.csv).match()
+            assertAll(
+                { assert process.success },
+                { assert process.out.mapping.size() == 1 },
+                { assert snapshot(process.out).match() }
+            )
         }
-
     }
 
-    test("Map NCBI IDs") {
+    test("Entrez - No mapping found") {
 
         when {
+
             process {
                 """
-                meta = []
-                count_file = file("$baseDir/tests/input/idmapping/counts.ncbi_ids.csv")
-                input[0] = [meta, count_file, "Arabidopsis thaliana"]
+                input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/gene_ids.txt", checkIfExists: true)
+                input[1] = "Solanum tuberosum"
+                input[2] = "ENTREZGENE"
                 """
             }
         }
 
         then {
-            assert process.success
-            assert snapshot(process.out.csv).match()
+            assertAll(
+                { assert !process.success }
+            )
         }
-
-    }
-
-
-    test("Map Uniprot IDs") {
-
-        when {
-            process {
-                """
-                meta = []
-                count_file = file("$baseDir/tests/input/idmapping/counts.uniprot_ids.csv")
-                input[0] = [meta, count_file, "Arabidopsis thaliana"]
-                """
-            }
-        }
-
-        then {
-            assert process.success
-            assert snapshot(process.out.csv).match()
-        }
-
     }
 
 }
