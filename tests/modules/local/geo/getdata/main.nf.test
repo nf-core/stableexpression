@@ -5,9 +5,6 @@ nextflow_process {
     process "GEO_GETDATA"
     tag "geo_getdata"
 
-
-    // TODO: see why these tests give ".command.run: No such file or directory" errors sometimes, even when running locally with act
-    // since this process is experimental, we can skip it for now
     test("Beta vulgaris - Small RNA of sugar beet in response to drought stress") {
         when {
 

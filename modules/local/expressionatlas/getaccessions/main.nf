@@ -55,15 +55,4 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     SAMPLING_QUOTA=\$(cat sampling_quota.txt)
     """
-
-    stub:
-    """
-    touch accessions.txt \\
-        all_experiments.metadata.tsv \\
-        filtered_experiments.metadata.tsv \\
-        filtered_experiments.keywords.yaml
-
-    SAMPLING_QUOTA="ok"
-    """
-
 }
