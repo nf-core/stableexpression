@@ -28,9 +28,7 @@ process NORMFINDER   {
     """
 
     stub:
-
     """
     touch stability_values.normfinder.csv
     """
-
 }

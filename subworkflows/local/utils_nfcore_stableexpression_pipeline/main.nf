@@ -173,7 +173,7 @@ workflow PIPELINE_COMPLETION {
 
 def check_accession(accession) {
     if ( !( accession.startsWith('E-') || accession.startsWith('GSE') ) ) {
-        error('Accession ' + accession + ' is not well formated. All accessions should start with "E-" or "GSE".')
+        error('Accession ' + accession + ' is not well formatted. All accessions should start with "E-" or "GSE".')
     }
 }
 
@@ -202,7 +202,7 @@ def validateInputParameters(params) {
         error('You must provide a species name')
     }
 
-    // if accessions are provided or excluded, checking that they are well formated
+    // if accessions are provided or excluded, checking that they are well formatted
     check_accession_string( params.accessions )
     check_accession_string( params.excluded_accessions )
 
@@ -261,7 +261,7 @@ def validateInputSamplesheet( ch_datasets ) {
             }
         }
 
-    // checking that all count files are well formated (same number of columns in header and rows)
+    // checking that all count files are well formatted (same number of columns in header and rows)
     ch_datasets
         .map { meta, file ->
 

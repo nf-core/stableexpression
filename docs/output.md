@@ -250,7 +250,7 @@ Parquet files containing all normalised gene counts are also stored in the `merg
 
 ### Individual datasets
 
-All individual datasets are also stored at each step of the pipelines, with the following pattern:
+All individual datasets are also stored at each step of the pipeline, with the following pattern:
 `datasets/<platform>/<normalisation status>/<dataset name>/`
 
 <details markdown="1">

@@ -24,4 +24,9 @@ process CLEAN_GENE_IDS {
         --count-file "$count_file"
     """
 
+    stub:
+    """
+    touch stub.cleaned.parquet
+    """
+
 }

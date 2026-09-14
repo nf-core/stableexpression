@@ -30,4 +30,12 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS {
     NB_KEPT_SAMPLES=\$(cat nb_kept_samples.csv)
     """
 
+    stub:
+    """
+    touch stub.zeros_filtered.parquet
+    touch ratio_zeros.csv
+    NB_KEPT_SAMPLES=0
+    NB_REJECTED_SAMPLES=0
+    """
+
 }

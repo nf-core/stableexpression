@@ -27,5 +27,9 @@ process NORMALISATION_COMPUTE_TPM {
         --gene-lengths $gene_lengths_file
     """
 
+    stub:
+    """
+    touch stub.tpm.parquet
+    """
 
 }

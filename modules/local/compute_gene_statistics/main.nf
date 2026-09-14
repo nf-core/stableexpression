@@ -35,4 +35,9 @@ process COMPUTE_GENE_STATISTICS {
         $args
     """
 
+    stub:
+    """
+    touch stub.stats_all_genes.csv
+    """
+
 }

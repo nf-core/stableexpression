@@ -29,4 +29,9 @@ process COMPUTE_STABILITY_SCORES {
     mv stats_with_scores.csv ${meta.section}.stats_with_scores.csv
     """
 
+    stub:
+    """
+    touch section_stub.stats_with_scores.csv
+    """
+
 }

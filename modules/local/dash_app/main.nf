@@ -57,4 +57,10 @@ process DASH_APP {
     timeout 10 python -B app.py || exit_code=\$?; [ "\$exit_code" -eq 124 ] && exit 0 || exit 100
     """
 
+    stub:
+    """
+    mkdir dash_app/
+    echo 'dash_app:\nkey: value' > versions.yml
+    """
+
 }

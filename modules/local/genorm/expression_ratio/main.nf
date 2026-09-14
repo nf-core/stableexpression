@@ -22,4 +22,9 @@ process EXPRESSION_RATIO {
         --file $file
     """
 
+    stub:
+    """
+    touch ratios.stub.parquet
+    """
+
 }

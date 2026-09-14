@@ -28,4 +28,10 @@ process GET_CANDIDATE_GENES {
         --nb-sections $nb_sections
     """
 
+    stub:
+    """
+    touch section_stub.candidate_counts.parquet
+    touch section_stub.stats.parquet
+    """
+
 }

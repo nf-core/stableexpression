@@ -29,10 +29,8 @@ process COMPUTE_GENE_TRANSCRIPT_LENGTHS {
         --annotation ${gff3_name}
     """
 
-
     stub:
     """
     touch gene_transcript_lengths.csv
     """
-
 }

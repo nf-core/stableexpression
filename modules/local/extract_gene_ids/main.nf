@@ -22,4 +22,9 @@ process EXTRACT_GENE_IDS {
     extract_gene_ids.py \\
         --count-file "$count_file"
     """
+
+    stub:
+    """
+    touch stub.gene_ids.txt
+    """
 }

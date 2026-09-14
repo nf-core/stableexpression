@@ -24,4 +24,9 @@ process IMPUTE_MISSING_VALUES {
         --imputer $missing_value_imputer
     """
 
+    stub:
+    """
+    touch stub.imputed.parquet
+    """
+
 }

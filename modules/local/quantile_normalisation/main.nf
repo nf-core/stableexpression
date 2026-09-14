@@ -28,7 +28,6 @@ process QUANTILE_NORMALISATION {
 
     stub:
     """
-    touch count.cpm.quant_norm.parquet
+    touch stub.quant_norm.parquet
     """
-
 }

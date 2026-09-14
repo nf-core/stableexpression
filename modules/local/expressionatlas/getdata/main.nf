@@ -30,8 +30,8 @@ process EXPRESSIONATLAS_GETDATA {
 
     stub:
     """
-    touch acc.raw.counts.csv
-    touch acc.design.csv
+    touch stub.rnaseq.raw.counts.csv
+    echo 'sample,condition,batch' > stub.rnaseq.raw.design.csv
+    echo 'stub,stub_cond,stub_batch' >> stub.rnaseq.raw.design.csv
     """
-
 }

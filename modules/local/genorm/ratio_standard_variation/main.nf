@@ -22,4 +22,9 @@ process RATIO_STANDARD_VARIATION {
         --file $file
     """
 
+    stub:
+    """
+    touch std.stub.parquet
+    """
+
 }

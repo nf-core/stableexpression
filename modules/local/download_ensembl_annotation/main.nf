@@ -28,7 +28,6 @@ process DOWNLOAD_ENSEMBL_ANNOTATION {
 
     stub:
     """
-    touch fake.gff3.gz.txt
+    touch stub.gff3.gz
     """
-
 }

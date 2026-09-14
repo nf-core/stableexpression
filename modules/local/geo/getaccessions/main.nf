@@ -66,10 +66,9 @@ process GEO_GETACCESSIONS {
 
     stub:
     """
-    touch accessions.txt \\
-        all_experiments.metadata.tsv \\
-        filtered_experiments.metadata.tsv \\
-        filtered_experiments.keywords.yaml
+    touch accessions.txt
+    touch geo_selected_datasets.metadata.tsv
+    touch geo_all_datasets.metadata.tsv
+    touch geo_rejected_datasets.metadata.tsv
     """
-
 }

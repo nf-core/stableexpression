@@ -22,4 +22,9 @@ process MAKE_CHUNKS {
         --counts $count_file
     """
 
+    stub:
+    """
+    touch count_chunk.stub.parquet
+    """
+
 }

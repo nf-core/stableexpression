@@ -28,13 +28,11 @@ process DETECT_RARE_GENES {
         --nb-datasets $nb_datasets \\
         --min-occurrence-frequency $min_occurrence_frequency \\
         --min-occurrence-quantile $min_occurrence_quantile
-
     """
-
 
     stub:
     """
-    touch fake.validated_genes.txt
+    echo 'stub' > valid_gene_ids.txt
+    touch total_gene_id_occurrence_quantiles.csv
     """
-
 }

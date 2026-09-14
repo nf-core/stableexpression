@@ -35,8 +35,7 @@ process GEO_GETDATA {
 
     stub:
     """
-    touch acc.microarray.normalised.counts.csv
-    touch acc.design.csv
+    touch stub.counts.csv
+    touch stub.design.csv
     """
-
 }

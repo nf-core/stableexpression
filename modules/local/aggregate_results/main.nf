@@ -40,4 +40,13 @@ process AGGREGATE_RESULTS {
         $target_genes_arg
     """
 
+    stub:
+    """
+    touch all_genes_summary.csv
+    touch stub.most_stable_genes_summary.csv
+    touch stub.most_stable_genes_transposed_counts.csv
+    touch custom_content_multiqc_config.yaml
+    """
+
+
 }

@@ -58,12 +58,9 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     stub:
     """
-    touch accessions.txt \\
-        all_experiments.metadata.tsv \\
-        filtered_experiments.metadata.tsv \\
-        filtered_experiments.keywords.yaml
-
-    SAMPLING_QUOTA="ok"
+    echo "E-stub" > accessions.txt
+    SAMPLING_QUOTA=ok
+    touch selected_experiments.metadata.tsv
+    touch species_experiments.metadata.tsv
     """
-
 }

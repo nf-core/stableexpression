@@ -25,5 +25,10 @@ process NORMALISATION_COMPUTE_CPM {
         --counts $count_file
     """
 
+    stub:
+    """
+    touch stub.cpm.parquet
+    """
+
 
 }

@@ -37,10 +37,8 @@ process FILTER_AND_RENAME_GENES {
     NB_FINAL=\$(cat final.txt)
     """
 
-
     stub:
     """
-    touch fake_renamed.csv
+    touch stub.renamed.parquet
     """
-
 }
