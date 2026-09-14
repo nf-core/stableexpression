@@ -25,4 +25,9 @@ process DOWNLOAD_ENSEMBL_ANNOTATION {
     download_latest_ensembl_annotation.py \\
         --species ${species}
     """
+
+    stub:
+    """
+    touch stub.gff3.gz
+    """
 }

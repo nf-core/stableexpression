@@ -22,4 +22,9 @@ process COMPUTE_M_MEASURE {
         --std-files "$ratio_files"
     """
 
+    stub:
+    """
+    touch m_measures.csv
+    """
+
 }

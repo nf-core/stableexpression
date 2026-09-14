@@ -27,4 +27,11 @@ process EXPRESSIONATLAS_GETDATA {
     """
     download_eatlas_data.R --accession $accession
     """
+
+    stub:
+    """
+    touch stub.rnaseq.raw.counts.csv
+    echo 'sample,condition,batch' > stub.rnaseq.raw.design.csv
+    echo 'stub,stub_cond,stub_batch' >> stub.rnaseq.raw.design.csv
+    """
 }

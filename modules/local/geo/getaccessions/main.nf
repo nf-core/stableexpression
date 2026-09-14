@@ -63,4 +63,12 @@ process GEO_GETACCESSIONS {
         $args \\
         --cpus ${task.cpus}
     """
+
+    stub:
+    """
+    touch accessions.txt
+    touch geo_selected_datasets.metadata.tsv
+    touch geo_all_datasets.metadata.tsv
+    touch geo_rejected_datasets.metadata.tsv
+    """
 }

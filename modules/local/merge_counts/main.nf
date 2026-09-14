@@ -23,4 +23,9 @@ process MERGE_COUNTS {
         --counts "$count_files"
     """
 
+    stub:
+    """
+    touch all_counts.parquet
+    """
+
 }

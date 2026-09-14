@@ -36,4 +36,9 @@ process FILTER_AND_RENAME_GENES {
     NB_NOT_VALID=\$(cat not_valid.txt)
     NB_FINAL=\$(cat final.txt)
     """
+
+    stub:
+    """
+    touch stub.renamed.parquet
+    """
 }

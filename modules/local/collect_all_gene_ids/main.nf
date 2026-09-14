@@ -22,4 +22,10 @@ process COLLECT_ALL_GENE_IDS {
         --ids "$count_files"
     """
 
+    stub:
+    """
+    touch unique_gene_ids.txt
+    touch gene_id_occurrences.csv
+    """
+
 }

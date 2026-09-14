@@ -24,4 +24,9 @@ process COMPUTE_DATASET_STATISTICS {
         --counts $count_file
     """
 
+    stub:
+    """
+    touch skewness.txt
+    """
+
 }

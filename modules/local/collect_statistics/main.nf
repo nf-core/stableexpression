@@ -22,4 +22,9 @@ process COLLECT_STATISTICS {
         --file $file
     """
 
+    stub:
+    """
+    touch stub.transposed.csv
+    """
+
 }

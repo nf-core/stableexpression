@@ -25,4 +25,9 @@ process QUANTILE_NORMALISATION {
         --counts $count_file \\
         --target-distrib $target_distribution
     """
+
+    stub:
+    """
+    touch stub.quant_norm.parquet
+    """
 }

@@ -32,4 +32,10 @@ process GEO_GETDATA {
         --accession $accession \\
         --species $species
     """
+
+    stub:
+    """
+    touch stub.counts.csv
+    touch stub.design.csv
+    """
 }

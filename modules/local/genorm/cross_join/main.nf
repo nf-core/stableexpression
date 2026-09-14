@@ -25,4 +25,9 @@ process CROSS_JOIN {
         --index2 ${meta.index_2}
     """
 
+    stub:
+    """
+    touch cross_join.stub.parquet
+    """
+
 }

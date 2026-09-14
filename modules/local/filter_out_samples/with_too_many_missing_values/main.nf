@@ -33,4 +33,14 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_MISSING_VALUES {
     NB_KEPT_SAMPLES=\$(cat nb_kept_samples.csv)
     """
 
+    stub:
+    """
+    touch stub.nulls_filtered.parquet
+    echo 'sample,ratio' > ratio_null_values_per_sample.csv
+    echo 'stub,0' >> ratio_null_values_per_sample.csv
+    touch ratio_null_values.csv
+    NB_KEPT_SAMPLES=0
+    NB_REJECTED_SAMPLES=0
+    """
+
 }

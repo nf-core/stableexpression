@@ -42,4 +42,12 @@ process GPROFILER_IDMAPPING {
         --species "$species" \\
         --target-db "$gprofiler_target_db"
     """
+
+    stub:
+    """
+    echo 'original_gene_id,gene_id' > mapped_gene_ids.csv
+    echo 'stub,stub' >> mapped_gene_ids.csv
+    echo 'gene_id,name,description' > gene_metadata.csv
+    echo 'stub,stub_name,stub_desc' >> gene_metadata.csv
+    """
 }

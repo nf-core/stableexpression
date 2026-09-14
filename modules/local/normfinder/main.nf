@@ -26,4 +26,9 @@ process NORMFINDER   {
         --counts $count_file \\
         --design $design_file
     """
+
+    stub:
+    """
+    touch stability_values.normfinder.csv
+    """
 }

@@ -55,4 +55,12 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     SAMPLING_QUOTA=\$(cat sampling_quota.txt)
     """
+
+    stub:
+    """
+    echo "E-stub" > accessions.txt
+    SAMPLING_QUOTA=ok
+    touch selected_experiments.metadata.tsv
+    touch species_experiments.metadata.tsv
+    """
 }
