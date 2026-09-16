@@ -1,0 +1,17 @@
+[tool.ruff.lint]
+# Avoid enforcing line-length violations (`E501`)
+ignore = ["E501"]
+
+[tool.ruff.format]
+# Use single quotes when formatting.
+quote-style = "double"
+indent-style = "space"
+
+[tool.basedpyright]
+reportUnusedCallResult = "none"
+reportUnknownMemberType = "none"
+reportUnknownVariableType = "none"
+reportUnknownParameterType = "none"
+reportUnknownArgumentType = "none"
+reportAny = "none"
+reportImplicitRelativeImport = "none"

@@ -1,0 +1,28 @@
+nextflow_process {
+
+    name "Test Process MAKE_CHUNKS"
+    script "modules/local/genorm/make_chunks/main.nf"
+    process "MAKE_CHUNKS"
+    tag "make_chunks"
+
+    test("Should run without failures") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [section: "section_1"],
+                    file( '$projectDir/tests/test_data/modules/genorm/make_chunks/input/counts.parquet', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

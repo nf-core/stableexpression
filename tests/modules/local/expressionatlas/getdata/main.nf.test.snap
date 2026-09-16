@@ -1,0 +1,131 @@
+{
+    "Transcriptome Analysis of the potato (rnaseq)": {
+        "content": [
+            {
+                "0": [
+                    "E_MTAB_552_rnaseq.rnaseq.raw.counts.csv:md5,830f50b60b17b62f9ca2f6a163a2879f"
+                ],
+                "1": [
+                    "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "4.4.3 (2025-02-28)"
+                    ]
+                ],
+                "5": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "ExpressionAtlas",
+                        "1.34.0"
+                    ]
+                ],
+                "counts": [
+                    "E_MTAB_552_rnaseq.rnaseq.raw.counts.csv:md5,830f50b60b17b62f9ca2f6a163a2879f"
+                ],
+                "design": [
+                    "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c"
+                ]
+            }
+        ],
+        "timestamp": "2026-03-19T12:17:31.898448037",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    },
+    "Arabidopsis Geo dataset": {
+        "content": [
+            {
+                "0": [
+                    "E_GEOD_62537_A_AFFY_2.microarray.normalised.counts.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                ],
+                "1": [
+                    "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "4.4.3 (2025-02-28)"
+                    ]
+                ],
+                "5": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "ExpressionAtlas",
+                        "1.34.0"
+                    ]
+                ],
+                "counts": [
+                    "E_GEOD_62537_A_AFFY_2.microarray.normalised.counts.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                ],
+                "design": [
+                    "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88"
+                ]
+            }
+        ],
+        "timestamp": "2026-03-29T16:45:22.368557567",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    },
+    "Transcription profiling by array of Arabidopsis mutant for fis2 (microarray)": {
+        "content": [
+            {
+                "0": [
+                    "E_TABM_1007_A_AFFY_2.microarray.normalised.counts.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
+                ],
+                "1": [
+                    "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "4.4.3 (2025-02-28)"
+                    ]
+                ],
+                "5": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "ExpressionAtlas",
+                        "1.34.0"
+                    ]
+                ],
+                "counts": [
+                    "E_TABM_1007_A_AFFY_2.microarray.normalised.counts.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
+                ],
+                "design": [
+                    "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1"
+                ]
+            }
+        ],
+        "timestamp": "2026-03-19T12:17:45.546042421",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    }
+}

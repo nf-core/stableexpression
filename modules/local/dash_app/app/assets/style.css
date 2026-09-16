@@ -1,0 +1,9 @@
+.modebar {
+  background: transparent;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.mantine-Drawer-root {
+  width: 0.1em !important;
+}

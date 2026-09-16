@@ -12,4 +12,24 @@ report_section_order:
 
 export_plots: true
 
+run_modules:
+  - custom_content
+
 disable_version_detection: true
+
+max_table_rows: 100000
+
+table_cond_formatting_colours:
+  - first: "#ffd700"
+  - second: "#C0C0C0"
+  - third: "#CD7F32"
+  - between_fourth_and_tenth: "#468F8F"
+  - very_low: "#337ab7"
+  - low: "#5bc0de"
+  - medium: "#5cb85c"
+  - high: "#f0ad4e"
+  - very_high: "#d9534f"
+
+#violin_downsample_after: 10000
+
+log_filesize_limit: 10000000000 # 10GB
