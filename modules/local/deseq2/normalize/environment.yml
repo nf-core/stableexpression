@@ -1,8 +1,0 @@
-name: deseq_normalize
-channels:
-  - conda-forge
-  - bioconda
-dependencies:
-  - conda-forge::r-base==4.3.3
-  - bioconda::bioconductor-deseq2==1.42.0
-  - conda-forge::r-optparse==1.7.5

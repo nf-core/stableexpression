@@ -1,0 +1,4 @@
+counts,design,platform,normalised
+tests/test_data/workflows/sampled/beta_vulgaris/counts.csv.gz,tests/test_data/workflows/sampled/beta_vulgaris/design.csv,rnaseq,false
+tests/test_data/workflows/sampled/beta_vulgaris/counts1.csv,tests/test_data/workflows/sampled/beta_vulgaris/design.csv,rnaseq,false
+tests/test_data/workflows/sampled/beta_vulgaris/counts2.csv,tests/test_data/workflows/sampled/beta_vulgaris/design.csv,rnaseq,false

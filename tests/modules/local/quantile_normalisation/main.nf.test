@@ -1,0 +1,54 @@
+nextflow_process {
+
+    name "Test Process QUANTILE_NORMALISATION"
+    script "modules/local/quantile_normalisation/main.nf"
+    process "QUANTILE_NORMALISATION"
+    tag "quant_norm"
+
+    test("Uniform target distribution") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [dataset: 'test'],
+                    file( '$projectDir/tests/test_data/modules/quantile_normalisation/count.raw.cpm.csv', checkIfExists: true)
+                ]
+                input[1] = "uniform"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Normal target distribution") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [dataset: 'test'],
+                    file( '$projectDir/tests/test_data/modules/quantile_normalisation/count.raw.cpm.csv', checkIfExists: true)
+                ]
+                input[1] = "normal"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

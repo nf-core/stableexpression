@@ -1,0 +1,50 @@
+nextflow_process {
+
+    name "Test Process NORMFINDER"
+    script "modules/local/normfinder/main.nf"
+    process "NORMFINDER"
+    tag "normfinder"
+
+    test("Very small dataset - Cq values") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [section: "section_1"],
+                    file( '$projectDir/tests/test_data/modules/normfinder/very_small_cq/all_counts.normalised.parquet', checkIfExists: true)
+                ]
+                input[1] = file( '$projectDir/tests/test_data/modules/normfinder/very_small_cq/design.csv', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+    test("Small dataset - Real expression values") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [section: "section_1"],
+                    file( '$projectDir/tests/test_data/modules/normfinder/small_normalised/all_counts.normalised.parquet', checkIfExists: true)
+                ]
+                input[1] = file( '$projectDir/tests/test_data/modules/normfinder/small_normalised/design.csv', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

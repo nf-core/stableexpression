@@ -1,0 +1,28 @@
+nextflow_process {
+
+    name "Test Process EXPRESSION_RATIO"
+    script "modules/local/genorm/expression_ratio/main.nf"
+    process "EXPRESSION_RATIO"
+    tag "expression_ratio"
+
+    test("Should run without failures") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [section: "section_1", index_1: 0, index_2: 1],
+                    file( '$projectDir/tests/test_data/modules/genorm/cross_join/output/cross_join.0.1.parquet', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

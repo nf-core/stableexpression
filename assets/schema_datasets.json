@@ -1,0 +1,41 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/assets/schema_datasets.json",
+    "title": "nf-core/stableexpression pipeline - params.schema_datasets schema",
+    "description": "Schema for the file provided with params.datasets",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "counts": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.(csv|tsv|dat)(\\.gz)?$",
+                "errorMessage": "You must provide a count dataset file"
+            },
+            "design": {
+                "type": "string",
+                "format": "file-path",
+                "schema": "assets/schema_design.json",
+                "exists": true,
+                "pattern": "^\\S+\\.(csv|tsv|dat)$",
+                "errorMessage": "You must provide a design file",
+                "meta": ["design"]
+            },
+            "platform": {
+                "type": "string",
+                "errorMessage": "You must specify the platform of the dataset",
+                "enum": ["rnaseq", "microarray"],
+                "meta": ["platform"]
+            },
+            "normalised": {
+                "type": "boolean",
+                "description": "Specify whether the dataset is already normalised",
+                "errorMessage": "You must specify whether the dataset is already normalised (true or false)",
+                "meta": ["normalised"]
+            }
+        },
+        "required": ["counts", "design", "platform", "normalised"]
+    }
+}

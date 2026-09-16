@@ -1,0 +1,95 @@
+{
+    "No imputed values": {
+        "content": [
+            {
+                "0": [
+                    "rnaseq.stats_all_genes.csv:md5,e2a15d08a3ada8daba6d5b834dbe1de7"
+                ],
+                "1": [
+                    [
+                        "COMPUTE_GENE_STATISTICS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_GENE_STATISTICS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats": [
+                    "rnaseq.stats_all_genes.csv:md5,e2a15d08a3ada8daba6d5b834dbe1de7"
+                ]
+            }
+        ],
+        "timestamp": "2026-06-25T18:46:35.712522825",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "No platform": {
+        "content": [
+            {
+                "0": [
+                    "stats_all_genes.csv:md5,42e9e52c43527e80489294a2c2dbbec0"
+                ],
+                "1": [
+                    [
+                        "COMPUTE_GENE_STATISTICS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_GENE_STATISTICS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats": [
+                    "stats_all_genes.csv:md5,42e9e52c43527e80489294a2c2dbbec0"
+                ]
+            }
+        ],
+        "timestamp": "2026-06-25T18:46:18.147376664",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "RNAseq platform": {
+        "content": [
+            {
+                "0": [
+                    "rnaseq.stats_all_genes.csv:md5,e2a15d08a3ada8daba6d5b834dbe1de7"
+                ],
+                "1": [
+                    [
+                        "COMPUTE_GENE_STATISTICS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_GENE_STATISTICS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats": [
+                    "rnaseq.stats_all_genes.csv:md5,e2a15d08a3ada8daba6d5b834dbe1de7"
+                ]
+            }
+        ],
+        "timestamp": "2026-06-25T18:46:26.843682242",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    }
+}

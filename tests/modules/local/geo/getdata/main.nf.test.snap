@@ -1,0 +1,506 @@
+{
+    "Drosophila simulans - Expression profiling by high throughput sequencing / One raw count found": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.78.0"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.2.0"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ],
+                "rejected": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-03-30T14:54:35.640938644",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    },
+    "Drosophila simulans - No data found": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.78.0"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.2.0"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ],
+                "rejected": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-03-30T14:54:07.057142353",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    },
+    "Drosophila simulans - Mismatch in suppl data colnames / design": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.78.0"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.2.0"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ],
+                "rejected": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-03-30T14:54:54.838651132",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    },
+    "Accession does not exist": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.78.0"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.2.0"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ],
+                "rejected": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-03-30T14:53:48.164404869",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    },
+    "Drosophila simulans - Expression profiling by array": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.78.0"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.2.0"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ],
+                "rejected": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-03-30T14:54:16.400915284",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    },
+    "Drosophila simulans - Expression profiling by high throughput sequencing / Some raw counts found": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.78.0"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.2.0"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ],
+                "rejected": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-03-30T14:54:25.947789471",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    },
+    "Drosophila simulans - Only series suppl data but multiple species": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.78.0"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.2.0"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ],
+                "rejected": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-03-30T14:54:45.272163295",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    },
+    "Drosophila simulans - Only one sample among several": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.78.0"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.2.0"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ],
+                "rejected": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-03-30T14:53:57.533758257",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    },
+    "Beta vulgaris - Small RNA of sugar beet in response to drought stress": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    [
+                        "GEO_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "6": [
+                    [
+                        "GEO_GETDATA",
+                        "GEOquery",
+                        "2.78.0"
+                    ]
+                ],
+                "7": [
+                    [
+                        "GEO_GETDATA",
+                        "dplyr",
+                        "1.2.0"
+                    ]
+                ],
+                "counts": [
+                    
+                ],
+                "design": [
+                    
+                ],
+                "rejected": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-03-30T14:53:38.690525862",
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.4"
+        }
+    }
+}

@@ -1,0 +1,126 @@
+{
+    "Small dataset - Real expression values": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,396daa125b0f7d65a68d87e89acb6a8c"
+                    ]
+                ],
+                "1": [
+                    [
+                        "NORMFINDER",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "NORMFINDER",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "3": [
+                    [
+                        "NORMFINDER",
+                        "tqdm",
+                        "4.67.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMFINDER",
+                        "numpy",
+                        "2.4.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "NORMFINDER",
+                        "numba",
+                        "0.64.0"
+                    ]
+                ],
+                "stability_values": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,396daa125b0f7d65a68d87e89acb6a8c"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-07-15T23:16:10.62712975",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "Very small dataset - Cq values": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,4b862600bac58b66724a9dfe8789f8bf"
+                    ]
+                ],
+                "1": [
+                    [
+                        "NORMFINDER",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "NORMFINDER",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "3": [
+                    [
+                        "NORMFINDER",
+                        "tqdm",
+                        "4.67.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMFINDER",
+                        "numpy",
+                        "2.4.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "NORMFINDER",
+                        "numba",
+                        "0.64.0"
+                    ]
+                ],
+                "stability_values": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "stability_values.normfinder.csv:md5,4b862600bac58b66724a9dfe8789f8bf"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-07-15T23:15:58.113899646",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    }
+}
