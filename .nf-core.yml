@@ -17,7 +17,7 @@ lint:
     - params.input
   template_strings:
     - tests/test_data/modules/genorm/compute_m_measure/input/std.1.2.parquet
-nf_core_version: 4.0.3
+nf_core_version: 4.1.0
 repository_type: pipeline
 template:
   author: Olivier Coen
