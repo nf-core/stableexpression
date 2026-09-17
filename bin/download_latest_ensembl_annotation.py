@@ -154,8 +154,17 @@ def get_species_taxid(species: str) -> int:
         return get_species_taxid_from_ncbi(ncbi_formated_species_name)
 
 
+def format_species_name_for_ensembl(species: str) -> str:
+    return species.replace(" ", "_").lower()
+
+
+def format_species_name_for_ncbi_taxonomy(species: str) -> str:
+    return species.replace("_", " ").lower()
+
+
 def get_species_taxid_from_ensembl(species: str) -> int:
-    url = ENSEMBL_REST_SERVER + TAXONOMY_NAME_ENDPOINT.format(species=species)
+    formatted_species = format_species_name_for_ensembl(species)
+    url = ENSEMBL_REST_SERVER + TAXONOMY_NAME_ENDPOINT.format(species=formatted_species)
     data = send_get_request_to_ensembl(url)
     if len(data) == 0:
         raise ValueError(f"No species found for species {species}")
@@ -172,7 +181,8 @@ def get_species_taxid_from_ensembl(species: str) -> int:
 
 
 def get_species_taxid_from_ncbi(species: str) -> int:
-    result = send_request_to_ncbi_taxonomy(species)
+    formatted_species = format_species_name_for_ncbi_taxonomy(species)
+    result = send_request_to_ncbi_taxonomy(formatted_species)
     if len(result["taxonomy_nodes"]) > 1:
         raise ValueError(f"Multiple taxids for species {species}")
     metadata = result["taxonomy_nodes"][0]
@@ -181,7 +191,7 @@ def get_species_taxid_from_ncbi(species: str) -> int:
     return int(metadata["taxonomy"]["tax_id"])
 
 
-def get_species_division(species_taxid: int) -> str:
+def get_species_division_and_candidate_folders(species_taxid: int) -> tuple[str, list[str]]:
     url = ENSEMBL_REST_SERVER + SPECIES_INFO_BASE_ENDPOINT.format(
         species=str(species_taxid)
     )
@@ -198,35 +208,23 @@ def get_species_division(species_taxid: int) -> str:
     if len(found_divisions) > 1:
         logger.error(f"Multiple divisions found for species Taxon ID {species_taxid}: {found_divisions}.")
         sys.exit(100)
-    return found_divisions[0]
+    # there should be only one division
+    found_division = found_divisions[0]
+    # taking all assembly names
+    assembly_names = list({d.get("name", "") for d in data})
+    return found_division, assembly_names
 
 
-def get_species_category(species: str) -> str:
-    species_taxid = get_species_taxid(species)
-    logger.info(f"Got species taxid: {species_taxid}")
-    division = get_species_division(species_taxid)
-    logger.info(f"Got division: {division}")
-    return ENSEMBL_DIVISION_TO_FOLDER[division]
-
-
-def get_division_url(species: str) -> str:
+def get_division_url(division: str) -> str:
     """
     In Ensembl, species are separated into divisions.
     Returns the URL for the division of the given species.
     """
-    category = get_species_category(species)
-    if category == "vertebrates":
+    if division == "vertebrates":
         return ENSEMBL_VERTEBRATES_BASE_URL
     else:
-        return ENSEMBL_GENOMES_BASE_URL.format(category)
-
-
-def format_species_name_for_ensembl(species: str) -> str:
-    return species.replace(" ", "_").lower()
-
-
-def format_species_name_for_ncbi_taxonomy(species: str) -> str:
-    return species.replace("_", " ").lower()
+        division_folder = ENSEMBL_DIVISION_TO_FOLDER[division]
+        return ENSEMBL_GENOMES_BASE_URL.format(division_folder)
 
 
 def parse_last_modified_date(dt_string: str) -> datetime | None:
@@ -394,18 +392,19 @@ def get_annotation_file(url: str) -> str:
 def main():
     args = parse_args()
 
-    # format species name to fit with Ensembl API requirement
-    species = format_species_name_for_ensembl(args.species)
-    division_url = get_division_url(species)
-    logger.info(f"Searching for the right folder in {division_url}")
+    species_taxid = get_species_taxid(args.species)
+    logger.info(f"Got species taxid: {species_taxid}")
 
-    logger.info(f"Fetching division name for {species}")
-    division_url = get_division_url(species)
+    division, assembly_names = get_species_division_and_candidate_folders(species_taxid)
+    logger.info(f"Got division: {division}")
+
+    logger.info(f"Fetching division name for {args.species}")
+    division_url = get_division_url(division)
 
     logger.info(f"Searching for the right folder in {division_url}")
-    species_url_records = get_candidate_species_folders(species, division_url)
+    species_url_records = get_candidate_species_folders(args.species, division_url)
     if not species_url_records:
-        raise ValueError(f"No species folder found for {species}")
+        raise ValueError(f"No species folder found for {args.species}")
 
     annotation_folder_url = get_current_annotation_folder(species_url_records, species)
     logger.info(f"Found current annotation folder: {annotation_folder_url}")
