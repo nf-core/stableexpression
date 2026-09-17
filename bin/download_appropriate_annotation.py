@@ -5,6 +5,7 @@
 import argparse
 import logging
 import sys
+import re
 from pathlib import Path
 from datetime import datetime
 from urllib.request import urlretrieve
@@ -48,6 +49,18 @@ ENSEMBL_DIVISION_TO_FOLDER = {
 
 ENSEMBL_GENOMES_BASE_URL = "https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/{}/gff3/"
 ENSEMBL_VERTEBRATES_BASE_URL = "https://ftp.ensembl.org/pub/current/gff3/"
+
+GFF3_COLUMN_DTYPES = {
+    "chromosome": str,
+    "source": str,
+    "feature": str,
+    "start": int,
+    "end": int,
+    "score": str,
+    "strand": str,
+    "phase": str,
+    "attributes": str,
+}
 
 
 ##################################################################
@@ -244,14 +257,14 @@ def parse_last_modified_date(dt_string: str) -> datetime | None:
 
 def get_candidate_species_folders(
     species: str, assembly_names: list[str], url: str, first_level: bool = True
-) -> list[dict]:
+) -> list[str]:
     """
     Get the content of the url corresponding to the species division and parse it using BeautifulSoup.
     Get all folders
     """
     soup = parse_page_data(url)
-    species_url_records = []
-    species_url_collection_records = []
+    folder_urls = []
+    collection_folder_urls = []
 
     # adding progress bar only at the first level
     iterator = tqdm(soup.find_all("tr")) if first_level else soup.find_all("tr")
@@ -263,9 +276,6 @@ def get_candidate_species_folders(
             continue
 
         folder_name_section = line_sections[1]
-        date_section = line_sections[2]
-        last_modified_date = parse_last_modified_date(date_section.text.strip())
-
         for folder in folder_name_section.find_all("a"):
             folder_name = folder.text
             folder_url = f"{url}{folder_name}"
@@ -273,30 +283,25 @@ def get_candidate_species_folders(
             # start with the species name
             # are in the list of assembly names
             if folder_name.startswith(species) or folder_name in assembly_names:
-                d = {
-                    "date": last_modified_date,
-                    "url": folder_url,
-                    "name": folder_name.rstrip("/"),
-                }
-                species_url_records.append(d)
+                folder_urls.append(folder_url)
             elif folder_name.endswith("_collection/"):
-                species_url_collection_records += get_candidate_species_folders(
+                collection_folder_urls += get_candidate_species_folders(
                     species, assembly_names, folder_url, first_level=False
                 )
             else:
                 continue
 
     # if no first-level folder found
-    if not species_url_records:
+    if not folder_urls:
         # if collection folders were found at >= second level, taking those ones as fallback
-        if species_url_collection_records:
+        if collection_folder_urls:
             logger.warning(f"No first-level folder found for {species} at {url}. Taking collection folders as fallback.")
-            return species_url_collection_records
+            return collection_folder_urls
         else:
             return []
 
     # if first-level folders were found, keeping only those ones
-    return species_url_records
+    return folder_urls
 
 
 def parse_size(size_str: str) -> int:
@@ -376,6 +381,30 @@ def parse_gene_ids(file: Path):
     with open(file, "r") as fin:
         return  list({line.strip() for line in fin})
 
+
+def parse_gff3_file(annotation_file: str) -> pd.DataFrame:
+    return pd.read_csv(
+        annotation_file,
+        sep="\t",
+        names=list(GFF3_COLUMN_DTYPES.keys()),
+        dtype=GFF3_COLUMN_DTYPES,
+        comment="#",
+        on_bad_lines="warn",
+    )
+
+
+def parse_gene_ids_from_annotation(file: str) -> list[str]:
+    """
+    Extract gene ID from attributes column for each gene feature
+    """
+    df = parse_gff3_file(file)
+    return (
+        df.loc[df["feature"] == 'gene']['attributes']
+        .str.extract(r"ID=gene:([^;]+)", expand=False)
+        .drop_duplicates()
+        .tolist()
+    )
+
 ##################################################################
 ##################################################################
 # MAIN
@@ -388,6 +417,7 @@ def main():
 
     species = args.species
     unique_gene_ids = parse_gene_ids(args.gene_ids_file)
+    logger.info(f"Got {len(unique_gene_ids)} unique gene IDs like {', '.join(unique_gene_ids[:3])}")
 
     ##################################################################
     # GETTING A SUBSET OF CANDIDATE FOLDERS CONTAINING THE BEST ANNOTATION
@@ -404,19 +434,39 @@ def main():
     division_url = get_division_url(division)
 
     logger.info(f"Searching for the right folder in {division_url}")
-    species_url_records = get_candidate_species_folders(species, assembly_names, division_url)
-    if not species_url_records:
+    candidate_folder_urls = get_candidate_species_folders(species, assembly_names, division_url)
+    if not candidate_folder_urls:
         raise ValueError(f"No candidate annotation folder found for {species}")
 
-    annotation_folder_url = get_current_annotation_folder(species_url_records, species)
-    logger.info(f"Found current annotation folder: {annotation_folder_url}")
+    annotation_file_to_nb_common_gene_ids = {}
+    for folder_url in candidate_folder_urls:
+        annotation_file = get_annotation_file(folder_url)
 
-    annotation_file = get_annotation_file(annotation_folder_url)
+        annotation_full_url = folder_url + annotation_file
+        logger.info(f"Found annotation URL: {annotation_full_url}.\nDownloading...")
+        download_file(annotation_full_url, annotation_file)
 
-    annotation_full_url = annotation_folder_url + annotation_file
-    logger.info(f"Found annotation URL: {annotation_full_url}.\nDownloading...")
+        annotation_gene_ids = parse_gene_ids_from_annotation(annotation_file)
+        logger.info(f"{annotation_file} :: found {len(annotation_gene_ids)} gene IDs like {', '.join(annotation_gene_ids[:3])}")
 
-    download_file(annotation_full_url, annotation_file)
+        gene_id_intersection = set(annotation_gene_ids).intersection(unique_gene_ids)
+        logger.info(f"{annotation_file} :: {len(gene_id_intersection)} gene IDs in commmon")
+
+        annotation_file_to_nb_common_gene_ids[annotation_file] = len(gene_id_intersection)
+
+    max_nb_common_gene_ids = max(annotation_file_to_nb_common_gene_ids.values())
+    if not max_nb_common_gene_ids == 0:
+        raise ValueError("Could not find any annotation file having gene IDs in common with list provided...")
+
+    # if multiple annotation file share the same number of common gene IDs
+    # taking the first one
+    # the list os sorted first for reproducibility
+    chosen_annotation_file = next(sorted([
+        file for file, nb_common_gene_ids in annotation_file_to_nb_common_gene_ids.items()
+        if nb_common_gene_ids == max_nb_common_gene_ids
+    ]))
+
+
     logger.info("Done")
 
 
