@@ -2,29 +2,27 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
-import argparse
 import logging
-import sys
-import re
-from pathlib import Path
-from datetime import datetime
-from urllib.request import urlretrieve
-
 import httpx
 import pandas as pd
-from bs4 import BeautifulSoup
+
+from datetime import datetime
+from tqdm import tqdm
+from urllib.request import urlretrieve
+
 from tenacity import (
     before_sleep_log,
     retry,
     stop_after_delay,
     wait_exponential,
 )
-from tqdm import tqdm
+from bs4 import BeautifulSoup
 
-logging.basicConfig(level=logging.INFO)
+import ncbi_datasets_utils
+
 logger = logging.getLogger(__name__)
+logging.getLogger("httpx").setLevel(logging.ERROR)
 
-GENE_IDS_CHUNKSIZE = 50  # max allowed by Ensembl REST API
 
 ENSEMBL_REST_SERVER = "https://rest.ensembl.org/"
 SPECIES_INFO_BASE_ENDPOINT = "info/genomes/taxonomy/{species}"
@@ -33,11 +31,6 @@ ENSEMBL_API_HEADERS = {
     "Content-Type": "application/json",
     "Accept": "application/json",
 }
-STOP_RETRY_AFTER_DELAY = 120
-
-NCBI_TAXONOMY_API_URL = "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy"
-NCBI_API_HEADERS = {"accept": "application/json", "content-type": "application/json"}
-
 ENSEMBL_DIVISION_TO_FOLDER = {
     "EnsemblPlants": "plants",
     "EnsemblVertebrates": "vertebrates",
@@ -50,17 +43,7 @@ ENSEMBL_DIVISION_TO_FOLDER = {
 ENSEMBL_GENOMES_BASE_URL = "https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/{}/gff3/"
 ENSEMBL_VERTEBRATES_BASE_URL = "https://ftp.ensembl.org/pub/current/gff3/"
 
-GFF3_COLUMN_DTYPES = {
-    "chromosome": str,
-    "source": str,
-    "feature": str,
-    "start": int,
-    "end": int,
-    "score": str,
-    "strand": str,
-    "phase": str,
-    "attributes": str,
-}
+STOP_RETRY_AFTER_DELAY = 120
 
 
 ##################################################################
@@ -68,60 +51,6 @@ GFF3_COLUMN_DTYPES = {
 # FUNCTIONS
 ##################################################################
 ##################################################################
-
-
-def parse_args():
-    parser = argparse.ArgumentParser("Get GEO Datasets accessions")
-    parser.add_argument(
-        "--species",
-        type=str,
-        dest="species",
-        required=True,
-        help="Species name",
-    )
-    parser.add_argument(
-        "--gene-ids",
-        type=Path,
-        dest="gene_ids_file",
-        required=True,
-        help="File containing gene IDs",
-    )
-    return parser.parse_args()
-
-
-##################################################################
-##################################################################
-# httpx
-##################################################################
-##################################################################
-
-
-@retry(
-    stop=stop_after_delay(600),
-    wait=wait_exponential(multiplier=1, min=1, max=30),
-    before_sleep=before_sleep_log(logger, logging.WARNING),
-)
-def parse_page_data(url: str) -> BeautifulSoup:
-    page = httpx.get(url)
-    page.raise_for_status()
-    return BeautifulSoup(page.content, "html.parser")
-
-
-@retry(
-    stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
-    wait=wait_exponential(multiplier=1, min=1, max=30),
-    before_sleep=before_sleep_log(logger, logging.WARNING),
-)
-def send_request_to_ncbi_taxonomy(taxid: str | int):
-    """
-    Sends a POST request to the NCBI taxonomy API to retrieve taxonomic information for the given taxid.
-    """
-    logger.info(f"Sending POST request to {NCBI_TAXONOMY_API_URL}")
-    taxons = [str(taxid)]
-    data = {"taxons": taxons}
-    response = httpx.post(NCBI_TAXONOMY_API_URL, headers=NCBI_API_HEADERS, json=data)
-    response.raise_for_status()
-    return response.json()
 
 
 @retry(
@@ -133,15 +62,27 @@ def send_get_request_to_ensembl(url: str) -> list[dict]:
     """
     Sends a GET request to the Ensembl API to retrieve data from the given URL.
     """
-    logger.info(f"Sending GET request to {url}")
-    response = httpx.get(url, headers=ENSEMBL_API_HEADERS)
-    if response.status_code == 200:
-        response.raise_for_status()
-    else:
-        raise RuntimeError(
-            f"Failed to retrieve data: encountered error {response.status_code}"
-        )
-    return response.json()
+    with httpx.Client() as client:
+        response = client.get(url, headers=ENSEMBL_API_HEADERS)
+        if response.status_code == 200:
+            response.raise_for_status()
+        else:
+            raise RuntimeError(
+                f"Failed to retrieve data: encountered error {response.status_code}"
+            )
+        return response.json()
+
+
+@retry(
+    stop=stop_after_delay(600),
+    wait=wait_exponential(multiplier=1, min=1, max=30),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+)
+def parse_page_data(url: str) -> BeautifulSoup:
+    with httpx.Client() as client:
+        page = client.get(url)
+        page.raise_for_status()
+        return BeautifulSoup(page.content, "html.parser")
 
 
 @retry(
@@ -149,19 +90,12 @@ def send_get_request_to_ensembl(url: str) -> list[dict]:
     wait=wait_exponential(multiplier=1, min=1, max=30),
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
-def download_file(url: str, output_path: str):
+def download_file(url: str, output_path: Path):
     try:
-        urlretrieve(url, output_path)
+        urlretrieve(url, str(output_path))
     except Exception as e:
         logger.error(f"Failed to download file from {url}: {e}")
         raise
-
-
-##################################################################
-##################################################################
-# PARSING
-##################################################################
-##################################################################
 
 
 def get_species_taxid(species: str) -> int:
@@ -171,16 +105,12 @@ def get_species_taxid(species: str) -> int:
         logger.error(
             f"Could not get species taxid for species {species} using the Ensembl REST API: {e}.\nTrying NCBI taxonomy."
         )
-        ncbi_formated_species_name = format_species_name_for_ncbi_taxonomy(species)
-        return get_species_taxid_from_ncbi(ncbi_formated_species_name)
+        ncbi_formated_species_name = ncbi_datasets_utils.format_species_name(species)
+        return ncbi_datasets_utils.get_species_taxid(ncbi_formated_species_name)
 
 
 def format_species_name_for_ensembl(species: str) -> str:
     return species.replace(" ", "_").lower()
-
-
-def format_species_name_for_ncbi_taxonomy(species: str) -> str:
-    return species.replace("_", " ").lower()
 
 
 def get_species_taxid_from_ensembl(species: str) -> int:
@@ -201,17 +131,6 @@ def get_species_taxid_from_ensembl(species: str) -> int:
     return species_data["id"]
 
 
-def get_species_taxid_from_ncbi(species: str) -> int:
-    formatted_species = format_species_name_for_ncbi_taxonomy(species)
-    result = send_request_to_ncbi_taxonomy(formatted_species)
-    if len(result["taxonomy_nodes"]) > 1:
-        raise ValueError(f"Multiple taxids for species {species}")
-    metadata = result["taxonomy_nodes"][0]
-    if "taxonomy" not in metadata:
-        raise ValueError(f"Could not find taxonomy results for species {species}")
-    return int(metadata["taxonomy"]["tax_id"])
-
-
 def get_species_division_and_candidate_folders(species_taxid: int) -> tuple[str, list[str]]:
     url = ENSEMBL_REST_SERVER + SPECIES_INFO_BASE_ENDPOINT.format(
         species=str(species_taxid)
@@ -222,13 +141,11 @@ def get_species_division_and_candidate_folders(species_taxid: int) -> tuple[str,
     found_divisions = list({d["division"] for d in data})
     # this should not happen (and if it does, it's an issue on Ensembl's side)
     if not found_divisions:
-        logger.error(f"Could not find any division for species {species_taxid}...")
-        sys.exit(100)
+        raise ValueError(f"Could not find any division for species {species_taxid}...")
     # we should never have multiple possible divisions for a single species
     # it is like if a species belonged to multiple kingdoms at the same time...
     if len(found_divisions) > 1:
-        logger.error(f"Multiple divisions found for species Taxon ID {species_taxid}: {found_divisions}.")
-        sys.exit(100)
+        raise ValueError(f"Multiple divisions found for species Taxon ID {species_taxid}: {found_divisions}.")
     # there should be only one division
     found_division = found_divisions[0]
     # taking all assembly names
@@ -375,100 +292,3 @@ def get_annotation_file(url: str) -> str:
     if max_size_df["file"].str.endswith("chr.gff3.gz").any():
         max_size_df = max_size_df[~max_size_df["file"].str.endswith("chr.gff3.gz")]
     return max_size_df["file"].iloc[0]
-
-
-def parse_gene_ids(file: Path):
-    with open(file, "r") as fin:
-        return  list({line.strip() for line in fin})
-
-
-def parse_gff3_file(annotation_file: str) -> pd.DataFrame:
-    return pd.read_csv(
-        annotation_file,
-        sep="\t",
-        names=list(GFF3_COLUMN_DTYPES.keys()),
-        dtype=GFF3_COLUMN_DTYPES,
-        comment="#",
-        on_bad_lines="warn",
-    )
-
-
-def parse_gene_ids_from_annotation(file: str) -> list[str]:
-    """
-    Extract gene ID from attributes column for each gene feature
-    """
-    df = parse_gff3_file(file)
-    return (
-        df.loc[df["feature"] == 'gene']['attributes']
-        .str.extract(r"ID=gene:([^;]+)", expand=False)
-        .drop_duplicates()
-        .tolist()
-    )
-
-##################################################################
-##################################################################
-# MAIN
-##################################################################
-##################################################################
-
-
-def main():
-    args = parse_args()
-
-    species = args.species
-    unique_gene_ids = parse_gene_ids(args.gene_ids_file)
-    logger.info(f"Got {len(unique_gene_ids)} unique gene IDs like {', '.join(unique_gene_ids[:3])}")
-
-    ##################################################################
-    # GETTING A SUBSET OF CANDIDATE FOLDERS CONTAINING THE BEST ANNOTATION
-    # FOR OUR GENE IDS
-    ##################################################################
-
-    species_taxid = get_species_taxid(species)
-    logger.info(f"Got species taxid: {species_taxid}")
-
-    division, assembly_names = get_species_division_and_candidate_folders(species_taxid)
-    logger.info(f"Got division: {division}")
-
-    logger.info(f"Fetching division name for {species}")
-    division_url = get_division_url(division)
-
-    logger.info(f"Searching for the right folder in {division_url}")
-    candidate_folder_urls = get_candidate_species_folders(species, assembly_names, division_url)
-    if not candidate_folder_urls:
-        raise ValueError(f"No candidate annotation folder found for {species}")
-
-    annotation_file_to_nb_common_gene_ids = {}
-    for folder_url in candidate_folder_urls:
-        annotation_file = get_annotation_file(folder_url)
-
-        annotation_full_url = folder_url + annotation_file
-        logger.info(f"Found annotation URL: {annotation_full_url}.\nDownloading...")
-        download_file(annotation_full_url, annotation_file)
-
-        annotation_gene_ids = parse_gene_ids_from_annotation(annotation_file)
-        logger.info(f"{annotation_file} :: found {len(annotation_gene_ids)} gene IDs like {', '.join(annotation_gene_ids[:3])}")
-
-        gene_id_intersection = set(annotation_gene_ids).intersection(unique_gene_ids)
-        logger.info(f"{annotation_file} :: {len(gene_id_intersection)} gene IDs in commmon")
-
-        annotation_file_to_nb_common_gene_ids[annotation_file] = len(gene_id_intersection)
-
-    max_nb_common_gene_ids = max(annotation_file_to_nb_common_gene_ids.values())
-    if not max_nb_common_gene_ids == 0:
-        raise ValueError("Could not find any annotation file having gene IDs in common with list provided...")
-
-    # if multiple annotation file share the same number of common gene IDs
-    # taking the first one
-    # the list os sorted first for reproducibility
-    chosen_annotation_file = next(sorted([
-        file for file, nb_common_gene_ids in annotation_file_to_nb_common_gene_ids.items()
-        if nb_common_gene_ids == max_nb_common_gene_ids
-    ]))
-
-
-    logger.info("Done")
-
-
-if __name__ == "__main__":
-    main()
