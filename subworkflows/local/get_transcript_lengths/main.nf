@@ -1,5 +1,5 @@
 include { COMPUTE_GENE_TRANSCRIPT_LENGTHS              } from '../../../modules/local/compute_gene_transcript_lengths'
-include { DOWNLOAD_ANNOTATION                          } from '../../../modules/local/download_annotation'
+include { DOWNLOAD_GENOME_ANNOTATION                   } from '../../../modules/local/download_genome_annotation'
 
 
 /*
@@ -23,11 +23,11 @@ workflow GET_TRANSCRIPT_LENGTHS {
     } else if ( gff_url ) {
         ch_annotation = channel.fromPath( gff_url, checkIfExists: true )
     } else {
-        DOWNLOAD_ANNOTATION(
+        DOWNLOAD_GENOME_ANNOTATION(
             species,
             ch_valid_gene_ids.collect()
         )
-        ch_annotation = DOWNLOAD_ANNOTATION.out.gff3
+        ch_annotation = DOWNLOAD_GENOME_ANNOTATION.out.gff3
     }
 
     COMPUTE_GENE_TRANSCRIPT_LENGTHS( ch_annotation )

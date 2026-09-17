@@ -1,4 +1,4 @@
-process DOWNLOAD_ANNOTATION {
+process DOWNLOAD_GENOME_ANNOTATION {
 
     label 'process_single_cpu'
 
@@ -24,7 +24,7 @@ process DOWNLOAD_ANNOTATION {
     script:
     def args = task.ext.args ?: ''
     """
-    download_latest_ensembl_annotation.py \\
+    download_genome_annotation.py \\
         --species ${species} \\
         --gene-ids $gene_ids_file \\
         $args

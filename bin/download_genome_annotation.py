@@ -7,7 +7,6 @@ import logging
 import sys
 import shutil
 import pandas as pd
-from enum import Enum
 from tenacity import RetryError
 import ensembl_utils, ncbi_datasets_utils
 
@@ -32,10 +31,6 @@ GFF3_COLUMN_DTYPES = {
 }
 
 OUTPUT_DIR = "selected"
-
-class GeneIDFormat(Enum):
-    ENSEMBL = "ensembl"
-    NCBI = "ncbi"
 
 
 ##################################################################
@@ -157,7 +152,7 @@ def parse_annotation(annotation_file: Path) -> pd.DataFrame:
     )
 
 
-def parse_gene_ids_from_annotation(file: Path, gene_id_format: GeneIDFormat) -> list[str]:
+def parse_gene_ids_from_annotation(file: Path) -> list[str]:
     """
     Extract gene ID from attributes column for each gene feature
     """
@@ -166,10 +161,7 @@ def parse_gene_ids_from_annotation(file: Path, gene_id_format: GeneIDFormat) -> 
 
     suffix = file.suffix if file.suffix != '.gz' else file.suffixes[-2]
     if suffix in [".gff3", ".gff"]:
-        if gene_id_format == GeneIDFormat.ENSEMBL:
-            pattern = r"ID=gene:([^;]+)"
-        elif gene_id_format == GeneIDFormat.NCBI:
-            pattern = r"ID=gene-([^;]+)"
+        pattern = r"ID=gene[:\-]([^;]+)"
     elif suffix == ".gtf":
         pattern = r'gene_id\s+"([^"]*)"'
     else:
@@ -184,14 +176,14 @@ def parse_gene_ids_from_annotation(file: Path, gene_id_format: GeneIDFormat) -> 
     )
 
 
-def get_annotation_matching_gene_ids(annotations: list[Path], gene_id_format: GeneIDFormat, unique_gene_ids: list[str]) -> Path | None:
+def get_annotation_matching_gene_ids(annotations: list[Path], unique_gene_ids: list[str]) -> Path | None:
     """
     Find the annotation file that contains the most gene IDs in common with the list provided.
     """
     annotation_file_to_nb_common_gene_ids = {}
     for annotation_file in annotations:
 
-        annotation_gene_ids = parse_gene_ids_from_annotation(annotation_file, gene_id_format)
+        annotation_gene_ids = parse_gene_ids_from_annotation(annotation_file)
         if annotation_gene_ids:
             genes_to_show = [str(gene_id) for gene_id in annotation_gene_ids[:min(3, len(annotation_gene_ids))]]
             logger.info(f"{annotation_file.name} :: found {len(annotation_gene_ids)} gene IDs like {', '.join(genes_to_show)}")
@@ -246,7 +238,6 @@ def main():
             ensembl_annotations = get_ensembl_annotations(species)
             selected_annotation = get_annotation_matching_gene_ids(
                 ensembl_annotations,
-                GeneIDFormat.ENSEMBL,
                 unique_gene_ids
             )
             if selected_annotation is not None:
@@ -262,7 +253,6 @@ def main():
             ncbi_annotations = get_ncbi_annotations(species)
             selected_annotation = get_annotation_matching_gene_ids(
                 ncbi_annotations,
-                GeneIDFormat.NCBI,
                 unique_gene_ids
             )
 
