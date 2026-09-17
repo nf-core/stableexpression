@@ -73,7 +73,7 @@ def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
     exon_df = df.loc[df["feature"] == "exon"].copy()
     # extract transcript ID from attributes column for each exon
     exon_df["transcript_id"] = exon_df["attributes"].str.extract(
-        r"Parent=transcript:([^;]+)"
+        r"Parent=(?:transcript|rna)[:\-]([^;]+)"
     )
     # compute transcript length
     exon_df[config.CDNA_LENGTH_COLNAME] = exon_df["end"] - exon_df["start"] + 1
@@ -86,6 +86,7 @@ def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
 def compute_max_transcript_lengths_per_gene(
     df: pd.DataFrame, transcript_lengths_df: pd.DataFrame
 ) -> pd.DataFrame:
+    # catching all kings of RNAs (we don't necessarily want only mRNA)
     rna_cols = [
         feature
         for feature in df["feature"].unique()
@@ -95,10 +96,10 @@ def compute_max_transcript_lengths_per_gene(
 
     # extract gene ID from attributes column for each transcript
     rna_df[config.GENE_ID_COLNAME] = rna_df["attributes"].str.extract(
-        r"Parent=gene:([^;]+)"
+        r"Parent=gene[:\-]([^;]+)"
     )
     # extract transcript ID from attributes column
-    rna_df["transcript_id"] = rna_df["attributes"].str.extract(r"ID=transcript:([^;]+)")
+    rna_df["transcript_id"] = rna_df["attributes"].str.extract(r"ID=(?:transcript|rna)[:\-]([^;]+)")
 
     # merge with transcript lengths dataframe to get length
     merged_df = rna_df.merge(transcript_lengths_df, how="left", on="transcript_id")
