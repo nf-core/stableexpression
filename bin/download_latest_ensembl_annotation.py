@@ -5,6 +5,7 @@
 import argparse
 import logging
 import sys
+from pathlib import Path
 from datetime import datetime
 from urllib.request import urlretrieve
 
@@ -64,6 +65,13 @@ def parse_args():
         dest="species",
         required=True,
         help="Species name",
+    )
+    parser.add_argument(
+        "--gene-ids",
+        type=Path,
+        dest="gene_ids_file",
+        required=True,
+        help="File containing gene IDs",
     )
     return parser.parse_args()
 
@@ -285,48 +293,13 @@ def get_candidate_species_folders(
             logger.warning(f"No first-level folder found for {species} at {url}. Taking collection folders as fallback.")
             return species_url_collection_records
         else:
-            raise ValueError(f"No species folder found for {species} at {url}")
+            return []
 
     # if first-level folders were found, keeping only those ones
     return species_url_records
 
 
-def get_main_folder_url(records: list[dict], species: str) -> str | None:
-    main_folder_url = None
-    for record in records:
-        if record["name"] == species:
-            main_folder_url = record["url"]
-            break
-    return main_folder_url
-
-
-def get_last_modified_folder_url(records: list[dict]) -> str:
-    df = pd.DataFrame.from_dict(records)
-    df.sort_values(by="date", ascending=False, inplace=True)
-    return df.iloc[0]["url"]
-
-
-def get_current_annotation_folder(records: list[dict], species: str) -> str:
-    main_folder_url = get_main_folder_url(records, species)
-    if main_folder_url is not None:
-        return main_folder_url
-
-    logger.info(
-        "Could not find a folder having the species as name. Checking for gca folders."
-    )
-    gca_records = [
-        record for record in records if record["name"].startswith(f"{species}_gca")
-    ]
-    if gca_records:
-        return get_last_modified_folder_url(gca_records)
-
-    logger.info(
-        "Could not find a folder having the species as name. Getting the last modified one."
-    )
-    return get_last_modified_folder_url(records)
-
-
-def parse_size(size_str):
+def parse_size(size_str: str) -> int:
     """
     Convert size strings like '902K', '4.1M', '5G' to bytes.
 
@@ -340,14 +313,12 @@ def parse_size(size_str):
     int : size in bytes
     """
     size_str = size_str.strip().upper()
-
     # Define multipliers
-    multipliers = {"K": 1024, "M": 1024**2, "G": 1024**3, "T": 1024**4, "P": 1024**5}
-
+    MULTIPLIERS = {"K": 1024, "M": 1024**2, "G": 1024**3, "T": 1024**4, "P": 1024**5}
     # Check if last character is a unit
-    if size_str[-1] in multipliers:
+    if size_str[-1] in MULTIPLIERS:
         number = float(size_str[:-1])
-        multiplier = multipliers[size_str[-1]]
+        multiplier = MULTIPLIERS[size_str[-1]]
         return int(number * multiplier)
     else:
         # No suffix, assume it's already in bytes
@@ -378,7 +349,7 @@ def get_annotation_file(url: str) -> str:
     if not file_records:
         raise ValueError("No annotation files found")
 
-    df = pd.DataFrame.from_dict(file_records)
+    df = pd.DataFrame(file_records)
 
     # keeping the biggest annotation
     max_size_df = df.loc[
@@ -401,6 +372,10 @@ def get_annotation_file(url: str) -> str:
     return max_size_df["file"].iloc[0]
 
 
+def parse_gene_ids(file: Path):
+    with open(file, "r") as fin:
+        return  list({line.strip() for line in fin})
+
 ##################################################################
 ##################################################################
 # MAIN
@@ -411,21 +386,29 @@ def get_annotation_file(url: str) -> str:
 def main():
     args = parse_args()
 
-    species_taxid = get_species_taxid(args.species)
+    species = args.species
+    unique_gene_ids = parse_gene_ids(args.gene_ids_file)
+
+    ##################################################################
+    # GETTING A SUBSET OF CANDIDATE FOLDERS CONTAINING THE BEST ANNOTATION
+    # FOR OUR GENE IDS
+    ##################################################################
+
+    species_taxid = get_species_taxid(species)
     logger.info(f"Got species taxid: {species_taxid}")
 
     division, assembly_names = get_species_division_and_candidate_folders(species_taxid)
     logger.info(f"Got division: {division}")
 
-    logger.info(f"Fetching division name for {args.species}")
+    logger.info(f"Fetching division name for {species}")
     division_url = get_division_url(division)
 
     logger.info(f"Searching for the right folder in {division_url}")
-    species_url_records = get_candidate_species_folders(args.species, assembly_names, division_url)
+    species_url_records = get_candidate_species_folders(species, assembly_names, division_url)
     if not species_url_records:
-        raise ValueError(f"No species folder found for {args.species}")
+        raise ValueError(f"No candidate annotation folder found for {species}")
 
-    annotation_folder_url = get_current_annotation_folder(species_url_records, args.species)
+    annotation_folder_url = get_current_annotation_folder(species_url_records, species)
     logger.info(f"Found current annotation folder: {annotation_folder_url}")
 
     annotation_file = get_annotation_file(annotation_folder_url)
