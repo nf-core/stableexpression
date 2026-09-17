@@ -1,4 +1,4 @@
-process DOWNLOAD_ENSEMBL_ANNOTATION {
+process DOWNLOAD_ANNOTATION {
 
     label 'process_single_cpu'
 
@@ -11,9 +11,10 @@ process DOWNLOAD_ENSEMBL_ANNOTATION {
 
     input:
     val species
+    path gene_ids_file
 
     output:
-    path "*.gff3.gz",                                                                                           emit: gff3
+    path "selected/*",                                                                                          emit: gff3
     tuple val("${task.process}"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("${task.process}"), val('httpx'),  eval('python3 -c "import httpx; print(httpx.__version__)"'),   topic: versions
     tuple val("${task.process}"), val('pandas'), eval('python3 -c "import pandas; print(pandas.__version__)"'), topic: versions
@@ -21,13 +22,16 @@ process DOWNLOAD_ENSEMBL_ANNOTATION {
     tuple val("${task.process}"), val('tqdm'),   eval('python3 -c "import tqdm; print(tqdm.__version__)"'),     topic: versions
 
     script:
+    def args = task.ext.args ?: ''
     """
     download_latest_ensembl_annotation.py \\
-        --species ${species}
+        --species ${species} \\
+        --gene-ids $gene_ids_file \\
+        $args
     """
 
     stub:
     """
-    touch stub.gff3.gz
+    touch selected/stub.gff3.gz
     """
 }
