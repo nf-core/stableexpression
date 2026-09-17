@@ -235,10 +235,15 @@ def parse_last_modified_date(dt_string: str) -> datetime | None:
 
 
 def get_candidate_species_folders(
-    species: str, url: str, first_level: bool = True
+    species: str, assembly_names: list[str], url: str, first_level: bool = True
 ) -> list[dict]:
+    """
+    Get the content of the url corresponding to the species division and parse it using BeautifulSoup.
+    Get all folders
+    """
     soup = parse_page_data(url)
     species_url_records = []
+    species_url_collection_records = []
 
     # adding progress bar only at the first level
     iterator = tqdm(soup.find_all("tr")) if first_level else soup.find_all("tr")
@@ -254,21 +259,35 @@ def get_candidate_species_folders(
         last_modified_date = parse_last_modified_date(date_section.text.strip())
 
         for folder in folder_name_section.find_all("a"):
-            folder_url = f"{url}{folder.text}"
-            if folder.text.startswith(species):
+            folder_name = folder.text
+            folder_url = f"{url}{folder_name}"
+            # getting all folders that either
+            # start with the species name
+            # are in the list of assembly names
+            if folder_name.startswith(species) or folder_name in assembly_names:
                 d = {
                     "date": last_modified_date,
                     "url": folder_url,
-                    "name": folder.text.rstrip("/"),
+                    "name": folder_name.rstrip("/"),
                 }
                 species_url_records.append(d)
-            elif folder.text.endswith("_collection/"):
-                species_url_records += get_candidate_species_folders(
-                    species, folder_url, first_level=False
+            elif folder_name.endswith("_collection/"):
+                species_url_collection_records += get_candidate_species_folders(
+                    species, assembly_names, folder_url, first_level=False
                 )
             else:
                 continue
 
+    # if no first-level folder found
+    if not species_url_records:
+        # if collection folders were found at >= second level, taking those ones as fallback
+        if species_url_collection_records:
+            logger.warning(f"No first-level folder found for {species} at {url}. Taking collection folders as fallback.")
+            return species_url_collection_records
+        else:
+            raise ValueError(f"No species folder found for {species} at {url}")
+
+    # if first-level folders were found, keeping only those ones
     return species_url_records
 
 
@@ -402,11 +421,11 @@ def main():
     division_url = get_division_url(division)
 
     logger.info(f"Searching for the right folder in {division_url}")
-    species_url_records = get_candidate_species_folders(args.species, division_url)
+    species_url_records = get_candidate_species_folders(args.species, assembly_names, division_url)
     if not species_url_records:
         raise ValueError(f"No species folder found for {args.species}")
 
-    annotation_folder_url = get_current_annotation_folder(species_url_records, species)
+    annotation_folder_url = get_current_annotation_folder(species_url_records, args.species)
     logger.info(f"Found current annotation folder: {annotation_folder_url}")
 
     annotation_file = get_annotation_file(annotation_folder_url)
