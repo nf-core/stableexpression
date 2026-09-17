@@ -4,6 +4,7 @@
 
 import argparse
 import logging
+import sys
 from datetime import datetime
 from urllib.request import urlretrieve
 
@@ -91,6 +92,9 @@ def parse_page_data(url: str) -> BeautifulSoup:
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
 def send_request_to_ncbi_taxonomy(taxid: str | int):
+    """
+    Sends a POST request to the NCBI taxonomy API to retrieve taxonomic information for the given taxid.
+    """
     logger.info(f"Sending POST request to {NCBI_TAXONOMY_API_URL}")
     taxons = [str(taxid)]
     data = {"taxons": taxons}
@@ -105,6 +109,9 @@ def send_request_to_ncbi_taxonomy(taxid: str | int):
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
 def send_get_request_to_ensembl(url: str) -> list[dict]:
+    """
+    Sends a GET request to the Ensembl API to retrieve data from the given URL.
+    """
     logger.info(f"Sending GET request to {url}")
     response = httpx.get(url, headers=ENSEMBL_API_HEADERS)
     if response.status_code == 200:
@@ -178,14 +185,20 @@ def get_species_division(species_taxid: int) -> str:
     url = ENSEMBL_REST_SERVER + SPECIES_INFO_BASE_ENDPOINT.format(
         species=str(species_taxid)
     )
-    data = send_get_request_to_ensembl(url)
+    data: list[dict] = send_get_request_to_ensembl(url)
     if len(data) == 0:
         raise ValueError(f"No division found for species Taxon ID {species_taxid}")
-    elif len(data) > 1:
-        logger.warning(
-            f"Multiple divisions found for species Taxon ID {species_taxid}. Keeping the first one."
-        )
-    return data[0]["division"]
+    found_divisions = list({d["division"] for d in data})
+    # this should not happen (and if it does, it's an issue on Ensembl's side)
+    if not found_divisions:
+        logger.error(f"Could not find any division for species {species_taxid}...")
+        sys.exit(100)
+    # we should never have multiple possible divisions for a single species
+    # it is like if a species belonged to multiple kingdoms at the same time...
+    if len(found_divisions) > 1:
+        logger.error(f"Multiple divisions found for species Taxon ID {species_taxid}: {found_divisions}.")
+        sys.exit(100)
+    return found_divisions[0]
 
 
 def get_species_category(species: str) -> str:
@@ -197,6 +210,10 @@ def get_species_category(species: str) -> str:
 
 
 def get_division_url(species: str) -> str:
+    """
+    In Ensembl, species are separated into divisions.
+    Returns the URL for the division of the given species.
+    """
     category = get_species_category(species)
     if category == "vertebrates":
         return ENSEMBL_VERTEBRATES_BASE_URL
@@ -377,10 +394,15 @@ def get_annotation_file(url: str) -> str:
 def main():
     args = parse_args()
 
+    # format species name to fit with Ensembl API requirement
     species = format_species_name_for_ensembl(args.species)
     division_url = get_division_url(species)
     logger.info(f"Searching for the right folder in {division_url}")
 
+    logger.info(f"Fetching division name for {species}")
+    division_url = get_division_url(species)
+
+    logger.info(f"Searching for the right folder in {division_url}")
     species_url_records = get_candidate_species_folders(species, division_url)
     if not species_url_records:
         raise ValueError(f"No species folder found for {species}")
