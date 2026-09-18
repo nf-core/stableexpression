@@ -312,8 +312,8 @@ nextflow_pipeline {
         when {
             params {
                 species = "solanum tuberosum"
-                accessions = "E-MTAB-552,E-GEOD-61690"
-                excluded_accessions = "E-MTAB-4251"
+                accessions = "E-MTAB-552"
+                excluded_accessions = "E-MTAB-4251,E-MTAB-552"
                 accessions_file = "${projectDir}/tests/test_data/workflows/misc/accessions_to_include.txt"
                 excluded_accessions_file = "${projectDir}/tests/test_data/workflows/misc/excluded_accessions.txt"
                 normalisation_method = "cpm"
