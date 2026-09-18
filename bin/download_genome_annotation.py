@@ -8,7 +8,8 @@ import sys
 import shutil
 import pandas as pd
 from tenacity import RetryError
-import ensembl_utils, ncbi_datasets_utils
+from ensembl_annotation_manager import EnsemblAnnotationManager
+from ncbi_annotation_manager import NCBIAnnotationManager
 
 from pathlib import Path
 
@@ -71,17 +72,9 @@ def parse_args():
 
 def get_ensembl_annotations(species: str) -> list[Path]:
 
-    species_taxid = ensembl_utils.get_species_taxid(species)
-    logger.info(f"[Ensembl] :: Got species taxid: {species_taxid}")
+    logger.info("[Ensembl] :: Searching for the appropriate annotation folder")
+    candidate_folder_urls = EnsemblAnnotationManager(species).get_candidate_folders()
 
-    division, assembly_names = ensembl_utils.get_species_division_and_candidate_folders(species_taxid)
-    logger.info(f"[Ensembl] :: Got division: {division}")
-
-    logger.info(f"[Ensembl] :: Fetching division name for {species}")
-    division_url = ensembl_utils.get_division_url(division)
-
-    logger.info(f"[Ensembl] :: Searching for the right folder in {division_url}")
-    candidate_folder_urls = ensembl_utils.get_candidate_species_folders(species, assembly_names, division_url)
     if not candidate_folder_urls:
         logger.error(f"[Ensembl] :: No candidate annotation folder found for {species}")
         return []
@@ -91,47 +84,45 @@ def get_ensembl_annotations(species: str) -> list[Path]:
 
     annotation_files = []
     for folder_url in candidate_folder_urls:
-        annotation_filename = ensembl_utils.get_annotation_file(folder_url)
+        annotation_filename = EnsemblAnnotationManager.get_annotation_file(folder_url)
 
         annotation_full_url = folder_url + annotation_filename
         logger.info(f"[Ensembl] :: Found annotation URL: {annotation_full_url}.\nDownloading...")
         annotation_file = target_folder / annotation_filename
-        ensembl_utils.download_file(annotation_full_url, annotation_file)
+        EnsemblAnnotationManager.download_file(annotation_full_url, annotation_file)
         annotation_files.append(annotation_file)
 
     return annotation_files
 
 
 def get_ncbi_annotations(species: str) -> list[Path]:
-
-    species_taxid = ncbi_datasets_utils.get_species_taxid(species)
-    logger.info(f"[NCBI] :: Species taxid: {species_taxid}")
-
-    logger.info(f"[NCBI] :: Getting best assembly for taxid: {species_taxid}")
-    reports = ncbi_datasets_utils.get_assembly_reports(species_taxid)
-
-    if not reports:
-        logger.info(f"[NCBI] :: No assembly reports found for taxid {species_taxid}")
-        return []
+    """
+    Downloading genome annotation
+    """
 
     target_folder = Path(NCBI_ANNOTATION_LOCAL_FOLDER)
     target_folder.mkdir(parents=True, exist_ok=True)
 
-    # downloading the assemblies from the most 'reference ' to the least
-    reference_reports = ncbi_datasets_utils.get_sorted_reference_genome_reports(reports)
+    # getting list of assemblies from the most 'reference ' to the least
+    reference_reports = NCBIAnnotationManager(species).get_sorted_reference_genome_reports()
+
+    if not reference_reports:
+        logger.info(f"[NCBI] :: No assembly reports found for species {species}")
+        return []
+
     annotation_files = []
     for report in reference_reports:
         accession = report['accession']
         logger.info(f"[NCBI] :: Trying to download annotation of assembly {accession}.")
         try:
-            download_archive = ncbi_datasets_utils.download_genome_annotation(accession)
-            annotation_file = ncbi_datasets_utils.extract_annotation_file_from_archive(download_archive, accession, target_folder)
+            download_archive = NCBIAnnotationManager.download_genome_annotation(accession)
+            annotation_file = NCBIAnnotationManager.extract_annotation_file_from_archive(download_archive, accession, target_folder)
             annotation_files.append(annotation_file)
         except Exception as e:
             logger.error(f"[NCBI] :: Error downloading annotation for accession {accession}: {e}")
 
     if not annotation_files:
-        logger.error(f"[NCBI] :: No annotation found for taxid {species_taxid}")
+        logger.error(f"[NCBI] :: No annotation found for species {species}")
 
     return annotation_files
 
