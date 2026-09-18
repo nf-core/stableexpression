@@ -158,8 +158,15 @@ def parse_gene_ids_from_annotation(file: Path) -> list[str]:
     else:
         raise ValueError(f"Unsupported file suffix: {suffix}")
 
+    # getting all types of gene features
+    # it contains of course 'gene', but also 'ncRNA_gene', etc.
+    gene_cols = [
+        feature for feature in df["feature"].unique()
+        if "gene" in feature
+    ]
+
     return (
-        df.loc[df["feature"] == 'gene']['attributes']
+        df.loc[df["feature"].isin(gene_cols)]['attributes']
         .str.extract(pattern, expand=False)
         .drop_duplicates()
         .dropna()
@@ -231,8 +238,9 @@ def main():
                 ensembl_annotations,
                 unique_gene_ids
             )
-            if selected_annotation is not None:
+            if selected_annotation is None:
                 logger.warning("Could not find any suitable annotation in Ensembl. Trying with NCBI")
+            else:
                 search_on_ncbi = False
 
         ##################################################################

@@ -70,6 +70,14 @@ def parse_gff3_file(annotation_file: Path) -> pd.DataFrame:
 
 
 def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Get total length for each transcript:
+        - extract exon features from annotation
+        - extract transcript (rna) ID for each exon
+        - computes length for each exon
+        - group by transcript ID
+        - computes sum of exon lengths for each transcript
+    """
     exon_df = df.loc[df["feature"] == "exon"].copy()
     # extract transcript ID from attributes column for each exon
     exon_df["transcript_id"] = exon_df["attributes"].str.extract(
@@ -86,7 +94,17 @@ def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
 def compute_max_transcript_lengths_per_gene(
     df: pd.DataFrame, transcript_lengths_df: pd.DataFrame
 ) -> pd.DataFrame:
-    # catching all kings of RNAs (we don't necessarily want only mRNA)
+    """
+    Compute maximum of transript lengths for each gene:
+        - get all transcript / RNA features
+        - extract their transcript ID + gene ID
+        - merge with dataframe containing total length for each transcript
+        - groupby gene ID
+        - compute max of transcript length for each gene (longest isoform)
+    """
+    # catching all kings of RNAs (mRNA, snRNA, ...)
+    # (we don't necessarily want only mRNA)
+    # excluding features containing genes, like 'ncRNA_gene'
     rna_cols = [
         feature
         for feature in df["feature"].unique()
