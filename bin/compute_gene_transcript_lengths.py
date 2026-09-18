@@ -70,10 +70,18 @@ def parse_gff3_file(annotation_file: Path) -> pd.DataFrame:
 
 
 def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Get total length for each transcript:
+        - extract exon features from annotation
+        - extract transcript (rna) ID for each exon
+        - computes length for each exon
+        - group by transcript ID
+        - computes sum of exon lengths for each transcript
+    """
     exon_df = df.loc[df["feature"] == "exon"].copy()
     # extract transcript ID from attributes column for each exon
     exon_df["transcript_id"] = exon_df["attributes"].str.extract(
-        r"Parent=transcript:([^;]+)"
+        r"Parent=(?:transcript|rna)[:\-]([^;]+)"
     )
     # compute transcript length
     exon_df[config.CDNA_LENGTH_COLNAME] = exon_df["end"] - exon_df["start"] + 1
@@ -86,6 +94,17 @@ def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
 def compute_max_transcript_lengths_per_gene(
     df: pd.DataFrame, transcript_lengths_df: pd.DataFrame
 ) -> pd.DataFrame:
+    """
+    Compute maximum of transript lengths for each gene:
+        - get all transcript / RNA features
+        - extract their transcript ID + gene ID
+        - merge with dataframe containing total length for each transcript
+        - groupby gene ID
+        - compute max of transcript length for each gene (longest isoform)
+    """
+    # catching all kings of RNAs (mRNA, snRNA, ...)
+    # (we don't necessarily want only mRNA)
+    # excluding features containing genes, like 'ncRNA_gene'
     rna_cols = [
         feature
         for feature in df["feature"].unique()
@@ -95,10 +114,10 @@ def compute_max_transcript_lengths_per_gene(
 
     # extract gene ID from attributes column for each transcript
     rna_df[config.GENE_ID_COLNAME] = rna_df["attributes"].str.extract(
-        r"Parent=gene:([^;]+)"
+        r"Parent=gene[:\-]([^;]+)"
     )
     # extract transcript ID from attributes column
-    rna_df["transcript_id"] = rna_df["attributes"].str.extract(r"ID=transcript:([^;]+)")
+    rna_df["transcript_id"] = rna_df["attributes"].str.extract(r"ID=(?:transcript|rna)[:\-]([^;]+)")
 
     # merge with transcript lengths dataframe to get length
     merged_df = rna_df.merge(transcript_lengths_df, how="left", on="transcript_id")
