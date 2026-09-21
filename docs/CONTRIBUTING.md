@@ -106,9 +106,9 @@ These tests are run with the latest available version of Nextflow and the minimu
 > [!WARNING]
 > Only in the unlikely event of a release that contains a critical bug.
 
-- [ ] Create a new branch `patch` on your fork based on `upstream/main` or `upstream/master`.
+- [ ] Create a new branch `patch` on your fork based on `upstream/main`.
 - [ ] Fix the bug and use nf-core/tools to bump the version to the next semantic version, for example, `1.2.3` → `1.2.4`.
-- [ ] Open a Pull Request from `patch` directly to `main`/`master` with the changes.
+- [ ] Open a Pull Request from `patch` directly to `main` with the changes.
 
 ### Pipeline contribution conventions
 
