@@ -5,7 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v1.0.0 - 14/09/2026
 
-First complete, official release of nf-core/stableexpression.
+Initial release of nf-core/stableexpression, created with the [nf-core](https://nf-co.re/) template.
 
 ## v1.0dev - 26/01/2025
 
