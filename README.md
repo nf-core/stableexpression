@@ -50,8 +50,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) dataset accessions corresponding to the provided species (and optionally keywords)
   This is optional and **NOT** run by default. Set `--fetch_geo_accessions` to run it.
 
->[!WARNING]
->Due to the high heterogeneity of formats of NCBI GEO datasets, automated retrieval of expression datasets from NCBI GEO is considered **experimental**.
+> [!WARNING]
+> Due to the high heterogeneity of formats of NCBI GEO datasets, automated retrieval of expression datasets from NCBI GEO is considered **experimental**.
 
 #### 2. Download data (see [usage](./conf/usage.md#3-provide-your-own-accessions))
 
@@ -95,11 +95,11 @@ All datasets are merged into one single dataframe.
 
 Missing values are replaced by imputed values using a specific algorithm provided by [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html). The user can choose the method of imputation with the `--missing_value_imputer` parameter.
 
->[!NOTE]
->For better scalability, the full dataset is first clustered by similarity of genes (using the [MiniBatchKMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html) algorithm) prior to missing value imputation.
+> [!NOTE]
+> For better scalability, the full dataset is first clustered by similarity of genes (using the [MiniBatchKMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html) algorithm) prior to missing value imputation.
 
->[!WARNING]
->This step takes the longest, especially when working with a large number of datasets.
+> [!WARNING]
+> This step takes the longest, especially when working with a large number of datasets.
 
 #### 9. General statistics for each gene
 
