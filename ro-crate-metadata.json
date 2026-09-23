@@ -1,6 +1,6 @@
 {
     "@context": [
-        "https://w3id.org/ro/crate/1.2/context",
+        "https://w3id.org/ro/crate/1.1/context",
         {
             "GithubService": "https://w3id.org/ro/terms/test#GithubService",
             "JenkinsService": "https://w3id.org/ro/terms/test#JenkinsService",
@@ -105,7 +105,7 @@
             },
             "mentions": [
                 {
-                    "@id": "#a59882d9-f03f-4540-adb6-b76afefdae0a"
+                    "@id": "#f008731f-ab23-4b58-b7e2-24d20b5360c2"
                 }
             ],
             "name": "nf-core/stableexpression"
@@ -118,7 +118,7 @@
             },
             "conformsTo": [
                 {
-                    "@id": "https://w3id.org/ro/crate/1.2"
+                    "@id": "https://w3id.org/ro/crate/1.1"
                 },
                 {
                     "@id": "https://w3id.org/workflowhub/workflow-ro-crate/1.0"
@@ -132,15 +132,33 @@
                 "SoftwareSourceCode",
                 "ComputationalWorkflow"
             ],
+            "author": [
+                {
+                    "@id": "https://orcid.org/0000-0003-3387-1040"
+                }
+            ],
+            "contributor": [
+                {
+                    "@id": "https://orcid.org/0009-0007-8870-9995"
+                }
+            ],
             "dateCreated": "",
-            "dateModified": "2026-09-21T12:18:50Z",
+            "dateModified": "2026-09-23T12:21:36Z",
             "dct:conformsTo": "https://bioschemas.org/profiles/ComputationalWorkflow/1.0-RELEASE/",
             "keywords": [
                 "nf-core",
-                "nextflow"
+                "nextflow",
+                "expression",
+                "housekeeping-genes",
+                "qpcr-analysis"
             ],
             "license": [
                 "MIT"
+            ],
+            "maintainer": [
+                {
+                    "@id": "https://orcid.org/0000-0003-3387-1040"
+                }
             ],
             "name": [
                 "nf-core/stableexpression"
@@ -153,11 +171,10 @@
             },
             "url": [
                 "https://github.com/nf-core/stableexpression",
-                "https://nf-co.re/stableexpression//"
+                "https://nf-co.re/stableexpression/1.1.0/"
             ],
             "version": [
-                "",
-                "1.0.0"
+                "1.1.0"
             ]
         },
         {
@@ -170,14 +187,14 @@
             "url": {
                 "@id": "https://www.nextflow.io/"
             },
-            "version": "!>=25.10.4"
+            "version": "!>=26.04.4"
         },
         {
-            "@id": "#a59882d9-f03f-4540-adb6-b76afefdae0a",
+            "@id": "#f008731f-ab23-4b58-b7e2-24d20b5360c2",
             "@type": "TestSuite",
             "instance": [
                 {
-                    "@id": "#fbebbf1f-b30c-4e4e-ad58-9971fab8db08"
+                    "@id": "#77922926-66ad-46f0-a5da-6a50cbcddb8e"
                 }
             ],
             "mainEntity": {
@@ -186,7 +203,7 @@
             "name": "Test suite for nf-core/stableexpression"
         },
         {
-            "@id": "#fbebbf1f-b30c-4e4e-ad58-9971fab8db08",
+            "@id": "#77922926-66ad-46f0-a5da-6a50cbcddb8e",
             "@type": "TestInstance",
             "name": "GitHub Actions workflow for testing nf-core/stableexpression",
             "resource": "repos/nf-core/stableexpression/actions/workflows/nf-test.yml",
@@ -323,6 +340,22 @@
             "@type": "Organization",
             "name": "nf-core",
             "url": "https://nf-co.re/"
+        },
+        {
+            "@id": "https://orcid.org/0000-0003-3387-1040",
+            "@type": "Person",
+            "affiliation": "CNRS / Universit\u00e9 Paris-Saclay",
+            "email": "olivier.coen[at]universite-paris-saclay.fr",
+            "name": "Olivier Coen",
+            "url": "https://github.com/OlivierCoen"
+        },
+        {
+            "@id": "https://orcid.org/0009-0007-8870-9995",
+            "@type": "Person",
+            "affiliation": "CNRS / Universit\u00e9 Paris-Saclay",
+            "email": "remy.costa[at]universite-paris-saclay.fr",
+            "name": "R\u00e9my Costa",
+            "url": "https://github.com/Ositofeliz"
         }
     ]
 }
