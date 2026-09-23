@@ -102,7 +102,7 @@ def compute_max_transcript_lengths_per_gene(
         - groupby gene ID
         - compute max of transcript length for each gene (longest isoform)
     """
-    # catching all kings of RNAs (mRNA, snRNA, ...)
+    # catching all kings of RNAs (mRNA, snRNA, lnc_RNA, ...)
     # (we don't necessarily want only mRNA)
     # excluding features containing genes, like 'ncRNA_gene'
     rna_cols = [
