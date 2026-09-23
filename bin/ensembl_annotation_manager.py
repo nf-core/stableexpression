@@ -125,12 +125,12 @@ class EnsemblAnnotationManager:
 
     ENSEMBL_DIVISION_TO_FOLDER: ClassVar[dict[str, str]] = {
         "EnsemblPlants": "plants",
-        "EnsemblVertebrates": "vertebrates",
         "EnsemblMetazoa": "metazoa",
         "EnsemblFungi": "fungi",
         "EnsemblBacteria": "bacteria",
         "EnsemblProtists": "protists",
     }
+    ENSEMBL_VERTEBRATE_DIVISION: ClassVar[str] = "EnsemblVertebrates"
 
     ENSEMBL_GENOMES_BASE_URL: ClassVar[str] = "https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/{}/gff3/"
     ENSEMBL_VERTEBRATES_BASE_URL: ClassVar[str] = "https://ftp.ensembl.org/pub/current/gff3/"
@@ -218,7 +218,8 @@ class EnsemblAnnotationManager:
         In Ensembl, species are separated into divisions.
         Returns the URL for the division of the given species.
         """
-        if self.division == "vertebrates":
+        # the URL is different for vertebrates
+        if self.division == self.ENSEMBL_VERTEBRATE_DIVISION:
             return self.ENSEMBL_VERTEBRATES_BASE_URL
         else:
             division_folder = self.ENSEMBL_DIVISION_TO_FOLDER[self.division]
