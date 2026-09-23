@@ -1,0 +1,65 @@
+nextflow_process {
+
+    name "Test Process DOWNLOAD_GENOME_ANNOTATION"
+    script "modules/local/download_genome_annotation/main.nf"
+    process "DOWNLOAD_GENOME_ANNOTATION"
+    tag "download_genome_annotation"
+
+    // NOTES:
+    // for this process, snapshots are not used because the downloaded annotations may (and will) change in the future
+    // the purpose here is not to check if downloaded files are identical, but whether the process passes or not
+    // as long as it passes, it means it's OK
+
+
+    test("OK from Ensembl - Solanum tuberosum") {
+
+        when {
+            process {
+                """
+                input[0] = "solanum_tuberosum"
+                input[1] = file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+    test("Only from NCBI - Aspergillus fumigatus") {
+
+        when {
+            process {
+                """
+                input[0] = "aspergillus_fumigatus"
+                input[1] = file( '$projectDir/tests/test_data/workflows/sampled/aspergillus_fumigatus/valid_gene_ids.txt', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+    test("Vertebrate - Canis lupus") {
+
+        when {
+            process {
+                """
+                input[0] = "canis_lupus"
+                input[1] = file( '$projectDir/tests/test_data/workflows/sampled/canis_lupus/valid_gene_ids.txt', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+}

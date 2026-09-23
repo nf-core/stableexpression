@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/master/assets/schema_gene_id_mapping.json",
+    "$id": "https://raw.githubusercontent.com/nf-core/stableexpression/main/assets/schema_gene_id_mapping.json",
     "title": "nf-core/stableexpression pipeline - custom mappings schema",
     "description": "Schema for the file provided with the params.gene_id_mapping CSV / TSV file",
     "type": "array",

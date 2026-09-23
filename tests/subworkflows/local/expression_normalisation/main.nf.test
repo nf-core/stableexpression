@@ -32,11 +32,12 @@ nextflow_workflow {
                         file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
-                input[2] = "tpm"
-                input[3] = "uniform"
-                input[4] = null
+                input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
+                input[3] = "tpm"
+                input[4] = "uniform"
                 input[5] = null
                 input[6] = null
+                input[7] = null
                 """
             }
         }
@@ -76,11 +77,12 @@ nextflow_workflow {
                         file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
-                input[2] = "tpm"
-                input[3] = "uniform"
-                input[4] = null
+                input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
+                input[3] = "tpm"
+                input[4] = "uniform"
                 input[5] = null
-                input[6] = file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/gene_lengths.csv', checkIfExists: true )
+                input[6] = null
+                input[7] = file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/gene_lengths.csv', checkIfExists: true )
                 """
             }
         }
@@ -120,11 +122,12 @@ nextflow_workflow {
                         file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
-                input[2] = "cpm"
-                input[3] = "uniform"
-                input[4] = null
+                input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
+                input[3] = "cpm"
+                input[4] = "uniform"
                 input[5] = null
                 input[6] = null
+                input[7] = null
                 """
             }
         }
@@ -155,11 +158,12 @@ nextflow_workflow {
                         file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
-                input[2] = "tpm "
-                input[3] = "uniform"
-                input[4] = null
+                input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
+                input[3] = "tpm"
+                input[4] = "uniform"
                 input[5] = null
                 input[6] = null
+                input[7] = null
                 """
             }
         }

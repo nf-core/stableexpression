@@ -126,7 +126,7 @@
                     "scikit-learn": "1.8.0"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "v1.1.0"
                 }
             },
             [
@@ -136,58 +136,6 @@
                 "datasets",
                 "datasets/rnaseq",
                 "datasets/rnaseq/raw",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/0.downloaded/E_GEOD_61690_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/1.id_filtered_renamed/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/2.samples_filtered",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/2.samples_filtered/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/3.cpm_normalised",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/3.cpm_normalised/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/4.quantile_normalised",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/4.quantile_normalised/E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet",
-                "datasets/rnaseq/raw/E_GEOD_61690_rnaseq/E_GEOD_61690_rnaseq.design.csv",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/0.downloaded/E_GEOD_77826_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/1.id_filtered_renamed/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/2.samples_filtered",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/2.samples_filtered/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/3.cpm_normalised",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/3.cpm_normalised/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/4.quantile_normalised",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/4.quantile_normalised/E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet",
-                "datasets/rnaseq/raw/E_GEOD_77826_rnaseq/E_GEOD_77826_rnaseq.design.csv",
-                "datasets/rnaseq/raw/E_MTAB_4252_rnaseq",
-                "datasets/rnaseq/raw/E_MTAB_4252_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_MTAB_4252_rnaseq/0.downloaded/E_MTAB_4252_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_MTAB_4252_rnaseq/E_MTAB_4252_rnaseq.design.csv",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/0.downloaded/E_MTAB_5038_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/1.id_filtered_renamed/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/2.samples_filtered",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/2.samples_filtered/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/3.cpm_normalised",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/3.cpm_normalised/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/4.quantile_normalised",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/4.quantile_normalised/E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet",
-                "datasets/rnaseq/raw/E_MTAB_5038_rnaseq/E_MTAB_5038_rnaseq.design.csv",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/0.downloaded/E_MTAB_5215_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/1.id_filtered_renamed/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/2.samples_filtered",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/2.samples_filtered/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/3.cpm_normalised",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/3.cpm_normalised/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/4.quantile_normalised",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/4.quantile_normalised/E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet",
-                "datasets/rnaseq/raw/E_MTAB_5215_rnaseq/E_MTAB_5215_rnaseq.design.csv",
                 "datasets/rnaseq/raw/E_MTAB_552_rnaseq",
                 "datasets/rnaseq/raw/E_MTAB_552_rnaseq/0.downloaded",
                 "datasets/rnaseq/raw/E_MTAB_552_rnaseq/0.downloaded/E_MTAB_552_rnaseq.rnaseq.raw.counts.csv",
@@ -200,21 +148,7 @@
                 "datasets/rnaseq/raw/E_MTAB_552_rnaseq/4.quantile_normalised",
                 "datasets/rnaseq/raw/E_MTAB_552_rnaseq/4.quantile_normalised/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet",
                 "datasets/rnaseq/raw/E_MTAB_552_rnaseq/E_MTAB_552_rnaseq.design.csv",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/0.downloaded/E_MTAB_7711_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/1.id_filtered_renamed/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/2.samples_filtered",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/2.samples_filtered/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/3.cpm_normalised",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/3.cpm_normalised/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/4.quantile_normalised",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/4.quantile_normalised/E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet",
-                "datasets/rnaseq/raw/E_MTAB_7711_rnaseq/E_MTAB_7711_rnaseq.design.csv",
                 "errors",
-                "errors/eatlas_failure_reasons.csv",
-                "errors/renaming_failure_reasons.tsv",
                 "id_mapping",
                 "id_mapping/global_gene_id_mapping.csv",
                 "id_mapping/global_gene_metadata.csv",
@@ -271,69 +205,35 @@
             ],
             [
                 "accessions.txt:md5,e38a0aaf5191ba5f94cb7a96b8d30aa7",
-                "E_GEOD_61690_rnaseq.rnaseq.raw.counts.csv:md5,2e3f1a125b3d41d622e2d24447620eb3",
-                "E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,7182743c3f277d64646527baef7e94d8",
-                "E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,7182743c3f277d64646527baef7e94d8",
-                "E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet:md5,93b2fa8b32a192139ace736a2d5f1564",
-                "E_GEOD_61690_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet:md5,d410c7f630454f051ac5be8a739c1bd8",
-                "E_GEOD_61690_rnaseq.design.csv:md5,ba807caf74e0b55f5c3fe23810a89560",
-                "E_GEOD_77826_rnaseq.rnaseq.raw.counts.csv:md5,85cea79c602a9924d5a4d6b597ef5530",
-                "E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,66a6083a258829f679b2f2656129703c",
-                "E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,66a6083a258829f679b2f2656129703c",
-                "E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet:md5,408c2d8ccf818660736e71eb5651d4ce",
-                "E_GEOD_77826_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet:md5,849a4e93e50befcf474b2931a2c65503",
-                "E_GEOD_77826_rnaseq.design.csv:md5,5aa61df754aa9c6c107b247c642d2e53",
-                "E_MTAB_4252_rnaseq.rnaseq.raw.counts.csv:md5,80d4fdb7f02fc7875827b61e104da56e",
-                "E_MTAB_4252_rnaseq.design.csv:md5,5aef2d1f8b78b3e60225855a6aafe6ad",
-                "E_MTAB_5038_rnaseq.rnaseq.raw.counts.csv:md5,b4acb3d7c39cdb2bd6cef6c9314c5b2a",
-                "E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,e2863619e80bc50a176d80209f401cc9",
-                "E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,e2863619e80bc50a176d80209f401cc9",
-                "E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet:md5,288bbbedbf3e6e609b0603dd91a4ea49",
-                "E_MTAB_5038_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet:md5,2b238d6f49f63a21d0dc64eb7f5ae865",
-                "E_MTAB_5038_rnaseq.design.csv:md5,352ed3163d7deef2be35d899418d5ad4",
-                "E_MTAB_5215_rnaseq.rnaseq.raw.counts.csv:md5,273704bdf762c342271b33958a84d1e7",
-                "E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,45fcb730b454e5386593976bfb1cf811",
-                "E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,45fcb730b454e5386593976bfb1cf811",
-                "E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet:md5,11af0ca7e75fe13fd0aec35790e2dde4",
-                "E_MTAB_5215_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet:md5,9b0caf48b64de5bde9cec043cd913633",
-                "E_MTAB_5215_rnaseq.design.csv:md5,2741dcd5b45bacce865db632f626a273",
                 "E_MTAB_552_rnaseq.rnaseq.raw.counts.csv:md5,830f50b60b17b62f9ca2f6a163a2879f",
                 "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,92174ad8c2424ef81102d6aca083b979",
                 "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,92174ad8c2424ef81102d6aca083b979",
                 "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet:md5,a27eaf9a3a4c869e401d7dd11da59261",
                 "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet:md5,fe057dde03876b3f64d8515fdf021e40",
                 "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c",
-                "E_MTAB_7711_rnaseq.rnaseq.raw.counts.csv:md5,3c02cf432c29d3751c978439539df388",
-                "E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,8ddc4820f2c4eb0331bbba54d09a6041",
-                "E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,8ddc4820f2c4eb0331bbba54d09a6041",
-                "E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet:md5,ee486115bf1c95982292b763ea5fb414",
-                "E_MTAB_7711_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet:md5,9b49401f19b7aa03aa9426ef450af06f",
-                "E_MTAB_7711_rnaseq.design.csv:md5,3e7748b54a0c25c008d9bd2ddbf1bf00",
-                "eatlas_failure_reasons.csv:md5,2a8cd0ed795e82647d19c484a79acde6",
-                "renaming_failure_reasons.tsv:md5,af783264770a861c263480141fdd8bf6",
                 "global_gene_id_mapping.csv:md5,a86823539deb80c0aa44378d3078969d",
                 "global_gene_metadata.csv:md5,e33e0ed63a3dec26bc95fe422f02844c",
                 "valid_gene_ids.txt:md5,81bb2277904f2e0ff6118ea0bc696af9",
-                "all_counts.imputed.parquet:md5,e16e554ab42428eba9b050bc1c0ecd34",
-                "all_counts.parquet:md5,8c389d47d51a6df74224fdf0643e2f23",
-                "whole_design.csv:md5,cc24405dce8d22b93b9999a2287113ef",
-                "all_genes_summary.csv:md5,b795ef9cfb940afeb75482de0e5bfa4a",
+                "all_counts.imputed.parquet:md5,d61f45a28a4897a36e37588e324d40ba",
+                "all_counts.parquet:md5,fe057dde03876b3f64d8515fdf021e40",
+                "whole_design.csv:md5,eb4519bb6d76c2b393e37b2251bcf089",
+                "all_genes_summary.csv:md5,1b7fe77668345209744a8c33b8267d2a",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,e16e554ab42428eba9b050bc1c0ecd34",
-                "all_genes_summary.csv:md5,b795ef9cfb940afeb75482de0e5bfa4a",
-                "whole_design.csv:md5,cc24405dce8d22b93b9999a2287113ef",
+                "all_counts.imputed.parquet:md5,d61f45a28a4897a36e37588e324d40ba",
+                "all_genes_summary.csv:md5,1b7fe77668345209744a8c33b8267d2a",
+                "whole_design.csv:md5,eb4519bb6d76c2b393e37b2251bcf089",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "2029240f6d1128be89ddc32729463129:md5,5cc6eb1406d6403afe70dd790f5a929b",
-                "id_mapping_stats.csv:md5,ca5e05936cbc8a1e8ea7c942752c883a",
-                "missing_values_filter_stats.csv:md5,e3f9e9e8b5c6b6e90e57444d438de219",
-                "ratio_nulls.csv:md5,b2b0b0e91d7f427dd16f2cfc25cc9c40",
-                "ratio_nulls_per_sample.csv:md5,142c1f0b8adb34d8d20ad781111b9e7c",
-                "ratio_zeros.csv:md5,f6c6e2df4dd9d2c089bce4847e89e6a0",
-                "skewness.csv:md5,be792da71863655af50348eb82e7fbc2",
-                "zero_values_filter_stats.csv:md5,e3f9e9e8b5c6b6e90e57444d438de219"
+                "id_mapping_stats.csv:md5,e1da683aacc11fbf42e59eb6b02d8e82",
+                "missing_values_filter_stats.csv:md5,70d91c8a7e03ee89edc0d165996d6ccc",
+                "ratio_nulls.csv:md5,d573479b5249c7a6431800e2829281ea",
+                "ratio_nulls_per_sample.csv:md5,45208d3909e1bef1e80fab995c7cebd7",
+                "ratio_zeros.csv:md5,0f15f8124e542e7e5d8504352422626f",
+                "skewness.csv:md5,3bd34c5a5eeb65f2716e884d327f4e6d",
+                "zero_values_filter_stats.csv:md5,70d91c8a7e03ee89edc0d165996d6ccc"
             ]
         ],
-        "timestamp": "2026-08-11T20:01:23.897062176",
+        "timestamp": "2026-09-17T21:24:53.684978122",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
@@ -528,7 +428,7 @@
                     "python": "3.14.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "v1.1.0"
                 }
             },
             [
@@ -687,7 +587,7 @@
                     "pyyaml": "6.0.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "v1.1.0"
                 }
             },
             [
@@ -838,7 +738,7 @@
                     "scikit-learn": "1.8.0"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "v1.1.0"
                 }
             },
             [
@@ -963,7 +863,7 @@
                     "pyyaml": "6.0.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "v1.1.0"
                 }
             },
             [
@@ -1244,7 +1144,7 @@
                     "scikit-learn": "1.8.0"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "v1.1.0"
                 }
             },
             [

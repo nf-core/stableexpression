@@ -1,0 +1,10 @@
+AFFX-Cf_G-6-PDH_5_at
+AFFX-Cf_P450-2E1_M_s_at
+AFFX-Cfa-actin-5_s_at
+AFFX-Cfa-gapdh-M_x_at
+Cfa.100.1.S1_at
+Cfa.10002.1.A1_at
+Cfa.10005.1.A1_at
+Cfa.10007.1.A1_s_at
+Cfa.10011.1.A1_at
+Cfa.10012.1.A1_at
