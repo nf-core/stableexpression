@@ -126,7 +126,7 @@
                     "scikit-learn": "1.8.0"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "1.1.0"
                 }
             },
             [
@@ -428,7 +428,7 @@
                     "python": "3.14.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "1.1.0"
                 }
             },
             [
@@ -587,7 +587,7 @@
                     "pyyaml": "6.0.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "1.1.0"
                 }
             },
             [
@@ -738,7 +738,7 @@
                     "scikit-learn": "1.8.0"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "1.1.0"
                 }
             },
             [
@@ -863,7 +863,7 @@
                     "pyyaml": "6.0.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "1.1.0"
                 }
             },
             [
@@ -1144,7 +1144,7 @@
                     "scikit-learn": "1.8.0"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.0.0"
+                    "nf-core/stableexpression": "1.1.0"
                 }
             },
             [
