@@ -22,7 +22,7 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline aiming to aggregate multiple count datasets for a specific species and find the most stable genes. The datasets can be either downloaded from public databases (EBI, NCBI) or provided directly by the user. Both RNA-seq and Microarray count datasets can be utilised.
+**nf-core/stableexpression** is a bioinformatics pipeline that aims to identify the most stable genes in one or more expression datasets. These datasets can be downloaded from public databases such as [EBI Expression Atlas](https://www.ebi.ac.uk/gxa/home) and [NCBI GEO Datasets](https://www.ncbi.nlm.nih.gov/gds), or provided directly by the user. Both RNA-seq and microarray count datasets can be used. The pipeline is ideally suited to determining the most suitable RT-qPCR reference genes for a given species.
 
 <p align="center">
     <img title="Stableexpression Workflow" src="docs/images/metromap/nf_core_stableexpression.metromap.png" width=100%>
@@ -36,8 +36,8 @@ It takes as main inputs :
 
 **Use cases**:
 
-- **find the most suitable genes as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
-- download all Expression Atlas and / or NCBI GEO datasets for a species (and optionally keywords)
+- **find the most suitable genes for use as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
+- download all EBI Expression Atlas and / or NCBI GEO datasets for a species (and optionally keywords)
 
 ## Pipeline overview
 
@@ -47,8 +47,11 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - Get [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords)
   This step is run by default but is optional. Set `--skip_fetch_eatlas_accessions` to skip it.
-- Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) **microarray** dataset accessions corresponding to the provided species (and optionally keywords)
+- Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) dataset accessions corresponding to the provided species (and optionally keywords)
   This is optional and **NOT** run by default. Set `--fetch_geo_accessions` to run it.
+
+>[!WARNING]
+>Due to the high heterogeneity of formats of NCBI GEO datasets, automated retrieval of expression datasets from NCBI GEO is considered **experimental**.
 
 #### 2. Download data (see [usage](./conf/usage.md#3-provide-your-own-accessions))
 
@@ -56,12 +59,12 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data if any
 
 > [!NOTE]
-> At this step, datasets downloaded from public databases are merged with datasets provided by the user using the `--datasets` parameter. See [usage](./conf/usage.md#4-use-your-own-expression-datasets) for more information about local datasets.
+> At this stage, the datasets that have been downloaded from public databases are merged with the user datasets (provided with the `--datasets` parameter). See [usage](./conf/usage.md#4-use-your-own-expression-datasets) for more information about user datasets.
 
 #### 3. ID Mapping (see [usage](./conf/usage.md#5-custom-gene-id-mapping--metadata))
 
 - Gene IDs are cleaned
-- Map gene IDS to NCBI Entrez Gene IDS (or Ensembl IDs) for standardisation among datasets using [`g:Profiler`](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
+- Map gene IDS to Ensembl IDs for standardisation among datasets using [`g:Profiler`](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
 - Rare genes are filtered out
 
 #### 4. Sample filtering
@@ -72,8 +75,8 @@ Samples that show too high ratios of zeros or missing values are removed from th
 
 ##### Pathway A: TPM (Transcripts Per Million)
 
-- Unless provided by the user: download reference annotation from [Ensembl Genomes](https://ensemblgenomes.org/) or [Ensembl](https://www.ensembl.org/)
-- Compute transcript lengths from the reference annotation
+- Unless provided by the user: download a reference annotation from the Ensembl FTPs ([Ensembl Genomes](https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/) or [Ensembl](https://ftp.ensembl.org/pub/current/)) or using the [NCBI Dataset API](https://api.ncbi.nlm.nih.gov/datasets/v2/)
+- Using the reference annotation, compute the length of the longest transcript for each gene
 - Normalize RNAseq raw data using TPM.
 
 ##### Pathway B: CPM (Counts Per Million)
@@ -92,17 +95,23 @@ All datasets are merged into one single dataframe.
 
 Missing values are replaced by imputed values using a specific algorithm provided by [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html). The user can choose the method of imputation with the `--missing_value_imputer` parameter.
 
+>[!NOTE]
+>For better scalability, the full dataset is first clustered by similarity of genes (using the [MiniBatchKMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html) algorithm) prior to missing value imputation.
+
+>[!WARNING]
+>This step takes the longest, especially when working with a large number of datasets.
+
 #### 9. General statistics for each gene
 
-Base statistics are computed for each gene, platform-wide and for each platform (RNAseq and microarray).
+Base statistics are computed for each gene, platform-wide and for each platform separately (RNAseq and microarray).
 
 #### 10. Scoring
 
-- The whole list of genes is divided in multiple sections, based on their expression level.
-- Based on the coefficient of variation, a shortlist of candidates genes is extracted for each section.
+- The full list of genes is divided into multiple 'sections' based on their expression levels
+- A shortlist of candidate genes is extracted for each section based on their coefficient of variation
 - Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder)
 - Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034) (run by default; optional)
-- Compute stability scores for each candidate gene
+- Compute stability score for each candidate gene
 
 #### 11. Reporting
 
@@ -127,9 +136,9 @@ To search the most stable genes in a species considering all public datasets, si
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -profile <PROFILE (examples: docker / apptainer / conda / micromamba)> \
+   -profile <PROFILE (docker / apptainer / singularity / conda / micromamba / ...)> \
    --species <SPECIES (examples: arabidopsis_thaliana / "drosophila melanogaster")> \
-   --outdir <OUTDIR (example: ./results)> \
+   --outdir <OUTDIR (example: results)> \
    -resume
 ```
 
@@ -138,9 +147,9 @@ nextflow run nf-core/stableexpression \
 
 ## More advanced usage
 
-For more specific scenarios, like:
+For more specific scenarios, such as:
 
-- **fetching only specific conditions**
+- **fetching datasets related to specific conditions only**
 - **using your own expression dataset(s)**
 
 please refer to the [usage documentation](https://nf-co.re/stableexpression/usage).
