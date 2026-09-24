@@ -54,7 +54,18 @@ process DASH_APP {
     # trying to launch the app
     # if the resulting exit code is not 124 (exit code of timeout) then there is an error
     cd dash_app
-    timeout 10 python -B app.py || exit_code=\$?; [ "\$exit_code" -eq 124 ] && exit 0 || exit 100
+    echo "Testing app launch"
+    # timeout makes app exit after 10 seconds with exitcode 124
+    timeout 10 python -B app.py || exit_code=\$?; [ "\$exit_code" -eq 124 ] && STATUS=success || STATUS=failure
+
+    rm -rf file_system_backend
+    if [ "\$STATUS" = "success" ]; then
+        echo "App launch successful!"
+        exit 0
+    else
+        echo "App launch failed"
+        exit 100
+    fi
     """
 
     stub:

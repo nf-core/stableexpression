@@ -24,12 +24,12 @@ from ncbi_annotation_manager import NCBIAnnotationManager
 logger = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.ERROR)
 
+TIMEOUT = 600
 
 STOP_RETRY_AFTER_DELAY = 120
 
 ENSEMBL_API_HEADERS = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
+    "Content-type": "application/json"
 }
 
 
@@ -48,7 +48,7 @@ def send_get_request_to_ensembl(url: str) -> list[dict]:
     """
     Sends a GET request to the Ensembl API to retrieve data from the given URL.
     """
-    with httpx.Client() as client:
+    with httpx.Client(timeout=TIMEOUT) as client:
         response = client.get(url, headers=ENSEMBL_API_HEADERS)
         if response.status_code == 200:
             response.raise_for_status()
@@ -65,7 +65,7 @@ def send_get_request_to_ensembl(url: str) -> list[dict]:
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
 def parse_page_data(url: str) -> BeautifulSoup:
-    with httpx.Client() as client:
+    with httpx.Client(timeout=TIMEOUT) as client:
         page = client.get(url)
         page.raise_for_status()
         return BeautifulSoup(page.content, "html.parser")
