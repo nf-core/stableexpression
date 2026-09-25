@@ -72,27 +72,12 @@ def parse_args():
 
 def get_ensembl_annotations(species: str) -> list[Path]:
 
-    logger.info("[Ensembl] :: Searching for the appropriate annotation folder")
-    candidate_folder_urls = EnsemblAnnotationManager(species).get_candidate_folders()
-
-    if not candidate_folder_urls:
-        logger.error(f"[Ensembl] :: No candidate annotation folder found for {species}")
-        return []
-
-    target_folder = Path(ENSEMBL_ANNOTATION_LOCAL_FOLDER)
-    target_folder.mkdir(parents=True, exist_ok=True)
-
-    annotation_files = []
-    for folder_url in candidate_folder_urls:
-        annotation_filename = EnsemblAnnotationManager.get_annotation_file(folder_url)
-
-        annotation_full_url = folder_url + annotation_filename
-        logger.info(f"[Ensembl] :: Found annotation URL: {annotation_full_url}.\nDownloading...")
-        annotation_file = target_folder / annotation_filename
-        EnsemblAnnotationManager.download_file(annotation_full_url, annotation_file)
-        annotation_files.append(annotation_file)
-
-    return annotation_files
+    manager = EnsemblAnnotationManager(species, ENSEMBL_ANNOTATION_LOCAL_FOLDER)
+    logger.info("[Ensembl] :: Searching for appropriate annotations")
+    ensembl_annotations = manager.get_ensembl_genomes_annotations()
+    logger.warning("[Ensembl organisms] :: Searching for appropriate annotations")
+    ensembl_organism_annotations = manager.get_ensembl_organisms_annotations()
+    return ensembl_annotations + ensembl_organism_annotations
 
 
 def get_ncbi_annotations(species: str) -> list[Path]:
@@ -239,7 +224,7 @@ def main():
                 unique_gene_ids
             )
             if selected_annotation is None:
-                logger.warning("Could not find any suitable annotation in Ensembl. Trying with NCBI")
+                logger.warning("[Ensembl] :: Could not find any suitable annotation in Ensembl. Trying with NCBI")
             else:
                 search_on_ncbi = False
 
