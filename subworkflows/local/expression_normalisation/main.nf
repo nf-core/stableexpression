@@ -18,6 +18,7 @@ workflow EXPRESSION_NORMALISATION {
     ch_datasets
     ch_valid_gene_ids
     normalisation_method
+    quantile_normalise
     quantile_norm_target_distrib
     gff_file
     gff_url
@@ -87,19 +88,24 @@ workflow EXPRESSION_NORMALISATION {
 
     ch_counts_after_first_normalisation = ch_datasets.normalised.mix( ch_raw_rnaseq_datasets_normalised )
 
-    //
-    // MODULE: Quantile normalisation
-    //
+    if ( quantile_normalise ) {
 
-    // putting all normalised count datasets together and performing quantile normalisation
-    QUANTILE_NORMALISATION (
-        ch_counts_after_first_normalisation,
-        quantile_norm_target_distrib
-    )
+        //
+        // MODULE: Quantile normalisation
+        //
+
+        // putting all normalised count datasets together and performing quantile normalisation
+        QUANTILE_NORMALISATION (
+            ch_counts_after_first_normalisation,
+            quantile_norm_target_distrib
+        )
+        ch_raw_rnaseq_datasets_normalised = QUANTILE_NORMALISATION.out.counts
+
+    }
 
     emit:
-    normalised_once              = ch_counts_after_first_normalisation
-    quantile_normalised_counts   = QUANTILE_NORMALISATION.out.counts
-    gene_length_file            = ch_gene_length_file
+    normalised          = ch_raw_rnaseq_datasets_normalised
+    normalised_once     = ch_counts_after_first_normalisation
+    gene_length_file    = ch_gene_length_file
 
 }

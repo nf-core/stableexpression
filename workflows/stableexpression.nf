@@ -140,14 +140,15 @@ workflow STABLEEXPRESSION {
             ch_counts_samples_filtered,
             ch_valid_gene_ids,
             params.normalisation_method,
+            params.quantile_normalise,
             params.quantile_norm_target_distrib,
             params.gff,
             params.gff_url,
             params.gene_length
         )
 
-        ch_counts_first_normalissation         = EXPRESSION_NORMALISATION.out.normalised_once
-        ch_normalised_counts                   = EXPRESSION_NORMALISATION.out.quantile_normalised_counts
+        ch_counts_first_normalisation          = EXPRESSION_NORMALISATION.out.normalised_once
+        ch_normalised_counts                   = EXPRESSION_NORMALISATION.out.normalised
         ch_gene_length_file                    = EXPRESSION_NORMALISATION.out.gene_length_file
 
         // -----------------------------------------------------------------
@@ -230,7 +231,7 @@ workflow STABLEEXPRESSION {
     downloaded                             = ch_downloaded_datasets
     id_filtered_renamed                    = ch_counts_ids_filtered_renamed
     samples_filtered                       = ch_counts_samples_filtered
-    first_normalisation                    = ch_counts_first_normalissation
+    first_normalisation                    = ch_counts_first_normalisation
     quantile_normalised                    = ch_normalised_counts
     gene_length_file                       = ch_gene_length_file
     merged                                 = ch_all_counts
