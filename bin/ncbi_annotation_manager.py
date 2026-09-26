@@ -137,13 +137,15 @@ class NCBIAnnotationManager:
         return result.get("reports", [])
 
 
-    def get_sorted_reference_genome_reports(self, refseq_only: bool = False) -> list[dict]:
+    def get_sorted_reference_genome_reports(self, reference_only: bool = False, refseq_only: bool = False) -> list[dict]:
         # selecting genome annotated as 'reference'
-        reference_reports = [
-            report
-            for report in self.reports
-            if report.get("assembly_info", {}).get("refseq_category") == "reference genome"
-        ]
+        reference_reports = self.reports
+        if reference_only:
+            reference_reports = [
+                report
+                for report in reference_reports
+                if report.get("assembly_info", {}).get("refseq_category") == "reference genome"
+            ]
         if refseq_only:
             reference_reports = [
                 report
