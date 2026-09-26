@@ -253,9 +253,9 @@
                     "type": "string",
                     "description": "Count normalisation method",
                     "fa_icon": "fas fa-divide",
-                    "enum": ["tpm", "cpm"],
-                    "default": "tpm",
-                    "help_text": "Raw RNAseq data must be normalised before further processing. `tmp offers a more accurate representation of gene expression levels as it is unbiased toward gene length. However, you can choose `cpm` if you do not have access to a genome annotation."
+                    "enum": ["getmm", "tpm", "cpm"],
+                    "default": "getmm",
+                    "help_text": "Raw RNAseq data must be normalised before further processing. `GeTMM` is the best option here as it allows accurate intra- and inter-sample comparisons. However, it can be computed only from raw counts. For datasets already normalised, `tpm` normalisation + quantile normalisation will be computed instead, which is less accurate. With this parameter, you can enforce which normalisation you would like to perform on your data. `tmp` offers a more accurate representation of gene expression levels as it is unbiased toward gene length. However, you can choose `cpm` if you do not have access to a genome annotation."
                 },
                 "gff": {
                     "type": "string",

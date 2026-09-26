@@ -1,8 +1,9 @@
-include { NORMALISATION_COMPUTE_CPM as COMPUTE_CPM   } from '../../../modules/local/normalisation/compute_cpm'
-include { NORMALISATION_COMPUTE_TPM as COMPUTE_TPM   } from '../../../modules/local/normalisation/compute_tpm'
-include { QUANTILE_NORMALISATION                     } from '../../../modules/local/quantile_normalisation'
+include { NORMALISATION_COMPUTE_CPM   as COMPUTE_CPM     } from '../../../modules/local/normalisation/compute_cpm'
+include { NORMALISATION_COMPUTE_TPM   as COMPUTE_TPM     } from '../../../modules/local/normalisation/compute_tpm'
+include { QUANTILE_NORMALISATION                         } from '../../../modules/local/quantile_normalisation'
 
 include { GET_TRANSCRIPT_LENGTHS                     } from '../../../subworkflows/local/get_transcript_lengths'
+include { GETMM                                      } from '../../../subworkflows/local/getmm'
 
 /*
 ========================================================================================
@@ -39,7 +40,7 @@ workflow EXPRESSION_NORMALISATION {
 
     ch_raw_rnaseq_datasets_to_normalise = ch_datasets.raw.filter { meta, file -> meta.platform == 'rnaseq' }
 
-    if ( normalisation_method == 'tpm' ) {
+    if ( normalisation_method in ['tpm', 'getmm'] ) {
 
         if ( gene_length_file ) {
 
@@ -58,6 +59,18 @@ workflow EXPRESSION_NORMALISATION {
             ch_gene_length_file = GET_TRANSCRIPT_LENGTHS.out.csv
 
         }
+
+    }
+
+    if  ( normalisation_method == 'getmm' ) {
+
+        GETMM(
+            ch_raw_rnaseq_datasets_to_normalise,
+            ch_gene_length_file
+        )
+        ch_raw_rnaseq_datasets_normalised = GETMM.out.counts
+
+    } else if ( normalisation_method == 'tpm' ) {
 
         COMPUTE_TPM(
             ch_raw_rnaseq_datasets_to_normalise,
