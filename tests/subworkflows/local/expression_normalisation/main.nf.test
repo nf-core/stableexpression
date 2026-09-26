@@ -6,7 +6,7 @@ nextflow_workflow {
     tag "subworkflow_expression_normalisation"
     tag "subworkflow"
 
-    test("TPM Normalisation") {
+    test("GeTMM") {
 
         when {
             workflow {
@@ -33,11 +33,12 @@ nextflow_workflow {
                     ]
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
-                input[3] = "tpm"
-                input[4] = "uniform"
-                input[5] = null
+                input[3] = "getmm"
+                input[4] = false
+                input[5] = "uniform"
                 input[6] = null
                 input[7] = null
+                input[8] = null
                 """
             }
         }
@@ -51,7 +52,7 @@ nextflow_workflow {
 
     }
 
-    test("TPM Normalisation with gene length") {
+    test("TPM + quantile normalisation") {
 
         when {
             workflow {
@@ -79,10 +80,57 @@ nextflow_workflow {
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = "tpm"
-                input[4] = "uniform"
-                input[5] = null
+                input[4] = true
+                input[5] = "uniform"
                 input[6] = null
-                input[7] = file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/gene_lengths.csv', checkIfExists: true )
+                input[7] = null
+                input[8] = null
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("Normalisation with gene length") {
+
+        when {
+            workflow {
+                """
+                input[0] = "solanum_tuberosum"
+                input[1] = channel.of(
+                    [
+                        [
+                            normalised: false,
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
+                            dataset: "rnaseq_raw",
+                            platform: "rnaseq"
+                        ],
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
+                    ],
+                    [
+                        [
+                            normalised: true,
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
+                            dataset: "microarray_normalised",
+                            platform: "microarray"
+                        ],
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
+                    ]
+                )
+                input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
+                input[3] = "getmm"
+                input[4] = false
+                input[5] = "uniform"
+                input[6] = null
+                input[7] = null
+                input[8] = file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/gene_lengths.csv', checkIfExists: true )
                 """
             }
         }
@@ -124,10 +172,11 @@ nextflow_workflow {
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = "cpm"
-                input[4] = "uniform"
-                input[5] = null
+                input[4] = false
+                input[5] = "uniform"
                 input[6] = null
                 input[7] = null
+                input[8] = null
                 """
             }
         }
@@ -160,10 +209,10 @@ nextflow_workflow {
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = "tpm"
-                input[4] = "uniform"
-                input[5] = null
+                input[5] = "uniform"
                 input[6] = null
                 input[7] = null
+                input[8] = null
                 """
             }
         }
