@@ -189,10 +189,11 @@ class EnsemblAnnotationManager:
         annotation_files = []
         for candidate_folder_url in candidate_folder_urls:
             annotation_url = self.get_ensembl_organism_annotation_url(candidate_folder_url)
-            assembly_accession = candidate_folder_url.rstrip('/').split('/')[-1]
-            annotation_file = self.target_folder / f"{assembly_accession}.{annotation_url.split('/')[-1]}"
-            self.download_file(annotation_url, annotation_file)
-            annotation_files.append(annotation_file)
+            if annotation_url is not None:
+                assembly_accession = candidate_folder_url.rstrip('/').split('/')[-1]
+                annotation_file = self.target_folder / f"{assembly_accession}.{annotation_url.split('/')[-1]}"
+                self.download_file(annotation_url, annotation_file)
+                annotation_files.append(annotation_file)
         return annotation_files
 
 
@@ -317,7 +318,7 @@ class EnsemblAnnotationManager:
         return f"{splitted[0].capitalize()}_{splitted[1].lower()}"
 
 
-    def get_ensembl_organisms_subfolder(self, url: str, accepted_folders: list[str] | None = None) -> list[str]:
+    def get_ensembl_organisms_subfolder(self, url: str, accepted_folders: list[str] = [], excluded_folders: list[str] = []) -> list[str]:
         soup = parse_page_data(url)
         folder_names = []
         for item in soup.find_all("tr"):
@@ -328,16 +329,27 @@ class EnsemblAnnotationManager:
             folder_name = line_sections[1].text.strip()
             if accepted_folders and folder_name not in accepted_folders:
                 continue
-            if folder_name in self.ENSEMBL_ORGANISMS_EXCLUDED_FOLDERS:
+            if folder_name in excluded_folders + self.ENSEMBL_ORGANISMS_EXCLUDED_FOLDERS:
                 continue
             folder_names.append(folder_name)
         return [url + folder_name for folder_name in folder_names]
 
 
-    def get_ensembl_organism_annotation_url(self, url: str):
-        first_level_folder_urls = self.get_ensembl_organisms_subfolder(url, accepted_folders=["ensembl/", "community/"])
-        second_level_folder_urls = self.get_ensembl_organisms_subfolder(first_level_folder_urls[0], accepted_folders=["geneset/"])
-        third_level_folder_urls = self.get_ensembl_organisms_subfolder(second_level_folder_urls[0])
+    def get_ensembl_organism_annotation_url(self, url: str) -> str | None:
+        first_level_folder_urls = self.get_ensembl_organisms_subfolder(url, excluded_folders=["genome", "vep"])
+        if not first_level_folder_urls:
+            return None
+        second_level_folder_url = None
+        for first_level_folder_url in first_level_folder_urls:
+            second_level_folder_urls = self.get_ensembl_organisms_subfolder(first_level_folder_url, accepted_folders=["geneset/"])
+            if second_level_folder_urls:
+                second_level_folder_url = second_level_folder_urls[0]
+                break
+        if second_level_folder_url is None:
+            return None
+        third_level_folder_urls = self.get_ensembl_organisms_subfolder(second_level_folder_url)
+        if not third_level_folder_urls:
+            return None
         return third_level_folder_urls[0] + self.ENSEMBL_ORGANISMS_ANNOTATION_FILENAME
 
 
