@@ -34,7 +34,7 @@ nextflow_workflow {
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = "getmm"
-                input[4] = false
+                input[4] = 'scaling'
                 input[5] = "uniform"
                 input[6] = null
                 input[7] = null
@@ -80,7 +80,7 @@ nextflow_workflow {
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = "tpm"
-                input[4] = true
+                input[4] = 'quantile'
                 input[5] = "uniform"
                 input[6] = null
                 input[7] = null
@@ -126,7 +126,7 @@ nextflow_workflow {
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = "getmm"
-                input[4] = false
+                input[4] = 'scaling'
                 input[5] = "uniform"
                 input[6] = null
                 input[7] = null
@@ -172,7 +172,7 @@ nextflow_workflow {
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = "cpm"
-                input[4] = false
+                input[4] = 'scaling'
                 input[5] = "uniform"
                 input[6] = null
                 input[7] = null

@@ -1,4 +1,4 @@
-process NORMALISATION_COMPUTE_TPM {
+process NORMALISATION_CPM {
 
     label 'process_single_cpu'
 
@@ -11,10 +11,9 @@ process NORMALISATION_COMPUTE_TPM {
 
     input:
     tuple val(meta), path(count_file)
-    path gene_lengths_file
 
     output:
-    tuple val(meta), path('*.tpm.parquet'),                 optional: true,                                           emit: counts
+    tuple val(meta), path('*.cpm.parquet'),                 optional: true,                                           emit: counts
     tuple val(meta.dataset), path("failure_reason.txt"),    optional: true,                                           topic: normalisation_failure_reason
     tuple val(meta.dataset), path("warning_reason.txt"),    optional: true,                                           topic: normalisation_warning_reason
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
@@ -22,14 +21,14 @@ process NORMALISATION_COMPUTE_TPM {
 
     script:
     """
-    compute_tpm.py \\
-        --counts $count_file \\
-        --gene-lengths $gene_lengths_file
+    compute_cpm.py \\
+        --counts $count_file
     """
 
     stub:
     """
-    touch stub.tpm.parquet
+    touch stub.cpm.parquet
     """
+
 
 }

@@ -1,9 +1,10 @@
-include { NORMALISATION_COMPUTE_CPM   as COMPUTE_CPM     } from '../../../modules/local/normalisation/compute_cpm'
-include { NORMALISATION_COMPUTE_TPM   as COMPUTE_TPM     } from '../../../modules/local/normalisation/compute_tpm'
+include { NORMALISATION_CPM as COMPUTE_CPM               } from '../../../modules/local/normalisation/cpm'
+include { NORMALISATION_TPM as COMPUTE_TPM               } from '../../../modules/local/normalisation/tpm'
+include { SCALING_NORMALISATION                          } from '../../../modules/local/scaling_normalisation'
 include { QUANTILE_NORMALISATION                         } from '../../../modules/local/quantile_normalisation'
 
-include { GET_TRANSCRIPT_LENGTHS                     } from '../../../subworkflows/local/get_transcript_lengths'
-include { GETMM                                      } from '../../../subworkflows/local/getmm'
+include { GET_TRANSCRIPT_LENGTHS                         } from '../../../subworkflows/local/get_transcript_lengths'
+include { GETMM                                          } from '../../../subworkflows/local/getmm'
 
 /*
 ========================================================================================
@@ -18,7 +19,7 @@ workflow EXPRESSION_NORMALISATION {
     ch_datasets
     ch_valid_gene_ids
     normalisation_method
-    quantile_normalise
+    scaling_method
     quantile_norm_target_distrib
     gff_file
     gff_url
@@ -26,20 +27,11 @@ workflow EXPRESSION_NORMALISATION {
 
     main:
 
+    // ------------------------------------------------------------------------------------
+    // GET TABLE ASSOCIATING GENE IDS TO THE LENGTH OF THEIR LARGEST TRANSCRIPT
+    // ------------------------------------------------------------------------------------
+
     ch_gene_length_file = channel.empty()
-
-    //
-    // MODULE: normalisation of raw count datasets (including downloaded RNA-seq datasets)
-    // at the same time, removing genes that show only zero counts
-    //
-
-    ch_datasets = ch_datasets.branch {
-        meta, file ->
-            raw: meta.normalised == false
-            normalised: meta.normalised == true
-        }
-
-    ch_raw_rnaseq_datasets_to_normalise = ch_datasets.raw.filter { meta, file -> meta.platform == 'rnaseq' }
 
     if ( normalisation_method in ['tpm', 'getmm'] ) {
 
@@ -60,13 +52,25 @@ workflow EXPRESSION_NORMALISATION {
             ch_gene_length_file = GET_TRANSCRIPT_LENGTHS.out.csv
 
         }
-
     }
+
+    // ------------------------------------------------------------------------------------
+    // NORMALISATION
+    // ------------------------------------------------------------------------------------
+
+    ch_datasets = ch_datasets.branch {
+        meta, file ->
+            raw: meta.normalised == false
+            normalised: meta.normalised == true
+        }
+
+    ch_raw_rnaseq_datasets = ch_datasets.raw.filter { meta, file -> meta.platform == 'rnaseq' }
+
 
     if  ( normalisation_method == 'getmm' ) {
 
         GETMM(
-            ch_raw_rnaseq_datasets_to_normalise,
+            ch_raw_rnaseq_datasets,
             ch_gene_length_file
         )
         ch_raw_rnaseq_datasets_normalised = GETMM.out.counts
@@ -74,38 +78,47 @@ workflow EXPRESSION_NORMALISATION {
     } else if ( normalisation_method == 'tpm' ) {
 
         COMPUTE_TPM(
-            ch_raw_rnaseq_datasets_to_normalise,
+            ch_raw_rnaseq_datasets,
             ch_gene_length_file.collect()
         )
         ch_raw_rnaseq_datasets_normalised = COMPUTE_TPM.out.counts
 
     } else { // 'cpm'
 
-        COMPUTE_CPM( ch_raw_rnaseq_datasets_to_normalise )
+        COMPUTE_CPM( ch_raw_rnaseq_datasets )
         ch_raw_rnaseq_datasets_normalised = COMPUTE_CPM.out.counts
 
     }
 
-    ch_counts_after_first_normalisation = ch_datasets.normalised.mix( ch_raw_rnaseq_datasets_normalised )
+    ch_normalised_once = ch_datasets.normalised.mix( ch_raw_rnaseq_datasets_normalised )
 
-    if ( quantile_normalise ) {
 
-        //
-        // MODULE: Quantile normalisation
-        //
+    // ------------------------------------------------------------------------------------
+    // SECOND NORMALISATION / SCALING
+    // ------------------------------------------------------------------------------------
 
-        // putting all normalised count datasets together and performing quantile normalisation
+    //
+    // put all normalised count datasets together and perform scaling (z-score) or quantile normalisation
+    //
+
+    if ( scaling_method == 'z_score' ) {
+
+        SCALING_NORMALISATION( ch_normalised_once )
+        ch_all_normalised = SCALING_NORMALISATION.out.counts
+
+    } else { // quantile
+
         QUANTILE_NORMALISATION (
-            ch_counts_after_first_normalisation,
+            ch_normalised_once,
             quantile_norm_target_distrib
         )
-        ch_raw_rnaseq_datasets_normalised = QUANTILE_NORMALISATION.out.counts
+        ch_all_normalised = QUANTILE_NORMALISATION.out.counts
 
     }
 
     emit:
-    normalised          = ch_raw_rnaseq_datasets_normalised
-    normalised_once     = ch_counts_after_first_normalisation
+    normalised          = ch_all_normalised
+    normalised_once     = ch_normalised_once
     gene_length_file    = ch_gene_length_file
 
 }

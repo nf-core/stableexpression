@@ -1,5 +1,5 @@
-include { NORMALISATION_COMPUTE_RPK   as COMPUTE_RPK     } from '../../../modules/local/normalisation/compute_rpk'
-include { NORMALISATION_EDGER         as EDGER           } from '../../../modules/local/normalisation/edger'
+include { NORMALISATION_RPK as COMPUTE_RPK } from '../../../modules/local/normalisation/compute_rpk'
+include { EDGER                            } from '../../../modules/local/edger'
 
 /*
 ========================================================================================

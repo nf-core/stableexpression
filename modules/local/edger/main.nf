@@ -1,4 +1,4 @@
-process NORMALISATION_EDGER {
+process EDGER {
 
     label 'process_single_cpu'
 
