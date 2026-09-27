@@ -76,12 +76,14 @@ def get_ensembl_annotations(species: str) -> list[Path]:
     logger.info("[Ensembl] :: Searching for appropriate annotations")
     try:
         ensembl_annotations = manager.get_ensembl_genomes_annotations()
+        logger.info(f"[Ensembl] :: Found {len(ensembl_annotations)} annotations")
     except Exception as e:
         logger.error(f"[Ensembl] :: Failed to get ensembl annotations: {e}")
         ensembl_annotations = []
     logger.warning("[Ensembl organisms] :: Searching for appropriate annotations")
     try:
         ensembl_organism_annotations = manager.get_ensembl_organisms_annotations()
+        logger.info(f"[Ensembl organisms] :: Found {len(ensembl_organism_annotations)} annotations")
     except Exception as e:
         logger.error(f"[Ensembl organisms] :: Failed to get ensembl organism annotations: {e}")
         ensembl_organism_annotations = []
@@ -99,7 +101,9 @@ def get_ncbi_annotations(species: str) -> list[Path]:
     # getting list of assemblies from the most 'reference ' to the least
     reference_reports = NCBIAnnotationManager(species).get_sorted_reference_genome_reports()
 
-    if not reference_reports:
+    if reference_reports:
+        logger.info(f"[NCBI] :: Found {len(reference_reports)} assembly reports for species {species}")
+    else:
         logger.info(f"[NCBI] :: No assembly reports found for species {species}")
         return []
 

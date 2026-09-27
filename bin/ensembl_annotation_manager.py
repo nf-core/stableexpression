@@ -143,7 +143,7 @@ class EnsemblAnnotationManager:
 
     ENSEMBL_GENOMES_BASE_URL: ClassVar[str] = "https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/{}/gff3/"
     ENSEMBL_VERTEBRATES_BASE_URL: ClassVar[str] = "https://ftp.ensembl.org/pub/current/gff3/"
-    ENSEMBL_ORGANISMS_BASE_URL: ClassVar[str] = "https://ftp.ebi.ac.uk/pub/ensemblorganisms"
+    ENSEMBL_ORGANISMS_BASE_URL: ClassVar[str] = "https://ftp.ebi.ac.uk/pub/ensemblorganisms/"
     ENSEMBL_ORGANISMS_ANNOTATION_FILENAME: ClassVar[str] = "genes.gff3.gz"
     ENSEMBL_ORGANISMS_EXCLUDED_FOLDERS: ClassVar[list[str]] = [
         "Parent Directory"
@@ -192,17 +192,17 @@ class EnsemblAnnotationManager:
 
 
     def get_ensembl_organisms_annotations(self) -> list[Path]:
-        formated_species = self.get_ensembl_organisms_formatted_species()
-        url = f"{self.ENSEMBL_ORGANISMS_BASE_URL}/{formated_species}/"
-        candidate_folder_urls = self.get_ensembl_organisms_subfolder(url)
         annotation_files = []
-        for candidate_folder_url in candidate_folder_urls:
-            annotation_url = self.get_ensembl_organism_annotation_url(candidate_folder_url)
-            if annotation_url is not None:
-                assembly_accession = candidate_folder_url.rstrip('/').split('/')[-1]
-                annotation_file = self.target_folder / f"{assembly_accession}.{annotation_url.split('/')[-1]}"
-                self.download_file(annotation_url, annotation_file)
-                annotation_files.append(annotation_file)
+        species_folder_urls = self.get_ensembl_organisms_species_folders()
+        for url in species_folder_urls:
+            candidate_folder_urls = self.get_ensembl_organisms_subfolder(url)
+            for candidate_folder_url in candidate_folder_urls:
+                annotation_url = self.get_ensembl_organism_annotation_url(candidate_folder_url)
+                if annotation_url is not None:
+                    assembly_accession = candidate_folder_url.rstrip('/').split('/')[-1]
+                    annotation_file = self.target_folder / f"{assembly_accession}.{annotation_url.split('/')[-1]}"
+                    self.download_file(annotation_url, annotation_file)
+                    annotation_files.append(annotation_file)
         return annotation_files
 
 
@@ -325,6 +325,23 @@ class EnsemblAnnotationManager:
     def get_ensembl_organisms_formatted_species(self) -> str:
         splitted = self.species.replace(" ", "_").split("_")
         return f"{splitted[0].capitalize()}_{splitted[1].lower()}"
+
+
+    def get_ensembl_organisms_species_folders(self):
+        formated_species = self.get_ensembl_organisms_formatted_species()
+        soup = parse_page_data(self.ENSEMBL_ORGANISMS_BASE_URL)
+        folder_names = []
+        for item in soup.find_all("tr"):
+            # all line sections
+            line_sections = list(item.find_all("td"))
+            if len(line_sections) < 5:
+                continue
+            folder_name = line_sections[1].text.strip()
+            if folder_name in self.ENSEMBL_ORGANISMS_EXCLUDED_FOLDERS:
+                continue
+            if folder_name.startswith(formated_species):
+                folder_names.append(folder_name)
+        return [f"{self.ENSEMBL_ORGANISMS_BASE_URL}{folder_name}" for folder_name in folder_names]
 
 
     def get_ensembl_organisms_subfolder(self, url: str, accepted_folders: list[str] = [], excluded_folders: list[str] = []) -> list[str]:
