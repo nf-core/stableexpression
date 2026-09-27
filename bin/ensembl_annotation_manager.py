@@ -17,6 +17,7 @@ from tenacity import (
     retry,
     stop_after_delay,
     wait_exponential,
+    retry_if_exception
 )
 from bs4 import BeautifulSoup
 from ncbi_annotation_manager import NCBIAnnotationManager
@@ -39,7 +40,14 @@ ENSEMBL_API_HEADERS = {
 ##################################################################
 ##################################################################
 
+def is_retryable(exception: BaseException) -> bool:
+    """Retry everything except a 404 HTTPStatusError."""
+    if isinstance(exception, httpx.HTTPStatusError):
+        return exception.response.status_code != 404
+    return True
+
 @retry(
+    retry=retry_if_exception(is_retryable),
     stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
     wait=wait_exponential(multiplier=1, min=1, max=30),
     before_sleep=before_sleep_log(logger, logging.WARNING),
@@ -60,6 +68,7 @@ def send_get_request_to_ensembl(url: str) -> list[dict]:
 
 
 @retry(
+    retry=retry_if_exception(is_retryable),
     stop=stop_after_delay(600),
     wait=wait_exponential(multiplier=1, min=1, max=30),
     before_sleep=before_sleep_log(logger, logging.WARNING),

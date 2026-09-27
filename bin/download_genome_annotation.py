@@ -74,9 +74,17 @@ def get_ensembl_annotations(species: str) -> list[Path]:
 
     manager = EnsemblAnnotationManager(species, ENSEMBL_ANNOTATION_LOCAL_FOLDER)
     logger.info("[Ensembl] :: Searching for appropriate annotations")
-    ensembl_annotations = manager.get_ensembl_genomes_annotations()
+    try:
+        ensembl_annotations = manager.get_ensembl_genomes_annotations()
+    except Exception as e:
+        logger.error(f"[Ensembl] :: Failed to get ensembl annotations: {e}")
+        ensembl_annotations = []
     logger.warning("[Ensembl organisms] :: Searching for appropriate annotations")
-    ensembl_organism_annotations = manager.get_ensembl_organisms_annotations()
+    try:
+        ensembl_organism_annotations = manager.get_ensembl_organisms_annotations()
+    except Exception as e:
+        logger.error(f"[Ensembl organisms] :: Failed to get ensembl organism annotations: {e}")
+        ensembl_organism_annotations = []
     return ensembl_annotations + ensembl_organism_annotations
 
 
