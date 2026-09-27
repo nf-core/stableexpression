@@ -25,18 +25,28 @@ GFF_COLUMNS = [
     "phase",
     "attributes",
 ]
+COLUMNS_TO_KEEP = [
+    "feature",
+    "start",
+    "end",
+    "attributes",
+]
 
 DTYPES = {
     "chromosome": str,
     "source": str,
     "feature": str,
-    "start": int,
-    "end": int,
+    "start": 'Int64',
+    "end": 'Int64',
     "score": str,
     "strand": str,
     "phase": str,
     "attributes": str,
 }
+
+PARENT_TRANSCRIPT_ID_PATTERN = r"Parent=(?:(?:transcript|rna)[:\-])?([^;]+)"
+PARENT_GENE_ID_PATTERN = r"Parent=(?:gene[:\-])?([^;]+)"
+TRANSCRIPT_ID_PATTERN = r"ID=(?:(?:transcript|rna)[:\-])?([^;]+)"
 
 
 ##################################################################
@@ -59,7 +69,7 @@ def parse_args():
 
 
 def parse_gff3_file(annotation_file: Path) -> pd.DataFrame:
-    return pd.read_csv(
+    df = pd.read_csv(
         annotation_file,
         sep="\t",
         names=GFF_COLUMNS,
@@ -67,6 +77,8 @@ def parse_gff3_file(annotation_file: Path) -> pd.DataFrame:
         comment="#",
         on_bad_lines="warn",
     )
+    df = df[COLUMNS_TO_KEEP]
+    return df[pd.notnull(df["start"]) & pd.notnull(df["end"]) & pd.notnull(df["feature"]) & pd.notnull("attributes")]
 
 
 def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
@@ -80,12 +92,11 @@ def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
     """
     exon_df = df.loc[df["feature"] == "exon"].copy()
     # extract transcript ID from attributes column for each exon
-    exon_df["transcript_id"] = exon_df["attributes"].str.extract(
-        r"Parent=(?:transcript|rna)[:\-]([^;]+)"
-    )
-    # compute transcript length
+    exon_df["transcript_id"] = exon_df["attributes"].str.extract(PARENT_TRANSCRIPT_ID_PATTERN)
+    # compute exon length
     exon_df[config.CDNA_LENGTH_COLNAME] = exon_df["end"] - exon_df["start"] + 1
     exon_df = exon_df[["transcript_id", config.CDNA_LENGTH_COLNAME]]
+    # compute transcript length as the sum of the lengths of its exons
     return exon_df.groupby("transcript_id", as_index=False).agg(
         {config.CDNA_LENGTH_COLNAME: "sum"}
     )
@@ -102,22 +113,21 @@ def compute_max_transcript_lengths_per_gene(
         - groupby gene ID
         - compute max of transcript length for each gene (longest isoform)
     """
-    # catching all kings of RNAs (mRNA, snRNA, ...)
+    # catching all kings of RNAs (mRNA, snRNA, lnc_RNA, ...)
     # (we don't necessarily want only mRNA)
     # excluding features containing genes, like 'ncRNA_gene'
     rna_cols = [
         feature
-        for feature in df["feature"].unique()
+        for feature in df["feature"].dropna().unique()
         if "RNA" in feature and "gene" not in feature
     ]
     rna_df = df.loc[df["feature"].isin(rna_cols)].copy()
 
     # extract gene ID from attributes column for each transcript
-    rna_df[config.GENE_ID_COLNAME] = rna_df["attributes"].str.extract(
-        r"Parent=gene[:\-]([^;]+)"
-    )
+    rna_df[config.GENE_ID_COLNAME] = rna_df["attributes"].str.extract(PARENT_GENE_ID_PATTERN)
+
     # extract transcript ID from attributes column
-    rna_df["transcript_id"] = rna_df["attributes"].str.extract(r"ID=(?:transcript|rna)[:\-]([^;]+)")
+    rna_df["transcript_id"] = rna_df["attributes"].str.extract(TRANSCRIPT_ID_PATTERN)
 
     # merge with transcript lengths dataframe to get length
     merged_df = rna_df.merge(transcript_lengths_df, how="left", on="transcript_id")

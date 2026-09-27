@@ -143,14 +143,18 @@ def clean_counts(lf: pl.LazyFrame):
     The config.GENE_ID_COLNAME column is cast
     to String, and all other columns are cast to Float32.
     """
+    logger.info("Cleaning merged lazyframe")
     # casting count columns to Float32
     # casting gene id column to String
-    # replacing nans with nulls
-    logger.info("Cleaning merged lazyframe")
-    return lf.select(
+    lf = lf.select(
         [pl.col(config.GENE_ID_COLNAME).cast(pl.String)]
         + [pl.col(column).cast(pl.Float32) for column in get_count_columns(lf)]
-    ).fill_nan(None)
+    )
+    # replacing nans with nulls
+    lf = lf.fill_nan(None)
+    # removing genes for which all values are Nan / null
+    return lf.filter(~pl.all_horizontal(pl.exclude(config.GENE_ID_COLNAME).is_null()))
+
 
 
 #####################################################

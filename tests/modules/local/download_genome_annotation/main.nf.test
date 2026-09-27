@@ -29,6 +29,7 @@ nextflow_process {
     }
 
     test("Only from NCBI - Aspergillus fumigatus") {
+        tag "download_annotation_afumigatus"
 
         when {
             process {
@@ -52,6 +53,23 @@ nextflow_process {
                 """
                 input[0] = "canis_lupus"
                 input[1] = file( '$projectDir/tests/test_data/workflows/sampled/canis_lupus/valid_gene_ids.txt', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+    test("Ensembl organisms - Vitis vinifera") {
+
+        when {
+            process {
+                """
+                input[0] = "vitis_vinifera"
+                input[1] = file( '$projectDir/tests/test_data/workflows/sampled/vitis_vinifera/valid_gene_ids.txt', checkIfExists: true)
                 """
             }
         }
