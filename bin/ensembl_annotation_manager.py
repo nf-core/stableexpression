@@ -165,6 +165,7 @@ class EnsemblAnnotationManager:
 
     def get_ensembl_genomes_annotations(self) -> list[Path]:
         species_info = self.get_species_info()
+        print(species_info)
         if len(species_info) == 0:
             raise ValueError(f"No division found for species Taxon ID {self.species_taxid}")
 
@@ -253,7 +254,7 @@ class EnsemblAnnotationManager:
         # we should never have multiple possible divisions for a single species
         # it is like if a species belonged to multiple kingdoms at the same time...
         if len(found_divisions) > 1:
-            raise ValueError(f"Multiple divisions found for species Taxon ID {self.species_taxid}: {found_divisions}.")
+            logger.warning(f"Multiple divisions found for species Taxon ID {self.species_taxid}: {found_divisions}. Taking the first one.")
         # there should be only one division
         return found_divisions[0]
 
