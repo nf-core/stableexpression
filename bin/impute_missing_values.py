@@ -188,17 +188,22 @@ def apply_knn_imputer(df: pl.DataFrame) -> pl.DataFrame:
     labels = cluster_dataframe(df, n_clusters=n_clusters)
 
     unique_labels = labels.unique()
+    label_parquet_files = []
     for label in unique_labels:
         cluster_mask = labels == label
         cluster_df = df.filter(cluster_mask)
         logger.info(f"Imputing cluster {label} ({cluster_df.shape[0]} genes)")
         imputed_cluster_df = apply_imputer(cluster_df, imputer)
-        imputed_cluster_df.write_parquet(f"imputed_cluster_{label}.parquet")
+        file = f"imputed_cluster_{label}.parquet"
+        imputed_cluster_df.write_parquet(file)
+        label_parquet_files.append(file)
 
-    del df
-    return pl.concat(
-        [pl.read_parquet(f"imputed_cluster_{label}.parquet") for label in unique_labels]
-    )
+    df = pl.concat([pl.read_parquet(file) for file in label_parquet_files])
+    # removing intermediate parquet files
+    for file in label_parquet_files:
+        Path(file).unlink()
+    return df
+
 
 
 def apply_iterative_imputer(df: pl.DataFrame) -> pl.DataFrame:
