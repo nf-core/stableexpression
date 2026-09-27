@@ -249,21 +249,25 @@
             "fa_icon": "fas fa-chart-line",
             "description": "Options for normalisation and calculation of gene expression variation.",
             "properties": {
-                "normalisation_method": {
-                    "type": "string",
-                    "description": "Count normalisation method",
-                    "fa_icon": "fas fa-divide",
-                    "enum": ["getmm", "tpm", "cpm"],
-                    "default": "getmm",
-                    "help_text": "Raw RNAseq data must be normalised before further processing. `GeTMM` is the best option here as it allows accurate intra- and inter-sample comparisons. However, it can be computed only from raw counts. For datasets already normalised, `tpm` normalisation + quantile normalisation will be computed instead, which is less accurate. With this parameter, you can enforce which normalisation you would like to perform on your data. `tmp` offers a more accurate representation of gene expression levels as it is unbiased toward gene length. However, you can choose `cpm` if you do not have access to a genome annotation."
+                "skip_gene_length_normalisation": {
+                  "type": "boolean",
+                    "fa_icon": "fas fa-ban",
+                    "description": "Do not use gene lengths (annotation) for normalisation of RNA-seq datasets",
+                    "help_text": "Raw RNA-seq data must be normalised using `GeTMM` before further processing. Likewise, already normalised RNA-seq data are converted to `TPM`. Both methods require gene lengths, which are computed from a genome annotation if they are not provided directly. However, if the pipeline cannot automatically find a genome annotation and if you do not have access to a gene length / genome annotation file, you can choose to replace these normalisation steps with `CPM` computation. This method is less accurate as gene expression is no longer normalised with gene length, but it allows running the pipeline and get farily reliable results."
+                },
+                "skip_scaling": {
+                  "type": "boolean",
+                    "fa_icon": "fas fa-ban",
+                    "description": "Skip ",
+                    "help_text": "Raw RNA-seq data must be normalised using `GeTMM` before further processing. Likewise, already normalised RNA-seq data are converted to `TPM`. Both methods require gene lengths, which are computed from a genome annotation if they are not provided directly. However, if the pipeline cannot automatically find a genome annotation and if you do not have access to a gene length / genome annotation file, you can choose to replace these normalisation steps with `CPM` computation. This method is less accurate as gene expression is no longer normalised with gene length, but it allows running the pipeline and get farily reliable results."
                 },
                 "scaling_method": {
                     "type": "string",
-                    "description": "Method for scaling data after the `getmm` / `tpm` / `cpm` normalisation step.",
+                    "description": "Method for scaling data to a common expression range.",
                     "fa_icon": "fas fa-divide",
-                    "enum": ["z_score", "quantile"],
-                    "default": "getmm",
-                    "help": "Method for scaling data after the `getmm` / `tpm` / `cpm` normalisation step."
+                    "enum": ["quantile", "z_score"],
+                    "default": "quantile",
+                    "help": "Method for scaling data after the first normalisation step. Default is `quantile`, which performs quantile normalisation on each dataset separately. This method is the most intrusive but allows optimal comparison of datasets displaying different distributions of expression (for instance RNA-seq and microarray data). "
                 },
                 "gff": {
                     "type": "string",

@@ -18,7 +18,8 @@ workflow EXPRESSION_NORMALISATION {
     species
     ch_datasets
     ch_valid_gene_ids
-    normalisation_method
+    skip_gene_length_normalisation
+    skip_scaling
     scaling_method
     quantile_norm_target_distrib
     gff_file
@@ -27,13 +28,29 @@ workflow EXPRESSION_NORMALISATION {
 
     main:
 
-    // ------------------------------------------------------------------------------------
-    // GET TABLE ASSOCIATING GENE IDS TO THE LENGTH OF THEIR LARGEST TRANSCRIPT
-    // ------------------------------------------------------------------------------------
-
     ch_gene_length_file = channel.empty()
 
-    if ( normalisation_method in ['tpm', 'getmm'] ) {
+    ch_datasets = ch_datasets.branch {
+        meta, file ->
+            rnaseq: meta.platform == 'rnaseq'
+            microarray: meta.platform == 'microarray'
+        }
+
+    // ------------------------------------------------------------------------------------
+    // NORMALISATION OF RNA-SEQ DATA
+    // ------------------------------------------------------------------------------------
+
+    ch_rnaseq_datasets = ch_datasets.rnaseq.branch {
+        meta, file ->
+            raw: meta.normalised == false
+            normalised: meta.normalised == true
+        }
+
+    if ( !skip_gene_length_normalisation  ) {
+
+        // ------------------------------------------------------------------------------------
+        // GET TABLE ASSOCIATING GENE IDS TO THE LENGTH OF THEIR LARGEST TRANSCRIPT
+        // ------------------------------------------------------------------------------------
 
         if ( gene_length_file ) {
 
@@ -42,77 +59,81 @@ workflow EXPRESSION_NORMALISATION {
         } else {
 
             // download genome annotation
-            // and computing length of the longest transcript gene per gene
+            // and compute length of the longest transcript gene per gene
             GET_TRANSCRIPT_LENGTHS(
                 species,
                 ch_valid_gene_ids,
                 gff_file,
-                gff_url
+                gff_url,
+                ch_datasets.rnaseq.collect() // used to trigger this subworkflow only if RNA-seq data are present
             )
             ch_gene_length_file = GET_TRANSCRIPT_LENGTHS.out.csv
 
         }
-    }
 
-    // ------------------------------------------------------------------------------------
-    // NORMALISATION
-    // ------------------------------------------------------------------------------------
+        // ------------------------------------------------------------------------------------
+        // NORMALISATION
+        // ------------------------------------------------------------------------------------
 
-    ch_datasets = ch_datasets.branch {
-        meta, file ->
-            raw: meta.normalised == false
-            normalised: meta.normalised == true
-        }
-
-    ch_raw_rnaseq_datasets = ch_datasets.raw.filter { meta, file -> meta.platform == 'rnaseq' }
-
-
-    if  ( normalisation_method == 'getmm' ) {
-
+        // normalisation on raw counts (preferred option)
         GETMM(
-            ch_raw_rnaseq_datasets,
+            ch_rnaseq_datasets.raw,
             ch_gene_length_file
         )
-        ch_raw_rnaseq_datasets_normalised = GETMM.out.counts
 
-    } else if ( normalisation_method == 'tpm' ) {
-
+        // if some provided counts are already normalised, use TPM instead
         COMPUTE_TPM(
-            ch_raw_rnaseq_datasets,
+            ch_rnaseq_datasets.normalised,
             ch_gene_length_file.collect()
         )
-        ch_raw_rnaseq_datasets_normalised = COMPUTE_TPM.out.counts
 
-    } else { // 'cpm'
+        ch_normalised_rnaseq_datasets = GETMM.out.counts.mix( COMPUTE_TPM.out.counts )
 
-        COMPUTE_CPM( ch_raw_rnaseq_datasets )
-        ch_raw_rnaseq_datasets_normalised = COMPUTE_CPM.out.counts
+    } else {
+
+        // Checking that we have either raw or normalised datasets, but not both
+        ch_datasets.rnaseq.collect().map { datasets ->
+            def normalisation_status_list = datasets.collect{ meta, file -> meta.normalised ? 'normalised': 'raw' }.unique()
+            println normalisation_status_list
+        }
+
+        COMPUTE_CPM( ch_datasets.rnaseq )
+        ch_normalised_rnaseq_datasets = COMPUTE_CPM.out.counts
 
     }
 
-    ch_normalised_once = ch_datasets.normalised.mix( ch_raw_rnaseq_datasets_normalised )
+
+    ch_normalised_once = ch_datasets.microarray.mix( ch_normalised_rnaseq_datasets )
 
 
     // ------------------------------------------------------------------------------------
-    // SECOND NORMALISATION / SCALING
+    // SECOND NORMALISATION : SCALING
     // ------------------------------------------------------------------------------------
 
     //
-    // put all normalised count datasets together and perform scaling (z-score) or quantile normalisation
+    // put all normalised count datasets together and perform scaling (quantile normalisation or z-score)
     //
 
-    if ( scaling_method == 'z_score' ) {
+    if ( skip_scaling ) {
 
-        SCALING_NORMALISATION( ch_normalised_once )
-        ch_all_normalised = SCALING_NORMALISATION.out.counts
+        ch_all_normalised = ch_normalised_once
 
-    } else { // quantile
+    } else {
 
-        QUANTILE_NORMALISATION (
-            ch_normalised_once,
-            quantile_norm_target_distrib
-        )
-        ch_all_normalised = QUANTILE_NORMALISATION.out.counts
+        if ( scaling_method == 'quantile' ) {
+
+            QUANTILE_NORMALISATION (
+                ch_normalised_once,
+                quantile_norm_target_distrib
+            )
+            ch_all_normalised = QUANTILE_NORMALISATION.out.counts
+
+        } else { // z-score
+
+            SCALING_NORMALISATION( ch_normalised_once )
+            ch_all_normalised = SCALING_NORMALISATION.out.counts
+
+        }
 
     }
 

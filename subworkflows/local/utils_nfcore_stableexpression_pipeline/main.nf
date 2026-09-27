@@ -299,7 +299,7 @@ def toolCitationText() {
             "<li ${style}>Expression Atlas (Papatheodorou et al. 2018)</li>",
             params["fetch_geo_accessions"] ? "<li ${style}>NCBI GEO (Edgar et al. 2002)</li>" : "",
             params["skip_id_mapping"] ? "" : "<li ${style}>g:Profiler (Reimand et al. 2007)</li>",
-            params["normalisation_method"] == "tpm" && !params["gff"] && !params["gene_length"] ? "<li ${style}>Ensembl (Yates et al. 2026)</li>" : "",
+            "<li ${style}>Ensembl (Yates et al. 2026)</li>",
             "<li ${style}>Scikit-learn (Pedregosa et al. 2011)</li>",
             "<li ${style}>NormFinder (Andersen et al. 2004)</li>",
             params["skip_genorm"] ? "" : "<li ${style}>GeNorm (Vandesompele et al. 2002)</li>",

@@ -149,13 +149,13 @@ output {
 
     first_normalisation {
         path { meta, file ->
-            file >> getOutputFolder(meta, "3.${params.normalisation_method}_normalised")
+            file >> getOutputFolder(meta, "3.normalised")
         }
     }
 
     quantile_normalised {
         path { meta, file ->
-            file >> getOutputFolder(meta, "4.quantile_normalised")
+            file >> getOutputFolder(meta, "4.${params.scaling_method}_normalised")
         }
     }
 

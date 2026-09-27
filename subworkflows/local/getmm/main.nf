@@ -1,4 +1,4 @@
-include { NORMALISATION_RPK as COMPUTE_RPK } from '../../../modules/local/normalisation/compute_rpk'
+include { NORMALISATION_RPK as COMPUTE_RPK } from '../../../modules/local/normalisation/rpk'
 include { EDGER                            } from '../../../modules/local/edger'
 
 /*

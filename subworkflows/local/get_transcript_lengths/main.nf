@@ -15,6 +15,7 @@ workflow GET_TRANSCRIPT_LENGTHS {
     ch_valid_gene_ids
     gff_file
     gff_url
+    ch_rnaseq_datasets_collected // only used as a trigger to launch this subworkflow
 
     main:
 
