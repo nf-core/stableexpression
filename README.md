@@ -185,6 +185,15 @@ We thank the following people for their assistance in the development of this pi
 - Shaheen Acheche
 - Janine Soares
 
+We also thank the following members of the nf-core organisation for their assistance and reviews:
+
+- Simon Pearce
+- Quentin Blampey
+- Matthias Hörtenhuber
+- Phil Ewels
+- Maxime U Garcia
+- James A. Fellows Yates
+
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](docs/CONTRIBUTING.md).
