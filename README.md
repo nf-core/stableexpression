@@ -189,10 +189,10 @@ We also thank the following members of the nf-core organisation for their assist
 
 - Simon Pearce
 - Quentin Blampey
-- Matthias Hörtenhuber 
+- Matthias Hörtenhuber
 - Phil Ewels
 - Maxime U Garcia
-- James A. Fellows Yates 
+- James A. Fellows Yates
 
 ## Contributions and Support
 
