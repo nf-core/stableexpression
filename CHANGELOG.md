@@ -3,11 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.1.0 - [2026-09-23]
+## v1.1.0 - [2026-09-28]
 
 ### `Added`
 
-- [#58] Tries to fetch genome annotation from the [Ensembl organisms](https://ftp.ebi.ac.uk/pub/ensemblorganisms/) FTP, in addition to Ensembl and NCBI.
+- [#58](https://github.com/nf-core/stableexpression/issues/58) Tries to fetch genome annotation from the [Ensembl organisms](https://ftp.ebi.ac.uk/pub/ensemblorganisms/) FTP, in addition to Ensembl and NCBI.
 
 ### `Fixed`
 
