@@ -15,6 +15,14 @@ logger = logging.getLogger(__name__)
 
 ALLOWED_FILE_FORMATS = [".csv", ".tsv", ".dat"]
 
+COL_SCHEMA = pl.Schema(
+    {
+        "gene_id": pl.String(),
+        "original_gene_id": pl.String(),
+
+    }
+)
+
 
 def parse_header(file: Path, sep: str):
     if file.suffix == ".gz":
@@ -69,6 +77,7 @@ def parse_table(file: Path):
         header = parse_header(file, sep)
         return pl.read_csv(
             file,
+            schema_overrides=COL_SCHEMA,
             separator=sep,
             has_header=False,
             skip_rows=1,
