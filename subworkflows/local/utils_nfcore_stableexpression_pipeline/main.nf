@@ -135,10 +135,10 @@ workflow PIPELINE_COMPLETION {
     main:
     summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
     def multiqc_reports = multiqc_report.toList()
+
     //
     // Completion email and summary
     //
-
     workflow.onComplete {
         if (email || email_on_fail) {
             completionEmail(

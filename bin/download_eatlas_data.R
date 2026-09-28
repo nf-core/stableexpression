@@ -3,12 +3,14 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 options(error = traceback)
-suppressPackageStartupMessages(library("ExpressionAtlas"))
-library(ExpressionAtlas)
 library(optparse)
+suppressPackageStartupMessages(library("SummarizedExperiment"))
+library(SummarizedExperiment)
 
 FAILURE_REASON_FILE <- "failure_reason.txt"
 WARNING_REASON_FILE <- "warning_reason.txt"
+
+EXPRESSION_ATLAS_URL_BASE <- "ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/atlas/experiments"
 
 
 #####################################################
@@ -29,6 +31,76 @@ get_args <- function() {
     return(args)
 }
 
+
+get_atlas_experiment <- function( accession ) {
+
+    if( ! accession_is_valid( accession ) ) {
+        stop( "Experiment accession not valid. Cannot continue." )
+    }
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Build URL
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    # Name of file to download
+    atlasExperimentSummaryFile <- paste0(accession, "-atlasExperimentSummary.Rdata")
+
+    # Create full URL to download R data from.
+    fullUrl <- paste(EXPRESSION_ATLAS_URL_BASE, accession, atlasExperimentSummaryFile, sep = "/")
+
+    message(paste("Downloading Expression Atlas experiment summary from:\n", fullUrl))
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Download
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    connection <- url( fullUrl )
+
+    # load into its own environment
+    load_env <- new.env()
+
+    experiment_summary <- tryCatch({
+
+        loaded_names <- load(connection, envir = load_env)
+
+        # there should be exactly one object in this file.
+        if (length(loaded_names) != 1) {
+            warning("Unexpected number of objects in Rdata file: ", length(loaded_names))
+        }
+
+        # getting the first element
+        get(loaded_names[[ 1 ]], envir = load_env)
+
+    }, error = function(e) {
+
+        warning(e$message)
+        write("ERROR OCCURED DURING DOWNLOAD", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
+
+    }, finally = {
+        close(connection)
+    })
+
+    message(paste("Successfully downloaded experiment summary object for", accession))
+
+    return( experiment_summary )
+}
+
+accession_is_valid <- function( accession ) {
+
+    if( missing( accession ) ) {
+        warning( "Accession missing. Cannot validate." )
+        return( FALSE )
+    }
+
+    if( !grepl( "^E-\\w{4}-\\d+$", accession ) ) {
+        write("EXPERIMENT ACCESSION DOES NOT LOOK LIKE AN EXPRESSION ATLAS ACCESSION", file = FAILURE_REASON_FILE)
+        quit(save = "no", status = 0)
+    } else {
+        return( TRUE )
+    }
+}
+
 download_expression_atlas_data_with_retries <- function(accession, max_retries = 3, wait_time = 5) {
     success <- FALSE
     attempts <- 0
@@ -37,17 +109,11 @@ download_expression_atlas_data_with_retries <- function(accession, max_retries =
         attempts <- attempts + 1
 
         tryCatch({
-            atlas_data <- ExpressionAtlas::getAtlasData( accession )
+
+            atlas_data <- get_atlas_experiment( accession )
             success <- TRUE
 
         }, warning = function(w) {
-
-            # if the accession os not valid, we stop immediately (useless to keep going)
-            if (grepl("does not look like an ArrayExpress/BioStudies experiment accession.", w$message)) {
-                warning(w$message)
-                write("EXPERIMENT NOT FOUND", file = FAILURE_REASON_FILE)
-                quit(save = "no", status = 0)
-            }
 
             # else, retrying
             message("Attempt ", attempts, " Warning: ", w$message)
@@ -143,7 +209,7 @@ export_count_data <- function(result, batch_id) {
 
     # exporting to CSV file
     # index represents gene names
-    cat(paste('Exporting count data to file', outfilename))
+    message(paste('Exporting count data to file', outfilename))
     write.table(result$count_data, outfilename, sep = ',', row.names = TRUE, col.names = TRUE, quote = FALSE)
 }
 
@@ -159,21 +225,19 @@ export_metadata <- function(result, batch_id) {
     )
 
     outfilename <- paste0(batch_id, '.design.csv')
-    cat(paste('Exporting design data to file', outfilename))
+    message(paste('Exporting design data to file', outfilename))
     write.table(df, outfilename, sep = ',', row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
 
 
 process_data <- function(atlas_data, accession) {
 
-    eset <- atlas_data[[ accession ]]
-
     # looping through each data type (ex: 'rnaseq') in the experiment
-    for (data_type in names(eset)) {
+    for (data_type in names(atlas_data)) {
 
-        data <- eset[[ data_type ]]
-
+        data <- atlas_data[[ data_type ]]
         skip_iteration <- FALSE
+
         # getting count dataframe
         tryCatch({
 
@@ -217,7 +281,7 @@ process_data <- function(atlas_data, accession) {
 
 args <- get_args()
 
-cat(paste("Getting data for accession", args$accession, "\n"))
+message(paste("Getting data for accession", args$accession, "\n"))
 
 accession <- trimws(args$accession)
 if (startsWith(accession, "E-PROT")) {

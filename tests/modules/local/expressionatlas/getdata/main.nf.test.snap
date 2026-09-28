@@ -18,14 +18,7 @@
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
-                    ]
-                ],
-                "5": [
-                    [
-                        "EXPRESSIONATLAS_GETDATA",
-                        "ExpressionAtlas",
-                        "1.34.0"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "counts": [
@@ -36,10 +29,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-19T12:17:31.898448037",
+        "timestamp": "2026-09-27T20:43:14.376582637",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
         }
     },
     "Arabidopsis Geo dataset": {
@@ -61,14 +54,7 @@
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
-                    ]
-                ],
-                "5": [
-                    [
-                        "EXPRESSIONATLAS_GETDATA",
-                        "ExpressionAtlas",
-                        "1.34.0"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "counts": [
@@ -79,10 +65,82 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-29T16:45:22.368557567",
+        "timestamp": "2026-09-27T20:43:53.851723017",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "E-MTAB-5132": {
+        "content": [
+            {
+                "0": [
+                    "E_MTAB_5132_rnaseq.rnaseq.raw.counts.csv:md5,8eb16badb742ecb93b7d3a37f6c83466"
+                ],
+                "1": [
+                    "E_MTAB_5132_rnaseq.design.csv:md5,648104817ad2b3a183ff661265d07c58"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "counts": [
+                    "E_MTAB_5132_rnaseq.rnaseq.raw.counts.csv:md5,8eb16badb742ecb93b7d3a37f6c83466"
+                ],
+                "design": [
+                    "E_MTAB_5132_rnaseq.design.csv:md5,648104817ad2b3a183ff661265d07c58"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-27T20:59:46.509065103",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "E-ENAD-11 :: experiment_summary key not found": {
+        "content": [
+            {
+                "0": [
+                    "E_ENAD_11_rnaseq.rnaseq.raw.counts.csv:md5,c7111a816dfdc5de2cb043e6966675c1"
+                ],
+                "1": [
+                    "E_ENAD_11_rnaseq.design.csv:md5,f40ed39a066242faccddfe68ad0cf7cc"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "counts": [
+                    "E_ENAD_11_rnaseq.rnaseq.raw.counts.csv:md5,c7111a816dfdc5de2cb043e6966675c1"
+                ],
+                "design": [
+                    "E_ENAD_11_rnaseq.design.csv:md5,f40ed39a066242faccddfe68ad0cf7cc"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-27T21:05:51.791032159",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
         }
     },
     "Transcription profiling by array of Arabidopsis mutant for fis2 (microarray)": {
@@ -104,14 +162,7 @@
                     [
                         "EXPRESSIONATLAS_GETDATA",
                         "R",
-                        "4.4.3 (2025-02-28)"
-                    ]
-                ],
-                "5": [
-                    [
-                        "EXPRESSIONATLAS_GETDATA",
-                        "ExpressionAtlas",
-                        "1.34.0"
+                        "4.5.3 (2026-03-11)"
                     ]
                 ],
                 "counts": [
@@ -122,10 +173,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-03-19T12:17:45.546042421",
+        "timestamp": "2026-09-27T20:43:33.960970946",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
         }
     }
 }

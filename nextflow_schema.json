@@ -307,7 +307,7 @@
                     "fa_icon": "fas fa-cogs",
                     "enum": ["knn", "iterative", "simple"],
                     "default": "knn",
-                    "help_text": "The pipeline provides three options for imputing missing values: iterative, k-nearest neighbours, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Simple imputation is a very basic method that replaces missing values with the median expression level of the gene across all samples. In terms of memory usage, iterative >> knn x > simple. In cases where memory usage is a concern, consider decreasing the number of neighbours for KNN imputation or the number of nearest features for iterative imputation. On the contrary, you may want to increase these parameters if you want more accuracy."
+                    "help_text": "The pipeline provides three options for imputing missing values: iterative, k-nearest neighbours, and gene mean. Iterative imputation uses a bayesian iterative algorithm to fill in missing values. K-nearest neighbors imputation uses a k-nearest neighbors algorithm to fill in missing values. Simple imputation is a very basic method that replaces missing values with the median expression level of the gene across all samples. In terms of memory usage, iterative >> knn >> simple."
                 }
             }
         },
