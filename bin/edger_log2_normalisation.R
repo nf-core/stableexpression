@@ -112,7 +112,7 @@ parse_data <- function(count_file) {
 }
 
 export_data <- function(count_matrix, filename) {
-    filename <- sub("\\.parquet$", ".getmm.parquet", filename)
+    filename <- sub("\\.parquet$", ".edger_log2.parquet", filename)
     message(paste('Exporting normalised data to:', filename))
     # putting row names (gene ids) back in one column
     df <- data.frame(

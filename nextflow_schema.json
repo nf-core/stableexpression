@@ -261,19 +261,11 @@
                     "description": "Do not use gene lengths (annotation) for normalisation of RNA-seq datasets",
                     "help_text": "Raw RNA-seq data must be normalised using `GeTMM` before further processing. Likewise, already normalised RNA-seq data are converted to `TPM`. Both methods require gene lengths, which are computed from a genome annotation if they are not provided directly. However, if the pipeline cannot automatically find a genome annotation and if you do not have access to a gene length / genome annotation file, you can choose to replace these normalisation steps with `CPM` computation. This method is less accurate as gene expression is no longer normalised with gene length, but it allows running the pipeline and get farily reliable results."
                 },
-                "skip_scaling": {
+                "skip_quantile_normalisation": {
                   "type": "boolean",
                     "fa_icon": "fas fa-ban",
-                    "description": "Skip ",
-                    "help_text": "Raw RNA-seq data must be normalised using `GeTMM` before further processing. Likewise, already normalised RNA-seq data are converted to `TPM`. Both methods require gene lengths, which are computed from a genome annotation if they are not provided directly. However, if the pipeline cannot automatically find a genome annotation and if you do not have access to a gene length / genome annotation file, you can choose to replace these normalisation steps with `CPM` computation. This method is less accurate as gene expression is no longer normalised with gene length, but it allows running the pipeline and get farily reliable results."
-                },
-                "scaling_method": {
-                    "type": "string",
-                    "description": "Method for scaling data to a common expression range.",
-                    "fa_icon": "fas fa-divide",
-                    "enum": ["quantile", "z_score"],
-                    "default": "quantile",
-                    "help": "Method for scaling data after the first normalisation step. Default is `quantile`, which performs quantile normalisation on each dataset separately. This method is the most intrusive but allows optimal comparison of datasets displaying different distributions of expression (for instance RNA-seq and microarray data). "
+                    "description": "Skip quantile normalisation",
+                    "help_text": "Skip quantile normalisation"
                 },
                 "gff": {
                     "type": "string",

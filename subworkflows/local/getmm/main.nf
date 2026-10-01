@@ -1,5 +1,5 @@
-include { NORMALISATION_RPK as COMPUTE_RPK } from '../../../modules/local/normalisation/rpk'
-include { EDGER                            } from '../../../modules/local/edger'
+include { NORMALISATION_RPK        as RPK               } from '../../../modules/local/normalisation/rpk'
+include { NORMALISATION_EDGER_LOG2 as EDGER_LOG2        } from '../../../modules/local/normalisation/edger_log2'
 
 /*
 ========================================================================================
@@ -19,19 +19,19 @@ workflow GETMM {
     // first computing RPK from raw counts
     //
 
-    COMPUTE_RPK(
+    RPK(
         ch_datasets,
         ch_gene_length_file.collect()
     )
 
     //
-    // feeding these RPK counts to edgeR
+    // feeding these RPK counts to edgeR and compute log2
     //
 
-    EDGER( COMPUTE_RPK.out.counts )
+    EDGER_LOG2( RPK.out.counts )
 
 
     emit:
-    counts = EDGER.out.counts
+    counts = EDGER_LOG2.out.counts
 
 }

@@ -12,15 +12,14 @@ import polars as pl
 from common import (
     compute_log2,
     export_parquet,
-    parse_count_table,
-    parse_table,
+    parse_count_table
 )
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-OUTFILE_SUFFIX = ".tpm.parquet"
+OUTFILE_SUFFIX = ".tpm_log2.parquet"
 
 WARNING_REASON_FILE = "warning_reason.txt"
 FAILURE_REASON_FILE = "failure_reason.txt"
@@ -37,13 +36,6 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Normalise data to TPM")
     parser.add_argument(
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
-    )
-    parser.add_argument(
-        "--gene-lengths",
-        type=Path,
-        dest="gene_lengths_file",
-        required=True,
-        help="Gene lengths file (CSV format)",
     )
     return parser.parse_args()
 
@@ -89,20 +81,6 @@ def is_tpm(df: pl.DataFrame) -> bool:
     ).item()  # Allow for floating-point precision
 
 
-def compute_rpkm(df: pl.DataFrame, cdna_length_df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Process raw counts to RPKM.
-    """
-    logger.info("Computing RPKM.")
-    df = df.join(cdna_length_df, on=config.GENE_ID_COLNAME)
-    return df.select(
-        pl.col(config.GENE_ID_COLNAME),
-        pl.exclude([config.GENE_ID_COLNAME, config.CDNA_LENGTH_COLNAME]).truediv(
-            pl.col(config.CDNA_LENGTH_COLNAME)
-        ),
-    )
-
-
 def compute_tpm_from_rpkm(rpkm_df: pl.DataFrame) -> pl.DataFrame:
     """
     Process RPKM to TPM.
@@ -117,26 +95,19 @@ def compute_tpm_from_rpkm(rpkm_df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def compute_tpm(df: pl.DataFrame, cdna_length_df: pl.DataFrame) -> pl.DataFrame:
+def compute_tpm(df: pl.DataFrame) -> pl.DataFrame:
     """
-    Process raw counts, FPKM, or RPKM to TPM.
+    FPKM, or RPKM to TPM.
     """
     if is_raw_counts(df):
-        logger.info("Raw counts detected → computing TPM directly.")
-        rpkm_df = compute_rpkm(df, cdna_length_df)
-        return compute_tpm_from_rpkm(rpkm_df)
+        raise ValueError("Raw counts detected. These counts should not be processed here. Please provide them as 'raw' in the input samplesheet.")
     elif is_tpm(df):
         logger.info("Data are already TPM. No conversion needed.")
         return df
     else:
         # Convert FPKM/RPKM to TPM
-        logger.info("Assuming FPKM/RPKM normalisation.")
+        logger.warning("Count data are assumed not to be TPM. Assuming FPKM/RPKM normalisation.")
         return compute_tpm_from_rpkm(df)
-
-
-def parse_gene_length(file: Path) -> pl.DataFrame:
-    df = parse_table(file)
-    return df.with_columns(pl.col(config.CDNA_LENGTH_COLNAME).cast(pl.UInt32))
 
 
 #####################################################
@@ -152,7 +123,6 @@ def main():
     try:
         logger.info("Parsing data")
         count_df = parse_count_table(args.count_file)
-        cdna_length_df = parse_gene_length(args.gene_lengths_file)
 
         # casting to Float64 to avoid inconsistency during the subsequent computations
         count_df = count_df.with_columns(
@@ -163,7 +133,7 @@ def main():
         count_df = try_cast_to_int(count_df)
 
         logger.info(f"Normalising {args.count_file.name}")
-        count_df = compute_tpm(count_df, cdna_length_df)
+        count_df = compute_tpm(count_df)
 
         logger.info("Computing log2 values")
         count_df = compute_log2(count_df)

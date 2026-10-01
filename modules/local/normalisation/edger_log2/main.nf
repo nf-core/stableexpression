@@ -1,4 +1,4 @@
-process EDGER {
+process NORMALISATION_EDGER_LOG2 {
 
     label 'process_single_cpu'
 
@@ -13,7 +13,7 @@ process EDGER {
     tuple val(meta), path(count_file)
 
     output:
-    tuple val(meta), path('*.getmm.parquet'),            optional: true,                                            emit: counts
+    tuple val(meta), path('*.edger_log2.parquet'),            optional: true,                                            emit: counts
     tuple val(meta.dataset), path("failure_reason.txt"), optional: true,                                            topic: normalisation_failure_reason
     tuple val(meta.dataset), path("warning_reason.txt"), optional: true,                                            topic: normalisation_warning_reason
     tuple val("${task.process}"), val('R'),     eval('Rscript -e "cat(R.version.string)" | sed "s/R version //"'),  topic: versions
@@ -21,13 +21,13 @@ process EDGER {
 
     script:
     """
-    normalise_with_edger.R \\
+    edger_log2_normalisation.R \\
         --counts $count_file
     """
 
     stub:
     """
-    touch stub.getmm.parquet
+    touch stub.edger_log2.parquet
     """
 
 }

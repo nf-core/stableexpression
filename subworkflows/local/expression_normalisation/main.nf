@@ -1,7 +1,6 @@
-include { NORMALISATION_CPM as COMPUTE_CPM               } from '../../../modules/local/normalisation/cpm'
-include { NORMALISATION_TPM as COMPUTE_TPM               } from '../../../modules/local/normalisation/tpm'
-include { SCALING_NORMALISATION                          } from '../../../modules/local/scaling_normalisation'
-include { QUANTILE_NORMALISATION                         } from '../../../modules/local/quantile_normalisation'
+include { NORMALISATION_CPM_LOG2 as CPM_LOG2             } from '../../../modules/local/normalisation/cpm_log2'
+include { NORMALISATION_TPM_LOG2 as TPM_LOG2             } from '../../../modules/local/normalisation/tpm_log2'
+include { QUANTILE_NORMALISATION                         } from '../../../modules/local/normalisation/quantile'
 
 include { GET_TRANSCRIPT_LENGTHS                         } from '../../../subworkflows/local/get_transcript_lengths'
 include { GETMM                                          } from '../../../subworkflows/local/getmm'
@@ -19,8 +18,7 @@ workflow EXPRESSION_NORMALISATION {
     ch_datasets
     ch_valid_gene_ids
     skip_gene_length_normalisation
-    skip_scaling
-    scaling_method
+    skip_quantile_normalisation
     quantile_norm_target_distrib
     gff_file
     gff_url
@@ -82,23 +80,21 @@ workflow EXPRESSION_NORMALISATION {
         )
 
         // if some provided counts are already normalised, use TPM instead
-        COMPUTE_TPM(
-            ch_rnaseq_datasets.normalised,
-            ch_gene_length_file.collect()
-        )
+        TPM_LOG2( ch_rnaseq_datasets.normalised )
 
-        ch_normalised_rnaseq_datasets = GETMM.out.counts.mix( COMPUTE_TPM.out.counts )
+        ch_normalised_rnaseq_datasets = GETMM.out.counts.mix( TPM_LOG2.out.counts )
 
     } else {
-
         // Checking that we have either raw or normalised datasets, but not both
-        ch_datasets.rnaseq.collect().map { datasets ->
+        ch_datasets.rnaseq.toSortedList().map { datasets ->
             def normalisation_status_list = datasets.collect{ meta, file -> meta.normalised ? 'normalised': 'raw' }.unique()
-            println normalisation_status_list
+            if ( normalisation_status_list.size() != 1 ) {
+                error("Skipping normalisation by gene length is allowed only either raw or normalised datasets are supplied, but not both at once.")
+            }
         }
 
-        COMPUTE_CPM( ch_datasets.rnaseq )
-        ch_normalised_rnaseq_datasets = COMPUTE_CPM.out.counts
+        CPM_LOG2( ch_datasets.rnaseq )
+        ch_normalised_rnaseq_datasets = CPM_LOG2.out.counts
 
     }
 
@@ -107,35 +103,27 @@ workflow EXPRESSION_NORMALISATION {
 
 
     // ------------------------------------------------------------------------------------
-    // SECOND NORMALISATION : SCALING
+    // QUANTILE NORMALISATION
     // ------------------------------------------------------------------------------------
 
     //
-    // put all normalised count datasets together and perform scaling (quantile normalisation or z-score)
+    // set all normalised count datasets together on the common distribution
     //
 
-    if ( skip_scaling ) {
+    if ( !skip_quantile_normalisation ) {
 
-        ch_all_normalised = ch_normalised_once
+        QUANTILE_NORMALISATION (
+            ch_normalised_once,
+            quantile_norm_target_distrib
+        )
+        ch_all_normalised = QUANTILE_NORMALISATION.out.counts
 
     } else {
 
-        if ( scaling_method == 'quantile' ) {
-
-            QUANTILE_NORMALISATION (
-                ch_normalised_once,
-                quantile_norm_target_distrib
-            )
-            ch_all_normalised = QUANTILE_NORMALISATION.out.counts
-
-        } else { // z-score
-
-            SCALING_NORMALISATION( ch_normalised_once )
-            ch_all_normalised = SCALING_NORMALISATION.out.counts
-
-        }
+        ch_all_normalised = ch_normalised_once
 
     }
+
 
     emit:
     normalised          = ch_all_normalised

@@ -36,7 +36,7 @@ workflow REPORTING {
 
     ch_versions = channel.empty()
     ch_dash_app = channel.empty()
-}
+
     // -----------------------------------------------------------------
     // AGGREGATE ALL RESULTS FOR MULTIQC
     // -----------------------------------------------------------------

@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-OUTFILE_SUFFIX = ".cpm.parquet"
+OUTFILE_SUFFIX = ".cpm_log2.parquet"
 
 WARNING_REASON_FILE = "warning_reason.txt"
 FAILURE_REASON_FILE = "failure_reason.txt"

@@ -1,4 +1,4 @@
-process SCALING_NORMALISATION {
+process QUANTILE_NORMALISATION {
 
     label 'process_low_requirements'
 
@@ -11,21 +11,23 @@ process SCALING_NORMALISATION {
 
     input:
     tuple val(meta), path(count_file)
+    val target_distribution
 
     output:
-    tuple val(meta), path('*.scaled.parquet'),                                                                          emit: counts
+    tuple val(meta), path('*.quant_norm.parquet'),                                                                      emit: counts
     tuple val("${task.process}"), val('python'),       eval("python3 --version | sed 's/Python //'"),                   topic: versions
     tuple val("${task.process}"), val('polars'),       eval('python3 -c "import polars; print(polars.__version__)"'),   topic: versions
     tuple val("${task.process}"), val('scikit-learn'), eval('python3 -c "import sklearn; print(sklearn.__version__)"'), topic: versions
 
     script:
     """
-    scaling_normalise.py \\
+    quantile_normalisation.py \\
         --counts $count_file \\
+        --target-distrib $target_distribution
     """
 
     stub:
     """
-    touch stub.scaled.parquet
+    touch stub.quant_norm.parquet
     """
 }
