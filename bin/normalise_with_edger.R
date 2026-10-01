@@ -92,7 +92,10 @@ get_normalised_cpm_counts <- function(count_data) {
     message("Calculating CPM counts")
     norm.counts.rpk_edger <- edgeR::cpm(rpk.norm)
 
-    return(norm.counts.rpk_edger)
+    message("Calculating log2(cpm +1)")
+    norm.counts.rpk_edger.log2 <- log2(norm.counts.rpk_edger) + 1
+
+    return(norm.counts.rpk_edger.log2)
 }
 
 #####################################################
