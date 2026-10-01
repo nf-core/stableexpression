@@ -76,6 +76,12 @@
                     "fa_icon": "fas fa-download",
                     "help_text": "Use this option if you only want to get Expression Atlas / GEO accessions, download the selected data, and skip the rest of the pipeline."
                 },
+                "skip_dash_app": {
+                    "type": "boolean",
+                    "description": "Skip builiding of the Dash reporting app.",
+                    "fa_icon": "fas fa-ban",
+                    "help_text": "Use this option to skip building of the Dash reporting app."
+                },
                 "email": {
                     "type": "string",
                     "description": "Email address for completion summary.",

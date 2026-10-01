@@ -26,6 +26,7 @@ workflow REPORTING {
     ch_whole_gene_id_mapping
     target_genes
     target_gene_file
+    skip_dash_app
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -34,7 +35,8 @@ workflow REPORTING {
     main:
 
     ch_versions = channel.empty()
-
+    ch_dash_app = channel.empty()
+}
     // -----------------------------------------------------------------
     // AGGREGATE ALL RESULTS FOR MULTIQC
     // -----------------------------------------------------------------
@@ -72,13 +74,17 @@ workflow REPORTING {
     // DASH APPLICATION
     // -----------------------------------------------------------------
 
-    DASH_APP(
-        ch_all_counts.map{ meta, file -> file }.collect(),
-        ch_whole_design.collect(),
-        ch_all_genes_summary.collect()
-    )
-    ch_dash_app        = DASH_APP.out.app
-    ch_versions        = ch_versions.mix ( DASH_APP.out.versions )
+    if ( !skip_dash_app ) {
+
+        DASH_APP(
+            ch_all_counts.map{ meta, file -> file }.collect(),
+            ch_whole_design.collect(),
+            ch_all_genes_summary.collect()
+        )
+        ch_dash_app        = DASH_APP.out.app
+        ch_versions        = ch_versions.mix ( DASH_APP.out.versions )
+
+    }
 
     // ------------------------------------------------------------------------------------
     // PREPARING BAR PLOTS
