@@ -7,7 +7,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
+                        "counts.cpm_log2.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ],
                 "1": [
@@ -18,14 +18,14 @@
                 ],
                 "3": [
                     [
-                        "NORMALISATION_COMPUTE_CPM",
+                        "NORMALISATION_CPM_LOG2",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "4": [
                     [
-                        "NORMALISATION_COMPUTE_CPM",
+                        "NORMALISATION_CPM_LOG2",
                         "polars",
                         "1.39.2"
                     ]
@@ -35,15 +35,15 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
+                        "counts.cpm_log2.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:12:26.560422115",
+        "timestamp": "2026-10-01T11:52:05.896649249",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     },
     "One group": {
@@ -54,7 +54,7 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,92565ffdb68131e1e218dfcc04a0a056"
+                        "counts.cpm_log2.parquet:md5,92565ffdb68131e1e218dfcc04a0a056"
                     ]
                 ],
                 "1": [
@@ -65,14 +65,14 @@
                 ],
                 "3": [
                     [
-                        "NORMALISATION_COMPUTE_CPM",
+                        "NORMALISATION_CPM_LOG2",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "4": [
                     [
-                        "NORMALISATION_COMPUTE_CPM",
+                        "NORMALISATION_CPM_LOG2",
                         "polars",
                         "1.39.2"
                     ]
@@ -82,15 +82,15 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,92565ffdb68131e1e218dfcc04a0a056"
+                        "counts.cpm_log2.parquet:md5,92565ffdb68131e1e218dfcc04a0a056"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:12:44.004103015",
+        "timestamp": "2026-10-01T11:52:21.765842988",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     },
     "TSV files": {
@@ -101,7 +101,7 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
+                        "counts.cpm_log2.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ],
                 "1": [
@@ -112,14 +112,14 @@
                 ],
                 "3": [
                     [
-                        "NORMALISATION_COMPUTE_CPM",
+                        "NORMALISATION_CPM_LOG2",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "4": [
                     [
-                        "NORMALISATION_COMPUTE_CPM",
+                        "NORMALISATION_CPM_LOG2",
                         "polars",
                         "1.39.2"
                     ]
@@ -129,15 +129,15 @@
                         {
                             "dataset": "accession"
                         },
-                        "counts.cpm.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
+                        "counts.cpm_log2.parquet:md5,2cd6ee764e06ca052fe11a41e2818e87"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:12:52.517087858",
+        "timestamp": "2026-10-01T11:52:30.063036835",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     },
     "Rows with many zeros": {
@@ -148,7 +148,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,b30ef63196202a42a06593b353f13891"
+                        "counts.cpm_log2.parquet:md5,b30ef63196202a42a06593b353f13891"
                     ]
                 ],
                 "1": [
@@ -159,14 +159,14 @@
                 ],
                 "3": [
                     [
-                        "NORMALISATION_COMPUTE_CPM",
+                        "NORMALISATION_CPM_LOG2",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "4": [
                     [
-                        "NORMALISATION_COMPUTE_CPM",
+                        "NORMALISATION_CPM_LOG2",
                         "polars",
                         "1.39.2"
                     ]
@@ -176,15 +176,62 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.cpm.parquet:md5,b30ef63196202a42a06593b353f13891"
+                        "counts.cpm_log2.parquet:md5,b30ef63196202a42a06593b353f13891"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:12:35.379374173",
+        "timestamp": "2026-10-01T11:52:14.136317285",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
+        }
+    },
+    "Pseudocounts": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "accession"
+                        },
+                        "pseudocounts.cpm_log2.parquet:md5,6c2a50da6d4845ca06207ed554d3afc3"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_CPM_LOG2",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_CPM_LOG2",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "accession"
+                        },
+                        "pseudocounts.cpm_log2.parquet:md5,6c2a50da6d4845ca06207ed554d3afc3"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T11:52:37.718128816",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
         }
     }
 }

@@ -21,20 +21,11 @@ nextflow_workflow {
                             platform: "rnaseq"
                         ],
                         file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
-                    ],
-                    [
-                        [
-                            normalised: true,
-                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
-                            dataset: "microarray_normalised",
-                            platform: "microarray"
-                        ],
-                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
-                input[3] = "getmm"
-                input[4] = 'scaling'
+                input[3] = false
+                input[4] = false
                 input[5] = "uniform"
                 input[6] = null
                 input[7] = null
@@ -52,7 +43,7 @@ nextflow_workflow {
 
     }
 
-    test("TPM + quantile normalisation") {
+    test("GeTMM + TPM - skip quantile normalisation") {
 
         when {
             workflow {
@@ -79,8 +70,8 @@ nextflow_workflow {
                     ]
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
-                input[3] = "tpm"
-                input[4] = 'quantile'
+                input[3] = false
+                input[4] = true
                 input[5] = "uniform"
                 input[6] = null
                 input[7] = null
@@ -98,7 +89,7 @@ nextflow_workflow {
 
     }
 
-    test("Normalisation with gene length") {
+    test("CPM Normalisation - Quantile normalisation to normal distribution") {
 
         when {
             workflow {
@@ -125,55 +116,9 @@ nextflow_workflow {
                     ]
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
-                input[3] = "getmm"
-                input[4] = 'scaling'
-                input[5] = "uniform"
-                input[6] = null
-                input[7] = null
-                input[8] = file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/gene_lengths.csv', checkIfExists: true )
-                """
-            }
-        }
-
-        then {
-            assertAll(
-                { assert workflow.success },
-                { assert snapshot(workflow.out).match() }
-            )
-        }
-
-    }
-
-    test("CPM Normalisation") {
-
-        when {
-            workflow {
-                """
-                input[0] = "solanum_tuberosum"
-                input[1] = channel.of(
-                    [
-                        [
-                            normalised: false,
-                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
-                            dataset: "rnaseq_raw",
-                            platform: "rnaseq"
-                        ],
-                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
-                    ],
-                    [
-                        [
-                            normalised: true,
-                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
-                            dataset: "microarray_normalised",
-                            platform: "microarray"
-                        ],
-                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
-                    ]
-                )
-                input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
-                input[3] = "cpm"
-                input[4] = 'scaling'
-                input[5] = "uniform"
+                input[3] = true
+                input[4] = false
+                input[5] = "normal"
                 input[6] = null
                 input[7] = null
                 input[8] = null
@@ -208,7 +153,7 @@ nextflow_workflow {
                     ]
                 )
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
-                input[3] = "tpm"
+                input[3] = "getmm"
                 input[5] = "uniform"
                 input[6] = null
                 input[7] = null

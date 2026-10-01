@@ -1,0 +1,89 @@
+{
+    "CSV": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "accession"
+                        },
+                        "pseudocounts.tpm_log2.parquet:md5,9f4a27c2dad2e583baaf58c33ca48a63"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_TPM_LOG2",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_TPM_LOG2",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "accession"
+                        },
+                        "pseudocounts.tpm_log2.parquet:md5,9f4a27c2dad2e583baaf58c33ca48a63"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T11:53:27.816796293",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "TPM - TSV file": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    [
+                        "test",
+                        "failure_reason.txt:md5,5b78e43cf7c6e88cc200810242fc8bc1"
+                    ]
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_TPM_LOG2",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_TPM_LOG2",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T11:53:35.465876592",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}

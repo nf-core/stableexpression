@@ -1,20 +1,20 @@
 nextflow_process {
 
-    name "Test Process QUANTILE_NORMALISATION"
-    script "modules/local/quantile_normalisation/main.nf"
-    process "QUANTILE_NORMALISATION"
-    tag "quant_norm"
+    name "Test Process NORMALISATION_TPM_LOG2"
+    script "modules/local/normalisation/tpm_log2/main.nf"
+    process "NORMALISATION_TPM_LOG2"
 
-    test("Uniform target distribution") {
+
+    test("CSV") {
 
         when {
+
             process {
                 """
                 input[0] = [
-                    [dataset: 'test'],
-                    file( '$projectDir/tests/test_data/modules/quantile_normalisation/count.raw.cpm.csv', checkIfExists: true)
+                    [ dataset: "accession" ],
+                    file('$projectDir/tests/test_data/modules/normalisation/base/pseudocounts.csv')
                 ]
-                input[1] = "uniform"
                 """
             }
         }
@@ -28,16 +28,16 @@ nextflow_process {
 
     }
 
-    test("Normal target distribution") {
+    test("TPM - TSV file") {
 
         when {
+
             process {
                 """
                 input[0] = [
-                    [dataset: 'test'],
-                    file( '$projectDir/tests/test_data/modules/quantile_normalisation/count.raw.cpm.csv', checkIfExists: true)
+                    [ dataset: "test" ],
+                    file('$projectDir/tests/test_data/modules/normalisation/base/tpm.tsv')
                 ]
-                input[1] = "normal"
                 """
             }
         }
@@ -50,5 +50,6 @@ nextflow_process {
         }
 
     }
+
 
 }

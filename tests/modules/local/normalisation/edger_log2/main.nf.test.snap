@@ -1,0 +1,143 @@
+{
+    "Integers": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.edger_log2.parquet:md5,a9bb6a6d20bce8bcf1e80f0dc2ff9e34"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_EDGER_LOG2",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_EDGER_LOG2",
+                        "edgeR",
+                        "4.8.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.edger_log2.parquet:md5,a9bb6a6d20bce8bcf1e80f0dc2ff9e34"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T12:41:28.200009983",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "RPK": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "accession"
+                        },
+                        "rpk.edger_log2.parquet:md5,adc1a4c76a91eb646fe3b9163dc6216c"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_EDGER_LOG2",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_EDGER_LOG2",
+                        "edgeR",
+                        "4.8.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "accession"
+                        },
+                        "rpk.edger_log2.parquet:md5,adc1a4c76a91eb646fe3b9163dc6216c"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T12:41:18.684976655",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "Rows with many zeros": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.edger_log2.parquet:md5,93d2ea7690a2873a5ea02a01a098dac2"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_EDGER_LOG2",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_EDGER_LOG2",
+                        "edgeR",
+                        "4.8.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.edger_log2.parquet:md5,93d2ea7690a2873a5ea02a01a098dac2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T12:41:38.072165652",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}
