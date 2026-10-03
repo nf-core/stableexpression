@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 import config
-from common import get_nb_rows
+from common import get_nb_rows, get_count_columns
 
 import polars as pl
 
@@ -35,18 +35,6 @@ def parse_args():
         help="File log of pairwise expression ratios",
     )
     return parser.parse_args()
-
-
-def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the config.GENE_ID_COLNAME column.
-
-    The config.GENE_ID_COLNAME column contains only gene IDs.
-    """
-    return [
-        col
-        for col in lf.collect_schema().names()
-        if not col.startswith(config.GENE_ID_COLNAME)
-    ]
 
 
 def compute_standard_deviations(file: Path) -> pl.LazyFrame:

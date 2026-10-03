@@ -8,7 +8,7 @@ from math import ceil
 from pathlib import Path
 
 import config
-from common import export_parquet
+from common import export_parquet, get_count_columns
 
 import polars as pl
 
@@ -50,18 +50,6 @@ def parse_count_dataset(file: Path) -> pl.LazyFrame:
         for column in count_columns
     ]
     return lf.select(cols)
-
-
-def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the config.GENE_ID_COLNAME column.
-
-    The config.GENE_ID_COLNAME column contains only gene IDs.
-    """
-    return [
-        col
-        for col in lf.collect_schema().names()
-        if not col.startswith(config.GENE_ID_COLNAME)
-    ]
 
 
 def split_count_summary_in_chunks(lf: pl.LazyFrame):

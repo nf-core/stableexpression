@@ -10,6 +10,7 @@ from operator import attrgetter
 from pathlib import Path
 
 import config
+from common import get_count_columns
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
@@ -61,10 +62,6 @@ def handle_duplicate_columns(lfs: list[pl.LazyFrame]) -> list[pl.LazyFrame]:
                 lfs[i] = lf.rename({duplicate_column: f"{duplicate_column}_{counter}"})
                 counter += 1
     return lfs
-
-
-def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    return [col for col in get_columns(lf) if col != config.GENE_ID_COLNAME]
 
 
 def reproducible_hash(lf: pl.LazyFrame) -> str:

@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 import config
-from common import get_nb_rows
+from common import get_nb_rows, get_count_columns
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
@@ -30,18 +30,6 @@ def parse_args():
         help="File where each row contains counts for two genes",
     )
     return parser.parse_args()
-
-
-def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    """Get all column names except the config.GENE_ID_COLNAME column.
-
-    The config.GENE_ID_COLNAME column contains only gene IDs.
-    """
-    return [
-        col
-        for col in lf.collect_schema().names()
-        if not col.startswith(config.GENE_ID_COLNAME)
-    ]
 
 
 def compute_ratios(file: Path) -> pl.LazyFrame:
@@ -71,12 +59,12 @@ def compute_ratios(file: Path) -> pl.LazyFrame:
 def main():
     args = parse_args()
 
-    logger.info(f"Computing ratios for {str(args.cross_joined_file)}")
+    logger.info(f"Computing ratios for {args.cross_joined_file}")
     ratios_lf = compute_ratios(args.cross_joined_file)
 
     if get_nb_rows(ratios_lf) == 0:
         raise ValueError(
-            f"No output following treatment of file {str(args.cross_joined_file)}"
+            f"No output following treatment of file {args.cross_joined_file}"
         )
 
     outfilename = args.cross_joined_file.name.replace("cross_join", "ratios")
