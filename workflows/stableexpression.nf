@@ -140,7 +140,7 @@ workflow STABLEEXPRESSION {
             ch_counts_samples_filtered,
             ch_valid_gene_ids,
             params.skip_gene_length_normalisation,
-            params.skip_quantile_normalisation,
+            params.quantile_normalisation,
             params.quantile_norm_target_distrib,
             params.gff,
             params.gff_url,

@@ -7,7 +7,7 @@ include { NORMALISATION_EDGER_LOG2 as EDGER_LOG2        } from '../../../modules
 ========================================================================================
 */
 
-workflow GETMM {
+workflow GETMM_LOG2 {
 
     take:
     ch_datasets

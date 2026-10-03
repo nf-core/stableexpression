@@ -256,16 +256,16 @@
             "description": "Options for normalisation and calculation of gene expression variation.",
             "properties": {
                 "skip_gene_length_normalisation": {
-                  "type": "boolean",
-                    "fa_icon": "fas fa-ban",
-                    "description": "Do not use gene lengths (annotation) for normalisation of RNA-seq datasets",
-                    "help_text": "Raw RNA-seq data must be normalised using `GeTMM` before further processing. Likewise, already normalised RNA-seq data are converted to `TPM`. Both methods require gene lengths, which are computed from a genome annotation if they are not provided directly. However, if the pipeline cannot automatically find a genome annotation and if you do not have access to a gene length / genome annotation file, you can choose to replace these normalisation steps with `CPM` computation. This method is less accurate as gene expression is no longer normalised with gene length, but it allows running the pipeline and get farily reliable results."
+                    "type": "boolean",
+                      "fa_icon": "fas fa-ban",
+                      "description": "Do not use gene lengths (annotation) for normalisation of RNA-seq datasets",
+                      "help_text": "Raw RNA-seq data must be normalised using `GeTMM` before further processing. Likewise, already normalised RNA-seq data are converted to `TPM`. Both methods require gene lengths, which are computed from a genome annotation if they are not provided directly. However, if the pipeline cannot automatically find a genome annotation and if you do not have access to a gene length / genome annotation file, you can choose to replace these normalisation steps with `CPM` computation. This method is less accurate as gene expression is no longer normalised with gene length, but it allows running the pipeline and get farily reliable results."
                 },
-                "skip_quantile_normalisation": {
-                  "type": "boolean",
-                    "fa_icon": "fas fa-ban",
-                    "description": "Skip quantile normalisation",
-                    "help_text": "Skip quantile normalisation"
+                "quantile_normalisation": {
+                    "type": "boolean",
+                      "fa_icon": "fas fa-ban",
+                      "description": "Perform quantile normalisation instead of per-platform dedicated normalisation",
+                      "help_text": "In some cases where scalability is a priority, quantile normalisation may be preferred over per-platform dedicated normalisation. In quantile normalisation, genes are ranked based on expression level among the total set of genes and assigned a quantile of rank. This quantile defines their normalisaed expression level. This method is more scalable but definitely less accurate than the per-platform normalisation."
                 },
                 "gff": {
                     "type": "string",
