@@ -1,4 +1,4 @@
-process COMPUTE_STABILITY_SCORES {
+process GLOBAL_STABILITY_SCORE {
 
     tag "${meta.section}"
     label 'process_high'
@@ -9,22 +9,21 @@ process COMPUTE_STABILITY_SCORES {
         'community.wave.seqera.io/library/polars_python:1a4a3322c56bfeb9' }"
 
     input:
-    tuple val(meta), path(normfinder_stability_file), path(genorm_stability_file), path(section_stat_file)
-    val stability_score_weights
+    tuple val(meta), path(platform_stats_score_files)
+    path nb_samples_per_platform_file
+    val lambda
 
     output:
-    path "${meta.section}.stats_with_scores.csv",                                                                     emit: stats_with_stability_scores
+    path "*.stats_with_scores.csv",                                                                                   emit: stats_with_stability_scores
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
-    def genorm_stability_file_arg = genorm_stability_file ? "--genorm-stability $genorm_stability_file" : ""
     """
-    compute_stability_scores.py \\
-        --stats $section_stat_file \\
-        --weights "$stability_score_weights" \\
-        --normfinder-stability $normfinder_stability_file \\
-        $genorm_stability_file_arg
+    compute_global_stability_score.py \\
+        --platform-stats-scores "${platform_stats_score_files.join(' ')}" \\
+        --nb-samples-per-platform $nb_samples_per_platform_file \\
+        --lambda $lambda
 
     mv stats_with_scores.csv ${meta.section}.stats_with_scores.csv
     """

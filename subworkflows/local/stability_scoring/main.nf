@@ -1,7 +1,8 @@
 include { COMPUTE_GENE_STATISTICS            } from '../../../modules/local/compute_gene_statistics'
 include { GET_CANDIDATE_GENES                } from '../../../modules/local/get_candidate_genes'
 include { NORMFINDER                         } from '../../../modules/local/normfinder'
-include { COMPUTE_STABILITY_SCORES           } from '../../../modules/local/compute_stability_scores'
+include { PLATFORM_STABILITY_SCORE           } from '../../../modules/local/stability_scores/platform'
+include { GLOBAL_STABILITY_SCORE             } from '../../../modules/local/stability_scores/global'
 
 include { GENORM                             } from '../genorm'
 
@@ -22,6 +23,7 @@ workflow STABILITY_SCORING {
     nb_sections
     skip_genorm
     stability_score_weights
+    outdir
 
     main:
 
@@ -76,21 +78,56 @@ workflow STABILITY_SCORING {
     }
 
     // -----------------------------------------------------------------
-    // AGGREGATION AND FINAL STABILITY SCORE
+    // INTERMEDIATE STABILITY SCORE FOR EACH PLATFORM
     // -----------------------------------------------------------------
 
-    ch_stability_score_input = ch_normfinder_stabilities.map { meta, file -> [ "${meta.platform}_${meta.section}", meta, file] }
-                                .join( ch_genorm_stability.map { meta, file -> [ "${meta.platform}_${meta.section}", file] } )
-                                .join( ch_section_stats.map { meta, file -> [ "${meta.platform}_${meta.section}", file] } )
-                                .map { key, meta, file1, file2, file3 -> [ meta, file1, file2, file3 ] }
+    ch_platform_stability_score_input = ch_normfinder_stabilities.map { meta, file -> [ "${meta.platform}_${meta.section}", meta, file] }
+                                        .join( ch_genorm_stability.map { meta, file -> [ "${meta.platform}_${meta.section}", file] } )
+                                        .join( ch_section_stats.map { meta, file -> [ "${meta.platform}_${meta.section}", file] } )
+                                        .map { key, meta, file1, file2, file3 -> [ meta, file1, file2, file3 ] }
 
-    COMPUTE_STABILITY_SCORES (
-        ch_stability_score_input,
+    PLATFORM_STABILITY_SCORE (
+        ch_platform_stability_score_input,
         stability_score_weights
     )
 
+    ch_platform_stats_with_stability_scores = PLATFORM_STABILITY_SCORE.out.stats_with_stability_scores
+
+    // -----------------------------------------------------------------
+    // COMPUTE NUMBER OF SAMPLES IN EACH PLATFORM (FOR THE COMPUTATION OF THE WEIGHTED AVERAGE IN THE GLOBAL SCORE)
+    // -----------------------------------------------------------------
+
+    ch_nb_samples_per_platform_file = ch_platform_design.map { meta, design ->
+                                                def design_content = design.splitCsv( header: true )
+                                                [ platform: meta.platform, size: design_content.size() ]
+                                            }.collectFile(
+                                                name: 'nb_samples_per_platform.csv',
+                                                seed: "platform,nb_samples",
+                                                newLine: true,
+                                                sort: true,
+                                                storeDir: "${outdir}/design/"
+                                            ) {
+                                                item -> "${item.platform},${item.size}"
+                                            }
+
+    // -----------------------------------------------------------------
+    // AGGREGATION AND FINAL STABILITY SCORE
+    // -----------------------------------------------------------------
+
+    ch_global_stability_score_input = ch_platform_stats_with_stability_scores
+                                        .map { meta, file -> [ meta.section, meta, file] }
+                                        .groupTuple()
+                                        .map { section, metas, files -> [ [ section: section ], files ] }
+
+    def lambda = 0.7
+    GLOBAL_STABILITY_SCORE(
+        ch_global_stability_score_input,
+        ch_nb_samples_per_platform_file.first(),
+        lambda
+    )
+
     emit:
-    summary_statistics      = COMPUTE_STABILITY_SCORES.out.stats_with_stability_scores
+    summary_statistics = GLOBAL_STABILITY_SCORE.out.stats_with_stability_scores
 
 }
 

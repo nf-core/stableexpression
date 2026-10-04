@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+
+# Written by Olivier Coen. Released under the MIT license.
+
+import argparse
+import logging
+from pathlib import Path
+from math import sqrt
+
+import config
+import polars as pl
+from common import write_csv_with_floats
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# outfile names
+STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.csv"
+
+#####################################################
+#####################################################
+# FUNCTIONS
+#####################################################
+#####################################################
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Computes global stability score for each gene"
+    )
+    parser.add_argument(
+        "--platform-stats-scores",
+        type=str,
+        dest="platform_stats_scores_file",
+        required=True,
+        help="Platform-specific statistics / scores file",
+    )
+    parser.add_argument(
+        "--nb-samples-per-platform",
+        type=Path,
+        dest="platform_size_file",
+        required=True,
+        help="File containing the number of samples per platform",
+    )
+
+    parser.add_argument(
+        "--lambda",
+        dest="lambda_",
+        type=float,
+        required=True,
+        help="Weight parameter",
+    )
+    return parser.parse_args()
+
+
+def get_scores(files: list[Path]) -> pl.DataFrame:
+    """Retrieve and concatenate stats and scores values from a list of files."""
+    df = pl.read_csv(files[0])
+    if len(files) > 1:
+        for file in files[1:]:
+            new_df = pl.read_csv(file)
+            df = df.join(new_df, on=config.GENE_ID_COLNAME, how="inner")
+    return df
+
+
+def compute_global_score(df: pl.DataFrame, platform_sizes: dict[str, int], lambda_: float) -> pl.DataFrame:
+    """
+    Compute the global stability score by weighting stability scores from multiple platforms.
+    """
+    stability_score_columns = [col for col in df.columns if col.startswith(config.STABILITY_SCORE_COLNAME)]
+
+    if len(stability_score_columns) == 1: # if only one platform, we just take the only score
+        return df.with_columns(pl.col(stability_score_columns[0]).alias(config.GLOBAL_STABILITY_SCORE_COLNAME))
+
+    stability_score_weighted_columns = [f"{col}.weighted" for col in stability_score_columns]
+    sum_of_weights = sum([sqrt(size) for size in platform_sizes.values()])
+
+    # multiplying each stability score column by the square root of the nb of samples in the associated platform
+    # compute the average of these weighted scores
+    # mitigating this sum by a penalty term, which is the max
+    return (
+        df.with_columns([
+            (pl.col(col) * sqrt(platform_sizes[col.split('.')[-1]])).alias(weighted_col)
+            for col, weighted_col in zip(stability_score_columns, stability_score_weighted_columns)
+        ]).with_columns(
+            (pl.sum_horizontal(pl.col(stability_score_weighted_columns) / sum_of_weights)).alias('stability_score_weighted_average'),
+            pl.max_horizontal(pl.col(stability_score_columns)).alias('stability_score_max')
+        ).with_columns(
+            (pl.col('stability_score_weighted_average') * (1 - lambda_) + pl.col('stability_score_max') * lambda_).alias(config.GLOBAL_STABILITY_SCORE_COLNAME)
+        )
+    )
+
+
+def export_data(df: pl.DataFrame):
+    """Export gene expression data to CSV files."""
+    logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
+    write_csv_with_floats(df, STATISTICS_WITH_SCORES_OUTFILENAME, float_precision=5)
+    logger.info("Done")
+
+
+#####################################################
+#####################################################
+# MAIN
+#####################################################
+#####################################################
+
+
+def main():
+    args = parse_args()
+
+    df = get_scores(args.platform_stats_scores_file.split(' '))
+
+    platform_size_df = pl.read_csv(args.platform_size_file)
+    platform_sizes = dict(zip(platform_size_df["platform"], platform_size_df["nb_samples"]))
+
+    df = compute_global_score(df, platform_sizes, args.lambda_)
+
+    # exporting computed data
+    export_data(df)
+
+
+if __name__ == "__main__":
+    main()

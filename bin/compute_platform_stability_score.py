@@ -167,7 +167,13 @@ class StabilityScorer:
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Computes stability score for each gene"
+        description="Computes stability score for each gene for a specific platform"
+    )
+    parser.add_argument(
+        "--platform",
+        type=str,
+        required=True,
+        help="Platform name",
     )
     parser.add_argument(
         "--stats",
@@ -219,6 +225,14 @@ def get_statistics(stat_files: list[Path]) -> pl.DataFrame:
     return df
 
 
+def rename_columns_for_platform(scored_df: pl.DataFrame, platform: str) -> pl.DataFrame:
+    return scored_df.rename({
+        col: f"{col}.{platform}" for col in scored_df.columns
+        if col != config.GENE_ID_COLNAME
+    })
+
+
+
 def export_data(scored_df: pl.DataFrame):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
@@ -252,6 +266,9 @@ def main():
     # sort genes according to the metrics present in the dataframe
     stability_scorer = StabilityScorer(df, args.stability_score_weights)
     scored_df = stability_scorer.get_statistics_with_stability_scores()
+
+    # adding a suffix to all columns except "gene_id"
+    scored_df = rename_columns_for_platform(scored_df, args.platform)
 
     # exporting computed data
     export_data(scored_df)

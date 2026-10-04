@@ -173,7 +173,8 @@ workflow STABLEEXPRESSION {
             params.nb_candidates_per_section,
             params.nb_sections,
             params.skip_genorm,
-            params.stability_score_weights
+            params.stability_score_weights,
+            params.outdir
         )
 
         ch_stats_all_genes_with_scores = STABILITY_SCORING.out.summary_statistics
