@@ -159,28 +159,17 @@ workflow STABLEEXPRESSION {
         ch_normalised_counts          = NORMALISATION.out.normalised_per_platform
         ch_imputed_counts             = NORMALISATION.out.imputed_per_platform
         ch_gene_length_file           = NORMALISATION.out.gene_length_file
-/*
-        // -----------------------------------------------------------------
-        // COMPUTE BASE STATISTICS FOR ALL GENES
-        // -----------------------------------------------------------------
-
-        GENE_STATISTICS (
-            ch_normalised_counts,
-            ch_ratio_nulls_per_sample_file,
-            params.max_null_ratio_valid_sample
-        )
-
-        ch_all_datasets_stats  = GENE_STATISTICS.out.stats
-        ch_platform_statistics = GENE_STATISTICS.out.platform_stats
 
         // -----------------------------------------------------------------
+        // COMPUTE BASE STATISTICS FOR ALL GENES,
         // GET CANDIDATES AS REFERENCE GENE AND COMPUTES VARIOUS STABILITY VALUES
         // -----------------------------------------------------------------
 
         STABILITY_SCORING (
-            ch_all_imputed_counts.map{ meta, file -> file },
-            ch_whole_design,
-            ch_all_datasets_stats,
+            ch_normalised_counts,
+            ch_imputed_counts,
+            ch_ratio_nulls_per_sample_file,
+            params.max_null_ratio_valid_sample,
             params.nb_candidates_per_section,
             params.nb_sections,
             params.skip_genorm,
@@ -209,8 +198,8 @@ workflow STABLEEXPRESSION {
         params.multiqc_logo,
         params.multiqc_methods_description,
         params.outdir
-    )Error workflows/stableexpression.nf:213:9: Unexpected input: ':
-*/}
+    )
+
     emit:
     accessions                             = GET_PUBLIC_ACCESSIONS.out.raw_accessions
     downloaded                             = ch_downloaded_datasets
@@ -219,11 +208,8 @@ workflow STABLEEXPRESSION {
     normalised                             = ch_normalised_counts
     gene_length_file                       = ch_gene_length_file
     imputed                                = ch_imputed_counts
-    //all_genes_summary                      = REPORTING.out.all_genes_summary
-    //multiqc_report                         = REPORTING.out.multiqc_report.toList()
-    //dash_app                               = REPORTING.out.dash_app
-    all_genes_summary = channel.empty()
-    multiqc_report = channel.empty().toList()
-    dash_app = channel.empty()
+    all_genes_summary                      = REPORTING.out.all_genes_summary
+    multiqc_report                         = REPORTING.out.multiqc_report.toList()
+    dash_app                               = REPORTING.out.dash_app
 
 }

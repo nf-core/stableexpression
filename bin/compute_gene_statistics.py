@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # outfile names
-ALL_GENES_RESULT_OUTFILE_SUFFIX = "stats_all_genes.csv"
+ALL_GENES_RESULT_OUTFILE = "stats_all_genes.csv"
 
 RCV_MULTIPLIER = 1.4826  # see https://pmc.ncbi.nlm.nih.gov/articles/PMC9196089/
 
@@ -92,17 +92,12 @@ def parse_args():
         required=True,
         help="Maximum ratio of null values for a sample to be considered valid",
     )
-    parser.add_argument("--platform", type=str, help="Platform name")
     return parser.parse_args()
 
 
 def get_counts(file: Path) -> pl.LazyFrame:
     # sorting dataframe (necessary to get consistent output)
     return pl.scan_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
-
-
-def get_colname(colname: str, platform: str | None) -> str:
-    return f"{platform}_{colname}" if platform else colname
 
 
 def get_samples(lf: pl.LazyFrame) -> list[str]:
@@ -125,9 +120,7 @@ def get_valid_samples(
     )
 
 
-def compute_ratios_null_values(
-    lf: pl.LazyFrame, valid_samples: list[str], platform: str | None
-) -> pl.LazyFrame:
+def compute_ratios_null_values(lf: pl.LazyFrame, valid_samples: list[str]) -> pl.LazyFrame:
     samples_cols = [
         col for col in lf.collect_schema().names() if col != config.GENE_ID_COLNAME
     ]
@@ -162,16 +155,12 @@ def compute_ratios_null_values(
 
     return lf.select(
         pl.col(config.GENE_ID_COLNAME),
-        (nb_nulls / nb_samples).alias(
-            get_colname(config.RATIO_NULLS_COLNAME, platform)
-        ),
-        (nb_nulls_valid_samples / len(found_valid_samples)).alias(
-            get_colname(config.RATIO_NULLS_VALID_SAMPLES_COLNAME, platform)
-        ),
+        (nb_nulls / nb_samples).alias(config.RATIO_NULLS_COLNAME),
+        (nb_nulls_valid_samples / len(found_valid_samples)).alias(config.RATIO_NULLS_VALID_SAMPLES_COLNAME)
     )
 
 
-def get_main_statistics(lf: pl.LazyFrame, platform: str | None) -> pl.LazyFrame:
+def get_main_statistics(lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Compute count descriptive statistics for each gene in the count dataframe.
     """
@@ -187,44 +176,35 @@ def get_main_statistics(lf: pl.LazyFrame, platform: str | None) -> pl.LazyFrame:
 
     return augmented_count_lf.select(
         pl.col(config.GENE_ID_COLNAME),
-        pl.col("mean").alias(get_colname(config.MEAN_COLNAME, platform)),
-        pl.col("std").alias(get_colname(config.STANDARD_DEVIATION_COLNAME, platform)),
-        pl.col("median").alias(get_colname(config.MEDIAN_COLNAME, platform)),
-        pl.col("mad").alias(get_colname(config.MAD_COLNAME, platform)),
-        (pl.col("std") / pl.col("mean")).alias(
-            get_colname(config.COEFFICIENT_OF_VARIATION_COLNAME, platform)
-        ),
-        (pl.col("mad") / pl.col("median") * RCV_MULTIPLIER).alias(
-            get_colname(config.ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME, platform)
-        ),
+        pl.col("mean").alias(config.MEAN_COLNAME),
+        pl.col("std").alias(config.STANDARD_DEVIATION_COLNAME),
+        pl.col("median").alias(config.MEDIAN_COLNAME),
+        pl.col("mad").alias(config.MAD_COLNAME),
+        (pl.col("std") / pl.col("mean")).alias(config.COEFFICIENT_OF_VARIATION_COLNAME),
+        (pl.col("mad") / pl.col("median") * RCV_MULTIPLIER).alias(config.ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME)
     )
 
 
-def compute_ratio_zeros(
-    count_lf: pl.LazyFrame, stat_lf: pl.LazyFrame, platform: str
-) -> pl.LazyFrame:
+def compute_ratio_zeros(count_lf: pl.LazyFrame, stat_lf: pl.LazyFrame) -> pl.LazyFrame:
     nb_samples = len(get_samples(count_lf))
     nb_zeros_lf = count_lf.select(
-        (pl.sum_horizontal(pl.exclude(config.GENE_ID_COLNAME) == 0) / nb_samples).alias(
-            get_colname(config.RATIO_ZEROS_COLNAME, platform)
-        )
+        (pl.sum_horizontal(pl.exclude(config.GENE_ID_COLNAME) == 0) / nb_samples).alias(config.RATIO_ZEROS_COLNAME)
     )
     # return stat_lf
     return pl.concat([stat_lf, nb_zeros_lf], how="horizontal")
 
 
-def get_quantile_intervals(lf: pl.LazyFrame, platform: str) -> pl.LazyFrame:
+def get_quantile_intervals(lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Compute the quantile intervals for the mean expression levels of each gene in the dataframe.
 
     The function assigns to each gene a quantile interval of its mean cpm compared to all genes.
     """
     logger.info("Getting mean expression quantiles")
-    mean_colname = get_colname(config.MEAN_COLNAME, platform)
     return lf.with_columns(
         (
-            pl.col(mean_colname).rank(method="ordinal")
-            / pl.col(mean_colname).count()
+            pl.col(config.MEAN_COLNAME).rank(method="ordinal")
+            / pl.col(config.MEAN_COLNAME).count()
             * NB_QUANTILES
         )
         .floor()
@@ -232,19 +212,14 @@ def get_quantile_intervals(lf: pl.LazyFrame, platform: str) -> pl.LazyFrame:
         # we want the only value = NB_QUANTILES to be NB_QUANTILES - 1
         # because the last quantile interval is [NB_QUANTILES - 1, NB_QUANTILES]
         .replace({NB_QUANTILES: NB_QUANTILES - 1})
-        .alias(get_colname(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME, platform))
+        .alias(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
     )
 
 
-def export_data(lf: pl.LazyFrame, platform: str | None):
+def export_data(lf: pl.LazyFrame):
     """Export gene expression data to CSV files."""
-    outfile = (
-        f"{platform}.{ALL_GENES_RESULT_OUTFILE_SUFFIX}"
-        if platform
-        else ALL_GENES_RESULT_OUTFILE_SUFFIX
-    )
-    logger.info(f"Exporting statistics for all genes to: {outfile}")
-    sink_csv_with_floats(lf, outfile)
+    logger.info(f"Exporting statistics for all genes to: {ALL_GENES_RESULT_OUTFILE}")
+    sink_csv_with_floats(lf, ALL_GENES_RESULT_OUTFILE)
     logger.info("Done")
 
 
@@ -266,9 +241,7 @@ def main():
     logger.info("Loading count data (before missing value imputation)")
     non_imputed_count_lf = get_counts(args.count_file)
 
-    ratio_nulls_lf = compute_ratios_null_values(
-        non_imputed_count_lf, valid_samples, args.platform
-    )
+    ratio_nulls_lf = compute_ratios_null_values(non_imputed_count_lf, valid_samples)
 
     # if the user provided an imputed count file, use it; otherwise, use the original count file
     if args.imputed_count_file:
@@ -283,19 +256,19 @@ def main():
 
     logger.info("Computing statistics and stability score")
     # getting expression statistics
-    stat_lf = get_main_statistics(count_lf, args.platform)
+    stat_lf = get_main_statistics(count_lf)
 
     # adding column for nb of null values for each gene
     stat_lf = stat_lf.join(ratio_nulls_lf, on=config.GENE_ID_COLNAME, how="inner")
 
     # adding a column for the frequency of zero values
-    stat_lf = compute_ratio_zeros(count_lf, stat_lf, args.platform)
+    stat_lf = compute_ratio_zeros(count_lf, stat_lf)
 
     # getting quantile intervals
-    stat_lf = get_quantile_intervals(stat_lf, args.platform)
+    stat_lf = get_quantile_intervals(stat_lf)
 
     # exporting computed data
-    export_data(stat_lf, args.platform)
+    export_data(stat_lf)
 
 
 if __name__ == "__main__":

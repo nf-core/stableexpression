@@ -1,6 +1,6 @@
 process COMPUTE_M_MEASURE {
 
-    tag "${meta.section}"
+    tag "${meta.platform} :: ${meta.section}"
     label 'process_medium_requirements'
 
     conda "${moduleDir}/environment.yml"

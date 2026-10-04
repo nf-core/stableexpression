@@ -1,6 +1,6 @@
 process CROSS_JOIN {
 
-    tag "${meta.section} :: ${meta.index_1} vs ${meta.index_2}"
+    tag "${meta.platform} :: ${meta.section} :: ${meta.index_1} vs ${meta.index_2}"
     label 'process_low_requirements'
 
     conda "${moduleDir}/environment.yml"
