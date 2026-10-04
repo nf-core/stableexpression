@@ -8,7 +8,7 @@ include { GET_PUBLIC_ACCESSIONS                  } from '../subworkflows/local/g
 include { DOWNLOAD_PUBLIC_DATASETS               } from '../subworkflows/local/download_public_datasets'
 include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
 include { SAMPLE_FILTERING                       } from '../subworkflows/local/sample_filtering'
-include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
+include { NORMALISATION                          } from '../subworkflows/local/normalisation'
 include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
 include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
 include { GENE_STATISTICS                        } from '../subworkflows/local/gene_statistics'
@@ -135,16 +135,17 @@ workflow STABLEEXPRESSION {
         // NORMALISATION OF RAW COUNT DATASETS (INCLUDING RNA-SEQ DATASETS)
         // -----------------------------------------------------------------
 
-        EXPRESSION_NORMALISATION(
-            species,
+        NORMALISATION(
             ch_counts_samples_filtered,
+            species,
             ch_valid_gene_ids,
             params.skip_gene_length_normalisation,
             params.quantile_normalisation,
             params.quantile_norm_target_distrib,
             params.gff,
             params.gff_url,
-            params.gene_length
+            params.gene_length,
+            params.outdir
         )
 
         ch_counts_first_normalisation          = EXPRESSION_NORMALISATION.out.normalised_once

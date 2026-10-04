@@ -1,9 +1,9 @@
 nextflow_workflow {
 
-    name "Test Workflow EXPRESSION_NORMALISATION"
-    script "subworkflows/local/expression_normalisation/main.nf"
-    workflow "EXPRESSION_NORMALISATION"
-    tag "subworkflow_expression_normalisation"
+    name "Test Workflow NORMALISATION"
+    script "subworkflows/local/normalisation/main.nf"
+    workflow "NORMALISATION"
+    tag "subworkflow_normalisation"
     tag "subworkflow"
 
     test("GeTMM") {
@@ -11,8 +11,7 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                input[0] = "solanum_tuberosum"
-                input[1] = channel.of(
+                input[0] = channel.of(
                     [
                         [
                             normalised: false,
@@ -23,6 +22,7 @@ nextflow_workflow {
                         file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
                     ]
                 )
+                input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = false
                 input[4] = false
@@ -48,8 +48,7 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                input[0] = "solanum_tuberosum"
-                input[1] = channel.of(
+                input[0] = channel.of(
                     [
                         [
                             normalised: false,
@@ -69,6 +68,7 @@ nextflow_workflow {
                         file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
+                input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = false
                 input[4] = true
@@ -94,8 +94,7 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                input[0] = "solanum_tuberosum"
-                input[1] = channel.of(
+                input[0] = channel.of(
                     [
                         [
                             normalised: false,
@@ -115,6 +114,7 @@ nextflow_workflow {
                         file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
+                input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = true
                 input[4] = false
@@ -140,8 +140,7 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                input[0] = "solanum_tuberosum"
-                input[1] = channel.of(
+                input[0] = channel.of(
                     [
                         [
                             normalised: true,
@@ -152,6 +151,7 @@ nextflow_workflow {
                         file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
                     ]
                 )
+                input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = "getmm"
                 input[5] = "uniform"

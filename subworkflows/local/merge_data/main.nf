@@ -2,9 +2,11 @@ include { MERGE_COUNTS as PLATFORM                      } from '../../../modules
 include { MERGE_COUNTS as GLOBAL                        } from '../../../modules/local/merge_counts'
 include { IMPUTE_MISSING_VALUES                         } from '../../../modules/local/impute_missing_values'
 
+include { mergeDesign                                   } from '../../../subworkflow/local/utils_nfcore_stableexpression_pipeline'
+
 /*
 ========================================================================================
-    SUBWORKFLOW TO DOWNLOAD EXPRESSIONATLAS ACCESSIONS AND DATASETS
+    SUBWORKFLOW TO MERGE DATASETS AND DESIGNS
 ========================================================================================
 */
 
@@ -22,24 +24,13 @@ workflow MERGE_DATA {
     // -----------------------------------------------------------------
 
 
-    ch_normalised_rnaseq_counts = ch_normalised_counts.filter { meta, file -> meta.platform == "rnaseq" }
-    ch_normalised_microarray_counts = ch_normalised_counts.filter { meta, file -> meta.platform == "microarray" }
 
-    ch_collected_rnaseq_counts = ch_normalised_rnaseq_counts
-                                    .map { meta, file -> file }
-                                    .collect( sort: true )
-                                    .map { files -> [ [ platform: "rnaseq" ], files ] }
 
-    ch_collected_microarray_counts = ch_normalised_microarray_counts
-                                        .map { meta, file -> file }
-                                        .collect( sort: true )
-                                        .map { files -> [ [ platform: "microarray" ], files ] }
+    // -----------------------------------------------------------------
+    // MERGE ALL DESIGNS IN A SINGLE TABLE
+    // -----------------------------------------------------------------
 
-    PLATFORM (
-        ch_collected_rnaseq_counts.concat( ch_collected_microarray_counts )
-    )
-
-    ch_platform_counts = PLATFORM.out.counts
+    ch_whole_design = mergeDesign(ch_normalised_counts, "${outdir}/merged_data/", 'whole_design.csv')
 
     // -----------------------------------------------------------------
     // MERGE ALL COUNTS
@@ -61,33 +52,6 @@ workflow MERGE_DATA {
         ch_all_counts.collect(),
         missing_value_imputer
     )
-
-    // -----------------------------------------------------------------
-    // MERGE ALL DESIGNS IN A SINGLE TABLE
-    // -----------------------------------------------------------------
-
-    ch_whole_design = ch_normalised_counts
-                        .map {
-                            meta, file -> // extracts design file and adds batch column whenever missing (for custom datasets)
-                                def design_content = meta.design.splitCsv( header: true )
-                                // if there is no batch, it is custom data
-                                def updated_design_content = design_content.collect { row ->
-                                    row.batch = row.batch ?: "custom_${meta.dataset}"
-                                    return row
-                                }
-                                [ updated_design_content ]
-                        }
-                        .flatten()
-                        .unique()
-                        .collectFile(
-                            name: 'whole_design.csv',
-                            seed: "batch,condition,sample",
-                            newLine: true,
-                            sort: true,
-                            storeDir: "${outdir}/merged_data/"
-                        ) {
-                            item -> "${item.batch},${item.condition},${item.sample}"
-                        }
 
     emit:
     all_imputed_counts                     = IMPUTE_MISSING_VALUES.out.counts

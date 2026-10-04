@@ -107,6 +107,7 @@ class ReComBat:
         logger.info("Starting to fot reComBat.")
         if np.isnan(data).any().any():
             raise ValueError("The data contains NaN values.")
+
         if np.isnan(batches).any().any():
             raise ValueError("The batches contain NaN values.")
 

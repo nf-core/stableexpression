@@ -10,25 +10,24 @@ process IMPUTE_MISSING_VALUES {
 
     input:
     path(count_file)
+    path(design_file)
 
     output:
     tuple val(meta), path('*.corrected.parquet'),                                                                       emit: counts
     tuple val("${task.process}"), val('python'),       eval("python3 --version | sed 's/Python //'"),                   topic: versions
-    tuple val("${task.process}"), val('pyarrow'),      eval('python3 -c "import pyarrow; print(pyarrow.__version__)"'), topic: versions
+    tuple val("${task.process}"), val('polars'),       eval('python3 -c "import polars; print(polars.__version__)"'),   topic: versions
     tuple val("${task.process}"), val('scikit-learn'), eval('python3 -c "import sklearn; print(sklearn.__version__)"'), topic: versions
-    tuple val("${task.process}"), val('tqdm'),         eval('python3 -c "import tqdm; print(tqdm.__version__)"'),       topic: versions
-    tuple val("${task.process}"), val('joblib'),       eval('python3 -c "import joblib; print(joblib.__version__)"'),   topic: versions
-    tuple val("${task.process}"), val('pandas'),       eval('python3 -c "import pandas; print(pandas.__version__)"'),   topic: versions
 
     script:
     """
     correct_batch_effects_with_recombat.py \\
-        --counts $count_file
+        --counts $count_file \\
+        --design $design_file
     """
 
     stub:
     """
-    touch stub.imputed.parquet
+    touch stub.corrected.parquet
     """
 
 }

@@ -465,6 +465,38 @@ def checkCounts(ch_counts, fetch_geo_accessions) {
 
 /*
 ========================================================================================
+    MERGE DESIGNS
+========================================================================================
+*/
+
+def mergeDesign(ch_datasets, platform, output_dir, filename) {
+
+    return ch_datasets
+                .map {
+                    meta, file -> // extracts design file and adds batch column whenever missing (for custom datasets)
+                        def design_content = meta.design.splitCsv( header: true )
+                        // if there is no batch, it is custom data
+                        def updated_design_content = design_content.collect { row ->
+                            row.batch = row.batch ?: "custom_${meta.dataset}"
+                            return row
+                        }
+                        [ updated_design_content ]
+                }
+                .flatten()
+                .unique()
+                .collectFile(
+                    name: ,
+                    seed: "batch,condition,sample",
+                    newLine: true,
+                    sort: true,
+                    storeDir:
+                ) {
+                    item -> "${item.batch},${item.condition},${item.sample}"
+                }
+}
+
+/*
+========================================================================================
     FUNCTION FOR FORMATING OUTPUT FOLDERS
 ========================================================================================
 */

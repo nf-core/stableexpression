@@ -10,7 +10,7 @@ import argparse
 from pathlib import Path
 import logging
 
-from common import export_parquet
+from common import export_parquet, get_count_columns
 import config
 
 import polars as pl
@@ -26,7 +26,7 @@ CONFIG = {'alpha': 1e-9}
 MAX_ITER = 1000 # RECOMBAT DEFAULT: 1000
 CONV_CRITERION = 1e-4 # RECOMBAT DEFAULT: 1e-4
 
-OUTPUT_FILE = "counts.recombat.parquet"
+OUTFILE_SUFFIX = "corrected.parquet"
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # FUNCTIONS
@@ -39,9 +39,6 @@ def parse_args():
     )
     parser.add_argument(
         "--design", type=Path, dest="design_file", required=True, help="Design file"
-    )
-    parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
     )
     return parser.parse_args()
 
@@ -64,9 +61,10 @@ def main():
 
     # align the design on the matrix columns (same order, same samples)
     design_df = (
-        pl.DataFrame({"sample": df.columns})
+        pl.DataFrame({"sample": get_count_columns(df)})
         .join(design_df, on="sample", how="left")
     )
+
     # get batches in the same order as in the count dataset
     batch_series = design_df['batch']
 
@@ -91,9 +89,18 @@ def main():
         }
         transformed_data = model.fit_transform(**kwargs)
         transformed_df_without_gene_ids = pl.DataFrame(transformed_data.T, schema=df.columns)
-        transformed_df = pl.concat([gene_ids, transformed_df_without_gene_ids], how='horizontal', strict=True)
+        transformed_df = pl.concat(
+            [gene_ids, transformed_df_without_gene_ids],
+            how='horizontal',
+            strict=True
+        )
 
-    export_parquet(transformed_df, OUTPUT_FILE)
+    for batch in batch_series.unique():
+        batch_samples = design_df.filter(pl.col('batch') == batch)['sample'].to_list()
+        batch_df = transformed_df.select(batch_samples)
+        outfile = f"{batch}.{OUTFILE_SUFFIX}"
+        export_parquet(batch_df, outfile)
+
     logger.info("Done")
 
 

@@ -14,12 +14,10 @@ include { GETMM_LOG2                                     } from '../../../subwor
 workflow RNASEQ_NORMALISATION {
 
     take:
-    species
     ch_datasets
+    species
     ch_valid_gene_ids
     skip_gene_length_normalisation
-    skip_quantile_normalisation
-    quantile_norm_target_distrib
     gff_file
     gff_url
     gene_length_file

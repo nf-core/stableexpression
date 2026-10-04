@@ -6,4 +6,4 @@ channels:
 dependencies:
   - conda-forge::python=3.14.7
   - conda-forge::polars=1.44.2
-  - codna-forge::numpy=2.5.3
+  - conda-forge::scikit-learn=1.9.1
