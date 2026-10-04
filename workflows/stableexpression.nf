@@ -12,7 +12,7 @@ include { NORMALISATION                          } from '../subworkflows/local/n
 include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
 include { GENE_STATISTICS                        } from '../subworkflows/local/gene_statistics'
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
-include { REPORTING                              } from '../subworkflows/local/reporting'
+//include { REPORTING                              } from '../subworkflows/local/reporting'
 
 include { checkCounts                            } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
@@ -39,8 +39,7 @@ workflow STABLEEXPRESSION {
     ch_normalised_counts                   = channel.empty()
     ch_gene_length_file                    = channel.empty()
     ch_all_counts                          = channel.empty()
-    ch_all_imputed_counts                  = channel.empty()
-    ch_whole_design                        = channel.empty()
+    ch_imputed_counts                      = channel.empty()
     ch_stats_all_genes_with_scores         = channel.empty()
     ch_platform_statistics                 = channel.empty()
     ch_whole_gene_metadata                 = channel.empty()
@@ -156,8 +155,9 @@ workflow STABLEEXPRESSION {
             params.outdir
         )
 
-        ch_normalised_counts          = NORMALISATION.out.normalised_per_platform
-        ch_imputed_counts             = NORMALISATION.out.imputed_per_platform
+        ch_normalised_counts          = NORMALISATION.out.normalised
+        ch_imputed_counts             = NORMALISATION.out.imputed
+        ch_non_imputed_counts         = NORMALISATION.out.non_imputed
         ch_gene_length_file           = NORMALISATION.out.gene_length_file
 
         // -----------------------------------------------------------------
@@ -167,7 +167,7 @@ workflow STABLEEXPRESSION {
 
         STABILITY_SCORING (
             ch_normalised_counts,
-            ch_imputed_counts,
+            ch_non_imputed_counts,
             ch_ratio_nulls_per_sample_file,
             params.max_null_ratio_valid_sample,
             params.nb_candidates_per_section,
@@ -183,12 +183,10 @@ workflow STABLEEXPRESSION {
     // -----------------------------------------------------------------
     // REPORTING
     // -----------------------------------------------------------------
-
+/*
     REPORTING(
-        ch_all_imputed_counts,
-        ch_whole_design,
+        ch_normalised_counts,
         ch_stats_all_genes_with_scores,
-        ch_platform_statistics,
         ch_whole_gene_metadata,
         ch_whole_gene_id_mapping,
         params.target_genes,
@@ -199,7 +197,7 @@ workflow STABLEEXPRESSION {
         params.multiqc_methods_description,
         params.outdir
     )
-
+*/
     emit:
     accessions                             = GET_PUBLIC_ACCESSIONS.out.raw_accessions
     downloaded                             = ch_downloaded_datasets
@@ -208,8 +206,10 @@ workflow STABLEEXPRESSION {
     normalised                             = ch_normalised_counts
     gene_length_file                       = ch_gene_length_file
     imputed                                = ch_imputed_counts
-    all_genes_summary                      = REPORTING.out.all_genes_summary
-    multiqc_report                         = REPORTING.out.multiqc_report.toList()
-    dash_app                               = REPORTING.out.dash_app
-
+    //all_genes_summary                      = REPORTING.out.all_genes_summary
+    //multiqc_report                         = REPORTING.out.multiqc_report.toList()
+    //dash_app                               = REPORTING.out.dash_app
+all_genes_summary = channel.empty()
+multiqc_report = channel.empty().toList()
+dash_app = channel.empty()
 }

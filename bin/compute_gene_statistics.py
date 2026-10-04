@@ -70,13 +70,13 @@ def parse_args():
         description="Get base statistics from count data for each gene"
     )
     parser.add_argument(
-        "--imputed-counts",
-        type=Path,
-        dest="imputed_count_file",
-        help="Count file with imputed missing values",
+        "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--non-imputed-counts",
+        type=Path,
+        dest="non_imputed_count_file",
+        help="Count file before imputation of missing values",
     )
     parser.add_argument(
         "--ratio-nulls-per-sample",
@@ -239,20 +239,12 @@ def main():
     )
 
     logger.info("Loading count data (before missing value imputation)")
-    non_imputed_count_lf = get_counts(args.count_file)
+    non_imputed_count_lf = get_counts(args.non_imputed_count_file)
 
     ratio_nulls_lf = compute_ratios_null_values(non_imputed_count_lf, valid_samples)
 
-    # if the user provided an imputed count file, use it; otherwise, use the original count file
-    if args.imputed_count_file:
-        logger.info("Using imputed count file")
-        count_file = args.imputed_count_file
-    else:
-        logger.info("Using original count file")
-        count_file = args.count_file
-
     logger.info("Loading count data...")
-    count_lf = get_counts(count_file)
+    count_lf = get_counts(args.count_file)
 
     logger.info("Computing statistics and stability score")
     # getting expression statistics

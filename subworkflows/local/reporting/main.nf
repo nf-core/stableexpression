@@ -18,10 +18,8 @@ include { paramsSummaryMap                       } from 'plugin/nf-schema'
 workflow REPORTING {
 
     take:
-    ch_all_counts
-    ch_whole_design
+    ch_normalised_counts // [ meta, counts, design ]
     ch_stats_all_genes_with_scores
-    ch_platform_statistics
     ch_whole_gene_metadata
     ch_whole_gene_id_mapping
     target_genes
@@ -36,6 +34,23 @@ workflow REPORTING {
 
     ch_versions = channel.empty()
     ch_dash_app = channel.empty()
+
+    // -----------------------------------------------------------------
+    // WRITING DESIGN FOR ALL PLATFORMS TOGETHER
+    // -----------------------------------------------------------------
+
+    ch_whole_design = ch_normalised_counts
+                        .map { meta, counts, design -> design }
+                        .splitCsv( header: true )
+                        .collectFile(
+                            name: 'whole_design.csv',
+                            seed: "batch,condition,sample",
+                            newLine: true,
+                            sort: true,
+                            storeDir: "${outdir}/design/"
+                        ) {
+                             item -> "${item.batch},${item.condition},${item.sample}"
+                        }
 
     // -----------------------------------------------------------------
     // AGGREGATE ALL RESULTS FOR MULTIQC
@@ -56,9 +71,8 @@ workflow REPORTING {
                                                 )
 
     AGGREGATE_RESULTS (
-        ch_all_counts.map{ meta, file -> file }.collect(), // 1 file
-        ch_stats_all_genes_with_scores.toSortedList().filter{ file -> file != [] }, // as many file as sections; make sure that at least one stat file is present
-        ch_platform_statistics.toSortedList(), // as many file as different platforms
+        ch_normalised_counts.map{ meta, file -> file }.collect(sort: true), // as many files as platforms
+        ch_stats_all_genes_with_scores.collect(sort: true).filter{ file -> file != [] }, // as many file as sections; make sure that at least one stat file is present
         ch_target_gene_list,
         ch_whole_gene_metadata.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
         ch_whole_gene_id_mapping.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
@@ -77,7 +91,7 @@ workflow REPORTING {
     if ( !skip_dash_app ) {
 
         DASH_APP(
-            ch_all_counts.map{ meta, file -> file }.collect(),
+            ch_normalised_counts.map{ meta, file -> file }.collect(),
             ch_whole_design.collect(),
             ch_all_genes_summary.collect()
         )

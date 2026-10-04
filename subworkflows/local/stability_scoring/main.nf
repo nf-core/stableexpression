@@ -15,7 +15,7 @@ workflow STABILITY_SCORING {
 
     take:
     ch_platform_counts_design // [ meta, count_file, design]
-    ch_imputed_counts // [ meta, count_file]
+    ch_non_imputed_counts // [ meta, count_file]
     ch_ratio_nulls_per_sample_file
     max_null_ratio_valid_sample
     nb_candidates_per_section
@@ -33,7 +33,7 @@ workflow STABILITY_SCORING {
     // -----------------------------------------------------------------
 
     COMPUTE_GENE_STATISTICS(
-        ch_platform_counts.join( ch_imputed_counts ),
+        ch_platform_counts.join( ch_non_imputed_counts ),
         ch_ratio_nulls_per_sample_file.collect(),
         max_null_ratio_valid_sample
     )

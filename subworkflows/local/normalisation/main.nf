@@ -87,8 +87,8 @@ workflow NORMALISATION {
     // MERGE ALL DESIGNS IN A SINGLE TABLE, PLATFORM PER PLATFORM
     // -----------------------------------------------------------------
 
-    ch_rnaseq_whole_design     = mergeDesign(ch_normalised_rnaseq_datasets, "${outdir}/merged_data/", 'rnaseq.whole_design.csv')
-    ch_microarray_whole_design = mergeDesign(ch_datasets.microarray,        "${outdir}/merged_data/", 'microarray.whole_design.csv')
+    ch_rnaseq_whole_design     = mergeDesign(ch_normalised_rnaseq_datasets, "${outdir}/design/", 'rnaseq.whole_design.csv')
+    ch_microarray_whole_design = mergeDesign(ch_datasets.microarray,        "${outdir}/design/", 'microarray.whole_design.csv')
 
     ch_rnaseq_whole_design     = ch_rnaseq_whole_design.map     { file -> [ 'rnaseq' , file ] }
     ch_microarray_whole_design = ch_microarray_whole_design.map { file -> [ 'microarray', file ] }
@@ -137,7 +137,7 @@ workflow NORMALISATION {
         SEPARATE_COUNTS( ch_imputed_datasets_with_design )
 
         ch_separated_datasets = SEPARATE_COUNTS.out.counts
-                                    .map { meta, file -> [ [ id: file.baseName, platform: meta.platform ], file ] }
+                                    .map { meta, file -> [ [ dataset: file.baseName, platform: meta.platform ], file ] }
 
         // ------------------------------------------------------------------------------------
         // QUANTILE NORMALISATION
@@ -189,8 +189,9 @@ workflow NORMALISATION {
 
 
     emit:
-    normalised_per_platform  = ch_merged_counts_with_design
-    imputed_per_platform     = ch_imputed_datasets
-    gene_length_file         = ch_gene_length_file
+    normalised       = ch_merged_counts_with_design
+    imputed          = ch_imputed_datasets
+    non_imputed      = ch_counts_merged_by_platform
+    gene_length_file = ch_gene_length_file
 
 }

@@ -2,7 +2,7 @@ process QUANTILE_NORMALISATION {
 
     label 'process_low_requirements'
 
-    tag "${meta.dataset}"
+    tag "${meta.platform} :: ${meta.dataset}"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?

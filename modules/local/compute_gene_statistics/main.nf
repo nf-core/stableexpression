@@ -10,7 +10,7 @@ process COMPUTE_GENE_STATISTICS {
         'community.wave.seqera.io/library/polars_python:1a4a3322c56bfeb9' }"
 
     input:
-    tuple val(meta), path(count_file, name: 'count_file.parquet'), path(imputed_count_file, name: 'imputed_count_file.parquet')
+    tuple val(meta), path(count_file, name: 'count_file.parquet'), path(non_imputed_count_file, name: 'non_imputed_count_file.parquet')
     path ratio_nulls_per_samples
     val max_null_ratio_valid_sample
 
@@ -27,7 +27,7 @@ process COMPUTE_GENE_STATISTICS {
         --counts count_file.parquet \\
         --ratio-nulls-per-sample $ratio_nulls_per_samples \\
         --max-ratio-null-valid-sample $max_null_ratio_valid_sample \\
-        --imputed-counts imputed_count_file.parquet
+        --non-imputed-counts non_imputed_count_file.parquet
     """
 
     stub:
