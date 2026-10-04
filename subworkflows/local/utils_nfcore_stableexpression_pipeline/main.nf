@@ -469,7 +469,7 @@ def checkCounts(ch_counts, fetch_geo_accessions) {
 ========================================================================================
 */
 
-def mergeDesign(ch_datasets, platform, output_dir, filename) {
+def mergeDesign(ch_datasets, output_dir, filename) {
 
     return ch_datasets
                 .map {
@@ -485,11 +485,11 @@ def mergeDesign(ch_datasets, platform, output_dir, filename) {
                 .flatten()
                 .unique()
                 .collectFile(
-                    name: ,
+                    name: filename,
                     seed: "batch,condition,sample",
                     newLine: true,
                     sort: true,
-                    storeDir:
+                    storeDir: output_dir
                 ) {
                     item -> "${item.batch},${item.condition},${item.sample}"
                 }

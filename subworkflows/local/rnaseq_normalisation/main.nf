@@ -14,7 +14,7 @@ include { GETMM_LOG2                                     } from '../../../subwor
 workflow RNASEQ_NORMALISATION {
 
     take:
-    ch_datasets
+    ch_rnaseq_datasets
     species
     ch_valid_gene_ids
     skip_gene_length_normalisation
@@ -30,7 +30,7 @@ workflow RNASEQ_NORMALISATION {
     // AT THIS POINT, ONLY ONE BRANCH (RAW OR NORMALISED) HAS ELEMENTS
     // ------------------------------------------------------------------------------------
 
-    ch_rnaseq_datasets = ch_datasets.rnaseq.branch {
+    ch_branched_rnaseq_datasets = ch_rnaseq_datasets.branch {
         meta, file ->
             raw: meta.normalised == false
             normalised: meta.normalised == true
@@ -55,7 +55,7 @@ workflow RNASEQ_NORMALISATION {
                 ch_valid_gene_ids,
                 gff_file,
                 gff_url,
-                ch_datasets.rnaseq.collect() // used to trigger this subworkflow only if RNA-seq data are present
+                ch_rnaseq_datasets.collect() // used to trigger this subworkflow only if RNA-seq data are present
             )
             ch_gene_length_file = GET_TRANSCRIPT_LENGTHS.out.csv
 
@@ -67,7 +67,7 @@ workflow RNASEQ_NORMALISATION {
 
         // normalisation on raw counts (preferred option)
         GETMM_LOG2(
-            ch_rnaseq_datasets.raw,
+            ch_branched_rnaseq_datasets.raw,
             ch_gene_length_file
         )
 
@@ -76,13 +76,13 @@ workflow RNASEQ_NORMALISATION {
         // ------------------------------------------------------------------------------------
 
         // if some provided counts are already normalised, use TPM instead
-        TPM_LOG2( ch_rnaseq_datasets.normalised )
+        TPM_LOG2( ch_branched_rnaseq_datasets.normalised )
 
-        ch_normalised_rnaseq_datasets = GETMM.out.counts.mix( TPM_LOG2.out.counts )
+        ch_normalised_rnaseq_datasets = GETMM_LOG2.out.counts.mix( TPM_LOG2.out.counts )
 
     } else {
 
-        CPM_LOG2( ch_datasets.rnaseq )
+        CPM_LOG2( ch_rnaseq_datasets )
         ch_normalised_rnaseq_datasets = CPM_LOG2.out.counts
 
     }
@@ -90,8 +90,7 @@ workflow RNASEQ_NORMALISATION {
 
 
     emit:
-    normalised          = ch_all_normalised
-    normalised_once     = ch_normalised_once
+    normalised          = ch_normalised_rnaseq_datasets
     gene_length_file    = ch_gene_length_file
 
 }

@@ -18,7 +18,7 @@ from pathlib import Path
 import config
 import numpy as np
 import polars as pl
-from common import export_parquet, parse_count_table, get_count_columns, get_nb_rows
+from common import export_parquet, get_count_columns, get_nb_rows
 from sklearn.experimental import enable_iterative_imputer  # noqa
 from sklearn.impute import IterativeImputer, KNNImputer, SimpleImputer
 from sklearn.cluster import MiniBatchKMeans
@@ -94,7 +94,7 @@ def get_number_of_neighbours(lf: pl.LazyFrame, k_min: int, k_max: int) -> int:
         .sum_horizontal()
         .item()
     )
-    n_genes = len(lf)
+    n_genes = get_nb_rows(lf)
     n_samples = len(get_count_columns(lf))
     missing_fraction = nb_missing_values / (n_genes * n_samples)
     # return k as a function of the number of samples and missing values, with bounds
@@ -174,7 +174,7 @@ def apply_imputer(lf: pl.LazyFrame, imputer):
     imputed_array = imputer.fit_transform(count_matrix) # shape (n_samples, n_genes)
     return pl.concat(
         [
-            lf.select(config.GENE_ID_COLNAME),
+            lf.select(config.GENE_ID_COLNAME).collect(),
             pl.DataFrame(imputed_array.T, schema=count_cols) # shape (n_genes, n_samples)
         ],
         how='horizontal'
@@ -199,9 +199,9 @@ def apply_knn_imputer(lf: pl.LazyFrame) -> pl.DataFrame:
     label_parquet_files = []
     for label in unique_labels:
         cluster_mask = labels == label
-        cluster_df = lf.filter(cluster_mask)
-        logger.info(f"Imputing cluster {label} ({cluster_df.shape[0]} genes)")
-        imputed_cluster_df = apply_imputer(cluster_df, imputer)
+        cluster_lf = lf.filter(cluster_mask)
+        logger.info(f"Imputing cluster {label} ({get_nb_rows(cluster_lf)} genes)")
+        imputed_cluster_df = apply_imputer(cluster_lf, imputer)
         file = f"imputed_cluster_{label}.parquet"
         imputed_cluster_df.write_parquet(file)
         label_parquet_files.append(file)

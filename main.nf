@@ -47,10 +47,8 @@ workflow NFCORE_STABLEEXPRESSION {
     downloaded                            = STABLEEXPRESSION.out.downloaded
     id_filtered_renamed                   = STABLEEXPRESSION.out.id_filtered_renamed
     samples_filtered                      = STABLEEXPRESSION.out.samples_filtered
-    first_normalisation                   = STABLEEXPRESSION.out.first_normalisation
-    quantile_normalised                   = STABLEEXPRESSION.out.quantile_normalised
+    normalised                            = STABLEEXPRESSION.out.normalised
     gene_length_file                      = STABLEEXPRESSION.out.gene_length_file
-    merged                                = STABLEEXPRESSION.out.merged
     imputed                               = STABLEEXPRESSION.out.imputed
     all_genes_summary                     = STABLEEXPRESSION.out.all_genes_summary
     dash_app                              = STABLEEXPRESSION.out.dash_app
@@ -103,10 +101,8 @@ workflow {
     downloaded                            = NFCORE_STABLEEXPRESSION.out.downloaded
     id_filtered_renamed                   = NFCORE_STABLEEXPRESSION.out.id_filtered_renamed
     samples_filtered                      = NFCORE_STABLEEXPRESSION.out.samples_filtered
-    first_normalisation                   = NFCORE_STABLEEXPRESSION.out.first_normalisation
-    quantile_normalised                   = NFCORE_STABLEEXPRESSION.out.quantile_normalised
+    normalised                            = NFCORE_STABLEEXPRESSION.out.normalised
     gene_length_file                      = NFCORE_STABLEEXPRESSION.out.gene_length_file
-    merged                                = NFCORE_STABLEEXPRESSION.out.merged
     imputed                               = NFCORE_STABLEEXPRESSION.out.imputed
     all_genes_summary                     = NFCORE_STABLEEXPRESSION.out.all_genes_summary
     dash_app                              = NFCORE_STABLEEXPRESSION.out.dash_app
@@ -147,27 +143,15 @@ output {
         }
     }
 
-    first_normalisation {
-        path { meta, file ->
+    normalised {
+        path { meta, file, design ->
             file >> getOutputFolder(meta, "3.normalised")
-        }
-    }
-
-    quantile_normalised {
-        path { meta, file ->
-            file >> getOutputFolder(meta, "4.quantile_normalised")
         }
     }
 
     gene_length_file {
         path { file ->
             file >> "annotation/"
-        }
-    }
-
-    merged {
-        path { meta, file ->
-            file >> "merged_data/"
         }
     }
 

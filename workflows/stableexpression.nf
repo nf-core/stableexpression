@@ -10,7 +10,6 @@ include { ID_MAPPING                             } from '../subworkflows/local/i
 include { SAMPLE_FILTERING                       } from '../subworkflows/local/sample_filtering'
 include { NORMALISATION                          } from '../subworkflows/local/normalisation'
 include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
-include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
 include { GENE_STATISTICS                        } from '../subworkflows/local/gene_statistics'
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { REPORTING                              } from '../subworkflows/local/reporting'
@@ -132,7 +131,15 @@ workflow STABLEEXPRESSION {
         ch_ratio_nulls_per_sample_file = SAMPLE_FILTERING.out.ratio_nulls_per_sample_file
 
         // -----------------------------------------------------------------
-        // NORMALISATION OF RAW COUNT DATASETS (INCLUDING RNA-SEQ DATASETS)
+        // ANALYSIS OF NORMALISED DATASETS
+        // -----------------------------------------------------------------
+
+        DATASET_ANALYSIS(
+            ch_counts_samples_filtered
+        )
+
+        // -----------------------------------------------------------------
+        // NORMALISATION OF COUNTS
         // -----------------------------------------------------------------
 
         NORMALISATION(
@@ -140,6 +147,7 @@ workflow STABLEEXPRESSION {
             species,
             ch_valid_gene_ids,
             params.skip_gene_length_normalisation,
+            params.missing_value_imputer,
             params.quantile_normalisation,
             params.quantile_norm_target_distrib,
             params.gff,
@@ -148,41 +156,16 @@ workflow STABLEEXPRESSION {
             params.outdir
         )
 
-        ch_counts_first_normalisation          = EXPRESSION_NORMALISATION.out.normalised_once
-        ch_normalised_counts                   = EXPRESSION_NORMALISATION.out.normalised
-        ch_gene_length_file                    = EXPRESSION_NORMALISATION.out.gene_length_file
-
-        // -----------------------------------------------------------------
-        // ANALYSIS OF NORMALISED DATASETS
-        // -----------------------------------------------------------------
-
-        DATASET_ANALYSIS(
-            ch_normalised_counts
-        )
-
-        // -----------------------------------------------------------------
-        // MERGE ALL DATASETS INTO ONE SINGLE DATASET
-        // -----------------------------------------------------------------
-
-        MERGE_DATA (
-            ch_normalised_counts,
-            params.missing_value_imputer,
-            params.outdir
-        )
-
-        ch_all_imputed_counts    = MERGE_DATA.out.all_imputed_counts
-        ch_all_counts            = MERGE_DATA.out.all_counts
-        ch_whole_design          = MERGE_DATA.out.whole_design
-        ch_platform_counts       = MERGE_DATA.out.platform_counts
-
+        ch_normalised_counts          = NORMALISATION.out.normalised_per_platform
+        ch_imputed_counts             = NORMALISATION.out.imputed_per_platform
+        ch_gene_length_file           = NORMALISATION.out.gene_length_file
+/*
         // -----------------------------------------------------------------
         // COMPUTE BASE STATISTICS FOR ALL GENES
         // -----------------------------------------------------------------
 
         GENE_STATISTICS (
-            ch_all_imputed_counts,
-            ch_all_counts,
-            ch_platform_counts,
+            ch_normalised_counts,
             ch_ratio_nulls_per_sample_file,
             params.max_null_ratio_valid_sample
         )
@@ -226,20 +209,21 @@ workflow STABLEEXPRESSION {
         params.multiqc_logo,
         params.multiqc_methods_description,
         params.outdir
-    )
-
+    )Error workflows/stableexpression.nf:213:9: Unexpected input: ':
+*/}
     emit:
     accessions                             = GET_PUBLIC_ACCESSIONS.out.raw_accessions
     downloaded                             = ch_downloaded_datasets
     id_filtered_renamed                    = ch_counts_ids_filtered_renamed
     samples_filtered                       = ch_counts_samples_filtered
-    first_normalisation                    = ch_counts_first_normalisation
-    quantile_normalised                    = ch_normalised_counts
+    normalised                             = ch_normalised_counts
     gene_length_file                       = ch_gene_length_file
-    merged                                 = ch_all_counts
-    imputed                                = ch_all_imputed_counts
-    all_genes_summary                      = REPORTING.out.all_genes_summary
-    multiqc_report                         = REPORTING.out.multiqc_report.toList()
-    dash_app                               = REPORTING.out.dash_app
+    imputed                                = ch_imputed_counts
+    //all_genes_summary                      = REPORTING.out.all_genes_summary
+    //multiqc_report                         = REPORTING.out.multiqc_report.toList()
+    //dash_app                               = REPORTING.out.dash_app
+    all_genes_summary = channel.empty()
+    multiqc_report = channel.empty().toList()
+    dash_app = channel.empty()
 
 }
