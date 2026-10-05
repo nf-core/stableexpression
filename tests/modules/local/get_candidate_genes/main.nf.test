@@ -11,10 +11,13 @@ nextflow_process {
 
             process {
                 """
-                input[0] = file('$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = file('$projectDir/tests/test_data/modules/compute_gene_statistics/output/stats_all_genes.csv', checkIfExists: true)
-                input[2] = "2"
-                input[3] = 3
+                input[0] = [
+                    [section: "section_1", platform: "rnaseq"],
+                    file('$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
+                    file('$projectDir/tests/test_data/modules/compute_gene_statistics/output/stats_all_genes.csv', checkIfExists: true)
+                ]
+                input[1] = "2"
+                input[2] = 3
                 """
             }
         }
@@ -34,10 +37,13 @@ nextflow_process {
 
             process {
                 """
-                input[0] = file('$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = file('$projectDir/tests/test_data/modules/compute_gene_statistics/output/stats_all_genes.csv', checkIfExists: true)
-                input[2] = "50"
-                input[3] = 20
+                input[0] = [
+                    [section: "section_1", platform: "rnaseq"],
+                    file('$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true),
+                    file('$projectDir/tests/test_data/modules/compute_gene_statistics/output/stats_all_genes.csv', checkIfExists: true)
+                ]
+                input[1] = "50"
+                input[2] = 20
                 """
             }
         }

@@ -1,64 +1,64 @@
 {
-    "With Genorm": {
+    "One platform - custom weights": {
         "content": [
             {
                 "0": [
-                    "section_1.stats_with_scores.csv:md5,8daa0824aed5d3f4e00e36498b2a3e3e"
+                    "section_1.stats_with_scores.csv:md5,6c8266ad7d32a5341932f8da900e31e1"
                 ],
                 "1": [
                     [
-                        "COMPUTE_STABILITY_SCORES",
+                        "GLOBAL_STABILITY_SCORE",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "2": [
                     [
-                        "COMPUTE_STABILITY_SCORES",
+                        "GLOBAL_STABILITY_SCORE",
                         "polars",
                         "1.39.2"
                     ]
                 ],
                 "stats_with_stability_scores": [
-                    "section_1.stats_with_scores.csv:md5,8daa0824aed5d3f4e00e36498b2a3e3e"
+                    "section_1.stats_with_scores.csv:md5,6c8266ad7d32a5341932f8da900e31e1"
                 ]
             }
         ],
-        "timestamp": "2026-07-15T23:06:35.605583396",
+        "timestamp": "2026-10-05T17:02:02.837503064",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     },
-    "Without Genorm": {
+    "Two platforms - default weights": {
         "content": [
             {
                 "0": [
-                    "section_1.stats_with_scores.csv:md5,c7e17edfcca92d637e501c3fa0557751"
+                    "section_1.stats_with_scores.csv:md5,1c8a89f6fefd8897aebbb12bcba00b79"
                 ],
                 "1": [
                     [
-                        "COMPUTE_STABILITY_SCORES",
+                        "GLOBAL_STABILITY_SCORE",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "2": [
                     [
-                        "COMPUTE_STABILITY_SCORES",
+                        "GLOBAL_STABILITY_SCORE",
                         "polars",
                         "1.39.2"
                     ]
                 ],
                 "stats_with_stability_scores": [
-                    "section_1.stats_with_scores.csv:md5,c7e17edfcca92d637e501c3fa0557751"
+                    "section_1.stats_with_scores.csv:md5,1c8a89f6fefd8897aebbb12bcba00b79"
                 ]
             }
         ],
-        "timestamp": "2026-07-15T23:06:43.757955102",
+        "timestamp": "2026-10-05T17:36:44.599380227",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     }
 }

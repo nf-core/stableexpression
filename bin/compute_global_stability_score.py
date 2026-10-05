@@ -66,7 +66,7 @@ def get_scores(files: list[Path]) -> pl.DataFrame:
     if len(files) > 1:
         for file in files[1:]:
             new_df = pl.read_csv(file)
-            df = df.join(new_df, on=config.GENE_ID_COLNAME, how="inner")
+            df = df.join(new_df, on=config.GENE_ID_COLNAME, how="full", coalesce=True)
     return df
 
 
@@ -96,8 +96,8 @@ def compute_global_score(
             for col, weighted_col in zip(stability_score_columns, weighted_stability_score_columns)
         ]).with_columns(
             (pl.sum_horizontal(weighted_stability_score_columns) / sum_of_weights).alias('stability_score_weighted_average'),
-            pl.concat_list(stability_score_columns).list.std().alias('stability_score_std'),
-            pl.concat_list(stability_score_columns).list.null_count().alias('nb_null_stability_scores')
+            pl.concat_list(stability_score_columns).list.drop_nulls().list.std().fill_null(0).alias('stability_score_std'),
+            pl.sum_horizontal(pl.col(stability_score_columns).is_null()).alias('nb_null_stability_scores')
         ).with_columns(
             (
                 pl.col('stability_score_weighted_average')

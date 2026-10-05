@@ -1,9 +1,8 @@
 nextflow_process {
 
-    name "Test Process COMPUTE_STABILITY_SCORES"
-    script "modules/local/compute_stability_scores/main.nf"
-    process "COMPUTE_STABILITY_SCORES"
-    tag "stability_scores"
+    name "Test Process PLATFORM_STABILITY_SCORE"
+    script "modules/local/stability_scores/platform/main.nf"
+    process "PLATFORM_STABILITY_SCORE"
 
     test("With Genorm") {
 

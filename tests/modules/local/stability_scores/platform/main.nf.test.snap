@@ -1,81 +1,81 @@
 {
-    "1 file": {
+    "With Genorm": {
         "content": [
             {
                 "0": [
                     [
                         {
-                            "platform": "microarray"
+                            "section": "section_1"
                         },
-                        "microarray.merged.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
+                        "null.section_1.stats_with_scores.csv:md5,a9086de494241f9034cd29d19806f230"
                     ]
                 ],
                 "1": [
                     [
-                        "MERGE_COUNTS",
+                        "PLATFORM_STABILITY_SCORE",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "2": [
                     [
-                        "MERGE_COUNTS",
+                        "PLATFORM_STABILITY_SCORE",
                         "polars",
                         "1.39.2"
                     ]
                 ],
-                "counts": [
+                "stats_with_stability_scores": [
                     [
                         {
-                            "platform": "microarray"
+                            "section": "section_1"
                         },
-                        "microarray.merged.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
+                        "null.section_1.stats_with_scores.csv:md5,a9086de494241f9034cd29d19806f230"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-05T15:26:47.946914328",
+        "timestamp": "2026-10-05T16:48:14.54031925",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
         }
     },
-    "3 files": {
+    "Without Genorm": {
         "content": [
             {
                 "0": [
                     [
                         {
-                            "platform": "rnaseq"
+                            "section": "section_1"
                         },
-                        "rnaseq.merged.parquet:md5,e64b6447f373377c507ae4136228ffbb"
+                        "null.section_1.stats_with_scores.csv:md5,31ed71da7b95e2693b31071e49d5a297"
                     ]
                 ],
                 "1": [
                     [
-                        "MERGE_COUNTS",
+                        "PLATFORM_STABILITY_SCORE",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "2": [
                     [
-                        "MERGE_COUNTS",
+                        "PLATFORM_STABILITY_SCORE",
                         "polars",
                         "1.39.2"
                     ]
                 ],
-                "counts": [
+                "stats_with_stability_scores": [
                     [
                         {
-                            "platform": "rnaseq"
+                            "section": "section_1"
                         },
-                        "rnaseq.merged.parquet:md5,e64b6447f373377c507ae4136228ffbb"
+                        "null.section_1.stats_with_scores.csv:md5,31ed71da7b95e2693b31071e49d5a297"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-05T15:26:39.724703075",
+        "timestamp": "2026-10-05T16:48:22.246314303",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
