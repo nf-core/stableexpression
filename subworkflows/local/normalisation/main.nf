@@ -104,9 +104,9 @@ workflow NORMALISATION {
         // -----------------------------------------------------------------
         // RECOMBAT
         // -----------------------------------------------------------------
-        // the default is the correct batch effects, platform per platform
+        // the default is to correct batch effects, platform per platform
         // first, counts are merged together, platform pre platform
-        // then, a reCombat is applied on the merged dataframe
+        // then, reCombat is applied on the merged dataframe
 
         RECOMBAT( ch_imputed_datasets_with_design )
 

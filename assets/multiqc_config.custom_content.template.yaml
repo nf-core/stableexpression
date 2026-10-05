@@ -13,7 +13,7 @@ custom_data:
         title: "Gene ID"
       rank:
         title: "Rank"
-        description: Rank of the gene based on stability score
+        description: Global rank of the gene based on the global stability score
         scale: "RdYlGn-rev"
         cond_formatting_rules:
           between_fourth_and_tenth:
@@ -30,6 +30,11 @@ custom_data:
             - eq: 2
           first:
             - eq: 1
+      global_stability_score:
+        title: "Global stability score"
+        description: "Global (cross-platform) stability score : the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
       name:
         title: "Gene name"
       description:
@@ -37,69 +42,139 @@ custom_data:
       original_gene_ids:
         title: "Original gene IDs"
         description: Original gene IDs as stated in the input (provided or downloaded) datasets
-      stability_score:
-        title: "Stability score"
-        description: "Final stability score : the lower, the better"
+
+      rank.rnaseq:
+        title: "Rank [RNA-seq]"
+        description: Rank of the gene based on the RNA-seq stability score
+        scale: "RdYlGn-rev"
+        cond_formatting_rules:
+          between_fourth_and_tenth:
+            - eq: 4
+            - eq: 5
+            - eq: 6
+            - eq: 7
+            - eq: 8
+            - eq: 9
+            - eq: 10
+          third:
+            - eq: 3
+          second:
+            - eq: 2
+          first:
+            - eq: 1
+      stability_score.rnaseq:
+        title: "Stability score [RNA-seq]"
+        description: "Stability score corresponding to the RNA-seq platform: the lower, the better"
         format: "{:,.6f}"
         scale: "RdYlGn-rev"
-      normfinder_stability_value_normalised:
-        title: "Normalised Normfinder score"
-        description: Normalised (among candidate genes) stability value as computed by Normfinder
+      rank.microarray:
+        title: "Rank [Microarray]"
+        description: Rank of the gene based on the Microarray stability score
+        scale: "RdYlGn-rev"
+        cond_formatting_rules:
+          between_fourth_and_tenth:
+            - eq: 4
+            - eq: 5
+            - eq: 6
+            - eq: 7
+            - eq: 8
+            - eq: 9
+            - eq: 10
+          third:
+            - eq: 3
+          second:
+            - eq: 2
+          first:
+            - eq: 1
+      stability_score.microarray:
+        title: "Stability score [Microarray]"
+        description: "Stability score corresponding to the Microarray platform: the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+
+      normfinder_stability_value_normalised.rnaseq:
+        title: "Normalised Normfinder score [RNA-seq]"
+        description: Normalised (among candidate genes) stability value as computed by Normfinder [RNA-seq only].
         format: "{:,.6f}"
         scale: "PRGn-rev"
-      genorm_m_measure_normalised:
-        title: "Normalised Genorm score"
-        description: Normalised (among candidate genes) M-measure as computed by Genorm
+      genorm_m_measure_normalised.rnaseq:
+        title: "Normalised Genorm score [RNA-seq]"
+        description: Normalised (among candidate genes) M-measure as computed by Genorm [RNA-seq only].
         format: "{:,.6f}"
         scale: "PRGn-rev"
-      ratio_nulls_in_valid_samples:
-        title: "Ratio null values (valid samples)"
-        description: Ratio of samples in which the gene is not represented, excluding samples with particularly low overall gene count.
-      coefficient_of_variation_normalised:
-        title: "Normalised CV"
-        description: Normalised (among candidate genes) coefficient of variation ( std(expression) / mean(expression) ) across all samples.
+      coefficient_of_variation_normalised.rnaseq:
+        title: "Normalised CV [RNA-seq]"
+        description: Normalised (among candidate genes) coefficient of variation ( std(expression) / mean(expression) ) across all samples [RNA-seq only].
         format: "{:,.6f}"
         scale: "PRGn-rev"
-      robust_coefficient_of_variation_median_normalised:
-        title: "Normalised RCVm"
-        description: Normalised (among candidate genes) robust coefficient of variation on median of the expression across all samples.
+      robust_coefficient_of_variation_median_normalised.rnaseq:
+        title: "Normalised RCVm [RNA-seq]"
+        description: Normalised (among candidate genes) robust coefficient of variation on median of the expression across all samples [RNA-seq only].
         format: "{:,.4f}"
         scale: "PRGn-rev"
-      normfinder_stability_value:
-        title: "Normfinder stability value "
-        description: Stability value as computed by Normfinder
+      ratio_nulls_in_valid_samples.rnaseq:
+        title: "Ratio null values (valid samples) [RNA-seq]"
+        description: Ratio of samples in which the gene is not represented, excluding samples with particularly low overall gene count [RNA-seq only].
+
+      normfinder_stability_value_normalised.microarray:
+        title: "Normalised Normfinder score [Microarray]"
+        description: Normalised (among candidate genes) stability value as computed by Normfinder [Microarray only].
         format: "{:,.6f}"
-      genorm_m_measure:
-        title: "Genorm M-measure"
-        description: M-measure as computed by Genorm
+        scale: "PRGn-rev"
+      genorm_m_measure_normalised.microarray:
+        title: "Normalised Genorm score [Microarray]"
+        description: Normalised (among candidate genes) M-measure as computed by Genorm [Microarray only].
         format: "{:,.6f}"
-      coefficient_of_variation:
-        title: "CV"
-        description: Coefficient of variation ( std(expression) / mean(expression) ) across all samples.
+        scale: "PRGn-rev"
+      coefficient_of_variation_normalised.microarray:
+        title: "Normalised CV [Microarray]"
+        description: Normalised (among candidate genes) coefficient of variation ( std(expression) / mean(expression) ) across all samples [Microarray only].
         format: "{:,.6f}"
-      robust_coefficient_of_variation_median:
-        title: "RCVm"
-        description: Robust coefficient of variation on median of the expression across all samples.
+        scale: "PRGn-rev"
+      robust_coefficient_of_variation_median_normalised.microarray:
+        title: "Normalised RCVm [Microarray]"
+        description: Normalised (among candidate genes) robust coefficient of variation on median of the expression across all samples [Microarray only].
         format: "{:,.4f}"
-      mean:
-        title: "Average"
-        description: Average expression across all samples.
-        format: "{:,.4f}"
-      standard_deviation:
-        title: "Standard deviation"
-        description: Standard deviation of the expression across all samples.
+        scale: "PRGn-rev"
+      ratio_nulls_in_valid_samples.microarray:
+        title: "Ratio null values (valid samples) [Microarray]"
+        description: Ratio of samples in which the gene is not represented, excluding samples with particularly low overall gene count [Microarray only].
+
+      normfinder_stability_value.rnaseq:
+        title: "Normfinder stability value [RNA-seq]"
+        description: Stability value as computed by Normfinder [RNA-seq only].
         format: "{:,.6f}"
-      median:
-        title: "Median"
-        description: Median expression across all samples.
+      genorm_m_measure.rnaseq:
+        title: "Genorm M-measure [RNA-seq]"
+        description: M-measure as computed by Genorm [RNA-seq only].
+        format: "{:,.6f}"
+      coefficient_of_variation.rnaseq:
+        title: "CV [RNA-seq]"
+        description: Coefficient of variation ( std(expression) / mean(expression) ) across all samples [RNA-seq only].
+        format: "{:,.6f}"
+      robust_coefficient_of_variation_median.rnaseq:
+        title: "RCVm [RNA-seq]"
+        description: Robust coefficient of variation on median of the expression across all samples [RNA-seq only].
         format: "{:,.4f}"
-      median_absolute_deviation:
-        title: "MAD"
-        description: Median absolute deviation of the expression across all samples.
+      mean.rnaseq:
+        title: "Average [RNA-seq]"
+        description: Average normalised expression across all samples [RNA-seq only].
         format: "{:,.4f}"
-      expression_level_status:
-        title: "Expression level"
-        description: "Indication about the average gene expression level across all samples (compared to the whole pool of genes). Expression in [0, 0.05]: Very low expression. Expression in [0.05, 0.1]: Low expression. Expression in [0.1, 0.9]: Medium range. Expression in [0.9, 0.95]: High expression. Expression in [0.95, 1]: Very high expression."
+      standard_deviation.rnaseq:
+        title: "Standard deviation [RNA-seq]"
+        description: Standard deviation of the normalised expression across all samples [RNA-seq only].
+        format: "{:,.6f}"
+      median.rnaseq:
+        title: "Median [RNA-seq]"
+        description: Median normalised expression across all samples [RNA-seq only].
+        format: "{:,.4f}"
+      median_absolute_deviation.rnaseq:
+        title: "MAD [RNA-seq]"
+        description: Median absolute deviation of the normalised expression across all samples [RNA-seq only].
+        format: "{:,.4f}"
+      expression_level_status.rnaseq:
+        title: "Expression level [RNA-seq]"
+        description: "Indication about the average normalised expression level across all samples (compared to the whole pool of genes) [RNA-seq only]. Expression in [0, 0.05]: Very low expression. Expression in [0.05, 0.1]: Low expression. Expression in [0.1, 0.9]: Medium range. Expression in [0.9, 0.95]: High expression. Expression in [0.95, 1]: Very high expression."
         cond_formatting_rules:
           very_high:
             - s_eq: "Very high expression"
@@ -111,33 +186,42 @@ custom_data:
             - s_eq: "Low expression"
           very_low:
             - s_eq: "Very low expression"
-      rnaseq_coefficient_of_variation:
-        title: "CV [RNA-seq only]"
-        description: Coefficient of variation ( std(expression) / mean(expression) ) across RNA-Seq samples.
+
+      normfinder_stability_value.microarray:
+        title: "Normfinder stability value [Microarray]"
+        description: Stability value as computed by Normfinder [Microarray only].
+        format: "{:,.6f}"
+      genorm_m_measure.microarray:
+        title: "Genorm M-measure [Microarray]"
+        description: M-measure as computed by Genorm [Microarray only].
+        format: "{:,.6f}"
+      coefficient_of_variation.microarray:
+        title: "CV [Microarray]"
+        description: Coefficient of variation ( std(expression) / mean(expression) ) across all samples [Microarray only].
+        format: "{:,.6f}"
+      robust_coefficient_of_variation_median.microarray:
+        title: "RCVm [Microarray]"
+        description: Robust coefficient of variation on median of the expression across all samples [Microarray only].
         format: "{:,.4f}"
-      rnaseq_robust_coefficient_of_variation_median:
-        title: "RCVm [RNA-seq only]"
-        description: Robust coefficient of variation on median of the expression across RNA-Seq samples.
+      mean.microarray:
+        title: "Average [Microarray]"
+        description: Average normalised expression across all samples [Microarray only].
         format: "{:,.4f}"
-      rnaseq_mean:
-        title: "Average [RNA-seq only]"
-        description: Average expression across RNA-Seq samples.
+      standard_deviation.microarray:
+        title: "Standard deviation [Microarray]"
+        description: Standard deviation of the normalised expression across all samples [Microarray only].
+        format: "{:,.6f}"
+      median.microarray:
+        title: "Median [Microarray]"
+        description: Median normalised expression across all samples [Microarray only].
         format: "{:,.4f}"
-      rnaseq_standard_deviation:
-        title: "Std [RNA-seq only]"
-        description: Standard deviation of the expression across RNA-Seq samples.
+      median_absolute_deviation.microarray:
+        title: "MAD [Microarray]"
+        description: Median absolute deviation of the normalised expression across all samples [Microarray only].
         format: "{:,.4f}"
-      rnaseq_median:
-        title: "Median [RNA-seq only]"
-        description: Median expression across RNA-Seq samples.
-        format: "{:,.4f}"
-      rnaseq_median_absolute_deviation:
-        title: "MAD [RNA-seq only]"
-        description: Median absolute deviation of the expression across RNA-Seq samples.
-        format: "{:,.4f}"
-      rnaseq_expression_level_status:
-        title: "Expression level [RNA-seq only]"
-        description: "Indication about the average gene expression level across RNA-seq samples (compared to the whole pool of genes). Expression in [0, 0.05]: Very low expression. Expression in [0.05, 0.1]: Low expression. Expression in [0.1, 0.9]: Medium range. Expression in [0.9, 0.95]: High expression. Expression in [0.95, 1]: Very high expression."
+      expression_level_status.microarray:
+        title: "Expression level [Microarray]"
+        description: "Indication about the average normalised expression level across all samples (compared to the whole pool of genes) [Microarray only]. Expression in [0, 0.05]: Very low expression. Expression in [0.05, 0.1]: Low expression. Expression in [0.1, 0.9]: Medium range. Expression in [0.9, 0.95]: High expression. Expression in [0.95, 1]: Very high expression."
         cond_formatting_rules:
           very_high:
             - s_eq: "Very high expression"
@@ -149,68 +233,7 @@ custom_data:
             - s_eq: "Low expression"
           very_low:
             - s_eq: "Very low expression"
-      microarray_coefficient_of_variation:
-        title: "CV [Microarray only]"
-        description: Coefficient of variation ( std(expression) / mean(expression) ) across Microarray samples.
-        format: "{:,.4f}"
-      microarray_robust_coefficient_of_variation_median:
-        title: "RCVm [Microarray only]"
-        description: Robust coefficient of variation on median of the expression across Microarray samples.
-        format: "{:,.4f}"
-      microarray_mean:
-        title: "Average [Microarray only]"
-        description: Average expression across Microarray samples.
-        format: "{:,.4f}"
-      microarray_standard_deviation:
-        title: "Std [Microarray only]"
-        description: Standard deviation of the expression across Microarray samples.
-        format: "{:,.4f}"
-      microarray_median:
-        title: "Median [Microarray only]"
-        description: Median expression across Microarray samples.
-        format: "{:,.4f}"
-      microarray_median_absolute_deviation:
-        title: "MAD [Microarray only]"
-        description: Median absolute deviation of the expression across Microarray samples.
-        format: "{:,.4f}"
-      microarray_expression_level_status:
-        title: "Expression level [Microarray only]"
-        description: "Indication about the average gene expression level across Microarray samples (compared to the whole pool of genes). Expression in [0, 0.05]: Very low expression. Expression in [0.05, 0.1]: Low expression. Expression in [0.1, 0.9]: Medium range. Expression in [0.9, 0.95]: High expression. Expression in [0.95, 1]: Very high expression."
-        cond_formatting_rules:
-          very_high:
-            - s_eq: "Very high expression"
-          high:
-            - s_eq: "High expression"
-          medium:
-            - s_eq: "Medium range"
-          low:
-            - s_eq: "Low expression"
-          very_low:
-            - s_eq: "Very low expression"
-      ratio_nulls_in_all_samples:
-        title: "Ratio null values (all samples)"
-        description: Ratio of samples in which the gene is not represented.
-      ratio_zeros:
-        title: "Ratio zero values"
-        description: Ratio of samples in which the gene has a zero value.
-      rnaseq_ratio_nulls_in_all_samples:
-        title: "Ratio null values (all samples) [RNA-seq only]"
-        description: Ratio of RNA-Seq samples in which the gene is not represented.
-      rnaseq_ratio_nulls_in_valid_samples:
-        title: "Ratio null values (valid samples) [RNA-seq only]"
-        description: Ratio of RNA-Seq samples in which the gene is not represented, excluding samples with particularly low overall gene count.
-      rnaseq_ratio_zeros:
-        title: "Ratio zero values [RNA-seq only]"
-        description: Ratio of RNA-Seq samples in which the gene has a zero value.
-      microarray_ratio_nulls_in_all_samples:
-        title: "Ratio null values (all samples) [Microarray only]"
-        description: Ratio of Microarray samples in which the gene is not represented.
-      microarray_ratio_nulls_in_valid_samples:
-        title: "Ratio null values (valid samples) [Microarray only]"
-        description: Ratio of Microarray samples in which the gene is not represented, excluding samples with particularly low overall gene count.
-      microarray_ratio_zeros:
-        title: "Ratio zero values [Microarray only]"
-        description: Ratio of Microarray samples in which the gene has a zero value.
+
 
   expr_distrib_most_stable_genes_template:
     section_name: "Normalised count distributions"

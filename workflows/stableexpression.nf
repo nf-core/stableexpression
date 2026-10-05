@@ -209,10 +209,8 @@ workflow STABLEEXPRESSION {
     normalised                             = ch_normalised_counts
     gene_length_file                       = ch_gene_length_file
     imputed                                = ch_imputed_counts
-    //all_genes_summary                      = REPORTING.out.all_genes_summary
-    //multiqc_report                         = REPORTING.out.multiqc_report.toList()
-    //dash_app                               = REPORTING.out.dash_app
-all_genes_summary = channel.empty()
-multiqc_report = channel.empty().toList()
-dash_app = channel.empty()
+    all_genes_summary                      = REPORTING.out.all_genes_summary
+    multiqc_report                         = REPORTING.out.multiqc_report.toList()
+    dash_app                               = REPORTING.out.dash_app
+
 }
