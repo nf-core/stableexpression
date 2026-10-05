@@ -216,6 +216,38 @@ def get_quantile_intervals(lf: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
+def get_status(quantile_interval: int) -> str:
+    """Return the expression level status of the gene given its quantile interval."""
+    if config.NB_EXPRESSION_QUANTILES - 5 <= quantile_interval:
+        return "Very high expression"
+    elif (
+        config.NB_EXPRESSION_QUANTILES - 10 <= quantile_interval < config.NB_EXPRESSION_QUANTILES - 5
+    ):
+        return "High expression"
+    elif 4 < quantile_interval <= 9:
+        return "Low expression"
+    elif quantile_interval <= 4:
+        return "Very low expression"
+    else:
+        return "Medium range"
+
+
+def add_expression_level_status(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    For each platform, add expression level status to the DataFrame based on the quantile interval.
+    """
+    logger.info("Adding expression level status for each platform")
+    mapping_dict = {
+        quantile_interval: get_status(quantile_interval)
+        for quantile_interval in range(config.NB_EXPRESSION_QUANTILES)
+    }
+    return df.with_columns(
+        pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
+        .replace_strict(mapping_dict)
+        .alias(config.EXPRESSION_LEVEL_STATUS_COLNAME)
+    )
+
+
 def export_data(lf: pl.LazyFrame):
     """Export gene expression data to CSV files."""
     logger.info(f"Exporting statistics for all genes to: {ALL_GENES_RESULT_OUTFILE}")
@@ -256,8 +288,11 @@ def main():
     # adding a column for the frequency of zero values
     stat_lf = compute_ratio_zeros(count_lf, stat_lf)
 
-    # getting quantile intervals
+    # getting expression quantile intervals
     stat_lf = get_quantile_intervals(stat_lf)
+
+    # add expression level based on the quntile of mean expression level, for each gene
+    stat_lf = add_expression_level_status(stat_lf)
 
     # exporting computed data
     export_data(stat_lf)

@@ -23,6 +23,8 @@ workflow STABILITY_SCORING {
     nb_sections
     skip_genorm
     stability_score_weights
+    stability_score_std_penalty_weight
+    stability_score_null_penalty_weight
     outdir
 
     main:
@@ -59,7 +61,7 @@ workflow STABILITY_SCORING {
     // -----------------------------------------------------------------
 
     ch_normfinder_input = ch_candidate_gene_counts.map { meta, counts -> [ meta.platform, meta, counts] }
-                            .join( ch_platform_design.map { meta, design -> [ meta.platform, design ] } )
+                            .combine( ch_platform_design.map { meta, design -> [ meta.platform, design ] }, by: 0 )
                             .map { platform, meta, counts, design -> [ meta, counts, design] }
 
     NORMFINDER( ch_normfinder_input )
@@ -82,7 +84,7 @@ workflow STABILITY_SCORING {
     // -----------------------------------------------------------------
 
     ch_platform_stability_score_input = ch_normfinder_stabilities.map { meta, file -> [ "${meta.platform}_${meta.section}", meta, file] }
-                                        .join( ch_genorm_stability.map { meta, file -> [ "${meta.platform}_${meta.section}", file] } )
+                                        .join( ch_genorm_stability.map { meta, file -> [ "${meta.platform}_${meta.section}", file] }, remainder: true)
                                         .join( ch_section_stats.map { meta, file -> [ "${meta.platform}_${meta.section}", file] } )
                                         .map { key, meta, file1, file2, file3 -> [ meta, file1, file2, file3 ] }
 
@@ -119,11 +121,11 @@ workflow STABILITY_SCORING {
                                         .groupTuple()
                                         .map { section, metas, files -> [ [ section: section ], files ] }
 
-    def lambda = 0.7
     GLOBAL_STABILITY_SCORE(
         ch_global_stability_score_input,
         ch_nb_samples_per_platform_file.first(),
-        lambda
+        stability_score_std_penalty_weight,
+        stability_score_null_penalty_weight
     )
 
     emit:

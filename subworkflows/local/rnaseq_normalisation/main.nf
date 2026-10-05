@@ -7,7 +7,7 @@ include { GETMM_LOG2                                     } from '../../../subwor
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO NORMALISE AND HARMONISE EXPRESSION DATASETS
+    SUBWORKFLOW TO NORMALISE AND HARMONISE RNA-SEQ EXPRESSION DATASETS
 ========================================================================================
 */
 

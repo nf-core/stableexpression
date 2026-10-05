@@ -71,7 +71,7 @@ workflow REPORTING {
                                                 )
 
     AGGREGATE_RESULTS (
-        ch_normalised_counts.map{ meta, file -> file }.collect(sort: true), // as many files as platforms
+        ch_normalised_counts.map{ meta, file, design -> file }.collect(sort: true), // as many files as platforms
         ch_stats_all_genes_with_scores.collect(sort: true).filter{ file -> file != [] }, // as many file as sections; make sure that at least one stat file is present
         ch_target_gene_list,
         ch_whole_gene_metadata.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
@@ -91,7 +91,7 @@ workflow REPORTING {
     if ( !skip_dash_app ) {
 
         DASH_APP(
-            ch_normalised_counts.map{ meta, file -> file }.collect(),
+            ch_normalised_counts.map{ meta, file, design -> file }.collect(),
             ch_whole_design.collect(),
             ch_all_genes_summary.collect()
         )

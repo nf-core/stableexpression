@@ -3,7 +3,7 @@ include { NORMALISATION_EDGER_LOG2 as EDGER_LOG2        } from '../../../modules
 
 /*
 ========================================================================================
-    SUBWORKFLOW TO COMPUTE GeTMM FROM RAW COUNTS
+    SUBWORKFLOW TO COMPUTE GeTMM FROM RNA-SEQ COUNTS
 ========================================================================================
 */
 

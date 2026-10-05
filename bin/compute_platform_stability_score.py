@@ -46,13 +46,16 @@ class StabilityScorer:
         ):
             self.weights[weight_field] = float(weight)
 
-    def linear_normalise(self, data: pl.Series, new_name: str) -> pl.Series:
+    def normalise_with_z_score(self, data: pl.Series, new_name: str) -> pl.Series:
         """
-        Linearly normalise a series
+        Normalised data using their Z-score.
+        Substract the min of z-scores to have only positive values (eg. s - (-2))
+        The minimum scores becomes 0.
         """
-        min_val = data.min()
-        max_val = data.max()
-        return pl.Series(new_name, (data - min_val) / (max_val - min_val))
+        mean = data.mean()
+        std = data.std()
+        s = pl.Series(new_name, (data - mean) / std)
+        return s - s.min()
 
     @staticmethod
     def get_normalised_col(col: str) -> str:
@@ -89,10 +92,11 @@ class StabilityScorer:
             if col not in self.df.columns:
                 continue
             data = candidate_df.select(col).to_series()
-            # for each column present, we perform linear transformation to have values between 0 and 1
+            # for each column present, we perform z-score transformation to have values in a comparable range
+            # and the min z-score is subtracted from each value, so that all values start at 0
             # and put these normalised data in another column suffixed with "_normalised"
             normalised_col = self.get_normalised_col(col)
-            normalised_data[col] = self.linear_normalise(data, new_name=normalised_col)
+            normalised_data[col] = self.normalise_with_z_score(data, new_name=normalised_col)
             # creating a null column with same name
             null_data[col] = pl.Series(normalised_col, [None] * len(non_candidate_df))
             # counting the sum of weights corresponding to the columns present
@@ -230,7 +234,6 @@ def rename_columns_for_platform(scored_df: pl.DataFrame, platform: str) -> pl.Da
         col: f"{col}.{platform}" for col in scored_df.columns
         if col != config.GENE_ID_COLNAME
     })
-
 
 
 def export_data(scored_df: pl.DataFrame):

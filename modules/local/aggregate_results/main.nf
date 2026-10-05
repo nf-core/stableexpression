@@ -10,7 +10,6 @@ process AGGREGATE_RESULTS {
     input:
     path count_file
     path stat_score_files
-    path platform_stat_files, stageAs: "?/*"
     val target_genes
     path metadata_files
     path mapping_files
@@ -33,7 +32,6 @@ process AGGREGATE_RESULTS {
     aggregate_results.py \\
         --counts $count_file \\
         --stats-with-scores $stat_score_files \\
-        --platform-stats $platform_stat_files \\
         --multiqc-config $multiqc_config \\
         $mapping_files_arg \\
         $metadata_files_arg \\

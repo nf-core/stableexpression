@@ -20,10 +20,6 @@ SUMMARY_OUTFILENAME_SUFFIX = "most_stable_genes_summary.csv"
 COUNTS_OUTFILENAME_SUFFIX = "most_stable_genes_transposed_counts.csv"
 CUSTOM_CONTENT_MULTIQC_CONFIG_FILE = "custom_content_multiqc_config.yaml"
 
-# quantile intervals
-NB_EXPRESSION_QUANTILES = 100
-NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS = 25
-
 GENE_SUMMARY_FLOAT_PRECISION = 4
 
 #####################################################
@@ -62,13 +58,6 @@ def parse_args():
         dest="multiqc_config",
         required=True,
         help="MultiQC config file for custom content",
-    )
-    parser.add_argument(
-        "--platform-stats",
-        type=Path,
-        dest="platform_stat_files",
-        nargs="+",
-        help="File containing base statistics for all genes and for all datasets for a specific platform",
     )
     parser.add_argument(
         "--metadata",
@@ -177,50 +166,6 @@ def get_mappings(mapping_files: list[Path]) -> pl.DataFrame | None:
     )
 
 
-def get_status(quantile_interval: int) -> str:
-    """Return the expression level status of the gene given its quantile interval."""
-    if NB_EXPRESSION_QUANTILES - 5 <= quantile_interval:
-        return "Very high expression"
-    elif (
-        NB_EXPRESSION_QUANTILES - 10 <= quantile_interval < NB_EXPRESSION_QUANTILES - 5
-    ):
-        return "High expression"
-    elif 4 < quantile_interval <= 9:
-        return "Low expression"
-    elif quantile_interval <= 4:
-        return "Very low expression"
-    else:
-        return "Medium range"
-
-
-def add_expression_level_status(df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Add expression level status to the DataFrame based on the quantile interval.
-    """
-    logger.info("Adding expression level status")
-    mapping_dict = {
-        quantile_interval: get_status(quantile_interval)
-        for quantile_interval in range(NB_EXPRESSION_QUANTILES)
-    }
-    return df.with_columns(
-        pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
-        .replace_strict(mapping_dict)
-        .alias(config.EXPRESSION_LEVEL_STATUS_COLNAME)
-    )
-
-
-def complement_gene_summary_table(
-    stat_summary_df: pl.DataFrame, *dfs: pl.DataFrame
-) -> pl.DataFrame:
-    """
-    Add various metadata to statistics summary.
-    """
-    # add gene name, description and original gene IDs to statistics summary
-    stat_summary_df = join_data_on_gene_id(stat_summary_df, *dfs)
-    stat_summary_df = add_expression_level_status(stat_summary_df)
-    return stat_summary_df
-
-
 def get_most_stable_genes_counts(
     log_count_df: pl.DataFrame, stat_summary_df: pl.DataFrame
 ) -> pl.DataFrame:
@@ -228,7 +173,7 @@ def get_most_stable_genes_counts(
     Get counts of the most stable genes
     """
     top_genes_with_order = (
-        stat_summary_df.head(NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS)
+        stat_summary_df.head(config.NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS)
         .select(config.GENE_ID_COLNAME)
         .with_row_index("sort_order")
     )
@@ -429,18 +374,8 @@ def main():
 
     # filling dynamically the number of genes to show in box plots
     expr_distrib_dict["description"] = expr_distrib_dict["description"].replace(
-        "NB_GENES", str(NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS)
+        "NB_GENES", str(config.NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS)
     )
-
-    # --------------------------------------------------
-    # Parsing statistics per platform
-    # --------------------------------------------------
-
-    platform_datasets_stat_dfs = [
-        parse_stat_score_file(file)
-        for file in args.platform_stat_files
-        if file is not None
-    ]
 
     # --------------------------------------------------
     # Parsing metadata and mapping files
@@ -463,13 +398,11 @@ def main():
     optional_dfs = [df for df in [metadata_df, mapping_df] if df is not None]
 
     # --------------------------------------------------
-    # Adding metadata, mapping and platform statistics information to gene summary table
+    # Adding metadata, mapping (when available) to gene summary table
     # --------------------------------------------------
 
-    additional_data_dfs = optional_dfs + platform_datasets_stat_dfs
-    all_genes_summary_df = complement_gene_summary_table(
-        stat_score_df, *additional_data_dfs
-    )
+    # add gene name, description and original gene IDs to statistics summary
+    all_genes_summary_df = join_data_on_gene_id(stat_score_df, *optional_dfs)
 
     logger.info(f"Exporting statistics of all genes to: {ALL_GENE_SUMMARY_OUTFILENAME}")
     # sorting values in order to having consistent output
@@ -495,7 +428,7 @@ def main():
         section_df = (
             all_genes_summary_df.filter(pl.col("section") == section)
             .drop("section")
-            .sort(config.STABILITY_SCORE_COLNAME, nulls_last=True, maintain_order=True)
+            .sort(config.GLOBAL_STABILITY_SCORE_COLNAME, nulls_last=True, maintain_order=True)
         )
 
         found_target_genes = []

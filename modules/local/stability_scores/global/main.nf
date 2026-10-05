@@ -11,7 +11,8 @@ process GLOBAL_STABILITY_SCORE {
     input:
     tuple val(meta), path(platform_stats_score_files)
     path nb_samples_per_platform_file
-    val lambda
+    val std_penalty_weight
+    val null_penalty_weight
 
     output:
     path "*.stats_with_scores.csv",                                                                                   emit: stats_with_stability_scores
@@ -23,7 +24,8 @@ process GLOBAL_STABILITY_SCORE {
     compute_global_stability_score.py \\
         --platform-stats-scores "${platform_stats_score_files.join(' ')}" \\
         --nb-samples-per-platform $nb_samples_per_platform_file \\
-        --lambda $lambda
+        --std-penalty-weight $std_penalty_weight \\
+        --null-penalty-weight $null_penalty_weight
 
     mv stats_with_scores.csv ${meta.section}.stats_with_scores.csv
     """

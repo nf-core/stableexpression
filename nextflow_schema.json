@@ -337,10 +337,10 @@
                 },
                 "nb_candidates_per_section": {
                     "type": "integer",
-                    "description": "Number of candidate genes to keep for stability scoring in each section",
+                    "description": "Number of candidate genes to keep for stability scoring in each section and each platform",
                     "fa_icon": "fas fa-sort-numeric-down",
                     "minimum": 1,
-                    "help_text": "Number of candidate genes to keep in each section for stability scoring. Within each section, the top candidates are selected based on the descriptor chosen with `--candidate_selection_descriptor`.",
+                    "help_text": "Number of candidate genes to keep in each section for stability scoring.",
                     "default": 250
                 },
                 "skip_genorm": {
@@ -351,11 +351,27 @@
                 },
                 "stability_score_weights": {
                     "type": "string",
-                    "description": "Weights for stability score calculation",
+                    "description": "Weights for the platform-specific stability score calculation",
                     "fa_icon": "fas fa-balance-scale",
                     "help_text": "Weights for Normfinder / Genorm / Coefficient of Variation (CV) / Robust Coefficient of Variation on Median (RCVM) respectively. Must be a comma-separated string. Example: 0.5,0.5,0.0,0",
                     "pattern": "^\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?,\\d+(\\.\\d+)?$",
                     "default": "0.25,0.25,0.25,0.25"
+                },
+                "stability_score_std_penalty_weight": {
+                    "type": "number",
+                    "description": "Penalty weight on variability among platform stability scores, for the computation of the global stability score",
+                    "fa_icon": "fas fa-balance-scale",
+                    "minimum": 0,
+                    "default": 0.7,
+                    "help_text": "For the computation of the global, cross-platform score, a penalty is used against genes having a low average yet high standard deviation of stability scores."
+                },
+                "stability_score_null_penalty_weight": {
+                    "type": "number",
+                    "description": "Penalty weight on the number of null platform stability scores, for the computation of the global stability score",
+                    "fa_icon": "fas fa-balance-scale",
+                    "minimum": 0,
+                    "default": 3,
+                    "help_text": "For the computation of the global, cross-platform score, a penalty is used against genes not belonging to candidate genes (and thus not having a stability score) in one or multiple platforms."
                 }
             }
         },

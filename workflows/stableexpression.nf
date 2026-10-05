@@ -12,7 +12,7 @@ include { NORMALISATION                          } from '../subworkflows/local/n
 include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
 include { GENE_STATISTICS                        } from '../subworkflows/local/gene_statistics'
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
-//include { REPORTING                              } from '../subworkflows/local/reporting'
+include { REPORTING                              } from '../subworkflows/local/reporting'
 
 include { checkCounts                            } from '../subworkflows/local/utils_nfcore_stableexpression_pipeline'
 
@@ -174,6 +174,8 @@ workflow STABLEEXPRESSION {
             params.nb_sections,
             params.skip_genorm,
             params.stability_score_weights,
+            params.stability_score_std_penalty_weight,
+            params.stability_score_null_penalty_weight,
             params.outdir
         )
 
@@ -184,7 +186,7 @@ workflow STABLEEXPRESSION {
     // -----------------------------------------------------------------
     // REPORTING
     // -----------------------------------------------------------------
-/*
+
     REPORTING(
         ch_normalised_counts,
         ch_stats_all_genes_with_scores,
@@ -198,7 +200,7 @@ workflow STABLEEXPRESSION {
         params.multiqc_methods_description,
         params.outdir
     )
-*/
+
     emit:
     accessions                             = GET_PUBLIC_ACCESSIONS.out.raw_accessions
     downloaded                             = ch_downloaded_datasets

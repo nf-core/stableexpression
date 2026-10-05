@@ -42,13 +42,20 @@ def parse_args():
         required=True,
         help="File containing the number of samples per platform",
     )
-
     parser.add_argument(
-        "--lambda",
-        dest="lambda_",
+        "--std-penalty-weight",
+        dest="std_penalty_weight",
         type=float,
         required=True,
-        help="Weight parameter",
+        help="Weight parameter for the variance penalty",
+    )
+    parser.add_argument(
+        "--null-penalty-weight",
+        dest="null_penalty_weight",
+        type=float,
+        required=True,
+        default = 3,
+        help="Weight parameter for the null values penalty",
     )
     return parser.parse_args()
 
@@ -63,7 +70,12 @@ def get_scores(files: list[Path]) -> pl.DataFrame:
     return df
 
 
-def compute_global_score(df: pl.DataFrame, platform_sizes: dict[str, int], lambda_: float) -> pl.DataFrame:
+def compute_global_score(
+    df: pl.DataFrame,
+    platform_sizes: dict[str, int],
+    std_penalty_weight: float,
+    null_penalty_weight: float
+) -> pl.DataFrame:
     """
     Compute the global stability score by weighting stability scores from multiple platforms.
     """
@@ -72,22 +84,38 @@ def compute_global_score(df: pl.DataFrame, platform_sizes: dict[str, int], lambd
     if len(stability_score_columns) == 1: # if only one platform, we just take the only score
         return df.with_columns(pl.col(stability_score_columns[0]).alias(config.GLOBAL_STABILITY_SCORE_COLNAME))
 
-    stability_score_weighted_columns = [f"{col}.weighted" for col in stability_score_columns]
+    weighted_stability_score_columns = [f"{col}.weighted" for col in stability_score_columns]
     sum_of_weights = sum([sqrt(size) for size in platform_sizes.values()])
 
-    # multiplying each stability score column by the square root of the nb of samples in the associated platform
-    # compute the average of these weighted scores
-    # mitigating this sum by a penalty term, which is the max
+    # 1 - multiplying each stability score column by the square root of the nb of samples in the associated platform
+    # 2 - compute the average of these weighted scores
+    # 3 - mitigating this sum by a penalty term, which is the std of all platform stability scores, multiplied by alpha
     return (
         df.with_columns([
             (pl.col(col) * sqrt(platform_sizes[col.split('.')[-1]])).alias(weighted_col)
-            for col, weighted_col in zip(stability_score_columns, stability_score_weighted_columns)
+            for col, weighted_col in zip(stability_score_columns, weighted_stability_score_columns)
         ]).with_columns(
-            (pl.sum_horizontal(pl.col(stability_score_weighted_columns) / sum_of_weights)).alias('stability_score_weighted_average'),
-            pl.max_horizontal(pl.col(stability_score_columns)).alias('stability_score_max')
+            (pl.sum_horizontal(weighted_stability_score_columns) / sum_of_weights).alias('stability_score_weighted_average'),
+            pl.concat_list(stability_score_columns).list.std().alias('stability_score_std'),
+            pl.concat_list(stability_score_columns).list.null_count().alias('nb_null_stability_scores')
         ).with_columns(
-            (pl.col('stability_score_weighted_average') * (1 - lambda_) + pl.col('stability_score_max') * lambda_).alias(config.GLOBAL_STABILITY_SCORE_COLNAME)
+            (
+                pl.col('stability_score_weighted_average')
+                + std_penalty_weight * pl.col('stability_score_std')
+                + null_penalty_weight * pl.col('nb_null_stability_scores')
+            ).alias(config.GLOBAL_STABILITY_SCORE_COLNAME)
         )
+    )
+
+
+def add_global_rank(df: pl.DataFrame) -> pl.DataFrame:
+    return (
+        df.sort(
+            config.GLOBAL_STABILITY_SCORE_COLNAME, descending=False, nulls_last=True
+        )
+        .with_row_index(name="index")
+        .with_columns((pl.col("index") + 1).alias(config.RANK_COLNAME))
+        .drop("index")
     )
 
 
@@ -113,7 +141,9 @@ def main():
     platform_size_df = pl.read_csv(args.platform_size_file)
     platform_sizes = dict(zip(platform_size_df["platform"], platform_size_df["nb_samples"]))
 
-    df = compute_global_score(df, platform_sizes, args.lambda_)
+    df = compute_global_score(df, platform_sizes, args.std_penalty_weight, args.null_penalty_weight)
+
+    df = add_global_rank(df)
 
     # exporting computed data
     export_data(df)
