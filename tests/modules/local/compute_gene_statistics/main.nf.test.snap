@@ -1,69 +1,5 @@
 {
-    "No imputed values": {
-        "content": [
-            {
-                "0": [
-                    
-                ],
-                "1": [
-                    
-                ],
-                "2": [
-                    
-                ],
-                "stats": [
-                    
-                ]
-            }
-        ],
-        "timestamp": "2026-10-05T15:14:46.495448888",
-        "meta": {
-            "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
-        }
-    },
-    "No platform": {
-        "content": [
-            {
-                "0": [
-                    [
-                        {
-                            "platform": "all"
-                        },
-                        "stats_all_genes.csv:md5,efea875427a4d3f34ac28d8a1c17f96f"
-                    ]
-                ],
-                "1": [
-                    [
-                        "COMPUTE_GENE_STATISTICS",
-                        "python",
-                        "3.14.3"
-                    ]
-                ],
-                "2": [
-                    [
-                        "COMPUTE_GENE_STATISTICS",
-                        "polars",
-                        "1.39.2"
-                    ]
-                ],
-                "stats": [
-                    [
-                        {
-                            "platform": "all"
-                        },
-                        "stats_all_genes.csv:md5,efea875427a4d3f34ac28d8a1c17f96f"
-                    ]
-                ]
-            }
-        ],
-        "timestamp": "2026-10-05T15:14:24.303656568",
-        "meta": {
-            "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
-        }
-    },
-    "RNAseq platform": {
+    "With imputed values": {
         "content": [
             {
                 "0": [
@@ -71,7 +7,7 @@
                         {
                             "platform": "rnaseq"
                         },
-                        "stats_all_genes.csv:md5,efea875427a4d3f34ac28d8a1c17f96f"
+                        "stats_all_genes.csv:md5,2aa9e3a354a9c53fcaea918cafdf3844"
                     ]
                 ],
                 "1": [
@@ -93,12 +29,12 @@
                         {
                             "platform": "rnaseq"
                         },
-                        "stats_all_genes.csv:md5,efea875427a4d3f34ac28d8a1c17f96f"
+                        "stats_all_genes.csv:md5,2aa9e3a354a9c53fcaea918cafdf3844"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-05T15:14:32.501493182",
+        "timestamp": "2026-10-05T22:33:05.562078851",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
