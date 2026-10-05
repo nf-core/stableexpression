@@ -26,8 +26,6 @@ from sklearn.cluster import MiniBatchKMeans
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-OUTFILE_SUFFIX = ".imputed.parquet"
-
 IMPUTERS = ["knn", "iterative", "gene_mean"]
 
 MAX_ITER = 10
@@ -58,6 +56,9 @@ def parse_args():
         required=True,
         dest="imputer",
         help="Imputer to use",
+    )
+    parser.add_argument(
+        "--out", type=Path, dest="outfile", required=True, help="Output file"
     )
     return parser.parse_args()
 
@@ -260,8 +261,7 @@ def main():
     else:
         raise ValueError(f"Unknown imputer: {args.imputer}")
 
-    outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
-    export_parquet(df, outfilename)
+    export_parquet(df, args.outfile)
 
     logger.info("Done")
 

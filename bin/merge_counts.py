@@ -16,8 +16,6 @@ import polars as pl
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-ALL_COUNTS_PARQUET_OUTFILENAME = "all_counts.parquet"
-
 
 #####################################################
 #####################################################
@@ -30,6 +28,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Merge count datasets")
     parser.add_argument(
         "--counts", type=str, dest="count_files", required=True, help="Count files"
+    )
+    parser.add_argument(
+        "--out", type=Path, dest="outfile", required=True, help="Output file"
     )
     return parser.parse_args()
 
@@ -159,10 +160,10 @@ def clean_counts(lf: pl.LazyFrame):
 #####################################################
 
 
-def export_data(lf: pl.LazyFrame):
+def export_data(lf: pl.LazyFrame, outfile: Path):
     """Export gene expression data."""
-    logger.info(f"Exporting normalised counts to: {ALL_COUNTS_PARQUET_OUTFILENAME}")
-    lf.sink_parquet(ALL_COUNTS_PARQUET_OUTFILENAME)
+    logger.info(f"Exporting normalised counts to: {outfile}")
+    lf.sink_parquet(outfile)
 
 
 #####################################################
@@ -199,7 +200,7 @@ def main():
     merged_lf = clean_counts(merged_lf)
 
     # exporting merged data in streaming mode
-    export_data(merged_lf)
+    export_data(merged_lf, args.outfile)
 
     # cleaning up tmp files
     for tmp_file in tmp_files:

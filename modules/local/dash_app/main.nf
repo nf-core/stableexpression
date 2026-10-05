@@ -19,7 +19,6 @@ process DASH_APP {
 
     input:
     path all_counts
-    path whole_design
     path all_genes_summary
 
     output:
@@ -33,7 +32,7 @@ process DASH_APP {
     export OMP_NUM_THREADS=${task.cpus}
 
     mkdir -p dash_app/data
-    mv ${all_counts} ${whole_design} ${all_genes_summary} dash_app/data
+    mv ${all_counts} ${all_genes_summary} dash_app/data
     cp -r ${moduleDir}/app/* dash_app/
 
     # as of Nextflow version 25.04.8, having these versions sent to the versions topic channel

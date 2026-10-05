@@ -1,6 +1,6 @@
 # Author: Michael F. Adamer (https://github.com/BorgwardtLab/reComBat)
 # Slightly modified by Olivier Coen (only cosmetic changes + typing)
-# Only the parametric part, without X nor C was kept
+# Only the parametric part was kept, without X nor C
 
 import logging
 import numpy as np
@@ -77,6 +77,7 @@ class ReComBat:
         self.fit(data, batches)
         return self.transform(data, batches)
 
+
     @staticmethod
     def get_dummies(batches: np.ndarray) -> np.ndarray:
         categories, codes = np.unique(batches.astype(str), return_inverse=True)
@@ -103,13 +104,9 @@ class ReComBat:
         -------
         None
         """
-
-        logger.info("Starting to fot reComBat.")
+        logger.info("Starting to fit reComBat.")
         if np.isnan(data).any().any():
             raise ValueError("The data contains NaN values.")
-
-        if np.isnan(batches).any().any():
-            raise ValueError("The batches contain NaN values.")
 
         if len(np.unique(batches)) == 1:
             raise ValueError("There should be at least two batches in the dataset.")

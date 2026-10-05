@@ -1,4 +1,5 @@
 include { AGGREGATE_RESULTS                      } from '../../../modules/local/aggregate_results'
+include { MERGE_COUNTS                           } from '../../../modules/local/merge_counts'
 include { DASH_APP                               } from '../../../modules/local/dash_app'
 include { COLLECT_STATISTICS                     } from '../../../modules/local/collect_statistics'
 include { MULTIQC                                } from '../../../modules/nf-core/multiqc'
@@ -18,7 +19,7 @@ include { paramsSummaryMap                       } from 'plugin/nf-schema'
 workflow REPORTING {
 
     take:
-    ch_normalised_counts // [ meta, counts, design ]
+    ch_normalised_counts_with_design // [ meta, counts, design ]
     ch_stats_all_genes_with_scores
     ch_whole_gene_metadata
     ch_whole_gene_id_mapping
@@ -35,22 +36,7 @@ workflow REPORTING {
     ch_versions = channel.empty()
     ch_dash_app = channel.empty()
 
-    // -----------------------------------------------------------------
-    // WRITING DESIGN FOR ALL PLATFORMS TOGETHER
-    // -----------------------------------------------------------------
-
-    ch_whole_design = ch_normalised_counts
-                        .map { meta, counts, design -> design }
-                        .splitCsv( header: true )
-                        .collectFile(
-                            name: 'whole_design.csv',
-                            seed: "batch,condition,sample",
-                            newLine: true,
-                            sort: true,
-                            storeDir: "${outdir}/design/"
-                        ) {
-                             item -> "${item.batch},${item.condition},${item.sample}"
-                        }
+    ch_sorted_normalised_counts = ch_normalised_counts_with_design.map { meta, counts, design -> counts }.collect(sort: true)
 
     // -----------------------------------------------------------------
     // AGGREGATE ALL RESULTS FOR MULTIQC
@@ -71,7 +57,7 @@ workflow REPORTING {
                                                 )
 
     AGGREGATE_RESULTS (
-        ch_normalised_counts.map{ meta, file, design -> file }.collect(sort: true), // as many files as platforms
+        ch_sorted_normalised_counts, // as many files as platforms
         ch_stats_all_genes_with_scores.collect(sort: true).filter{ file -> file != [] }, // as many file as sections; make sure that at least one stat file is present
         ch_target_gene_list,
         ch_whole_gene_metadata.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
@@ -90,9 +76,11 @@ workflow REPORTING {
 
     if ( !skip_dash_app ) {
 
+        MERGE_COUNTS(
+            ch_sorted_normalised_counts.map { files -> [ [ platform: 'all'], files ] }
+        )
         DASH_APP(
-            ch_normalised_counts.map{ meta, file, design -> file }.collect(),
-            ch_whole_design.collect(),
+            MERGE_COUNTS.out.counts.map { meta, file -> file }.collect(),
             ch_all_genes_summary.collect()
         )
         ch_dash_app        = DASH_APP.out.app

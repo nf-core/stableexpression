@@ -24,7 +24,8 @@ process IMPUTE_MISSING_VALUES {
     """
     impute_missing_values.py \\
         --counts $count_file \\
-        --imputer $missing_value_imputer
+        --imputer $missing_value_imputer \\
+        --out ${meta.platform}.imputed.parquet
     """
 
     stub:

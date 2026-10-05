@@ -125,6 +125,7 @@ def main():
 
         gene_ids = df.select(config.GENE_ID_COLNAME)
         df = df.drop(config.GENE_ID_COLNAME)
+
         kwargs = {
             'data': df.to_numpy().T,
             'batches': batch_series.to_numpy()
