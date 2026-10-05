@@ -58,7 +58,7 @@ nextflow_workflow {
                             dataset: "rnaseq_raw",
                             platform: "rnaseq"
                         ],
-                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.parquet', checkIfExists: true )
                     ],
                     [
                         [
@@ -67,7 +67,7 @@ nextflow_workflow {
                             dataset: "microarray_normalised",
                             platform: "microarray"
                         ],
-                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.parquet', checkIfExists: true )
                     ]
                 )
                 input[1] = "solanum_tuberosum"
@@ -106,7 +106,7 @@ nextflow_workflow {
                             dataset: "rnaseq_raw",
                             platform: "rnaseq"
                         ],
-                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.parquet', checkIfExists: true )
                     ],
                     [
                         [
@@ -115,7 +115,7 @@ nextflow_workflow {
                             dataset: "microarray_normalised",
                             platform: "microarray"
                         ],
-                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.parquet', checkIfExists: true )
                     ]
                 )
                 input[1] = "solanum_tuberosum"
@@ -154,7 +154,7 @@ nextflow_workflow {
                             dataset: "microarray_normalised",
                             platform: "microarray"
                         ],
-                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.csv', checkIfExists: true )
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.parquet', checkIfExists: true )
                     ]
                 )
                 input[1] = "solanum_tuberosum"
