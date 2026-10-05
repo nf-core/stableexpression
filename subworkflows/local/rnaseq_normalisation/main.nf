@@ -30,6 +30,7 @@ workflow RNASEQ_NORMALISATION {
             normalised: meta.normalised == true
         }
 
+    ch_annotation       = channel.empty()
     ch_gene_length_file = channel.empty()
 
     if ( !skip_gene_length_normalisation  ) {
@@ -54,6 +55,7 @@ workflow RNASEQ_NORMALISATION {
                 ch_rnaseq_datasets.collect() // used to trigger this subworkflow only if RNA-seq data are present
             )
             ch_gene_length_file = GET_TRANSCRIPT_LENGTHS.out.csv
+            ch_annotation       = GET_TRANSCRIPT_LENGTHS.out.annotation
 
         }
 
@@ -100,6 +102,7 @@ workflow RNASEQ_NORMALISATION {
 
     emit:
     normalised          = ch_normalised_rnaseq_datasets
+    annotation          = ch_annotation
     gene_length_file    = ch_gene_length_file
 
 }

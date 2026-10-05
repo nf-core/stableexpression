@@ -6,7 +6,7 @@ nextflow_workflow {
     tag "subworkflow_normalisation"
     tag "subworkflow"
 
-    test("GeTMM") {
+    test("GeTMM - KNN imputation") {
 
         when {
             workflow {
@@ -25,11 +25,13 @@ nextflow_workflow {
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = false
-                input[4] = false
-                input[5] = "uniform"
-                input[6] = null
+                input[4] = 'knn'
+                input[5] = false
+                input[6] = "uniform"
                 input[7] = null
                 input[8] = null
+                input[9] = null
+                input[10] ="$outputDir"
                 """
             }
         }
@@ -43,7 +45,7 @@ nextflow_workflow {
 
     }
 
-    test("GeTMM + TPM - skip quantile normalisation") {
+    test("Quantile normalisation - Iterative imputation") {
 
         when {
             workflow {
@@ -71,11 +73,13 @@ nextflow_workflow {
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = false
-                input[4] = true
-                input[5] = "uniform"
-                input[6] = null
+                input[4] = 'iterative'
+                input[5] = true
+                input[6] = "uniform"
                 input[7] = null
                 input[8] = null
+                input[9] = null
+                input[10] ="$outputDir"
                 """
             }
         }
@@ -89,7 +93,7 @@ nextflow_workflow {
 
     }
 
-    test("CPM Normalisation - Quantile normalisation to normal distribution") {
+    test("No gene length normalisation") {
 
         when {
             workflow {
@@ -117,11 +121,13 @@ nextflow_workflow {
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = true
-                input[4] = false
-                input[5] = "normal"
-                input[6] = null
+                input[4] = 'knn'
+                input[5] = false
+                input[6] = "uniform"
                 input[7] = null
                 input[8] = null
+                input[9] = null
+                input[10] ="$outputDir"
                 """
             }
         }
@@ -135,7 +141,7 @@ nextflow_workflow {
 
     }
 
-    test("No rnaseq normalisation") {
+    test("Microarray only - quantile normalisation to normal distribution") {
 
         when {
             workflow {
@@ -153,11 +159,14 @@ nextflow_workflow {
                 )
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
-                input[3] = "getmm"
-                input[5] = "uniform"
-                input[6] = null
+                input[3] = false
+                input[4] = 'knn'
+                input[5] = true
+                input[6] = "normal"
                 input[7] = null
                 input[8] = null
+                input[9] = null
+                input[10] ="$outputDir"
                 """
             }
         }

@@ -158,6 +158,8 @@ workflow STABLEEXPRESSION {
         ch_normalised_counts          = NORMALISATION.out.normalised
         ch_imputed_counts             = NORMALISATION.out.imputed
         ch_non_imputed_counts         = NORMALISATION.out.non_imputed
+        ch_rnaseq_normalised          = NORMALISATION.out.rnaseq_normalised
+        ch_annotation                 = NORMALISATION.out.annotation
         ch_gene_length_file           = NORMALISATION.out.gene_length_file
 
         // -----------------------------------------------------------------
@@ -206,9 +208,11 @@ workflow STABLEEXPRESSION {
     downloaded                             = ch_downloaded_datasets
     id_filtered_renamed                    = ch_counts_ids_filtered_renamed
     samples_filtered                       = ch_counts_samples_filtered
-    normalised                             = ch_normalised_counts
+    rnaseq_normalised                      = ch_rnaseq_normalised
+    annotation                             = ch_annotation
     gene_length_file                       = ch_gene_length_file
     imputed                                = ch_imputed_counts
+    corrected                              = ch_normalised_counts
     all_genes_summary                      = REPORTING.out.all_genes_summary
     multiqc_report                         = REPORTING.out.multiqc_report.toList()
     dash_app                               = REPORTING.out.dash_app

@@ -504,5 +504,5 @@ def mergeDesign(ch_datasets, output_dir, filename) {
 def getOutputFolder(meta, subfolder) {
     def normalised_status = meta.normalised ? "normalised" : "raw"
     def subfoldername = subfolder ? "${subfolder}/" : ""
-    return "datasets/${meta.platform}/${normalised_status}/${meta.dataset}/${subfoldername}"
+    return "individual_datasets/${meta.platform}/${normalised_status}/${meta.dataset}/${subfoldername}"
 }

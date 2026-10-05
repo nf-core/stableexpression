@@ -52,6 +52,7 @@ workflow NORMALISATION {
         gene_length_file
     )
     ch_normalised_rnaseq_datasets = RNASEQ.out.normalised
+    ch_annotation                 = RNASEQ.out.annotation
     ch_gene_length_file           = RNASEQ.out.gene_length_file
 
     // -----------------------------------------------------------------
@@ -189,9 +190,11 @@ workflow NORMALISATION {
 
 
     emit:
-    normalised       = ch_merged_counts_with_design
-    imputed          = ch_imputed_datasets
-    non_imputed      = ch_counts_merged_by_platform
-    gene_length_file = ch_gene_length_file
+    normalised        = ch_merged_counts_with_design
+    imputed           = ch_imputed_datasets
+    non_imputed       = ch_counts_merged_by_platform
+    rnaseq_normalised = ch_normalised_rnaseq_datasets
+    gene_length_file  = ch_gene_length_file
+    annotation        = ch_annotation
 
 }
