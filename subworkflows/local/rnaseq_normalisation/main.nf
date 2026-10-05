@@ -1,6 +1,6 @@
-include { NORMALISATION_CPM_LOG2 as CPM_LOG2             } from '../../../modules/local/normalisation/cpm_log2'
 include { NORMALISATION_TPM_LOG2 as TPM_LOG2             } from '../../../modules/local/normalisation/tpm_log2'
 include { QUANTILE_NORMALISATION                         } from '../../../modules/local/normalisation/quantile'
+include { NORMALISATION_EDGER_LOG2 as EDGER_LOG2        } from '../../../modules/local/normalisation/edger_log2'
 
 include { GET_TRANSCRIPT_LENGTHS                         } from '../../../subworkflows/local/get_transcript_lengths'
 include { GETMM_LOG2                                     } from '../../../subworkflows/local/getmm_log2'
@@ -24,17 +24,13 @@ workflow RNASEQ_NORMALISATION {
 
     main:
 
-    ch_gene_length_file = channel.empty()
-
-    // ------------------------------------------------------------------------------------
-    // AT THIS POINT, ONLY ONE BRANCH (RAW OR NORMALISED) HAS ELEMENTS
-    // ------------------------------------------------------------------------------------
-
     ch_branched_rnaseq_datasets = ch_rnaseq_datasets.branch {
         meta, file ->
             raw: meta.normalised == false
             normalised: meta.normalised == true
         }
+
+    ch_gene_length_file = channel.empty()
 
     if ( !skip_gene_length_normalisation  ) {
 
@@ -62,7 +58,7 @@ workflow RNASEQ_NORMALISATION {
         }
 
         // ------------------------------------------------------------------------------------
-        // NORMALISATION OR RAW COUNT DATASETS
+        // NORMALISATION OR RAW COUNT DATASETS USING GENE LENGTH
         // ------------------------------------------------------------------------------------
 
         // normalisation on raw counts (preferred option)
@@ -71,22 +67,35 @@ workflow RNASEQ_NORMALISATION {
             ch_gene_length_file
         )
 
-        // ------------------------------------------------------------------------------------
-        // RE-NORMALISATION OR ALREADY NORMALISED COUNT DATASETS
-        // ------------------------------------------------------------------------------------
-
-        // if some provided counts are already normalised, use TPM instead
-        TPM_LOG2( ch_branched_rnaseq_datasets.normalised )
-
-        ch_normalised_rnaseq_datasets = GETMM_LOG2.out.counts.mix( TPM_LOG2.out.counts )
+        ch_normalised_rnaseq_raw_datasets = GETMM_LOG2.out.counts
 
     } else {
 
-        CPM_LOG2( ch_rnaseq_datasets )
-        ch_normalised_rnaseq_datasets = CPM_LOG2.out.counts
+        // ------------------------------------------------------------------------------------
+        // NORMALISATION OR RAW COUNT DATASETS WITHOUT GENE LENGTH
+        // THIS INTRODUCES A BIAS DUE TO GENE LENGTH, WHICH WILL HAVE AN IMPACT ON THE EXPRESSION LEVEL OF EACH GENE
+        // HOWEVER, IT SHOULD NOT HAVE A MAJOR IMPACT ON STABILITY ASSESSMENT
+        // ------------------------------------------------------------------------------------
+
+        EDGER_LOG2( ch_branched_rnaseq_datasets.raw )
+
+        ch_normalised_rnaseq_raw_datasets = EDGER_LOG2.out.counts
 
     }
 
+    // ------------------------------------------------------------------------------------
+    // DATASETS ALREADY NORMALISED ARE MAPPED TO TPM (WHEN POSSIBLE)
+    // AND LOG2 + 1 IS COMPUTED ON THEM
+    // ------------------------------------------------------------------------------------
+
+    // if some provided counts are already normalised, use TPM instead
+    TPM_LOG2( ch_branched_rnaseq_datasets.normalised )
+
+    // ------------------------------------------------------------------------------------
+    // PUTTING ALL RNASEQ DATASETS TOGETHER
+    // ------------------------------------------------------------------------------------
+
+    ch_normalised_rnaseq_datasets = ch_normalised_rnaseq_raw_datasets.mix( TPM_LOG2.out.counts )
 
 
     emit:

@@ -1,6 +1,6 @@
 process NORMFINDER   {
 
-    tag "${meta.platform} :: {meta.section}"
+    tag "${meta.platform} :: ${meta.section}"
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
