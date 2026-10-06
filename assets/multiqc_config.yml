@@ -31,3 +31,127 @@ table_cond_formatting_colours:
 #violin_downsample_after: 10000
 
 log_filesize_limit: 10000000000 # 10GB
+
+custom_data:
+  eatlas_selected_experiments_metadata:
+    section_name: "Selected"
+    parent_id: eatlas
+    parent_name: "Expression Atlas datasets"
+    parent_description: "Information about the Expression Atlas datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    description: Metadata of selected Expression Atlas datasets corresponding to the provided species (and optionally the provided keywords)
+    plot_type: "table"
+
+  eatlas_all_experiments_metadata:
+    section_name: "All datasets"
+    parent_id: eatlas
+    parent_name: "Expression Atlas datasets"
+    parent_description: "Information about the Expression Atlas datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    description: Metadata of all Expression Atlas datasets corresponding to the provided species
+    plot_type: "table"
+
+  eatlas_failure_reasons:
+    section_name: "Failure reasons"
+    parent_id: eatlas
+    parent_name: "Expression Atlas datasets"
+    parent_description: "Information about the Expression Atlas datasets processed in the analysis"
+    file_format: "csv"
+    no_violin: true
+    description: Reasons of failure during download of Expression Atlas datasets
+    plot_type: "table"
+
+  eatlas_warning_reasons:
+    section_name: "Warnings"
+    parent_id: eatlas
+    parent_name: "Expression Atlas datasets"
+    parent_description: "Information about the Expression Atlas datasets processed in the analysis"
+    file_format: "csv"
+    no_violin: true
+    description: Warnings during download of Expression Atlas datasets
+    plot_type: "table"
+
+  geo_selected_experiments_metadata:
+    section_name: "Selected"
+    parent_id: geo
+    parent_name: "GEO dataset metadata"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    description: Metadata of selected GEO datasets corresponding to the provided species (and optionally the provided keywords)
+    plot_type: "table"
+
+  geo_all_experiments_metadata:
+    section_name: "All datasets"
+    parent_id: geo
+    parent_name: "GEO datasets"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    description: Metadata of all GEO datasets corresponding to the provided species
+    plot_type: "table"
+
+  geo_rejected_experiments_metadata:
+    section_name: "Rejected GEO datasets"
+    parent_id: geo
+    parent_name: "GEO datasets"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    description: Metadata of all GEO datasets which were rejected
+    plot_type: "table"
+
+  geo_failure_reasons:
+    section_name: "Failure reasons"
+    parent_id: geo
+    parent_name: "GEO datasets"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "csv"
+    no_violin: true
+    description: Reasons of failure during download of GEO datasets
+    plot_type: "table"
+
+  geo_warning_reasons:
+    section_name: "Warnings"
+    parent_id: geo
+    parent_name: "GEO datasets"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "csv"
+    no_violin: true
+    description: Warnings during download of GEO datasets
+    plot_type: "table"
+
+
+custom_content:
+  order:
+    - eatlas_selected_experiments_metadata
+    - eatlas_all_experiments_metadata
+    - eatlas_failure_reasons
+    - eatlas_warning_reasons
+    - geo_selected_experiments_metadata
+    - geo_all_experiments_metadata
+    - geo_rejected_experiments_metadata
+    - geo_failure_reasons
+    - geo_warning_reasons
+
+sp:
+  eatlas_selected_experiments_metadata:
+    fn: "*selected_experiments.metadata.tsv"
+  eatlas_all_experiments_metadata:
+    fn: "*species_experiments.metadata.tsv"
+  eatlas_failure_reasons:
+    fn: "*eatlas_failure_reasons.csv"
+  eatlas_warning_reasons:
+    fn: "*eatlas_warning_reasons.csv"
+  geo_selected_experiments_metadata:
+    fn: "*geo_selected_datasets.metadata.tsv"
+  geo_all_experiments_metadata:
+    fn: "*geo_all_datasets.metadata.tsv"
+  geo_rejected_experiments_metadata:
+    fn: "*geo_rejected_datasets.metadata.tsv"
+  geo_failure_reasons:
+    fn: "*geo_failure_reasons.csv"
+  geo_warning_reasons:
+    fn: "*geo_warning_reasons.csv"

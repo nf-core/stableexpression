@@ -281,12 +281,12 @@ workflow REPORTING {
     ch_multiqc_files = channel.empty()
                         .mix( ch_most_stable_genes_summary.collect() )                          // single item
                         .mix( ch_most_stable_genes_transposed_counts.collect() )                // single item
-                        .mix( channel.topic('eatlas_all_datasets').toSortedList() )
-                        .mix( channel.topic('eatlas_selected_datasets').toSortedList() )
-                        .mix( channel.topic('geo_all_datasets').toSortedList() )
-                        .mix( channel.topic('geo_selected_datasets').toSortedList() )
-                        .mix( channel.topic('geo_rejected_datasets').toSortedList() )
-                        .mix( channel.topic('total_gene_id_occurrence_quantiles').toSortedList() )
+                        .mix( channel.topic('eatlas_all_datasets').collect() )                  // single item
+                        .mix( channel.topic('eatlas_selected_datasets').collect() )             // single item
+                        .mix( channel.topic('geo_all_datasets').collect() )                     // single item
+                        .mix( channel.topic('geo_selected_datasets').collect() )                // single item
+                        .mix( channel.topic('geo_rejected_datasets').collect() )                // single item
+                        .mix( channel.topic('total_gene_id_occurrence_quantiles').collect() )   // single item
                         .mix( COLLECT_STATISTICS.out.csv )
                         .mix( ch_id_mapping_stats )
                         .mix( ch_missing_values_filter_stats )
@@ -382,10 +382,10 @@ workflow REPORTING {
                             .toSortedList()
                             .map{ list -> [ [id: 'Final report'], list ] }
 
-    ch_multiqc_config_list = ch_multiqc_config
-                                .mix( ch_multiqc_custom_config )
-                                .mix( ch_custom_content_multiqc_config )
-                                .toSortedList()
+    ch_multiqc_config_list = ch_custom_content_multiqc_config
+                                .concat( ch_multiqc_config )
+                                .concat( ch_multiqc_custom_config )
+                                .toList()
                                 .map{ list -> [ [id: 'Final report'], list ] }
 
     ch_multiqc_logo = ch_multiqc_logo.map{ file -> [ [id: 'Final report'], file ] }

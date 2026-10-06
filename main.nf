@@ -148,7 +148,7 @@ output {
     }
 
     rnaseq_normalised {
-        path { meta, file, design ->
+        path { meta, file ->
             file >> getOutputFolder(meta, "3.normalised")
         }
     }
