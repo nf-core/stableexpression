@@ -1,4 +1,45 @@
 {
+    "ENSG - Multiple candidate organisms": {
+        "content": [
+            {
+                "0": [
+                    "mapped_gene_ids.csv:md5,5dde3ccbcdc1b80f1d93981c15e51979"
+                ],
+                "1": [
+                    "gene_metadata.csv:md5,472905e22ead9f6d988286160a1795aa"
+                ],
+                "2": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "3": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "pandas",
+                        "3.0.1"
+                    ]
+                ],
+                "4": [
+                    [
+                        "GPROFILER_IDMAPPING",
+                        "httpx",
+                        "0.28.1"
+                    ]
+                ],
+                "metadata": [
+                    "gene_metadata.csv:md5,472905e22ead9f6d988286160a1795aa"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-17T07:23:43.079441633",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
     "ENSG - Mapping found": {
         "content": [
             {

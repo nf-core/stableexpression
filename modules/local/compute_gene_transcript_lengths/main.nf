@@ -18,15 +18,9 @@ process COMPUTE_GENE_TRANSCRIPT_LENGTHS {
     tuple val("${task.process}"), val('pandas'),   eval('python3 -c "import pandas; print(pandas.__version__)"'),     topic: versions
 
     script:
-    def is_compressed = gff3.getExtension() == "gz" ? true : false
-    def gff3_name = is_compressed ? gff3.getBaseName() : gff3
     """
-    if [ "${is_compressed}" == "true" ]; then
-        gzip -c -d ${gff3} > ${gff3_name}
-    fi
-
     compute_gene_transcript_lengths.py \\
-        --annotation ${gff3_name}
+        --annotation ${gff3}
     """
 
     stub:

@@ -11,8 +11,30 @@ nextflow_process {
 
             process {
                 """
-                input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/gene_ids.txt", checkIfExists: true)
+                input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/solanum_tuberosum.txt", checkIfExists: true)
                 input[1] = "Solanum tuberosum"
+                input[2] = "ENSG"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.mapping.size() == 1 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+
+    test("ENSG - Multiple candidate organisms") {
+
+        when {
+
+            process {
+                """
+                input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/canis_lupus.txt", checkIfExists: true)
+                input[1] = "canis lupus"
                 input[2] = "ENSG"
                 """
             }

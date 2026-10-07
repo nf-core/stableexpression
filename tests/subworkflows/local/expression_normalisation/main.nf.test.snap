@@ -122,10 +122,10 @@
                     ]
                 ],
                 "2": [
-                    
+                    "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
                 ],
                 "gene_length_file": [
-                    
+                    "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
                 ],
                 "normalised_once": [
                     [
@@ -151,10 +151,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-29T16:39:22.759864753",
+        "timestamp": "2026-09-18T11:13:24.879633998",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     },
     "TPM Normalisation with gene length": {
@@ -345,10 +345,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-29T16:38:59.746351",
+        "timestamp": "2026-09-18T11:11:43.087816114",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     }
 }

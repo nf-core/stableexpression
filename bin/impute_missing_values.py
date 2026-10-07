@@ -2,6 +2,15 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
+"""
+This script imputes missing values in a count table using a specified imputation method.
+It takes as inputs:
+    - a dataframe whose columns are samples and rows are genes.
+    - the name of the imputation method to use.
+Missing value imputation is performed using scikit-learn.
+Prior to imputation, a Mini Batch K-means algorithm is used to cluster the genes.
+"""
+
 import argparse
 import logging
 from pathlib import Path
@@ -83,6 +92,8 @@ def apply_simle_imputer(df: pl.DataFrame):
 def get_number_of_neighbours(df: pl.DataFrame, k_min: int, k_max: int) -> int:
     """
     Returns the number of neighbours to use for KNN-imputation based on the number of samples and missing values.
+    The number of neighbours is determined by the square root of the number of samples, scaled by a factor to account for missing values.
+    It is clipped to the range [k_min, k_max] to ensure the number of neighbours is within the specified bounds.
 
     Parameters
     ----------
@@ -120,7 +131,7 @@ def get_number_of_neighbours(df: pl.DataFrame, k_min: int, k_max: int) -> int:
 
 def cluster_dataframe(df: pl.DataFrame, n_clusters: int) -> pl.Series:
     """
-    Cluster the dataframe using MiniBatchKMeans.
+    Cluster the dataframe by similarity between genes using MiniBatchKMeans.
 
     Returns
     -------
