@@ -348,7 +348,7 @@ def main():
         # the section name is at the beginning of the file name
         section = file.name.split(".")[0]
         df = parse_stat_score_file(file)
-        print(section, len(df))
+
         df = df.with_columns(pl.lit(section).alias(config.SECTION_COLNAME))
         stat_score_dfs.append(df)
         sections.append(section)
@@ -356,7 +356,7 @@ def main():
     stat_score_df = pl.concat(stat_score_dfs)
 
     if stat_score_df.select(config.GENE_ID_COLNAME).is_duplicated().any():
-        print(len(stat_score_df.select(config.GENE_ID_COLNAME).is_duplicated()))
+
         raise ValueError("Duplicate gene IDs found in statistics and scores files.")
 
     # sorting sections in the order (from 1 to <max nb of section>)

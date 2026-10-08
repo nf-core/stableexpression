@@ -122,10 +122,6 @@ def main():
 
     stat_df = parse_stats(args.stat_file)
 
-    # first basic filters
-    # stat_df = filter_out_low_expression_genes(stat_df, args.min_pct_quantile_expr_level)
-    # stat_lf = filter_out_genes_with_zero_counts(stat_lf)
-
     logger.info("Getting sections")
     stat_df = add_sections(stat_df, args.nb_sections)
 
