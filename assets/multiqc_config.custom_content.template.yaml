@@ -234,15 +234,14 @@ custom_data:
           very_low:
             - s_eq: "Very low expression"
 
-
   expr_distrib_most_stable_genes_template:
-    section_name: "Normalised count distributions"
+    section_name: "Normalised count distributions [PLATFORM]"
     file_format: "csv"
     pconfig:
       sort_samples: false
       xlab: Expression
       ylab: Gene
-    description: "Distribution of normalised gene expression (after x -> log(2x +1) transformation) across samples for the most stable genes. Only the NB_GENES most stable genes are shown and genes are ranked from the most stable to the least stable."
+    description: "Distribution of normalised gene expression (after x -> log(2x +1) transformation) across samples for the most stable genes [PLATFORM only]. Only the NB_GENES most stable genes are shown and genes are ranked from the most stable to the least stable."
     plot_type: "boxplot"
 
   skewness:
@@ -542,7 +541,7 @@ sp:
     fn: "*SECTION.most_stable_genes_summary.csv"
     max_filesize: 5000000 # 5MB
   expr_distrib_most_stable_genes_template:
-    fn: "*SECTION.most_stable_genes_transposed_counts.csv"
+    fn: "*SECTION.PLATFORM.most_stable_genes_transposed_counts.csv"
     max_filesize: 50000000 # 50MB
   id_mapping_stats:
     fn: "*id_mapping_stats.csv"

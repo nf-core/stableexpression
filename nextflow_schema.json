@@ -399,6 +399,22 @@
                 }
             }
         },
+        "reporting_options": {
+            "title": "Reporting options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Options relative to reporting",
+            "properties": {
+                "multiqc_nb_genes_plotted": {
+                    "type": "integer",
+                    "description": "For each section and each platform, number of genes whose normalised expression is displayed.",
+                    "fa_icon": "fas fa-sort-numeric-down",
+                    "minimum": 1,
+                    "help_text": "In the MultiQC report, for each section and each platform, the distribution of normalised expressions is displayed for a shortlist of top-ranked genes. Set this parameter to adjust how many genes are displayed in these boxplots. Caution: above 20, this can drastically increase the size of the MultiQC report, especially with a high number of sections and multiple platforms.",
+                    "default": 10
+                }
+            }
+        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -574,6 +590,9 @@
         },
         {
             "$ref": "#/$defs/scalability_options"
+        },
+        {
+            "$ref": "#/$defs/reporting_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"

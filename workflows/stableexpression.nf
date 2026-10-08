@@ -197,6 +197,7 @@ workflow STABLEEXPRESSION {
         ch_whole_gene_id_mapping,
         params.target_genes,
         params.target_gene_file,
+        params.multiqc_nb_genes_plotted,
         params.skip_dash_app,
         params.multiqc_config,
         params.multiqc_logo,

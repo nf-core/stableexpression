@@ -34,7 +34,7 @@ def parse_args():
         description="Aggregate results from count data for each gene"
     )
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts", type=Path, nargs="+", dest="count_files", required=True, help="Count file"
     )
     parser.add_argument(
         "--target-genes",
@@ -67,6 +67,9 @@ def parse_args():
     )
     parser.add_argument(
         "--mappings", type=str, dest="mapping_files", help="Mapping file"
+    )
+    parser.add_argument(
+        "--nb-genes-plotted", type=int, dest="nb_genes_plotted", help="Number of genes to plot in the MultiQC report"
     )
     return parser.parse_args()
 
@@ -136,7 +139,9 @@ def get_counts(file: Path) -> pl.DataFrame:
     Sorts the DataFrame by gene ID in ascending order.
     """
     # sorting dataframe (necessary to get consistent output)
-    return pl.read_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
+    # reducing dataframe size (it is only used for plotting by MultiQC)
+    count_df = pl.read_parquet(file).sort(config.GENE_ID_COLNAME, descending=False)
+    return cast_count_columns_to_float(count_df)
 
 
 def get_metadata(metadata_files: list[Path]) -> pl.DataFrame | None:
@@ -167,13 +172,13 @@ def get_mappings(mapping_files: list[Path]) -> pl.DataFrame | None:
 
 
 def get_most_stable_genes_counts(
-    log_count_df: pl.DataFrame, stat_summary_df: pl.DataFrame
+    log_count_df: pl.DataFrame, stat_summary_df: pl.DataFrame, nb_genes_plotted: int
 ) -> pl.DataFrame:
     """
     Get counts of the most stable genes
     """
     top_genes_with_order = (
-        stat_summary_df.head(config.NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS)
+        stat_summary_df.head(nb_genes_plotted)
         .select(config.GENE_ID_COLNAME)
         .with_row_index("sort_order")
     )
@@ -193,12 +198,16 @@ def get_most_stable_genes_counts(
 
 
 def format_multiqc_section(
-    section: str, nb_sections: int, template_dict: dict, found_target_genes: list[dict]
+    section: str, nb_sections: int, template_dict: dict, found_target_genes: list[dict], platform: str | None = None
 ):
     """
     Format the dict for a specific MultiQC section based on the section name, number of sections, and found target genes.
     """
     section_dict = dict(template_dict)
+
+    if platform is not None:
+        section_dict['section_name'] = section_dict['section_name'].replace('[PLATFORM]', platform)
+        section_dict['description'] = section_dict['description'].replace('[PLATFORM]', platform)
 
     parent_id = section.replace("_", " ")
     parent_name = (
@@ -223,13 +232,15 @@ def format_multiqc_section(
     return section_dict
 
 
-def format_multiqc_sp(section: str, template_dict: dict):
+def format_multiqc_sp(section: str, template_dict: dict, platform: str | None = None):
     """
     Modify the dict for a specific MultiQC section in order to update the corresponding file name to search for
     among all the MultiQC files
     """
     sp_dict = dict(template_dict)
     sp_dict["fn"] = sp_dict["fn"].replace("SECTION", section)
+    if platform is not None:
+        sp_dict["fn"] = sp_dict["fn"].replace("PLATFORM", platform)
     return sp_dict
 
 
@@ -320,9 +331,12 @@ def main():
     # Parsing counts
     # --------------------------------------------------
 
-    count_df = get_counts(args.count_file)
-    # reducing dataframe size (it is only used for plotting by MultiQC)
-    count_df = cast_count_columns_to_float(count_df)
+    # args.count_files should contain files like 'microarray.corrected.parquet' or 'rnaseq.corrected.parquet'
+    # so the platform can be directly extracted from the file name
+    counts = {}
+    for file in args.count_files:
+        platform = file.name.split('.')[0]
+        counts[platform] = get_counts(file)
 
     # --------------------------------------------------
     # Parsing statistics and scores, section by section
@@ -334,6 +348,7 @@ def main():
         # the section name is at the beginning of the file name
         section = file.name.split(".")[0]
         df = parse_stat_score_file(file)
+        print(section, len(df))
         df = df.with_columns(pl.lit(section).alias(config.SECTION_COLNAME))
         stat_score_dfs.append(df)
         sections.append(section)
@@ -341,6 +356,7 @@ def main():
     stat_score_df = pl.concat(stat_score_dfs)
 
     if stat_score_df.select(config.GENE_ID_COLNAME).is_duplicated().any():
+        print(len(stat_score_df.select(config.GENE_ID_COLNAME).is_duplicated()))
         raise ValueError("Duplicate gene IDs found in statistics and scores files.")
 
     # sorting sections in the order (from 1 to <max nb of section>)
@@ -374,7 +390,7 @@ def main():
 
     # filling dynamically the number of genes to show in box plots
     expr_distrib_dict["description"] = expr_distrib_dict["description"].replace(
-        "NB_GENES", str(config.NB_TOP_GENES_TO_SHOW_IN_BOX_PLOTS)
+        "NB_GENES", str(args.nb_genes_plotted)
     )
 
     # --------------------------------------------------
@@ -423,8 +439,12 @@ def main():
 
     logger.info("Making new sections in the MultiQC config")
     for section in sections:
-        # getting best candidates for this section
 
+        # --------------------------------------------------
+        # BUILDING AND MAKING CONFIG FOR THE RANKING TABLE
+        # --------------------------------------------------
+
+        # getting best candidates for this section
         section_df = (
             all_genes_summary_df.filter(pl.col("section") == section)
             .drop("section")
@@ -435,31 +455,39 @@ def main():
         if args.target_genes:
             found_target_genes = search_target_genes(section_df, args.target_genes)
 
-        section_most_stable_genes_counts_df = get_most_stable_genes_counts(
-            count_df, section_df
-        )
-
+        # Writing section data file
         section_summary_outfile = f"{section}.{SUMMARY_OUTFILENAME_SUFFIX}"
         write_csv_with_floats(section_df, section_summary_outfile, float_precision=5)
 
-        section_counts_outfile = f"{section}.{COUNTS_OUTFILENAME_SUFFIX}"
-        write_csv_with_floats(section_most_stable_genes_counts_df, section_counts_outfile)
-
-        # making new sections in the MultiQC config
+        # making multiqc config for this table
         new_mqc_config_sections[f"genes_{section}"] = format_multiqc_section(
             section, nb_sections, ranking_dict, found_target_genes
         )
-        new_mqc_config_sections[f"normalised_expr_distrib_{section}"] = (
-            format_multiqc_section(
-                section, nb_sections, expr_distrib_dict, found_target_genes
-            )
-        )
+
+        # sp sections
         new_mqc_config_sp[f"genes_{section}"] = format_multiqc_sp(
             section, ranking_sp_dict
         )
-        new_mqc_config_sp[f"normalised_expr_distrib_{section}"] = format_multiqc_sp(
-            section, expr_distrib_sp_dict
-        )
+
+        # --------------------------------------------------
+        # BUILDING NORMALISED EXPRESSION DATAFRAMES AND MAKING CONFIG FOR IT, FOR EACH PLATFORM
+        # --------------------------------------------------
+
+        for platform, data in counts:
+            df = get_most_stable_genes_counts(data, section_df, args.nb_genes_plotted)
+
+            section_counts_outfile = f"{section}.{platform}.{COUNTS_OUTFILENAME_SUFFIX}"
+            write_csv_with_floats(df, section_counts_outfile)
+
+            # making new sections in the MultiQC config
+            new_mqc_config_sections[f"normalised_expr_distrib_{section}_{platform}"] = (
+                format_multiqc_section(
+                    section, nb_sections, expr_distrib_dict, found_target_genes, platform
+                )
+            )
+            new_mqc_config_sp[f"normalised_expr_distrib_{section}_{platform}"] = format_multiqc_sp(
+                section, expr_distrib_sp_dict, platform
+            )
 
     # adding new sections
     multiqc_config["custom_data"] = (

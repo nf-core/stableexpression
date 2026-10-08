@@ -1,5 +1,5 @@
 process AGGREGATE_RESULTS {
-    debug true
+
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
@@ -14,6 +14,7 @@ process AGGREGATE_RESULTS {
     path metadata_files
     path mapping_files
     path multiqc_config
+    val nb_genes_plotted
 
     output:
     path 'all_genes_summary.csv',                                                                               emit: all_genes_summary
@@ -35,7 +36,8 @@ process AGGREGATE_RESULTS {
         --multiqc-config $multiqc_config \\
         $mapping_files_arg \\
         $metadata_files_arg \\
-        $target_genes_arg
+        $target_genes_arg \\
+        --nb-genes-plotted $nb_genes_plotted
     """
 
     stub:
