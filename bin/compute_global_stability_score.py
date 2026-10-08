@@ -79,6 +79,8 @@ def compute_global_score(
     """
     Compute the global stability score by weighting stability scores from multiple platforms.
     """
+    # storing current list of columns
+    original_columns = df.columns
     stability_score_columns = [col for col in df.columns if col.startswith(config.STABILITY_SCORE_COLNAME)]
 
     if len(stability_score_columns) == 1: # if only one platform, we just take the only score
@@ -104,7 +106,7 @@ def compute_global_score(
                 + std_penalty_weight * pl.col('stability_score_std')
                 + null_penalty_weight * pl.col('nb_null_stability_scores')
             ).alias(config.GLOBAL_STABILITY_SCORE_COLNAME)
-        )
+        ).select(original_columns + [config.GLOBAL_STABILITY_SCORE_COLNAME])
     )
 
 

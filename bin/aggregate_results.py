@@ -74,13 +74,24 @@ def parse_args():
     return parser.parse_args()
 
 
+def column_sorter(col: str) -> int:
+    """
+    Return integer corresponding to the column name. This function is used for sorting columns.
+    """
+    splitted = col.split('.')
+    if len(splitted) == 1: # if no '.' if the column name, it should be return in the first columns
+       return 0
+    else: # return ascii value of the first character
+        return ord(splitted[1][1])
+
+
 def parse_stat_score_file(file: Path) -> pl.DataFrame:
     """
     Parse a file containing statistics and scores into a DataFrame.
+    The columns are sorted so that multiple dataframes can be v-stacked later in the script.
     """
-    return pl.read_csv(file).with_columns(
-        pl.col(config.GENE_ID_COLNAME).cast(pl.String())
-    )
+    df = pl.read_csv(file).with_columns(pl.col(config.GENE_ID_COLNAME).cast(pl.String()))
+    return df.select(sorted(df.columns, key=column_sorter))
 
 
 def get_non_empty_dataframes(files: list[Path]) -> list[pl.DataFrame]:
@@ -349,14 +360,15 @@ def main():
         section = file.name.split(".")[0]
         df = parse_stat_score_file(file)
 
+        # adding the section in the statistics dataframe
         df = df.with_columns(pl.lit(section).alias(config.SECTION_COLNAME))
         stat_score_dfs.append(df)
         sections.append(section)
 
-    stat_score_df = pl.concat(stat_score_dfs)
+    stat_score_df = pl.concat(stat_score_dfs, how="vertical")
+    print(stat_score_df)
 
     if stat_score_df.select(config.GENE_ID_COLNAME).is_duplicated().any():
-
         raise ValueError("Duplicate gene IDs found in statistics and scores files.")
 
     # sorting sections in the order (from 1 to <max nb of section>)
@@ -473,7 +485,7 @@ def main():
         # BUILDING NORMALISED EXPRESSION DATAFRAMES AND MAKING CONFIG FOR IT, FOR EACH PLATFORM
         # --------------------------------------------------
 
-        for platform, data in counts:
+        for platform, data in counts.items():
             df = get_most_stable_genes_counts(data, section_df, args.nb_genes_plotted)
 
             section_counts_outfile = f"{section}.{platform}.{COUNTS_OUTFILENAME_SUFFIX}"
