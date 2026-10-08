@@ -9,6 +9,7 @@ process MAKE_SECTIONS {
 
     input:
     path(stat_files, stageAs: "?/*")
+    path nb_samples_per_platform_file
     val nb_sections
 
     output:
@@ -20,6 +21,7 @@ process MAKE_SECTIONS {
     """
     make_sections.py \\
         --stats $stat_files \\
+        --nb-samples-per-platform $nb_samples_per_platform_file \\
         --nb-sections $nb_sections
     """
 

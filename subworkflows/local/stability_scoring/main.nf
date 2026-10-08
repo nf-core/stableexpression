@@ -45,12 +45,29 @@ workflow STABILITY_SCORING {
     ch_stats = COMPUTE_GENE_STATISTICS.out.stats
 
     // -----------------------------------------------------------------
+    // COMPUTE NUMBER OF SAMPLES IN EACH PLATFORM (FOR THE COMPUTATION OF THE WEIGHTED AVERAGE IN THE GLOBAL SCORE)
+    // -----------------------------------------------------------------
+
+    ch_nb_samples_per_platform_file = channel.topic('nb_samples')
+                                        .map { platform, nb_samples -> [ platform: platform, nb_samples: nb_samples] }
+                                        .collectFile(
+                                            name: 'nb_samples_per_platform.csv',
+                                            seed: "platform,nb_samples",
+                                            newLine: true,
+                                            sort: true,
+                                            storeDir: "${outdir}/design/"
+                                        ) {
+                                            item -> "${item.platform},${item.nb_samples}"
+                                        }
+
+    // -----------------------------------------------------------------
     // MAKE PLATFORM-WISE SECTIONS,
     // BASED ON THE MEAN EXPRESSION LEVEL OF EACH GENE IN EACH PLATFORM
     // -----------------------------------------------------------------
 
     MAKE_SECTIONS(
         ch_stats.map { meta, file -> file }.collect(),
+        ch_nb_samples_per_platform_file.first(),
         nb_sections
     )
 
@@ -107,23 +124,6 @@ workflow STABILITY_SCORING {
     )
 
     ch_platform_stats_with_stability_scores = PLATFORM_STABILITY_SCORE.out.stats_with_stability_scores
-
-    // -----------------------------------------------------------------
-    // COMPUTE NUMBER OF SAMPLES IN EACH PLATFORM (FOR THE COMPUTATION OF THE WEIGHTED AVERAGE IN THE GLOBAL SCORE)
-    // -----------------------------------------------------------------
-
-    ch_nb_samples_per_platform_file = ch_platform_design.map { meta, design ->
-                                                def design_content = design.splitCsv( header: true )
-                                                [ platform: meta.platform, size: design_content.size() ]
-                                            }.collectFile(
-                                                name: 'nb_samples_per_platform.csv',
-                                                seed: "platform,nb_samples",
-                                                newLine: true,
-                                                sort: true,
-                                                storeDir: "${outdir}/design/"
-                                            ) {
-                                                item -> "${item.platform},${item.size}"
-                                            }
 
     // -----------------------------------------------------------------
     // AGGREGATION AND FINAL STABILITY SCORE

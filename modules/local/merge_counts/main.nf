@@ -13,8 +13,6 @@ process MERGE_COUNTS {
 
     output:
     tuple val(meta), path('*.merged.parquet'), emit: counts
-    // not using task.process here as the process is called 'PLATFORM' or 'GLOBAL' in the workflow
-    // which is less informative and creates unnecessary duplicates
     tuple val("${task.process}"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("${task.process}"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 

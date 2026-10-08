@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 import config
-from common import sink_csv_with_floats
+from common import sink_csv_with_floats, get_count_columns
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 # outfile names
 ALL_GENES_RESULT_OUTFILE = "stats_all_genes.csv"
+NB_SAMPLES_OUTFILE = "nb_samples.txt"
 
 RCV_MULTIPLIER = 1.4826  # see https://pmc.ncbi.nlm.nih.gov/articles/PMC9196089/
 
@@ -296,6 +297,11 @@ def main():
 
     # exporting computed data
     export_data(stat_lf)
+
+    # exporting number of samples
+    nb_samples = len(get_count_columns(count_lf))
+    with open(NB_SAMPLES_OUTFILE, 'w') as fout:
+        fout.write(str(nb_samples))
 
 
 if __name__ == "__main__":
