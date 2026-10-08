@@ -1,0 +1,57 @@
+nextflow_process {
+
+    name "Test Process PLATFORM_STABILITY_SCORE"
+    script "modules/local/stability_scores/platform/main.nf"
+    process "PLATFORM_STABILITY_SCORE"
+
+    test("With Genorm") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [section: "section_1"],
+                    file( '$projectDir/tests/test_data/modules/stability_scores/input/stability_values.normfinder.csv', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/stability_scores/input/genorm.m_measures.csv', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/stability_scores/input/stats_all_genes.parquet', checkIfExists: true),
+                ]
+                input[1] = "0.8,0.1,0.1,0.1"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("Without Genorm") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [section: "section_1"],
+                    file( '$projectDir/tests/test_data/modules/stability_scores/input/stability_values.normfinder.csv', checkIfExists: true),
+                    [],
+                    file( '$projectDir/tests/test_data/modules/stability_scores/input/stats_all_genes.parquet', checkIfExists: true),
+                ]
+                input[1] = "0.8,0.1,0.1,0.1"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

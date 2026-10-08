@@ -165,7 +165,7 @@ class EnsemblAnnotationManager:
 
     def get_ensembl_genomes_annotations(self) -> list[Path]:
         species_info = self.get_species_info()
-        print(species_info)
+
         if len(species_info) == 0:
             raise ValueError(f"No division found for species Taxon ID {self.species_taxid}")
 

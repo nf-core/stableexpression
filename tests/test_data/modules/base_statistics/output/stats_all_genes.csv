@@ -1,4 +1,4 @@
-gene_id,mean,standard_deviation,median,median_absolute_deviation,coefficient_of_variation,robust_coefficient_of_variation_median,ratio_nulls_in_all_samples,ratio_nulls_in_valid_samples,ratio_zeros,expression_level_quantile_interval
+gene_id,mean.rnaseq,standard_deviation,median,median_absolute_deviation,coefficient_of_variation,robust_coefficient_of_variation_median,ratio_nulls_in_all_samples,ratio_nulls_in_valid_samples,ratio_zeros,expression_level_quantile_interval
 ENSRNA049454747,0.204895,0.197240,0.332892,0.111337,0.962641,0.495860,0.000000,0.000000,0.466667,28
 ENSRNA049454887,0.525767,0.039664,0.515980,0.014747,0.075440,0.042374,0.000000,0.000000,0.000000,52
 ENSRNA049454931,0.429906,0.040942,0.439106,0.028691,0.095235,0.096872,0.000000,0.000000,0.000000,43

@@ -70,9 +70,9 @@ def main():
     args = parse_args()
 
     original_gene_id_occurrence_df = parse_table(args.gene_id_occurrence_file)
-    print(original_gene_id_occurrence_df)
+
     mapping_df = parse_table(args.mapping_file)
-    print(mapping_df)
+
     nb_mapped_genes = len(mapping_df)
 
     df = original_gene_id_occurrence_df.join(

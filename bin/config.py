@@ -11,6 +11,7 @@ ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME = (
 )
 STANDARD_DEVIATION_COLNAME = "standard_deviation"
 STABILITY_SCORE_COLNAME = "stability_score"
+GLOBAL_STABILITY_SCORE_COLNAME = "global_stability_score"
 MEAN_COLNAME = "mean"
 MEDIAN_COLNAME = "median"
 MAD_COLNAME = "median_absolute_deviation"
@@ -43,3 +44,6 @@ RATIOS_STD_COLNAME = "ratios_stds"
 
 NB_DECIMAL_DIGITS = 8
 DEFAULT_CSV_FLOAT_PRECISION = 6
+
+# quantile intervals
+NB_EXPRESSION_QUANTILES = 100

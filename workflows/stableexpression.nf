@@ -8,9 +8,8 @@ include { GET_PUBLIC_ACCESSIONS                  } from '../subworkflows/local/g
 include { DOWNLOAD_PUBLIC_DATASETS               } from '../subworkflows/local/download_public_datasets'
 include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
 include { SAMPLE_FILTERING                       } from '../subworkflows/local/sample_filtering'
-include { EXPRESSION_NORMALISATION               } from '../subworkflows/local/expression_normalisation'
+include { NORMALISATION                          } from '../subworkflows/local/normalisation'
 include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
-include { MERGE_DATA                             } from '../subworkflows/local/merge_data'
 include { GENE_STATISTICS                        } from '../subworkflows/local/gene_statistics'
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { REPORTING                              } from '../subworkflows/local/reporting'
@@ -36,12 +35,12 @@ workflow STABLEEXPRESSION {
     ch_downloaded_datasets                 = channel.empty()
     ch_counts_ids_filtered_renamed         = channel.empty()
     ch_counts_samples_filtered             = channel.empty()
-    ch_counts_first_normalissation         = channel.empty()
+    ch_rnaseq_normalised                   = channel.empty()
     ch_normalised_counts                   = channel.empty()
+    ch_annotation                          = channel.empty()
     ch_gene_length_file                    = channel.empty()
     ch_all_counts                          = channel.empty()
-    ch_all_imputed_counts                  = channel.empty()
-    ch_whole_design                        = channel.empty()
+    ch_imputed_counts                      = channel.empty()
     ch_stats_all_genes_with_scores         = channel.empty()
     ch_platform_statistics                 = channel.empty()
     ch_whole_gene_metadata                 = channel.empty()
@@ -132,74 +131,55 @@ workflow STABLEEXPRESSION {
         ch_ratio_nulls_per_sample_file = SAMPLE_FILTERING.out.ratio_nulls_per_sample_file
 
         // -----------------------------------------------------------------
-        // NORMALISATION OF RAW COUNT DATASETS (INCLUDING RNA-SEQ DATASETS)
-        // -----------------------------------------------------------------
-
-        EXPRESSION_NORMALISATION(
-            species,
-            ch_counts_samples_filtered,
-            ch_valid_gene_ids,
-            params.normalisation_method,
-            params.quantile_norm_target_distrib,
-            params.gff,
-            params.gff_url,
-            params.gene_length
-        )
-
-        ch_counts_first_normalissation         = EXPRESSION_NORMALISATION.out.normalised_once
-        ch_normalised_counts                   = EXPRESSION_NORMALISATION.out.quantile_normalised_counts
-        ch_gene_length_file                    = EXPRESSION_NORMALISATION.out.gene_length_file
-
-        // -----------------------------------------------------------------
         // ANALYSIS OF NORMALISED DATASETS
         // -----------------------------------------------------------------
 
         DATASET_ANALYSIS(
-            ch_normalised_counts
+            ch_counts_samples_filtered
         )
 
         // -----------------------------------------------------------------
-        // MERGE ALL DATASETS INTO ONE SINGLE DATASET
+        // NORMALISATION OF COUNTS
         // -----------------------------------------------------------------
 
-        MERGE_DATA (
-            ch_normalised_counts,
+        NORMALISATION(
+            ch_counts_samples_filtered,
+            species,
+            ch_valid_gene_ids,
+            params.skip_gene_length_normalisation,
             params.missing_value_imputer,
+            params.quantile_normalisation,
+            params.quantile_norm_target_distrib,
+            params.gff,
+            params.gff_url,
+            params.gene_length,
             params.outdir
         )
 
-        ch_all_imputed_counts    = MERGE_DATA.out.all_imputed_counts
-        ch_all_counts            = MERGE_DATA.out.all_counts
-        ch_whole_design          = MERGE_DATA.out.whole_design
-        ch_platform_counts       = MERGE_DATA.out.platform_counts
+        ch_normalised_counts          = NORMALISATION.out.normalised
+        ch_imputed_counts             = NORMALISATION.out.imputed
+        ch_non_imputed_counts         = NORMALISATION.out.non_imputed
+        ch_rnaseq_normalised          = NORMALISATION.out.rnaseq_normalised
+        ch_annotation                 = NORMALISATION.out.annotation
+        ch_gene_length_file           = NORMALISATION.out.gene_length_file
 
         // -----------------------------------------------------------------
-        // COMPUTE BASE STATISTICS FOR ALL GENES
-        // -----------------------------------------------------------------
-
-        GENE_STATISTICS (
-            ch_all_imputed_counts,
-            ch_all_counts,
-            ch_platform_counts,
-            ch_ratio_nulls_per_sample_file,
-            params.max_null_ratio_valid_sample
-        )
-
-        ch_all_datasets_stats  = GENE_STATISTICS.out.stats
-        ch_platform_statistics = GENE_STATISTICS.out.platform_stats
-
-        // -----------------------------------------------------------------
+        // COMPUTE BASE STATISTICS FOR ALL GENES,
         // GET CANDIDATES AS REFERENCE GENE AND COMPUTES VARIOUS STABILITY VALUES
         // -----------------------------------------------------------------
 
         STABILITY_SCORING (
-            ch_all_imputed_counts.map{ meta, file -> file },
-            ch_whole_design,
-            ch_all_datasets_stats,
+            ch_normalised_counts,
+            ch_non_imputed_counts,
+            ch_ratio_nulls_per_sample_file,
+            params.max_null_ratio_valid_sample,
             params.nb_candidates_per_section,
             params.nb_sections,
             params.skip_genorm,
-            params.stability_score_weights
+            params.stability_score_weights,
+            params.stability_score_std_penalty_weight,
+            params.stability_score_null_penalty_weight,
+            params.outdir
         )
 
         ch_stats_all_genes_with_scores = STABILITY_SCORING.out.summary_statistics
@@ -211,14 +191,14 @@ workflow STABLEEXPRESSION {
     // -----------------------------------------------------------------
 
     REPORTING(
-        ch_all_imputed_counts,
-        ch_whole_design,
+        ch_normalised_counts,
         ch_stats_all_genes_with_scores,
-        ch_platform_statistics,
         ch_whole_gene_metadata,
         ch_whole_gene_id_mapping,
         params.target_genes,
         params.target_gene_file,
+        params.multiqc_nb_genes_plotted,
+        params.skip_dash_app,
         params.multiqc_config,
         params.multiqc_logo,
         params.multiqc_methods_description,
@@ -230,11 +210,11 @@ workflow STABLEEXPRESSION {
     downloaded                             = ch_downloaded_datasets
     id_filtered_renamed                    = ch_counts_ids_filtered_renamed
     samples_filtered                       = ch_counts_samples_filtered
-    first_normalisation                    = ch_counts_first_normalissation
-    quantile_normalised                    = ch_normalised_counts
+    rnaseq_normalised                      = ch_rnaseq_normalised
+    annotation                             = ch_annotation
     gene_length_file                       = ch_gene_length_file
-    merged                                 = ch_all_counts
-    imputed                                = ch_all_imputed_counts
+    imputed                                = ch_imputed_counts
+    corrected                              = ch_normalised_counts
     all_genes_summary                      = REPORTING.out.all_genes_summary
     multiqc_report                         = REPORTING.out.multiqc_report.toList()
     dash_app                               = REPORTING.out.dash_app

@@ -1,6 +1,6 @@
 process NORMFINDER   {
 
-    tag "${meta.section}"
+    tag "${meta.platform} :: ${meta.section}"
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
@@ -9,8 +9,7 @@ process NORMFINDER   {
         'community.wave.seqera.io/library/numba_numpy_polars_python_tqdm:f42e9bc9f30a29ff' }"
 
     input:
-    tuple val(meta), path(count_file)
-    path design_file
+    tuple val(meta), path(count_file), path(design_file)
 
     output:
     tuple val(meta), path('stability_values.normfinder.csv'),                                                   emit: stability_values

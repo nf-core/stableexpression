@@ -1,4 +1,5 @@
 include { AGGREGATE_RESULTS                      } from '../../../modules/local/aggregate_results'
+include { MERGE_COUNTS                           } from '../../../modules/local/merge_counts'
 include { DASH_APP                               } from '../../../modules/local/dash_app'
 include { COLLECT_STATISTICS                     } from '../../../modules/local/collect_statistics'
 include { MULTIQC                                } from '../../../modules/nf-core/multiqc'
@@ -18,14 +19,14 @@ include { paramsSummaryMap                       } from 'plugin/nf-schema'
 workflow REPORTING {
 
     take:
-    ch_all_counts
-    ch_whole_design
+    ch_normalised_counts_with_design // [ meta, counts, design ]
     ch_stats_all_genes_with_scores
-    ch_platform_statistics
     ch_whole_gene_metadata
     ch_whole_gene_id_mapping
     target_genes
     target_gene_file
+    multiqc_nb_genes_plotted
+    skip_dash_app
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -34,6 +35,9 @@ workflow REPORTING {
     main:
 
     ch_versions = channel.empty()
+    ch_dash_app = channel.empty()
+
+    ch_sorted_normalised_counts = ch_normalised_counts_with_design.map { meta, counts, design -> counts }.collect(sort: true)
 
     // -----------------------------------------------------------------
     // AGGREGATE ALL RESULTS FOR MULTIQC
@@ -54,13 +58,13 @@ workflow REPORTING {
                                                 )
 
     AGGREGATE_RESULTS (
-        ch_all_counts.map{ meta, file -> file }.collect(), // 1 file
-        ch_stats_all_genes_with_scores.toSortedList().filter{ file -> file != [] }, // as many file as sections; make sure that at least one stat file is present
-        ch_platform_statistics.toSortedList(), // as many file as different platforms
+        ch_sorted_normalised_counts, // as many files as platforms
+        ch_stats_all_genes_with_scores.collect(sort: true).filter{ file -> file != [] }, // as many file as sections; make sure that at least one stat file is present
         ch_target_gene_list,
         ch_whole_gene_metadata.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
         ch_whole_gene_id_mapping.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
-        ch_custom_content_multiqc_config_template.collect() // 1 file
+        ch_custom_content_multiqc_config_template.collect(), // 1 file
+        multiqc_nb_genes_plotted
     )
 
     ch_all_genes_summary                   = AGGREGATE_RESULTS.out.all_genes_summary
@@ -72,13 +76,19 @@ workflow REPORTING {
     // DASH APPLICATION
     // -----------------------------------------------------------------
 
-    DASH_APP(
-        ch_all_counts.map{ meta, file -> file }.collect(),
-        ch_whole_design.collect(),
-        ch_all_genes_summary.collect()
-    )
-    ch_dash_app        = DASH_APP.out.app
-    ch_versions        = ch_versions.mix ( DASH_APP.out.versions )
+    if ( !skip_dash_app ) {
+
+        MERGE_COUNTS(
+            ch_sorted_normalised_counts.map { files -> [ [ platform: 'all'], files ] }
+        )
+        DASH_APP(
+            MERGE_COUNTS.out.counts.map { meta, file -> file }.collect(),
+            ch_all_genes_summary.collect()
+        )
+        ch_dash_app        = DASH_APP.out.app
+        ch_versions        = ch_versions.mix ( DASH_APP.out.versions )
+
+    }
 
     // ------------------------------------------------------------------------------------
     // PREPARING BAR PLOTS
@@ -272,14 +282,13 @@ workflow REPORTING {
 
     ch_multiqc_files = channel.empty()
                         .mix( ch_most_stable_genes_summary.collect() )                          // single item
-                        .mix( ch_all_genes_summary.collect() )                                  // single item
                         .mix( ch_most_stable_genes_transposed_counts.collect() )                // single item
-                        .mix( channel.topic('eatlas_all_datasets').toSortedList() )
-                        .mix( channel.topic('eatlas_selected_datasets').toSortedList() )
-                        .mix( channel.topic('geo_all_datasets').toSortedList() )
-                        .mix( channel.topic('geo_selected_datasets').toSortedList() )
-                        .mix( channel.topic('geo_rejected_datasets').toSortedList() )
-                        .mix( channel.topic('total_gene_id_occurrence_quantiles').toSortedList() )
+                        .mix( channel.topic('eatlas_all_datasets').collect() )                  // single item
+                        .mix( channel.topic('eatlas_selected_datasets').collect() )             // single item
+                        .mix( channel.topic('geo_all_datasets').collect() )                     // single item
+                        .mix( channel.topic('geo_selected_datasets').collect() )                // single item
+                        .mix( channel.topic('geo_rejected_datasets').collect() )                // single item
+                        .mix( channel.topic('total_gene_id_occurrence_quantiles').collect() )   // single item
                         .mix( COLLECT_STATISTICS.out.csv )
                         .mix( ch_id_mapping_stats )
                         .mix( ch_missing_values_filter_stats )
@@ -375,10 +384,10 @@ workflow REPORTING {
                             .toSortedList()
                             .map{ list -> [ [id: 'Final report'], list ] }
 
-    ch_multiqc_config_list = ch_multiqc_config
-                                .mix( ch_multiqc_custom_config )
-                                .mix( ch_custom_content_multiqc_config )
-                                .toSortedList()
+    ch_multiqc_config_list = ch_custom_content_multiqc_config
+                                .concat( ch_multiqc_config )
+                                .concat( ch_multiqc_custom_config )
+                                .toList()
                                 .map{ list -> [ [id: 'Final report'], list ] }
 
     ch_multiqc_logo = ch_multiqc_logo.map{ file -> [ [id: 'Final report'], file ] }

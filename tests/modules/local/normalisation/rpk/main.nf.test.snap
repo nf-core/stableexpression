@@ -1,0 +1,237 @@
+{
+    "Very small dataset": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.rpk.parquet:md5,cebfe5eab31c8000f66e43dcb6c53243"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_RPK",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_RPK",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.rpk.parquet:md5,cebfe5eab31c8000f66e43dcb6c53243"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T11:24:20.518447177",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "One group": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.rpk.parquet:md5,d4476faba9ec7826d2e97967d14dc24e"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_RPK",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_RPK",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.rpk.parquet:md5,d4476faba9ec7826d2e97967d14dc24e"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T11:24:36.201047303",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "TSV files": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.rpk.parquet:md5,cebfe5eab31c8000f66e43dcb6c53243"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_RPK",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_RPK",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.rpk.parquet:md5,cebfe5eab31c8000f66e43dcb6c53243"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T11:24:44.114862732",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "Rows with many zeros": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.rpk.parquet:md5,cd90fd463fb20a15b0862428c66d28d1"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_RPK",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_RPK",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.rpk.parquet:md5,cd90fd463fb20a15b0862428c66d28d1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T11:24:28.575582518",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "Pseudocounts": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "accession"
+                        },
+                        "pseudocounts.rpk.parquet:md5,938a71042acb778f554f897e9f926bd3"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "NORMALISATION_RPK",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "NORMALISATION_RPK",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "accession"
+                        },
+                        "pseudocounts.rpk.parquet:md5,938a71042acb778f554f897e9f926bd3"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-01T11:53:19.483191894",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}

@@ -1,5 +1,5 @@
 process AGGREGATE_RESULTS {
-    debug true
+
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
@@ -10,11 +10,11 @@ process AGGREGATE_RESULTS {
     input:
     path count_file
     path stat_score_files
-    path platform_stat_files, stageAs: "?/*"
     val target_genes
     path metadata_files
     path mapping_files
     path multiqc_config
+    val nb_genes_plotted
 
     output:
     path 'all_genes_summary.csv',                                                                               emit: all_genes_summary
@@ -33,11 +33,11 @@ process AGGREGATE_RESULTS {
     aggregate_results.py \\
         --counts $count_file \\
         --stats-with-scores $stat_score_files \\
-        --platform-stats $platform_stat_files \\
         --multiqc-config $multiqc_config \\
         $mapping_files_arg \\
         $metadata_files_arg \\
-        $target_genes_arg
+        $target_genes_arg \\
+        --nb-genes-plotted $nb_genes_plotted
     """
 
     stub:

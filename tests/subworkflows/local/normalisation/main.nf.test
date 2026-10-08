@@ -1,0 +1,183 @@
+nextflow_workflow {
+
+    name "Test Workflow NORMALISATION"
+    script "subworkflows/local/normalisation/main.nf"
+    workflow "NORMALISATION"
+    tag "subworkflow_normalisation"
+    tag "subworkflow"
+
+    test("GeTMM - KNN imputation") {
+
+        when {
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [
+                            normalised: false,
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
+                            dataset: "rnaseq_raw",
+                            platform: "rnaseq"
+                        ],
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.csv', checkIfExists: true )
+                    ]
+                )
+                input[1] = "solanum_tuberosum"
+                input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
+                input[3] = false
+                input[4] = 'knn'
+                input[5] = false
+                input[6] = "uniform"
+                input[7] = null
+                input[8] = null
+                input[9] = null
+                input[10] ="$outputDir"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("Quantile normalisation - Iterative imputation") {
+
+        when {
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [
+                            normalised: false,
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
+                            dataset: "rnaseq_raw",
+                            platform: "rnaseq"
+                        ],
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.parquet', checkIfExists: true )
+                    ],
+                    [
+                        [
+                            normalised: true,
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
+                            dataset: "microarray_normalised",
+                            platform: "microarray"
+                        ],
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.parquet', checkIfExists: true )
+                    ]
+                )
+                input[1] = "solanum_tuberosum"
+                input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
+                input[3] = false
+                input[4] = 'iterative'
+                input[5] = true
+                input[6] = "uniform"
+                input[7] = null
+                input[8] = null
+                input[9] = null
+                input[10] ="$outputDir"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("No gene length normalisation") {
+
+        when {
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [
+                            normalised: false,
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.design.csv', checkIfExists: true ),
+                            dataset: "rnaseq_raw",
+                            platform: "rnaseq"
+                        ],
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/rnaseq.raw.parquet', checkIfExists: true )
+                    ],
+                    [
+                        [
+                            normalised: true,
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
+                            dataset: "microarray_normalised",
+                            platform: "microarray"
+                        ],
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.parquet', checkIfExists: true )
+                    ]
+                )
+                input[1] = "solanum_tuberosum"
+                input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
+                input[3] = true
+                input[4] = 'knn'
+                input[5] = false
+                input[6] = "uniform"
+                input[7] = null
+                input[8] = null
+                input[9] = null
+                input[10] ="$outputDir"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+    test("Microarray only - quantile normalisation to normal distribution") {
+
+        when {
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [
+                            normalised: true,
+                            design: file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.design.csv', checkIfExists: true ),
+                            dataset: "microarray_normalised",
+                            platform: "microarray"
+                        ],
+                        file( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/microarray.normalised.parquet', checkIfExists: true )
+                    ]
+                )
+                input[1] = "solanum_tuberosum"
+                input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
+                input[3] = false
+                input[4] = 'knn'
+                input[5] = true
+                input[6] = "normal"
+                input[7] = null
+                input[8] = null
+                input[9] = null
+                input[10] ="$outputDir"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+
+    }
+
+}

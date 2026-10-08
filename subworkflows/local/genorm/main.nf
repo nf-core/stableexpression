@@ -60,7 +60,7 @@ workflow GENORM {
     // -----------------------------------------------------------------
 
     ch_ratio_files = RATIO_STANDARD_VARIATION.out.data
-                        .map{ meta, file -> [ [ section: meta.section ], file ] }
+                        .map{ meta, file -> [ [ platform: meta.platform, section: meta.section ], file ] }
                         .groupTuple()
 
     COMPUTE_M_MEASURE( ch_ratio_files )

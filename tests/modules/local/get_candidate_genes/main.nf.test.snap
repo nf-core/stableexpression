@@ -4,16 +4,28 @@
             {
                 "0": [
                     [
-                        "section_1.candidate_counts.parquet:md5,061816e634eafd95cfdc09d586f226ec",
-                        "section_2.candidate_counts.parquet:md5,74c0b7e6e08990e97f02799e91dd1fa2",
-                        "section_3.candidate_counts.parquet:md5,a64221eb6e8376068089f29b16b2f068"
+                        {
+                            "section": "section_1",
+                            "platform": "rnaseq"
+                        },
+                        [
+                            "section_1.candidate_counts.parquet:md5,061816e634eafd95cfdc09d586f226ec",
+                            "section_2.candidate_counts.parquet:md5,74c0b7e6e08990e97f02799e91dd1fa2",
+                            "section_3.candidate_counts.parquet:md5,a64221eb6e8376068089f29b16b2f068"
+                        ]
                     ]
                 ],
                 "1": [
                     [
-                        "section_1.stats.parquet:md5,4d803c86f29e749be2228e8937ab949e",
-                        "section_2.stats.parquet:md5,04bbc879fcfa84728b1267b780dffa6a",
-                        "section_3.stats.parquet:md5,73b8479ff9e27141620386500ae83db6"
+                        {
+                            "section": "section_1",
+                            "platform": "rnaseq"
+                        },
+                        [
+                            "section_1.stats.parquet:md5,4fd89f2d533a84d91a518e1f3e9f544d",
+                            "section_2.stats.parquet:md5,316f6546e453b4c7635ff1e2101c17bd",
+                            "section_3.stats.parquet:md5,a087fc1f49c74faf21f2d29c008b546a"
+                        ]
                     ]
                 ],
                 "2": [
@@ -30,26 +42,38 @@
                         "1.39.2"
                     ]
                 ],
-                "counts": [
+                "section_counts": [
                     [
-                        "section_1.candidate_counts.parquet:md5,061816e634eafd95cfdc09d586f226ec",
-                        "section_2.candidate_counts.parquet:md5,74c0b7e6e08990e97f02799e91dd1fa2",
-                        "section_3.candidate_counts.parquet:md5,a64221eb6e8376068089f29b16b2f068"
+                        {
+                            "section": "section_1",
+                            "platform": "rnaseq"
+                        },
+                        [
+                            "section_1.candidate_counts.parquet:md5,061816e634eafd95cfdc09d586f226ec",
+                            "section_2.candidate_counts.parquet:md5,74c0b7e6e08990e97f02799e91dd1fa2",
+                            "section_3.candidate_counts.parquet:md5,a64221eb6e8376068089f29b16b2f068"
+                        ]
                     ]
                 ],
                 "section_stats": [
                     [
-                        "section_1.stats.parquet:md5,4d803c86f29e749be2228e8937ab949e",
-                        "section_2.stats.parquet:md5,04bbc879fcfa84728b1267b780dffa6a",
-                        "section_3.stats.parquet:md5,73b8479ff9e27141620386500ae83db6"
+                        {
+                            "section": "section_1",
+                            "platform": "rnaseq"
+                        },
+                        [
+                            "section_1.stats.parquet:md5,4fd89f2d533a84d91a518e1f3e9f544d",
+                            "section_2.stats.parquet:md5,316f6546e453b4c7635ff1e2101c17bd",
+                            "section_3.stats.parquet:md5,a087fc1f49c74faf21f2d29c008b546a"
+                        ]
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:11:32.809905407",
+        "timestamp": "2026-10-05T17:46:41.950577812",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     },
     "Too many sections": {
@@ -57,28 +81,40 @@
             {
                 "0": [
                     [
-                        "section_12.candidate_counts.parquet:md5,93fafe6b1b67be5c77f87a6ed59dd5f7",
-                        "section_14.candidate_counts.parquet:md5,664c0ccb85addf66ba02f0c1d51275d1",
-                        "section_16.candidate_counts.parquet:md5,acd64b1b485854ad35b7e177e72f08b5",
-                        "section_18.candidate_counts.parquet:md5,5e7bbaab8e787d7f2bc30e31691c7a4f",
-                        "section_20.candidate_counts.parquet:md5,8018785c254112e6dd097af783afdd98",
-                        "section_3.candidate_counts.parquet:md5,f9bf681ee165ffc8bc52f2da46d669a6",
-                        "section_5.candidate_counts.parquet:md5,c458f82606fea41b4c5e90df3d6c3b0a",
-                        "section_7.candidate_counts.parquet:md5,769296732439e729273303f2f05f1aed",
-                        "section_9.candidate_counts.parquet:md5,168e7ae463aab1dc99bf417d9d9dd8a3"
+                        {
+                            "section": "section_1",
+                            "platform": "rnaseq"
+                        },
+                        [
+                            "section_12.candidate_counts.parquet:md5,93fafe6b1b67be5c77f87a6ed59dd5f7",
+                            "section_14.candidate_counts.parquet:md5,664c0ccb85addf66ba02f0c1d51275d1",
+                            "section_16.candidate_counts.parquet:md5,acd64b1b485854ad35b7e177e72f08b5",
+                            "section_18.candidate_counts.parquet:md5,5e7bbaab8e787d7f2bc30e31691c7a4f",
+                            "section_20.candidate_counts.parquet:md5,8018785c254112e6dd097af783afdd98",
+                            "section_3.candidate_counts.parquet:md5,f9bf681ee165ffc8bc52f2da46d669a6",
+                            "section_5.candidate_counts.parquet:md5,c458f82606fea41b4c5e90df3d6c3b0a",
+                            "section_7.candidate_counts.parquet:md5,769296732439e729273303f2f05f1aed",
+                            "section_9.candidate_counts.parquet:md5,168e7ae463aab1dc99bf417d9d9dd8a3"
+                        ]
                     ]
                 ],
                 "1": [
                     [
-                        "section_12.stats.parquet:md5,37a9c893882779164c1f24090be03c6d",
-                        "section_14.stats.parquet:md5,f7d996cb686863c3d84ff3276c373e17",
-                        "section_16.stats.parquet:md5,4cce3721422f071322b29f69721aac31",
-                        "section_18.stats.parquet:md5,9a520f38ca6e6105060a56f2327977c6",
-                        "section_20.stats.parquet:md5,cf45dbca1d2c35c70e160f139be49bca",
-                        "section_3.stats.parquet:md5,0d0007304b13a7eb941ee2cc1c8e39f8",
-                        "section_5.stats.parquet:md5,f28aef4d13633de7f87bb5f08fb6a2f4",
-                        "section_7.stats.parquet:md5,6c900d815d8b8b2299ea43ead4fece76",
-                        "section_9.stats.parquet:md5,7b178b1913ddf5f70cc16f7a17854a4f"
+                        {
+                            "section": "section_1",
+                            "platform": "rnaseq"
+                        },
+                        [
+                            "section_12.stats.parquet:md5,a1177f8f53318c35fe5d642e791ff196",
+                            "section_14.stats.parquet:md5,8a3d0a1c4a78b7cb725597f9c1cad162",
+                            "section_16.stats.parquet:md5,afa7ef1faf4f294b763335c5a0ce138b",
+                            "section_18.stats.parquet:md5,f0e7b6515f7977ca60444d0aa9527d48",
+                            "section_20.stats.parquet:md5,6aa57abc7657ab1e8c65091512e3e7c6",
+                            "section_3.stats.parquet:md5,c7f7767c1464db8dfd2d9b02886a9682",
+                            "section_5.stats.parquet:md5,3abf0570c529497536cd1917132d8ec9",
+                            "section_7.stats.parquet:md5,aa10025e67ac21741c6183db8cc8fbfc",
+                            "section_9.stats.parquet:md5,0f38b3421c4b06ff340b18a6b2cdb5ac"
+                        ]
                     ]
                 ],
                 "2": [
@@ -95,38 +131,50 @@
                         "1.39.2"
                     ]
                 ],
-                "counts": [
+                "section_counts": [
                     [
-                        "section_12.candidate_counts.parquet:md5,93fafe6b1b67be5c77f87a6ed59dd5f7",
-                        "section_14.candidate_counts.parquet:md5,664c0ccb85addf66ba02f0c1d51275d1",
-                        "section_16.candidate_counts.parquet:md5,acd64b1b485854ad35b7e177e72f08b5",
-                        "section_18.candidate_counts.parquet:md5,5e7bbaab8e787d7f2bc30e31691c7a4f",
-                        "section_20.candidate_counts.parquet:md5,8018785c254112e6dd097af783afdd98",
-                        "section_3.candidate_counts.parquet:md5,f9bf681ee165ffc8bc52f2da46d669a6",
-                        "section_5.candidate_counts.parquet:md5,c458f82606fea41b4c5e90df3d6c3b0a",
-                        "section_7.candidate_counts.parquet:md5,769296732439e729273303f2f05f1aed",
-                        "section_9.candidate_counts.parquet:md5,168e7ae463aab1dc99bf417d9d9dd8a3"
+                        {
+                            "section": "section_1",
+                            "platform": "rnaseq"
+                        },
+                        [
+                            "section_12.candidate_counts.parquet:md5,93fafe6b1b67be5c77f87a6ed59dd5f7",
+                            "section_14.candidate_counts.parquet:md5,664c0ccb85addf66ba02f0c1d51275d1",
+                            "section_16.candidate_counts.parquet:md5,acd64b1b485854ad35b7e177e72f08b5",
+                            "section_18.candidate_counts.parquet:md5,5e7bbaab8e787d7f2bc30e31691c7a4f",
+                            "section_20.candidate_counts.parquet:md5,8018785c254112e6dd097af783afdd98",
+                            "section_3.candidate_counts.parquet:md5,f9bf681ee165ffc8bc52f2da46d669a6",
+                            "section_5.candidate_counts.parquet:md5,c458f82606fea41b4c5e90df3d6c3b0a",
+                            "section_7.candidate_counts.parquet:md5,769296732439e729273303f2f05f1aed",
+                            "section_9.candidate_counts.parquet:md5,168e7ae463aab1dc99bf417d9d9dd8a3"
+                        ]
                     ]
                 ],
                 "section_stats": [
                     [
-                        "section_12.stats.parquet:md5,37a9c893882779164c1f24090be03c6d",
-                        "section_14.stats.parquet:md5,f7d996cb686863c3d84ff3276c373e17",
-                        "section_16.stats.parquet:md5,4cce3721422f071322b29f69721aac31",
-                        "section_18.stats.parquet:md5,9a520f38ca6e6105060a56f2327977c6",
-                        "section_20.stats.parquet:md5,cf45dbca1d2c35c70e160f139be49bca",
-                        "section_3.stats.parquet:md5,0d0007304b13a7eb941ee2cc1c8e39f8",
-                        "section_5.stats.parquet:md5,f28aef4d13633de7f87bb5f08fb6a2f4",
-                        "section_7.stats.parquet:md5,6c900d815d8b8b2299ea43ead4fece76",
-                        "section_9.stats.parquet:md5,7b178b1913ddf5f70cc16f7a17854a4f"
+                        {
+                            "section": "section_1",
+                            "platform": "rnaseq"
+                        },
+                        [
+                            "section_12.stats.parquet:md5,a1177f8f53318c35fe5d642e791ff196",
+                            "section_14.stats.parquet:md5,8a3d0a1c4a78b7cb725597f9c1cad162",
+                            "section_16.stats.parquet:md5,afa7ef1faf4f294b763335c5a0ce138b",
+                            "section_18.stats.parquet:md5,f0e7b6515f7977ca60444d0aa9527d48",
+                            "section_20.stats.parquet:md5,6aa57abc7657ab1e8c65091512e3e7c6",
+                            "section_3.stats.parquet:md5,c7f7767c1464db8dfd2d9b02886a9682",
+                            "section_5.stats.parquet:md5,3abf0570c529497536cd1917132d8ec9",
+                            "section_7.stats.parquet:md5,aa10025e67ac21741c6183db8cc8fbfc",
+                            "section_9.stats.parquet:md5,0f38b3421c4b06ff340b18a6b2cdb5ac"
+                        ]
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:11:41.442628072",
+        "timestamp": "2026-10-05T17:46:50.46060222",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     }
 }

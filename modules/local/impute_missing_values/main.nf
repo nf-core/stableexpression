@@ -3,6 +3,8 @@ process IMPUTE_MISSING_VALUES {
     label 'process_high'
     label 'process_long'
 
+    tag "${meta.platform}"
+
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/57/5751f4c7c1eb17d92c2863dec2b7505295e56eafb65ea5a9df66876fbffd24e3/data':
@@ -22,7 +24,8 @@ process IMPUTE_MISSING_VALUES {
     """
     impute_missing_values.py \\
         --counts $count_file \\
-        --imputer $missing_value_imputer
+        --imputer $missing_value_imputer \\
+        --out ${meta.platform}.imputed.parquet
     """
 
     stub:

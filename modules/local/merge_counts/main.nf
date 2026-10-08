@@ -1,6 +1,7 @@
 process MERGE_COUNTS {
 
     label "process_high"
+    tag "${meta.platform}"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
@@ -11,21 +12,22 @@ process MERGE_COUNTS {
     tuple val(meta), path(count_files, stageAs: "?/*")
 
     output:
-    tuple val(meta), path('all_counts.parquet'), emit: counts
+    tuple val(meta), path('*.merged.parquet'), emit: counts
     // not using task.process here as the process is called 'PLATFORM' or 'GLOBAL' in the workflow
     // which is less informative and creates unnecessary duplicates
-    tuple val("MERGE_COUNTS"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
-    tuple val("MERGE_COUNTS"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
+    tuple val("${task.process}"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("${task.process}"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     """
     merge_counts.py \\
-        --counts "$count_files"
+        --counts "$count_files" \\
+        --out ${meta.platform}.merged.parquet
     """
 
     stub:
     """
-    touch all_counts.parquet
+    touch stub.merged.parquet
     """
 
 }

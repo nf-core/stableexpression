@@ -15,6 +15,7 @@ workflow GET_TRANSCRIPT_LENGTHS {
     ch_valid_gene_ids
     gff_file
     gff_url
+    ch_rnaseq_datasets_collected // only used as a trigger to launch this subworkflow
 
     main:
 
@@ -34,5 +35,6 @@ workflow GET_TRANSCRIPT_LENGTHS {
 
     emit:
     csv        = COMPUTE_GENE_TRANSCRIPT_LENGTHS.out.csv
+    annotation = ch_annotation
 
 }

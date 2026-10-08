@@ -47,11 +47,11 @@ workflow NFCORE_STABLEEXPRESSION {
     downloaded                            = STABLEEXPRESSION.out.downloaded
     id_filtered_renamed                   = STABLEEXPRESSION.out.id_filtered_renamed
     samples_filtered                      = STABLEEXPRESSION.out.samples_filtered
-    first_normalisation                   = STABLEEXPRESSION.out.first_normalisation
-    quantile_normalised                   = STABLEEXPRESSION.out.quantile_normalised
+    rnaseq_normalised                     = STABLEEXPRESSION.out.rnaseq_normalised
+    annotation                            = STABLEEXPRESSION.out.annotation
     gene_length_file                      = STABLEEXPRESSION.out.gene_length_file
-    merged                                = STABLEEXPRESSION.out.merged
     imputed                               = STABLEEXPRESSION.out.imputed
+    corrected                             = STABLEEXPRESSION.out.corrected
     all_genes_summary                     = STABLEEXPRESSION.out.all_genes_summary
     dash_app                              = STABLEEXPRESSION.out.dash_app
     multiqc_report                        = STABLEEXPRESSION.out.multiqc_report
@@ -103,11 +103,11 @@ workflow {
     downloaded                            = NFCORE_STABLEEXPRESSION.out.downloaded
     id_filtered_renamed                   = NFCORE_STABLEEXPRESSION.out.id_filtered_renamed
     samples_filtered                      = NFCORE_STABLEEXPRESSION.out.samples_filtered
-    first_normalisation                   = NFCORE_STABLEEXPRESSION.out.first_normalisation
-    quantile_normalised                   = NFCORE_STABLEEXPRESSION.out.quantile_normalised
+    rnaseq_normalised                     = NFCORE_STABLEEXPRESSION.out.rnaseq_normalised
+    annotation                            = NFCORE_STABLEEXPRESSION.out.annotation
     gene_length_file                      = NFCORE_STABLEEXPRESSION.out.gene_length_file
-    merged                                = NFCORE_STABLEEXPRESSION.out.merged
     imputed                               = NFCORE_STABLEEXPRESSION.out.imputed
+    corrected                             = NFCORE_STABLEEXPRESSION.out.corrected
     all_genes_summary                     = NFCORE_STABLEEXPRESSION.out.all_genes_summary
     dash_app                              = NFCORE_STABLEEXPRESSION.out.dash_app
     multiqc_report                        = NFCORE_STABLEEXPRESSION.out.multiqc_report
@@ -147,15 +147,15 @@ output {
         }
     }
 
-    first_normalisation {
+    rnaseq_normalised {
         path { meta, file ->
-            file >> getOutputFolder(meta, "3.${params.normalisation_method}_normalised")
+            file >> getOutputFolder(meta, "3.normalised")
         }
     }
 
-    quantile_normalised {
-        path { meta, file ->
-            file >> getOutputFolder(meta, "4.quantile_normalised")
+    annotation {
+        path { file ->
+            file >> "annotation/"
         }
     }
 
@@ -165,15 +165,16 @@ output {
         }
     }
 
-    merged {
+    imputed {
         path { meta, file ->
             file >> "merged_data/"
         }
     }
 
-    imputed {
-        path { meta, file ->
-            file >> "merged_data/"
+    corrected {
+        path { meta, file, design ->
+            file   >> "merged_data/"
+            design >> "merged_data/"
         }
     }
 

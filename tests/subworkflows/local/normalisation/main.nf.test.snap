@@ -1,0 +1,442 @@
+{
+    "Quantile normalisation - Iterative imputation": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
+                        "microarray.whole_design.csv:md5,4c2932b70f07ddbb290f372d79f151d7"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.merged.parquet:md5,1d39b9ab0de1a2680b6014d7a2d85041",
+                        "rnaseq.whole_design.csv:md5,44bcdbc0928dca0514a15ba085a36fb8"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.imputed.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.imputed.parquet:md5,4813d525e44d778dd559bedf6631c825"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.merged.parquet:md5,4813d525e44d778dd559bedf6631c825"
+                    ]
+                ],
+                "3": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.rpk.edger_log2.parquet:md5,45d24a266744367f529a24dae76aa2f3"
+                    ]
+                ],
+                "4": [
+                    "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
+                ],
+                "5": [
+                    "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744"
+                ],
+                "annotation": [
+                    "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744"
+                ],
+                "gene_length_file": [
+                    "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
+                ],
+                "imputed": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.imputed.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.imputed.parquet:md5,4813d525e44d778dd559bedf6631c825"
+                    ]
+                ],
+                "non_imputed": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.merged.parquet:md5,4813d525e44d778dd559bedf6631c825"
+                    ]
+                ],
+                "normalised": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
+                        "microarray.whole_design.csv:md5,4c2932b70f07ddbb290f372d79f151d7"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.merged.parquet:md5,1d39b9ab0de1a2680b6014d7a2d85041",
+                        "rnaseq.whole_design.csv:md5,44bcdbc0928dca0514a15ba085a36fb8"
+                    ]
+                ],
+                "rnaseq_normalised": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.rpk.edger_log2.parquet:md5,45d24a266744367f529a24dae76aa2f3"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-05T23:01:17.273834508",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "No gene length normalisation": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.corrected.parquet:md5,1296e2a1c0a5f1bc4f320b5a40144cf0",
+                        "microarray.whole_design.csv:md5,4c2932b70f07ddbb290f372d79f151d7"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.corrected.parquet:md5,2e209b35bb07b7d536cc645948db833b",
+                        "rnaseq.whole_design.csv:md5,44bcdbc0928dca0514a15ba085a36fb8"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.imputed.parquet:md5,1296e2a1c0a5f1bc4f320b5a40144cf0"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.imputed.parquet:md5,2e209b35bb07b7d536cc645948db833b"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.merged.parquet:md5,c961af30405c7b8b8bac4fe4883d82a8"
+                    ]
+                ],
+                "3": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.edger_log2.parquet:md5,eb8e6797f02035d00101fb3d6af86e0e"
+                    ]
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    
+                ],
+                "annotation": [
+                    
+                ],
+                "gene_length_file": [
+                    
+                ],
+                "imputed": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.imputed.parquet:md5,1296e2a1c0a5f1bc4f320b5a40144cf0"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.imputed.parquet:md5,2e209b35bb07b7d536cc645948db833b"
+                    ]
+                ],
+                "non_imputed": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.merged.parquet:md5,c961af30405c7b8b8bac4fe4883d82a8"
+                    ]
+                ],
+                "normalised": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.corrected.parquet:md5,1296e2a1c0a5f1bc4f320b5a40144cf0",
+                        "microarray.whole_design.csv:md5,4c2932b70f07ddbb290f372d79f151d7"
+                    ],
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.corrected.parquet:md5,2e209b35bb07b7d536cc645948db833b",
+                        "rnaseq.whole_design.csv:md5,44bcdbc0928dca0514a15ba085a36fb8"
+                    ]
+                ],
+                "rnaseq_normalised": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.edger_log2.parquet:md5,eb8e6797f02035d00101fb3d6af86e0e"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-05T23:01:39.927178761",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "Microarray only - quantile normalisation to normal distribution": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
+                        "microarray.whole_design.csv:md5,4c2932b70f07ddbb290f372d79f151d7"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.imputed.parquet:md5,1296e2a1c0a5f1bc4f320b5a40144cf0"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2"
+                    ]
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
+                ],
+                "5": [
+                    "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744"
+                ],
+                "annotation": [
+                    "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744"
+                ],
+                "gene_length_file": [
+                    "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
+                ],
+                "imputed": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.imputed.parquet:md5,1296e2a1c0a5f1bc4f320b5a40144cf0"
+                    ]
+                ],
+                "non_imputed": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2"
+                    ]
+                ],
+                "normalised": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
+                        "microarray.whole_design.csv:md5,4c2932b70f07ddbb290f372d79f151d7"
+                    ]
+                ],
+                "rnaseq_normalised": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-10-05T23:02:10.817588063",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "GeTMM - KNN imputation": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.corrected.parquet:md5,639e365c234082945f65eb73a030d3f3",
+                        "rnaseq.whole_design.csv:md5,44bcdbc0928dca0514a15ba085a36fb8"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.imputed.parquet:md5,639e365c234082945f65eb73a030d3f3"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.merged.parquet:md5,4813d525e44d778dd559bedf6631c825"
+                    ]
+                ],
+                "3": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.rpk.edger_log2.parquet:md5,45d24a266744367f529a24dae76aa2f3"
+                    ]
+                ],
+                "4": [
+                    "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
+                ],
+                "5": [
+                    "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744"
+                ],
+                "annotation": [
+                    "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744"
+                ],
+                "gene_length_file": [
+                    "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39"
+                ],
+                "imputed": [
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.imputed.parquet:md5,639e365c234082945f65eb73a030d3f3"
+                    ]
+                ],
+                "non_imputed": [
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.merged.parquet:md5,4813d525e44d778dd559bedf6631c825"
+                    ]
+                ],
+                "normalised": [
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.corrected.parquet:md5,639e365c234082945f65eb73a030d3f3",
+                        "rnaseq.whole_design.csv:md5,44bcdbc0928dca0514a15ba085a36fb8"
+                    ]
+                ],
+                "rnaseq_normalised": [
+                    [
+                        {
+                            "normalised": false,
+                            "design": "rnaseq.raw.design.csv:md5,39470b02a211aff791f9e4851b017488",
+                            "dataset": "rnaseq_raw",
+                            "platform": "rnaseq"
+                        },
+                        "rnaseq.raw.rpk.edger_log2.parquet:md5,45d24a266744367f529a24dae76aa2f3"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-05T22:41:36.84879636",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}

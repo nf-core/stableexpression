@@ -57,6 +57,8 @@ def detect_separator(file: Path, candidates: list[str]) -> str:
         if n_cols > best_score:
             best_score = n_cols
             best_sep = sep
+    if best_sep is None:
+        raise ValueError("No separator found among candidates")
     return best_sep
 
 
@@ -92,6 +94,10 @@ def parse_table(file: Path):
 
 def get_nb_rows(lf: pl.LazyFrame):
     return lf.select(pl.len()).collect().item()
+
+
+def get_count_columns(lf: pl.LazyFrame) -> list[str]:
+    return [col for col in lf.select(pl.exclude(config.GENE_ID_COLNAME)).collect_schema().names()]
 
 
 def parse_count_table(file: Path):
