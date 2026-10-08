@@ -1,4 +1,5 @@
 include { COMPUTE_GENE_STATISTICS            } from '../../../modules/local/compute_gene_statistics'
+include { MAKE_SECTIONS                      } from '../../../modules/local/make_sections'
 include { GET_CANDIDATE_GENES                } from '../../../modules/local/get_candidate_genes'
 include { NORMFINDER                         } from '../../../modules/local/normfinder'
 include { PLATFORM_STABILITY_SCORE           } from '../../../modules/local/stability_scores/platform'
@@ -44,13 +45,25 @@ workflow STABILITY_SCORING {
     ch_stats = COMPUTE_GENE_STATISTICS.out.stats
 
     // -----------------------------------------------------------------
+    // MAKE PLATFORM-WISE SECTIONS,
+    // BASED ON THE MEAN EXPRESSION LEVEL OF EACH GENE IN EACH PLATFORM
+    // -----------------------------------------------------------------
+
+    MAKE_SECTIONS(
+        ch_stats.map { meta, file -> file }.collect(),
+        nb_sections
+    )
+
+    ch_sections = MAKE_SECTIONS.out.sections
+
+    // -----------------------------------------------------------------
     // GETTING CANDIDATE GENES
     // -----------------------------------------------------------------
 
     GET_CANDIDATE_GENES(
         ch_platform_counts.join( ch_stats ),
-        nb_candidates_per_section,
-        nb_sections
+        ch_sections,
+        nb_candidates_per_section
     )
 
     ch_candidate_gene_counts = splitBySection( GET_CANDIDATE_GENES.out.section_counts )

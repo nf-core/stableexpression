@@ -11,8 +11,8 @@ process GET_CANDIDATE_GENES {
 
     input:
     tuple val(meta), path(count_file), path(stat_file)
+    path section_file
     val nb_candidates_per_section
-    val nb_sections
 
     output:
     tuple val(meta), path('section_*.candidate_counts.parquet'),                                                      emit: section_counts
@@ -25,8 +25,8 @@ process GET_CANDIDATE_GENES {
     get_candidate_genes.py \\
         --counts $count_file \\
         --stats $stat_file \\
-        --nb-candidates-per-section $nb_candidates_per_section \\
-        --nb-sections $nb_sections
+        --sections $section_file \\
+        --nb-candidates-per-section $nb_candidates_per_section
     """
 
     stub:

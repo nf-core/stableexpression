@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 
 # Written by Olivier Coen. Released under the MIT license.
+"""
+get_candidate_genes.py - Build a shortlist of candidate genes, section by section, based on the coefficient of variation.
+"""
 
 import argparse
 import logging
 from pathlib import Path
 
 import config
-from common import export_parquet
+from common import export_parquet, parse_table
 
 import polars as pl
 
@@ -35,14 +38,21 @@ def parse_args():
         type=Path,
         dest="count_file",
         required=True,
-        help="File containing counts for all genes",
+        help="Files containing counts for all genes",
     )
     parser.add_argument(
         "--stats",
         type=Path,
         dest="stat_file",
         required=True,
-        help="File containing statistics of expression over all datasets",
+        help="Files containing statistics of expression over all datasets",
+    )
+    parser.add_argument(
+        "--sections",
+        type=Path,
+        dest="section_file",
+        required=True,
+        help="File containing the section for each gene",
     )
     parser.add_argument(
         "--nb-candidates-per-section",
@@ -50,13 +60,6 @@ def parse_args():
         dest="nb_candidates_per_section",
         required=True,
         help="Number of candidates per section to select for subsequent steps",
-    )
-    parser.add_argument(
-        "--nb-sections",
-        type=int,
-        dest="nb_sections",
-        required=True,
-        help="Number of sections to divide the data into",
     )
     return parser.parse_args()
 
@@ -69,24 +72,15 @@ def parse_stats(file: Path) -> pl.DataFrame:
     )
 
 
-def add_sections(stat_df: pl.DataFrame, nb_sections: int):
+def add_sections(stat_df: pl.DataFrame, section_df: pl.DataFrame):
     """
-    Assigns gene to sections bases on mean expression level
-    Polars only ranks non-null values and preserves the null ones.
+    Add each gene's section in the dataframe containing statistics
     """
-    return stat_df.with_columns(
-        (
-            pl.col(config.MEAN_COLNAME).rank(method="ordinal", descending=True)
-            / pl.col(config.MEAN_COLNAME).count()
-            * nb_sections
-            + pl.lit(1)
-        )
-        .floor()
-        .cast(pl.UInt8)
-        # we want the only value at <nb_sections +1> to be at <nb_sections>
-        .replace({nb_sections + 1: nb_sections})
-        .alias("section")
-    )
+    stat_df = stat_df.join(section_df, how="left", on=config.GENE_ID_COLNAME)
+    at_least_one_section_is_null = stat_df.select(pl.col(config.SECTION_COLNAME).is_null().any()).item()
+    if at_least_one_section_is_null:
+        raise ValueError("Section was not provided for at least one gene.")
+    return stat_df
 
 
 def get_best_candidates(
@@ -122,8 +116,10 @@ def main():
 
     stat_df = parse_stats(args.stat_file)
 
-    logger.info("Getting sections")
-    stat_df = add_sections(stat_df, args.nb_sections)
+    # adding gene sections in the stat dataframe
+    logger.info("Adding sections")
+    section_df = parse_table(args.section_file)
+    stat_df = add_sections(stat_df, section_df)
 
     logger.info("Getting best candidates")
     # get base candidate genes based on the chosen statistical descriptor (cv, rcvm)
