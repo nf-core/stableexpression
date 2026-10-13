@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 
 # Written by Olivier Coen. Released under the MIT license.
+"""
+Compute log ratio for each pair of gene, for each column
+
+The output is like:
+    gene_id	gene_id_other	sampleA	sampleB
+    AT1G01060	AT4G34290	0.48072526	-0.049063634
+    AT1G01060	AT4G34460	0.21205564	0.15575644
+
+"""
 
 import argparse
 import logging
@@ -21,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Compute M-measure for each gene")
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--file",
         type=Path,

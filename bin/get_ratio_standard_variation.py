@@ -1,6 +1,18 @@
 #!/usr/bin/env python3
 
 # Written by Olivier Coen. Released under the MIT license.
+"""
+get_ratio_standard_variation.py
+
+The input is like:
+    gene_id	gene_id_other	sampleA	sampleB
+    AT1G01060	AT4G34290	0.48072526	-0.049063634
+    AT1G01060	AT4G34460	0.21205564	0.15575644
+
+The output is like:
+    gene_id ratio_stds
+    AT1G01060   [0.04122424, 0.049532797, 0.050319236, ...]
+"""
 
 import argparse
 import logging
@@ -37,27 +49,26 @@ def parse_args():
     return parser.parse_args()
 
 
-def compute_standard_deviations(file: Path) -> pl.LazyFrame:
-    ratios_lf = pl.scan_parquet(file)
+def compute_standard_deviations(ratios_lf: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    For each gene pair, combine all the *_log_ratio columns into one list and computes the standard deviation across samples.
+    The result is one row per pair: (ratios_std, gene_id, gene_id_other)
+    """
     ratio_columns = [
-        col for col in ratios_lf.collect_schema().names() if col.endswith("_log_ratio")
+        c for c in ratios_lf.collect_schema().names() if c.endswith("_log_ratio")
     ]
-    concat_ratios_lf = ratios_lf.select(
-        [
-            pl.concat_list(
-                [pl.col(col) for col in ratio_columns[i : i + RATIO_CHUNK_SIZE]]
-            ).alias(f"concat_list_chunk_{i // RATIO_CHUNK_SIZE}")
-            for i in range(0, len(ratio_columns), RATIO_CHUNK_SIZE)
-        ]
-    ).select(pl.concat_list(pl.all()).alias("ratios"))
-    return pl.concat(
-        [
-            concat_ratios_lf.select("ratios"),
-            ratios_lf.select(pl.exclude("^.*_log_ratio$")),  # gene_id & gene_id_other
-        ],
-        how="horizontal",
-    ).select(
-        pl.col("ratios").list.std(ddof=0).alias(config.RATIOS_STD_COLNAME),
+    if not ratio_columns:
+        raise ValueError("No '*_log_ratio' columns found in input")
+
+    # Concatenate in chunks to keep the expression tree small
+    # when there are many samples
+    chunks = [
+        pl.concat_list(ratio_columns[i : i + RATIO_CHUNK_SIZE])
+        for i in range(0, len(ratio_columns), RATIO_CHUNK_SIZE)
+    ]
+
+    return ratios_lf.select(
+        pl.concat_list(chunks).list.std(ddof=0).alias(config.RATIOS_STD_COLNAME),
         pl.col(config.GENE_ID_COLNAME),
         pl.col(f"{config.GENE_ID_COLNAME}_other"),
     )
@@ -104,15 +115,17 @@ def group_standard_deviations(std_lf: pl.LazyFrame) -> pl.LazyFrame:
 def main():
     args = parse_args()
 
-    logger.info(f"Computing standard deviations for {str(args.ratio_file)}")
-    std_lf = compute_standard_deviations(args.ratio_file)
+    ratios_lf = pl.scan_parquet(args.ratio_file)
+
+    logger.info(f"Computing standard deviations for {args.ratio_file}")
+    std_lf = compute_standard_deviations(ratios_lf)
     std_lf = group_standard_deviations(std_lf)
 
     # when the ratio file corresponds to the same gene ids cross joined with themselves (i == i)
     # then we want only only one row per gene id
     if get_nb_rows(std_lf) == 0:
         raise ValueError(
-            f"No output following treatment of file {str(args.ratio_file)}"
+            f"No output following treatment of file {args.ratio_file}"
         )
 
     # sort items in each list

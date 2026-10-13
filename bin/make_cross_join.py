@@ -2,12 +2,17 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
+"""
+make_cross_join.py - Make cross join between 2 count dataframes
+"""
+
+
 import argparse
 import logging
 from pathlib import Path
 
 import polars as pl
-from common import export_parquet
+from common import export_parquet, get_nb_rows
 
 
 logging.basicConfig(level=logging.INFO)
@@ -22,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Compute M-measure for each gene")
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--file1",
         type=Path,
@@ -72,14 +77,13 @@ def main():
         lf_other, how="cross", suffix="_other"
     )  # Perform a cross join with itself
 
-    df = lf.collect()
-    if len(df) == 0:
+    if len(get_nb_rows(lf)) == 0:
         raise ValueError(
-            f"No output following treatment of files {str(args.count_file_1)} and {str(args.count_file_2)}"
+            f"No output following treatment of files {args.count_file_1} and {args.count_file_2}"
         )
 
     outfile = f"cross_join.{args.count_file_1_index}.{args.count_file_2_index}.parquet"
-    export_parquet(df, outfile)
+    lf.sink_parquet(outfile)
 
 
 if __name__ == "__main__":
