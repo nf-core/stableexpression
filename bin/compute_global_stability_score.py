@@ -9,7 +9,7 @@ from math import sqrt
 
 import config
 import polars as pl
-from common import write_csv_with_floats
+from common import write_csv_with_floats, normalise_with_z_score
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -74,46 +74,93 @@ def compute_global_score(
     df: pl.DataFrame,
     platform_sizes: dict[str, int],
     std_penalty_weight: float,
-    null_penalty_weight: float
+    null_penalty_weight: float,
 ) -> pl.DataFrame:
     """
     Compute the global stability score by weighting stability scores from multiple platforms.
+
+    Steps:
+      1. Z-score-normalise each platform's stability score (shifted so the min is 0).
+      2. Weight each score by sqrt(platform sample size) and average them.
+      3. Subtract penalties: cross-platform score dispersion and missing platforms.
     """
-    # storing current list of columns
     original_columns = df.columns
-    stability_score_columns = [col for col in df.columns if col.startswith(config.STABILITY_SCORE_COLNAME)]
+    score_cols = [
+        col for col in df.columns
+        if col.startswith(config.STABILITY_SCORE_COLNAME)
+    ]
 
-    if len(stability_score_columns) == 1: # if only one platform, we just take the only score
-        return df.with_columns(pl.col(stability_score_columns[0]).alias(config.GLOBAL_STABILITY_SCORE_COLNAME))
+    # With a single platform, its score is the global score as-is.
+    if len(score_cols) == 1:
+        return df.with_columns(
+            pl.col(score_cols[0]).alias(config.GLOBAL_STABILITY_SCORE_COLNAME)
+        )
 
-    weighted_stability_score_columns = [f"{col}.weighted" for col in stability_score_columns]
-    sum_of_weights = sum([sqrt(size) for size in platform_sizes.values()])
+    # --- Step 1: normalise scores so platforms are comparable ---
+    # Z-score per platform, then subtract the min so every platform starts at 0.
+    normalised_cols = []
+    for col in score_cols:
+        normalised_col = f"{col}.normalised"
+        df = df.hstack(
+            [normalise_with_z_score(df[col], new_name=normalised_col)]
+        )
+        normalised_cols.append(normalised_col)
 
-    # 1 - multiplying each stability score column by the square root of the nb of samples in the associated platform
-    # 2 - compute the average of these weighted scores
-    # 3 - mitigating this sum by a penalty term, which is the std of all platform stability scores, multiplied by alpha
+    # --- Step 2: weight by platform size and average ---
+    # after normalising, col names are like 'a_string.<platform>.normalised
+    # so taking col.split(".")[-2] gives the associated platform
+    weights = {
+        col: sqrt(platform_sizes[col.split(".")[-2]]) for col in normalised_cols
+    }
+    sum_of_weights = sum(weights.values())
+
+    weighted_cols = [
+        (pl.col(normalised_col) * weight).alias(f"{normalised_col}.weighted")
+        for normalised_col, weight in zip(normalised_cols, weights.values())
+    ]
+
+    # --- Step 3: combine and apply penalties ---
+    weighted_average = (
+        pl.sum_horizontal(f"{col}.weighted" for col in normalised_cols)
+        / sum_of_weights
+    ).alias("stability_score_weighted_average")
+
+    score_dispersion = (
+        pl.concat_list(score_cols)
+        .list.drop_nulls()
+        .list.std()
+        .fill_null(0)
+        .alias("stability_score_std")
+    )
+
+    missing_platforms = (
+        pl.sum_horizontal(pl.col(score_cols).is_null())
+        .alias("nb_null_stability_scores")
+    )
+
+    global_score = (
+        pl.col("stability_score_weighted_average")
+        + std_penalty_weight * pl.col("stability_score_std")
+        + null_penalty_weight * pl.col("nb_null_stability_scores")
+    )
+
     return (
-        df.with_columns([
-            (pl.col(col) * sqrt(platform_sizes[col.split('.')[-1]])).alias(weighted_col)
-            for col, weighted_col in zip(stability_score_columns, weighted_stability_score_columns)
-        ]).with_columns(
-            (pl.sum_horizontal(weighted_stability_score_columns) / sum_of_weights).alias('stability_score_weighted_average'),
-            pl.concat_list(stability_score_columns).list.drop_nulls().list.std().fill_null(0).alias('stability_score_std'),
-            pl.sum_horizontal(pl.col(stability_score_columns).is_null()).alias('nb_null_stability_scores')
-        ).with_columns(
-            (
-                pl.col('stability_score_weighted_average')
-                + std_penalty_weight * pl.col('stability_score_std')
-                + null_penalty_weight * pl.col('nb_null_stability_scores')
-            ).alias(config.GLOBAL_STABILITY_SCORE_COLNAME)
-        ).select(original_columns + [config.GLOBAL_STABILITY_SCORE_COLNAME])
+        df.with_columns(weighted_cols)
+        .with_columns(weighted_average, score_dispersion, missing_platforms)
+        .with_columns(global_score.alias(config.GLOBAL_STABILITY_SCORE_COLNAME))
+        .select(original_columns + [config.GLOBAL_STABILITY_SCORE_COLNAME])
     )
 
 
 def add_global_rank(df: pl.DataFrame) -> pl.DataFrame:
+    """
+
+    """
     return (
         df.sort(
-            config.GLOBAL_STABILITY_SCORE_COLNAME, descending=False, nulls_last=True
+            [config.GLOBAL_STABILITY_SCORE_COLNAME, config.GENE_ID_COLNAME],
+            descending=[False, False],
+            nulls_last=True
         )
         .with_row_index(name="index")
         .with_columns((pl.col("index") + 1).alias(config.RANK_COLNAME))

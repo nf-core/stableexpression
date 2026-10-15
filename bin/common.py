@@ -147,3 +147,16 @@ def sink_csv_with_floats(
     lf.with_columns(
         cs.float().round(float_precision).cast(pl.Float32)
     ).sink_csv(outfilename, float_precision=float_precision)
+
+
+
+def normalise_with_z_score(data: pl.Series, new_name: str) -> pl.Series:
+    """
+    Normalised data using their Z-score.
+    Substract the min of z-scores to have only positive values (eg. s - (-2))
+    The minimum scores becomes 0.
+    """
+    mean = data.mean()
+    std = data.std()
+    s = pl.Series(new_name, (data - mean) / std)
+    return s - s.min()

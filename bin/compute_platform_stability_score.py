@@ -10,7 +10,7 @@ from typing import ClassVar
 
 import config
 import polars as pl
-from common import write_csv_with_floats
+from common import write_csv_with_floats, normalise_with_z_score
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -45,17 +45,6 @@ class StabilityScorer:
             self.WEIGHT_FIELDS, self.stability_score_weights_str.split(",")
         ):
             self.weights[weight_field] = float(weight)
-
-    def normalise_with_z_score(self, data: pl.Series, new_name: str) -> pl.Series:
-        """
-        Normalised data using their Z-score.
-        Substract the min of z-scores to have only positive values (eg. s - (-2))
-        The minimum scores becomes 0.
-        """
-        mean = data.mean()
-        std = data.std()
-        s = pl.Series(new_name, (data - mean) / std)
-        return s - s.min()
 
     @staticmethod
     def get_normalised_col(col: str) -> str:
@@ -96,7 +85,7 @@ class StabilityScorer:
             # and the min z-score is subtracted from each value, so that all values start at 0
             # and put these normalised data in another column suffixed with "_normalised"
             normalised_col = self.get_normalised_col(col)
-            normalised_data[col] = self.normalise_with_z_score(data, new_name=normalised_col)
+            normalised_data[col] = normalise_with_z_score(data, new_name=normalised_col)
             # creating a null column with same name
             null_data[col] = pl.Series(normalised_col, [None] * len(non_candidate_df))
             # counting the sum of weights corresponding to the columns present
