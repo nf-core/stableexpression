@@ -21,7 +21,6 @@ workflow STABILITY_SCORING {
     max_null_ratio_valid_sample
     nb_candidates_per_section
     nb_sections
-    skip_genorm
     stability_score_weights
     stability_score_std_penalty_weight
     stability_score_null_penalty_weight
@@ -94,19 +93,14 @@ workflow STABILITY_SCORING {
                             .map { platform, meta, counts, design -> [ meta, counts, design] }
 
     NORMFINDER( ch_normfinder_input )
-
     ch_normfinder_stabilities = NORMFINDER.out.stability_values
 
     // -----------------------------------------------------------------
     // GENORM
     // -----------------------------------------------------------------
 
-    if ( !skip_genorm ) {
-        GENORM ( ch_candidate_gene_counts )
-        ch_genorm_stability = GENORM.out.m_measures
-    } else {
-        ch_genorm_stability = channel.value([:])
-    }
+    GENORM ( ch_candidate_gene_counts )
+    ch_genorm_stability = GENORM.out.m_measures
 
     // -----------------------------------------------------------------
     // INTERMEDIATE STABILITY SCORE FOR EACH PLATFORM

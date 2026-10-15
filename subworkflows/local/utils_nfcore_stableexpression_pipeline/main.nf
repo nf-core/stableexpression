@@ -302,7 +302,7 @@ def toolCitationText() {
             "<li ${style}>Ensembl (Yates et al. 2026)</li>",
             "<li ${style}>Scikit-learn (Pedregosa et al. 2011)</li>",
             "<li ${style}>NormFinder (Andersen et al. 2004)</li>",
-            params["skip_genorm"] ? "" : "<li ${style}>GeNorm (Vandesompele et al. 2002)</li>",
+            <li ${style}>GeNorm (Vandesompele et al. 2002)</li>",
             "<li ${style}>MultiQC (Ewels et al. 2016)</li>"
         ].join(' ').trim()
 
@@ -317,7 +317,7 @@ def toolBibliographyText() {
             "<li>Yates, A. D., Austine-Orimoloye, O., Azov, A. G., Barba, M., Barnes, I., Barrera-Enriquez, V. P., Becker, A., Bennett, R., Berry, A., Bhai, J., Bhurji, S. K., Branco Lins, P. R., Brooks, L., Budhanuru Ramaraju, S., Campbell, L. I., Carbajo Martinez, M., Carpenter, J., Charkhchi, M., Cortes, L. A., … Finn, R. D. (2026). Ensembl 2026. Nucleic Acids Research, 54(D1), D1053–D1060. https://doi.org/10.1093/nar/gkaf1239</li>",
             "<li>Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., & Duchesnay, É. (2011). Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research, 12(85), 2825–2830.</li>",
             "<li>Andersen, C. L., Jensen, J. L., & Ørntoft, T. F. (2004). Normalization of Real-Time Quantitative Reverse Transcription-PCR Data: A Model-Based Variance Estimation Approach to Identify Genes Suited for Normalization, Applied to Bladder and Colon Cancer Data Sets. Cancer Research, 64(15), 5245–5250. https://doi.org/10.1158/0008-5472.CAN-04-0496</li>",
-            params["skip_genorm"] ? "" : "<li>Vandesompele, J., De Preter, K., Pattyn, F., Poppe, B., Van Roy, N., De Paepe, A., & Speleman, F. (2002). Accurate normalization of real-time quantitative RT-PCR data by geometric averaging of multiple internal control genes. Genome Biology, 3(7), research0034.1. https://doi.org/10.1186/gb-2002-3-7-research0034</li>",
+            "<li>Vandesompele, J., De Preter, K., Pattyn, F., Poppe, B., Van Roy, N., De Paepe, A., & Speleman, F. (2002). Accurate normalization of real-time quantitative RT-PCR data by geometric averaging of multiple internal control genes. Genome Biology, 3(7), research0034.1. https://doi.org/10.1186/gb-2002-3-7-research0034</li>",
             "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: /10.1093/bioinformatics/btw354</li>"
         ].join(' ').trim()
 

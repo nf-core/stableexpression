@@ -343,12 +343,6 @@
                     "help_text": "Number of candidate genes to keep in each section for stability scoring.",
                     "default": 250
                 },
-                "skip_genorm": {
-                    "type": "boolean",
-                    "description": "Run Genorm",
-                    "fa_icon": "fas fa-ban",
-                    "help": "Skip Genorm by setting this parameter to true. In this case, by default, only Normfinder will participate in the stability score."
-                },
                 "stability_score_weights": {
                     "type": "string",
                     "description": "Weights for the platform-specific stability score calculation",

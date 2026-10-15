@@ -175,7 +175,6 @@ workflow STABLEEXPRESSION {
             params.max_null_ratio_valid_sample,
             params.nb_candidates_per_section,
             params.nb_sections,
-            params.skip_genorm,
             params.stability_score_weights,
             params.stability_score_std_penalty_weight,
             params.stability_score_null_penalty_weight,
