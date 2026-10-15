@@ -43,7 +43,6 @@ class ReComBat:
 
     def __init__(
         self,
-        parametric: bool = True,
         model: str = 'linear',
         config: dict | None = None,
         conv_criterion: float = 1e-4,

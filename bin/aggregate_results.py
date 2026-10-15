@@ -232,7 +232,7 @@ def format_multiqc_section(
 
     if platform is not None:
         section_dict['section_name'] = section_dict['section_name'].replace('PLATFORM', platform.capitalize())
-        section_dict['description'] = section_dict['description'].replace('PLATFORM', platform.capitalize())
+        section_dict['description'] = section_dict['description'].replace('PLATFORM', platform)
 
     parent_id = section.replace("_", " ")
     parent_name = (
@@ -384,6 +384,8 @@ def main():
         stat_score_dfs.append(df)
         sections.append(section)
 
+    for stat_score_df in stat_score_dfs:
+        print(stat_score_df.schema)
     stat_score_df = pl.concat(stat_score_dfs, how="vertical")
 
     if stat_score_df.select(config.GENE_ID_COLNAME).is_duplicated().any():

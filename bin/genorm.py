@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 
 import config
-from common import sink_csv_with_floats, get_nb_rows, get_count_columns
+from common import sink_csv_with_floats, get_count_columns
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
@@ -184,14 +184,15 @@ def main():
     # replace 0 values by a very small count value
     count_lf = count_lf.with_columns(pl.exclude("gene_id").replace(0, 1e-8))
 
-    cross_join_lf = make_pairs(count_lf)
+    unique_pairs_lf = make_pairs(count_lf)
 
-    ratios_lf = compute_ratios(cross_join_lf)
+    ratios_lf = compute_ratios(unique_pairs_lf)
 
     ratio_std_lf = compute_standard_deviations(ratios_lf)
 
     # computing M measures for these gene IDs
     m_measure_lf = compute_m_measures(ratio_std_lf, n_genes)
+    print(m_measure_lf.collect())
 
     sink_csv_with_floats(m_measure_lf, args.outfile, float_precision=5)
 

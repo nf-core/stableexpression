@@ -136,12 +136,12 @@ def main():
     for row in best_candidates_df.iter_rows():
         section = row[0]
         best_candidates = row[1]
-        candidate_gene_count_lf = get_counts_for_candidates(
+        count_df = get_counts_for_candidates(
             args.count_file, best_candidates
         )
         # exporting count data for the best candidates for this section
         export_parquet(
-            candidate_gene_count_lf, CANDIDATE_COUNTS_OUTFILENAME.format(section)
+            count_df, CANDIDATE_COUNTS_OUTFILENAME.format(section)
         )
         # exporting statistics for all genes in this section
         export_parquet(

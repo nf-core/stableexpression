@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 #MODEL = 'linear'
 MODEL = 'ridge'
 #CONFIG = None
-CONFIG = {'alpha': 1e-9}
+CONFIG = {'alpha': 1e-9, 'copy_X': False}
 MAX_ITER = 1000 # RECOMBAT DEFAULT: 1000
 CONV_CRITERION = 1e-4 # RECOMBAT DEFAULT: 1e-4
 
@@ -116,7 +116,6 @@ def main():
 
     else:
         model = ReComBat(
-            parametric=False,
             model=MODEL,
             config=CONFIG,
             conv_criterion=CONV_CRITERION,
@@ -130,7 +129,15 @@ def main():
             'data': df.to_numpy().T,
             'batches': batch_series.to_numpy()
         }
+
         transformed_data = model.fit_transform(**kwargs)
+
+        # hack: when the transformed data contain negative values
+        # all data are translated up so that the min value (negative) becomes 0
+        min_all_values = transformed_data.min().min()
+        if min_all_values < 0:
+            transformed_data = transformed_data - min_all_values
+
         transformed_df_without_gene_ids = pl.DataFrame(transformed_data.T, schema=df.columns)
         transformed_df = pl.concat(
             [gene_ids, transformed_df_without_gene_ids],
