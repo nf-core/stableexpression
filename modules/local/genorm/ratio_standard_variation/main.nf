@@ -1,6 +1,6 @@
 process RATIO_STANDARD_VARIATION {
 
-    tag "${meta.platform} :: ${meta.section} :: ${meta.index_1} vs ${meta.index_2}"
+    tag "${meta.platform} :: ${meta.section}"
     label 'process_low_requirements'
 
     conda "${moduleDir}/environment.yml"
@@ -12,7 +12,7 @@ process RATIO_STANDARD_VARIATION {
     tuple val(meta), path(file)
 
     output:
-    tuple val(meta), path('std.*.parquet'), emit: data
+    tuple val(meta), path('*.std.parquet'), emit: data
     tuple val("GENORM_RATIO_STANDARD_VARIATION"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("GENORM_RATIO_STANDARD_VARIATION"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
@@ -24,7 +24,7 @@ process RATIO_STANDARD_VARIATION {
 
     stub:
     """
-    touch std.stub.parquet
+    touch stub.std.parquet
     """
 
 }

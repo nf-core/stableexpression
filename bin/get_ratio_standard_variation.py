@@ -53,6 +53,7 @@ def compute_standard_deviations(ratios_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     For each gene pair, combine all the *_log_ratio columns into one list and computes the standard deviation across samples.
     The result is one row per pair: (ratios_std, gene_id, gene_id_other)
+    If the number of samples is 1 (which should theoretically not happen), using a ddof of 0 for the std.
     """
     ratio_columns = [
         c for c in ratios_lf.collect_schema().names() if c.endswith("_log_ratio")
@@ -67,8 +68,10 @@ def compute_standard_deviations(ratios_lf: pl.LazyFrame) -> pl.LazyFrame:
         for i in range(0, len(ratio_columns), RATIO_CHUNK_SIZE)
     ]
 
+    ddof = 1 if len(get_count_columns(ratios_lf)) > 1 else 0
+
     return ratios_lf.select(
-        pl.concat_list(chunks).list.std(ddof=0).alias(config.RATIOS_STD_COLNAME),
+        pl.concat_list(chunks).list.std(ddof=ddof).alias(config.RATIOS_STD_COLNAME),
         pl.col(config.GENE_ID_COLNAME),
         pl.col(f"{config.GENE_ID_COLNAME}_other"),
     )

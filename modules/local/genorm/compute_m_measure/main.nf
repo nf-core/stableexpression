@@ -9,7 +9,7 @@ process COMPUTE_M_MEASURE {
         'community.wave.seqera.io/library/polars_python:e0e89fee0d134a04' }"
 
     input:
-    tuple val(meta), path(ratio_files)
+    tuple val(meta), path(ratio_std_file)
 
     output:
     tuple val(meta), path("m_measures.csv"), emit: m_measures
@@ -19,7 +19,7 @@ process COMPUTE_M_MEASURE {
     script:
     """
     compute_m_measures.py \\
-        --std-files "$ratio_files"
+        --ratio-std-file "$ratio_std_file"
     """
 
     stub:

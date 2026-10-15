@@ -1,6 +1,6 @@
 process CROSS_JOIN {
 
-    tag "${meta.platform} :: ${meta.section} :: ${meta.index_1} vs ${meta.index_2}"
+    tag "${meta.platform} :: ${meta.section}"
     label 'process_low_requirements'
 
     conda "${moduleDir}/environment.yml"
@@ -9,25 +9,22 @@ process CROSS_JOIN {
         'community.wave.seqera.io/library/polars_python:1a4a3322c56bfeb9' }"
 
     input:
-    tuple val(meta), path("count_chunk_file_1"), path("count_chunk_file_2")
+    tuple val(meta), path(counts)
 
     output:
-    tuple val(meta), path('cross_join.*.parquet'), emit: data
+    tuple val(meta), path('*.cross_join.parquet'), emit: data
     tuple val("GENORM_CROSS_JOIN"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("GENORM_CROSS_JOIN"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     """
     make_cross_join.py \\
-        --file1 count_chunk_file_1 \\
-        --file2 count_chunk_file_2 \\
-        --index1 ${meta.index_1} \\
-        --index2 ${meta.index_2}
+        --file $counts
     """
 
     stub:
     """
-    touch cross_join.stub.parquet
+    touch stub.cross_join.parquet
     """
 
 }

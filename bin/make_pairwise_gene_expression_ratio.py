@@ -2,7 +2,7 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 """
-Compute log ratio for each pair of gene, for each column
+Perform a cross join of a count file with itself and compute log ratio for each pair of gene, for each column
 
 The output is like:
     gene_id	gene_id_other	sampleA	sampleB
@@ -22,6 +22,9 @@ import polars as pl
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+CROSS_JOIN_INTERMEDIATE_OUTFILE = "cross_join.parquet"
+JOIN_SUFFIX = "_other"
+
 #####################################################
 #####################################################
 # FUNCTIONS
@@ -34,29 +37,31 @@ def parse_args():
     parser.add_argument(
         "--file",
         type=Path,
-        dest="cross_joined_file",
+        dest="count_file",
         required=True,
         help="File where each row contains counts for two genes",
     )
     return parser.parse_args()
 
 
-def compute_ratios(file: Path) -> pl.LazyFrame:
+def compute_ratios(cross_join_lf: pl.LazyFrame) -> pl.LazyFrame:
     # getting ratios for each sample
-    cross_join_lf = pl.scan_parquet(file)
+
     column_pairs = {
-        col: f"{col}_other"
+        col: f"{col}{JOIN_SUFFIX}"
         for col in get_count_columns(cross_join_lf)
-        if not col.endswith("_other")
+        if not col.endswith(JOIN_SUFFIX)
     }
     return cross_join_lf.select(
-        [pl.col(config.GENE_ID_COLNAME), pl.col(f"{config.GENE_ID_COLNAME}_other")]
+        [pl.col(config.GENE_ID_COLNAME), pl.col(f"{config.GENE_ID_COLNAME}{JOIN_SUFFIX}")]
         + [
             (pl.col(col) / pl.col(other_col)).log(base=2).alias(f"{col}_log_ratio")
             for col, other_col in column_pairs.items()
         ]
     )
 
+def make_cross_join(lf: pl.LazyFrame) -> pl.LazyFrame:
+    return lf.join(lf, how="cross", suffix=JOIN_SUFFIX)
 
 #####################################################
 #####################################################
@@ -68,18 +73,23 @@ def compute_ratios(file: Path) -> pl.LazyFrame:
 def main():
     args = parse_args()
 
-    logger.info(f"Computing ratios for {args.cross_joined_file}")
-    ratios_lf = compute_ratios(args.cross_joined_file)
+    count_lf = pl.scan_parquet(args.count_file)
+
+    logger.info(f"Computing cross join for {args.count_file}")
+    cross_join_lf = make_cross_join(count_lf)
+
+    logger.info(f"Computing ratios for {args.count_file}")
+    ratios_lf = compute_ratios(cross_join_lf)
 
     if get_nb_rows(ratios_lf) == 0:
         raise ValueError(
-            f"No output following treatment of file {args.cross_joined_file}"
+            f"No output following treatment of file {args.count_file}"
         )
 
-    outfilename = args.cross_joined_file.name.replace("cross_join", "ratios")
-    ratios_lf.sink_parquet(outfilename)
+    outfile = f"{args.count_file.stem}.ratios.parquet"
+    ratios_lf.sink_parquet(outfile)
 
-    logger.info(f"Wrote ratios to {outfilename}")
+    logger.info(f"Wrote ratios to {outfile}")
 
 
 if __name__ == "__main__":
