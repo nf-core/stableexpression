@@ -2,10 +2,9 @@ include { COMPUTE_GENE_STATISTICS            } from '../../../modules/local/comp
 include { MAKE_SECTIONS                      } from '../../../modules/local/make_sections'
 include { GET_CANDIDATE_GENES                } from '../../../modules/local/get_candidate_genes'
 include { NORMFINDER                         } from '../../../modules/local/normfinder'
+include { GENORM                             } from '../../../modules/local/genorm'
 include { PLATFORM_STABILITY_SCORE           } from '../../../modules/local/stability_scores/platform'
 include { GLOBAL_STABILITY_SCORE             } from '../../../modules/local/stability_scores/global'
-
-include { GENORM                             } from '../genorm'
 
 /*
 ========================================================================================

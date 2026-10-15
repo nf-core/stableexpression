@@ -1,4 +1,4 @@
-process COMPUTE_M_MEASURE {
+process GENORM {
 
     tag "${meta.platform} :: ${meta.section}"
     label 'process_medium_requirements'
@@ -9,22 +9,23 @@ process COMPUTE_M_MEASURE {
         'community.wave.seqera.io/library/polars_python:e0e89fee0d134a04' }"
 
     input:
-    tuple val(meta), path(ratio_std_file)
+    tuple val(meta), path(count_file)
 
     output:
-    tuple val(meta), path("m_measures.csv"), emit: m_measures
-    tuple val("GENORM_COMPUTE_M_MEASURE"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
-    tuple val("GENORM_COMPUTE_M_MEASURE"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
+    tuple val(meta), path("*.m_measures.csv"),                                                                  emit: m_measures
+    tuple val("${task.process}"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
+    tuple val("${task.process}"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     """
-    compute_m_measures.py \\
-        --ratio-std-file "$ratio_std_file"
+    genorm.py \\
+        --file "$count_file" \\
+        --out ${meta.section}.m_measures.csv
     """
 
     stub:
     """
-    touch m_measures.csv
+    touch stub.m_measures.csv
     """
 
 }
