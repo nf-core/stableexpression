@@ -340,8 +340,8 @@
                     "description": "Number of candidate genes to keep for stability scoring in each section and each platform",
                     "fa_icon": "fas fa-sort-numeric-down",
                     "minimum": 1,
-                    "help_text": "Number of candidate genes to keep in each section for stability scoring.",
-                    "default": 250
+                    "help_text": "Number of candidate genes to keep in each section for stability scoring. Set this parameter only in case of insufficient RAM and if you want to increase scalability. Setting this parameter to a non null values will select a shortlist of candidate genes instead of the whole list of genes in each section. When setting this parameter, we recommend a number of candidates of at least 300. ",
+                    "default": null
                 },
                 "stability_score_weights": {
                     "type": "string",

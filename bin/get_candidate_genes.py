@@ -56,9 +56,7 @@ def parse_args():
     )
     parser.add_argument(
         "--nb-candidates-per-section",
-        type=int,
         dest="nb_candidates_per_section",
-        required=True,
         help="Number of candidates per section to select for subsequent steps",
     )
     return parser.parse_args()
@@ -84,8 +82,12 @@ def add_sections(stat_df: pl.DataFrame, section_df: pl.DataFrame):
 
 
 def get_best_candidates(
-    stat_df: pl.DataFrame, nb_candidates_per_section: int
+    stat_df: pl.DataFrame, nb_candidates_per_section: int | None
 ) -> pl.DataFrame:
+    if nb_candidates_per_section:
+        agg_expr = pl.col(config.GENE_ID_COLNAME).head(nb_candidates_per_section)
+    else:
+        agg_expr = pl.col(config.GENE_ID_COLNAME)
     return (
         stat_df.sort(
             config.COEFFICIENT_OF_VARIATION_COLNAME,
@@ -94,7 +96,7 @@ def get_best_candidates(
             maintain_order=True,
         )
         .group_by("section", maintain_order=True)
-        .agg(pl.col(config.GENE_ID_COLNAME).head(nb_candidates_per_section))
+        .agg(agg_expr)
     )
 
 

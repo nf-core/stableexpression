@@ -21,12 +21,13 @@ process GET_CANDIDATE_GENES {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
+    nb_candidates_per_section_arg = nb_candidates_per_section == 'none' ? "" : "--nb-candidates-per-section $nb_candidates_per_section"
     """
     get_candidate_genes.py \\
         --counts $count_file \\
         --stats $stat_file \\
         --sections $section_file \\
-        --nb-candidates-per-section $nb_candidates_per_section
+        $nb_candidates_per_section_arg
     """
 
     stub:

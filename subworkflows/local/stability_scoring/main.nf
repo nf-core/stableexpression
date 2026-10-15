@@ -78,7 +78,7 @@ workflow STABILITY_SCORING {
     GET_CANDIDATE_GENES(
         ch_platform_counts.join( ch_stats ),
         ch_sections,
-        nb_candidates_per_section
+        nb_candidates_per_section ?: 'none'
     )
 
     ch_candidate_gene_counts = splitBySection( GET_CANDIDATE_GENES.out.section_counts )

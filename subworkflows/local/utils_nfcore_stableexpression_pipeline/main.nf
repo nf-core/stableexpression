@@ -302,7 +302,7 @@ def toolCitationText() {
             "<li ${style}>Ensembl (Yates et al. 2026)</li>",
             "<li ${style}>Scikit-learn (Pedregosa et al. 2011)</li>",
             "<li ${style}>NormFinder (Andersen et al. 2004)</li>",
-            <li ${style}>GeNorm (Vandesompele et al. 2002)</li>",
+            "<li ${style}>GeNorm (Vandesompele et al. 2002)</li>",
             "<li ${style}>MultiQC (Ewels et al. 2016)</li>"
         ].join(' ').trim()
 
