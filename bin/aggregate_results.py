@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 # Written by Olivier Coen. Released under the MIT license.
+"""
+Aggregate results from count data for each gene
+"""
 
 import argparse
 import logging
@@ -30,9 +33,7 @@ GENE_SUMMARY_FLOAT_PRECISION = 4
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Aggregate results from count data for each gene"
-    )
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--counts", type=Path, nargs="+", dest="count_files", required=True, help="Count file"
     )
@@ -77,6 +78,8 @@ def parse_args():
 def column_sorter(col: str) -> int:
     """
     Return integer corresponding to the column name. This function is used for sorting columns.
+    The first columns are the ones without '.' in their name.
+    The other columns are sorted by the first character of the second part of the column name.
     """
     splitted = col.split('.')
     if len(splitted) == 1: # if no '.' if the column name, it should be return in the first columns
@@ -212,13 +215,24 @@ def format_multiqc_section(
     section: str, nb_sections: int, template_dict: dict, found_target_genes: list[dict], platform: str | None = None
 ):
     """
-    Format the dict for a specific MultiQC section based on the section name, number of sections, and found target genes.
+    Format the dict for a specific MultiQC section.
+    The function replaces placeholders in the template dictionary with the actual section name, number of sections, and found target genes.
+
+    Args:
+        section (str): The name of the section.
+        nb_sections (int): The total number of sections.
+        template_dict (dict): The template dictionary corresponding thfor all MultiQC sections.
+        found_target_genes (list[dict]): The list of found target genes.
+        platform (str, optional): The platform name. Defaults to None.
+
+    Returns:
+        dict: The formatted dictionary for the MultiQC section.
     """
     section_dict = dict(template_dict)
 
     if platform is not None:
-        section_dict['section_name'] = section_dict['section_name'].replace('[PLATFORM]', platform)
-        section_dict['description'] = section_dict['description'].replace('[PLATFORM]', platform)
+        section_dict['section_name'] = section_dict['section_name'].replace('PLATFORM', platform.capitalize())
+        section_dict['description'] = section_dict['description'].replace('PLATFORM', platform.capitalize())
 
     parent_id = section.replace("_", " ")
     parent_name = (
@@ -247,6 +261,11 @@ def format_multiqc_sp(section: str, template_dict: dict, platform: str | None = 
     """
     Modify the dict for a specific MultiQC section in order to update the corresponding file name to search for
     among all the MultiQC files
+
+    Args:
+        section: the section to search for
+        template_dict: the dict to modify
+        platform: the platform to search for
     """
     sp_dict = dict(template_dict)
     sp_dict["fn"] = sp_dict["fn"].replace("SECTION", section)
@@ -366,7 +385,6 @@ def main():
         sections.append(section)
 
     stat_score_df = pl.concat(stat_score_dfs, how="vertical")
-    print(stat_score_df)
 
     if stat_score_df.select(config.GENE_ID_COLNAME).is_duplicated().any():
         raise ValueError("Duplicate gene IDs found in statistics and scores files.")

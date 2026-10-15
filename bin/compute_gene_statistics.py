@@ -168,21 +168,23 @@ def get_main_statistics(lf: pl.LazyFrame) -> pl.LazyFrame:
     logger.info("Getting descriptive statistics")
     samples = get_samples(lf)
     # computing main stats
-    augmented_count_lf = lf.with_columns(
+    lf = lf.with_columns(
         mean=pl.concat_list(samples).row.mean(),
         std=pl.concat_list(samples).row.std(),
         median=pl.concat_list(samples).row.median(),
         mad=pl.concat_list(samples).row.mad(),
     )
 
-    return augmented_count_lf.select(
-        pl.col(config.GENE_ID_COLNAME),
-        pl.col("mean").alias(config.MEAN_COLNAME),
-        pl.col("std").alias(config.STANDARD_DEVIATION_COLNAME),
-        pl.col("median").alias(config.MEDIAN_COLNAME),
-        pl.col("mad").alias(config.MAD_COLNAME),
-        (pl.col("std") / pl.col("mean")).alias(config.COEFFICIENT_OF_VARIATION_COLNAME),
-        (pl.col("mad") / pl.col("median") * RCV_MULTIPLIER).alias(config.ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME)
+    return (
+        lf.select(
+            pl.col(config.GENE_ID_COLNAME),
+            pl.col("mean").alias(config.MEAN_COLNAME),
+            pl.col("std").alias(config.STANDARD_DEVIATION_COLNAME),
+            pl.col("median").alias(config.MEDIAN_COLNAME),
+            pl.col("mad").alias(config.MAD_COLNAME),
+            (pl.col("std") / pl.col("mean")).alias(config.COEFFICIENT_OF_VARIATION_COLNAME),
+            (pl.col("mad") / pl.col("median") * RCV_MULTIPLIER).alias(config.ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME)
+        )
     )
 
 
@@ -282,6 +284,7 @@ def main():
     logger.info("Computing statistics and stability score")
     # getting expression statistics
     stat_lf = get_main_statistics(count_lf)
+    print(stat_lf.filter(pl.any_horizontal(pl.exclude(config.GENE_ID_COLNAME).is_nan())).collect())
 
     # adding column for nb of null values for each gene
     stat_lf = stat_lf.join(ratio_nulls_lf, on=config.GENE_ID_COLNAME, how="inner")

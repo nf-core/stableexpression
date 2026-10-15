@@ -10,7 +10,7 @@ from typing import ClassVar
 
 import config
 import polars as pl
-from common import write_csv_with_floats, normalise_with_z_score
+from common import write_csv_with_floats, zscore_to_unit
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -80,19 +80,15 @@ class StabilityScorer:
             # if a column is absent, skip it
             if col not in self.df.columns:
                 continue
-            data = candidate_df.select(col).to_series()
-            # for each column present, we perform z-score transformation to have values in a comparable range
-            # and the min z-score is subtracted from each value, so that all values start at 0
-            # and put these normalised data in another column suffixed with "_normalised"
             normalised_col = self.get_normalised_col(col)
-            normalised_data[col] = normalise_with_z_score(data, new_name=normalised_col)
+            normalised_data[col] = zscore_to_unit(candidate_df[col]).alias(normalised_col)
             # creating a null column with same name
             null_data[col] = pl.Series(normalised_col, [None] * len(non_candidate_df))
             # counting the sum of weights corresponding to the columns present
             # so that we can normalise the weights afterwards
             weight_sum += weight
 
-        # replacing original data with quantile normalised ones
+        # replacing original data with normalised ones
         candidate_df = candidate_df.with_columns(
             data for data in normalised_data.values()
         )
@@ -121,13 +117,14 @@ class StabilityScorer:
             normalised_col = self.get_normalised_col(col)
             # we do not want to include null / nan values in the stability score calculation
             # because this would result in a total null / nan value for the stability score
+            # since setting 0 for these samples would favour them, we add the max value of the distribution for these samples
             stability_scoring_expr += (
                 pl.when(
                     pl.col(normalised_col).is_not_null()
                     & pl.col(normalised_col).is_not_nan()
                 )
                 .then(pl.col(normalised_col) * weight)
-                .otherwise(pl.lit(0))
+                .otherwise(pl.col(normalised_col).max())
             )
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

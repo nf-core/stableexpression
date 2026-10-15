@@ -9,7 +9,7 @@ from math import sqrt
 
 import config
 import polars as pl
-from common import write_csv_with_floats, normalise_with_z_score
+from common import write_csv_with_floats, zscore_to_unit
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -101,9 +101,8 @@ def compute_global_score(
     normalised_cols = []
     for col in score_cols:
         normalised_col = f"{col}.normalised"
-        df = df.hstack(
-            [normalise_with_z_score(df[col], new_name=normalised_col)]
-        )
+        z = zscore_to_unit(df[col]).alias(normalised_col)
+        df = df.hstack([z])
         normalised_cols.append(normalised_col)
 
     # --- Step 2: weight by platform size and average ---
@@ -126,7 +125,7 @@ def compute_global_score(
     ).alias("stability_score_weighted_average")
 
     score_dispersion = (
-        pl.concat_list(score_cols)
+        pl.concat_list(normalised_cols)
         .list.drop_nulls()
         .list.std()
         .fill_null(0)
@@ -148,7 +147,7 @@ def compute_global_score(
         df.with_columns(weighted_cols)
         .with_columns(weighted_average, score_dispersion, missing_platforms)
         .with_columns(global_score.alias(config.GLOBAL_STABILITY_SCORE_COLNAME))
-        .select(original_columns + [config.GLOBAL_STABILITY_SCORE_COLNAME])
+        .select(original_columns + normalised_cols + ["stability_score_std", "nb_null_stability_scores", config.GLOBAL_STABILITY_SCORE_COLNAME])
     )
 
 

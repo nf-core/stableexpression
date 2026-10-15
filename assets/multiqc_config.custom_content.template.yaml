@@ -43,6 +43,26 @@ custom_data:
         title: "Original gene IDs"
         description: Original gene IDs as stated in the input (provided or downloaded) datasets
 
+      stability_score.rnaseq.normalised:
+        title: "Normalised stability score [RNA-seq]"
+        description: "Z-score ntability score corresponding to the RNA-seq platform: the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+      stability_score.microarray.normalised:
+        title: "Normalised stability score [Microarray]"
+        description: "Z-score normalised stability score corresponding to the Microarray platform: the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+      stability_score_std:
+        title: "Stability score dispersion"
+        description: "Standard deviation of the stability scores across platforms"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+      nb_null_stability_scores:
+        title: "Number of null stability scores"
+        description: "Number of null stability scores across platforms"
+        scale: "RdYlGn-rev"
+
       rank.rnaseq:
         title: "Rank [RNA-seq]"
         description: Rank of the gene based on the RNA-seq stability score
@@ -62,11 +82,6 @@ custom_data:
             - eq: 2
           first:
             - eq: 1
-      stability_score.rnaseq:
-        title: "Stability score [RNA-seq]"
-        description: "Stability score corresponding to the RNA-seq platform: the lower, the better"
-        format: "{:,.6f}"
-        scale: "RdYlGn-rev"
       rank.microarray:
         title: "Rank [Microarray]"
         description: Rank of the gene based on the Microarray stability score
@@ -86,9 +101,15 @@ custom_data:
             - eq: 2
           first:
             - eq: 1
+
+      stability_score.rnaseq:
+        title: "Stability score [RNA-seq]"
+        description: "Stability score corresponding to the RNA-seq platform: the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
       stability_score.microarray:
         title: "Stability score [Microarray]"
-        description: "Stability score corresponding to the Microarray platform: the lower, the better"
+        description: "Stability score corresponding to the RNA-seq platform: the lower, the better"
         format: "{:,.6f}"
         scale: "RdYlGn-rev"
 
@@ -116,6 +137,11 @@ custom_data:
         title: "Ratio null values (valid samples) [RNA-seq]"
         description: Ratio of samples in which the gene is not represented, excluding samples with particularly low overall gene count [RNA-seq only].
 
+      stability_score.microarray:
+        title: "Stability score [Microarray]"
+        description: "Stability score corresponding to the Microarray platform: the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
       normfinder_stability_value_normalised.microarray:
         title: "Normalised Normfinder score [Microarray]"
         description: Normalised (among candidate genes) stability value as computed by Normfinder [Microarray only].
