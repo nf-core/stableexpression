@@ -48,5 +48,4 @@ process AGGREGATE_RESULTS {
     touch custom_content_multiqc_config.yaml
     """
 
-
 }

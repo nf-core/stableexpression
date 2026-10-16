@@ -505,21 +505,22 @@ def main():
         # BUILDING NORMALISED EXPRESSION DATAFRAMES AND MAKING CONFIG FOR IT, FOR EACH PLATFORM
         # --------------------------------------------------
 
-        for platform, data in counts.items():
-            df = get_most_stable_genes_counts(data, section_df, args.nb_genes_plotted)
+        if args.nb_genes_plotted > 0:
+            for platform, data in counts.items():
+                df = get_most_stable_genes_counts(data, section_df, args.nb_genes_plotted)
 
-            section_counts_outfile = f"{section}.{platform}.{COUNTS_OUTFILENAME_SUFFIX}"
-            write_csv_with_floats(df, section_counts_outfile)
+                section_counts_outfile = f"{section}.{platform}.{COUNTS_OUTFILENAME_SUFFIX}"
+                write_csv_with_floats(df, section_counts_outfile)
 
-            # making new sections in the MultiQC config
-            new_mqc_config_sections[f"normalised_expr_distrib_{section}_{platform}"] = (
-                format_multiqc_section(
-                    section, nb_sections, expr_distrib_dict, found_target_genes, platform
+                # making new sections in the MultiQC config
+                new_mqc_config_sections[f"normalised_expr_distrib_{section}_{platform}"] = (
+                    format_multiqc_section(
+                        section, nb_sections, expr_distrib_dict, found_target_genes, platform
+                    )
                 )
-            )
-            new_mqc_config_sp[f"normalised_expr_distrib_{section}_{platform}"] = format_multiqc_sp(
-                section, expr_distrib_sp_dict, platform
-            )
+                new_mqc_config_sp[f"normalised_expr_distrib_{section}_{platform}"] = format_multiqc_sp(
+                    section, expr_distrib_sp_dict, platform
+                )
 
     # adding new sections
     multiqc_config["custom_data"] = (

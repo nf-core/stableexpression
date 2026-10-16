@@ -219,10 +219,12 @@ def validateInputParameters(params) {
     check_accession_file( params.accessions_file )
     check_accession_file( params.excluded_accessions_file )
 
+    // if keywords were provided but the pipeline was instructed not to fetch public data
     if ( params.keywords && params.skip_fetch_eatlas_accessions && !params.fetch_geo_accessions ) {
         log.warn "Ignoring keywords as accessions will not be fetched from Expression Atlas or GEO"
     }
 
+    // logs warning if both gff and gff_url params were provided
     if ( params.gff && params.gff_url ) {
         log.warn "Both gff and gff_url parameters are provided. Using gff."
     }
