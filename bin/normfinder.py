@@ -5,7 +5,7 @@
 # All linear algebra runs on a single dense (n_genes x n_samples) float32 matrix,
 # with NaN as the canonical "missing value" marker.
 #
-# Written by Olivier Coen. Released under the MIT license.
+# Written originally by Olivier Coen. Highly optimised by Mistral. Released under the MIT license.
 
 import argparse
 import logging
