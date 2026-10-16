@@ -19,10 +19,14 @@ from recombat import ReComBat
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-#MODEL = 'linear'
-MODEL = 'ridge'
-#CONFIG = None
-CONFIG = {'alpha': 1e-9, 'copy_X': False}
+
+MODEL = 'elastic_net'
+CONFIG = {
+    'copy_X': False, # to avoid unnecessary data duplication since original data are not used again
+    'positive': True, # very important, to ensure transformed data are all positive
+    'selection': 'random', # for faster convergence
+    'random_state': 42 # for reproducible output across multiple runs
+}
 MAX_ITER = 1000 # RECOMBAT DEFAULT: 1000
 CONV_CRITERION = 1e-4 # RECOMBAT DEFAULT: 1e-4
 
@@ -131,12 +135,6 @@ def main():
         }
 
         transformed_data = model.fit_transform(**kwargs)
-
-        # hack: when the transformed data contain negative values
-        # all data are translated up so that the min value (negative) becomes 0
-        min_all_values = transformed_data.min().min()
-        if min_all_values < 0:
-            transformed_data = transformed_data - min_all_values
 
         transformed_df_without_gene_ids = pl.DataFrame(transformed_data.T, schema=df.columns)
         transformed_df = pl.concat(
