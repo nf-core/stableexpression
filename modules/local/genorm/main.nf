@@ -5,8 +5,8 @@ process GENORM {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/83/83ffc025ce0d913f9eaa4e786c9ebd2817ddc57f85d6596663f0e8a290872fab/data':
-        'community.wave.seqera.io/library/polars_python:e0e89fee0d134a04' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/05/0526f3dbdd23175430f0af81763c1079b3b1425b2cdb2491ab54bb9c0d93d480/data':
+        'community.wave.seqera.io/library/numba_numpy_polars_python_tqdm:f42e9bc9f30a29ff' }"
 
     input:
     tuple val(meta), path(count_file)
