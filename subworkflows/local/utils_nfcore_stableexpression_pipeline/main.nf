@@ -202,6 +202,16 @@ def validateInputParameters(params) {
         error('You must provide a species name')
     }
 
+    // if nb_candidates_per_section is not null, try casting to int
+    if ( params.nb_candidates_per_section != null ) {
+        try {
+            def nb_candidates_per_section = params.nb_candidates_per_section.toInteger()
+        }
+        catch (NumberFormatException e) {
+            error("ERROR: The `nb_candidates_per_section` parameter must be an integer when not set to null.")
+        }
+    }
+
     // if accessions are provided or excluded, checking that they are well formatted
     check_accession_string( params.accessions )
     check_accession_string( params.excluded_accessions )

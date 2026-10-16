@@ -336,7 +336,7 @@
                     "default": 10
                 },
                 "nb_candidates_per_section": {
-                    "type": "integer",
+                    "type": ["integer", "string"],
                     "description": "Number of candidate genes to keep for stability scoring in each section and each platform",
                     "fa_icon": "fas fa-sort-numeric-down",
                     "minimum": 1,
