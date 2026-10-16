@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 def parse_args():
     parser = argparse.ArgumentParser(description="Merge count datasets")
     parser.add_argument(
-        "--counts", type=str, dest="count_files", required=True, help="Count files"
+        "--counts", type=Path, nargs="+", dest="count_files", required=True, help="Count files"
     )
     parser.add_argument(
         "--out", type=Path, dest="outfile", required=True, help="Output file"
@@ -177,7 +177,7 @@ def main():
     args = parse_args()
 
     # parsing count files
-    count_files = [Path(file) for file in args.count_files.split(" ")]
+    count_files = [Path(file) for file in args.count_files]
     logger.info(f"Merging {len(count_files)} count files")
 
     lfs = scan_counts(count_files)

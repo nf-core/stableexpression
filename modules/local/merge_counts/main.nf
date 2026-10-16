@@ -19,7 +19,7 @@ process MERGE_COUNTS {
     script:
     """
     merge_counts.py \\
-        --counts "$count_files" \\
+        --counts $count_files \\
         --out ${meta.platform}.merged.parquet
     """
 
