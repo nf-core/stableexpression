@@ -1,11 +1,10 @@
 nextflow_process {
 
-    name "Test Process MAKE_CHUNKS"
-    script "modules/local/genorm/make_chunks/main.nf"
-    process "MAKE_CHUNKS"
-    tag "make_chunks"
+    name "Test Process GENORM"
+    script "modules/local/genorm/genorm/main.nf"
+    process "GENORM"
 
-    test("Should run without failures") {
+    test("Should not fail") {
 
         when {
             process {
