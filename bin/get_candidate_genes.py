@@ -56,6 +56,7 @@ def parse_args():
     )
     parser.add_argument(
         "--nb-candidates-per-section",
+        type=int,
         dest="nb_candidates_per_section",
         help="Number of candidates per section to select for subsequent steps",
     )

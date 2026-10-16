@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.csv:md5,a9086de494241f9034cd29d19806f230"
+                        "null.section_1.stats_with_scores.csv:md5,86b7d2cbe0eab160ceadcb84ff9e5bb9"
                     ]
                 ],
                 "1": [
@@ -29,12 +29,12 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.csv:md5,a9086de494241f9034cd29d19806f230"
+                        "null.section_1.stats_with_scores.csv:md5,86b7d2cbe0eab160ceadcb84ff9e5bb9"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-05T22:36:03.96750661",
+        "timestamp": "2026-10-16T12:33:11.545893997",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
@@ -48,7 +48,7 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.csv:md5,31ed71da7b95e2693b31071e49d5a297"
+                        "null.section_1.stats_with_scores.csv:md5,3a1c1e0ba7f59fd7012ff59e3e22e5f4"
                     ]
                 ],
                 "1": [
@@ -70,12 +70,12 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.csv:md5,31ed71da7b95e2693b31071e49d5a297"
+                        "null.section_1.stats_with_scores.csv:md5,3a1c1e0ba7f59fd7012ff59e3e22e5f4"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-05T22:36:11.485773767",
+        "timestamp": "2026-10-16T12:33:16.802970909",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"

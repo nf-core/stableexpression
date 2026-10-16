@@ -34,7 +34,7 @@
         "content": [
             {
                 "0": [
-                    "section_1.stats_with_scores.csv:md5,1c8a89f6fefd8897aebbb12bcba00b79"
+                    "section_1.stats_with_scores.csv:md5,8cfd0f88744619de200f623f4cbe6043"
                 ],
                 "1": [
                     [
@@ -51,11 +51,11 @@
                     ]
                 ],
                 "stats_with_stability_scores": [
-                    "section_1.stats_with_scores.csv:md5,1c8a89f6fefd8897aebbb12bcba00b79"
+                    "section_1.stats_with_scores.csv:md5,8cfd0f88744619de200f623f4cbe6043"
                 ]
             }
         ],
-        "timestamp": "2026-10-05T17:36:44.599380227",
+        "timestamp": "2026-10-16T12:33:01.161415827",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
