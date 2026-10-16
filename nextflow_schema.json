@@ -88,11 +88,6 @@
                     "fa_icon": "fas fa-envelope",
                     "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
-                },
-                "multiqc_title": {
-                    "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
                 }
             }
         },
@@ -257,15 +252,15 @@
             "properties": {
                 "skip_gene_length_normalisation": {
                     "type": "boolean",
-                      "fa_icon": "fas fa-ban",
-                      "description": "Do not use gene lengths (annotation) for normalisation of RNA-seq datasets",
-                      "help_text": "Raw RNA-seq data must be normalised using `GeTMM` before further processing. Likewise, already normalised RNA-seq data are converted to `TPM`. Both methods require gene lengths, which are computed from a genome annotation if they are not provided directly. However, if the pipeline cannot automatically find a genome annotation and if you do not have access to a gene length / genome annotation file, you can choose to replace these normalisation steps with `CPM` computation. This method is less accurate as gene expression is no longer normalised with gene length, but it allows running the pipeline and get farily reliable results."
+                    "fa_icon": "fas fa-ban",
+                    "description": "Do not use gene lengths (annotation) for normalisation of RNA-seq datasets",
+                    "help_text": "Raw RNA-seq data must be normalised using `GeTMM` before further processing. Likewise, already normalised RNA-seq data are converted to `TPM`. Both methods require gene lengths, which are computed from a genome annotation if they are not provided directly. However, if the pipeline cannot automatically find a genome annotation and if you do not have access to a gene length / genome annotation file, you can choose to replace these normalisation steps with `CPM` computation. This method is less accurate as gene expression is no longer normalised with gene length, but it allows running the pipeline and get farily reliable results."
                 },
                 "quantile_normalisation": {
                     "type": "boolean",
-                      "fa_icon": "fas fa-ban",
-                      "description": "Perform quantile normalisation instead of per-platform dedicated normalisation",
-                      "help_text": "In some cases where scalability is a priority, quantile normalisation may be preferred over per-platform dedicated normalisation. In quantile normalisation, genes are ranked based on expression level among the total set of genes and assigned a quantile of rank. This quantile defines their normalisaed expression level. This method is more scalable but definitely less accurate than the per-platform normalisation."
+                    "fa_icon": "fas fa-ban",
+                    "description": "Perform quantile normalisation instead of per-platform dedicated normalisation",
+                    "help_text": "In some cases where scalability is a priority, quantile normalisation may be preferred over per-platform dedicated normalisation. In quantile normalisation, genes are ranked based on expression level among the total set of genes and assigned a quantile of rank. This quantile defines their normalisaed expression level. This method is more scalable but definitely less accurate than the per-platform normalisation."
                 },
                 "gff": {
                     "type": "string",
@@ -393,19 +388,42 @@
                 }
             }
         },
-        "reporting_options": {
-            "title": "Reporting options",
+        "multiqc_options": {
+            "title": "MultiQC options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "Options relative to reporting",
+            "description": "Options for the MultiQC report",
             "properties": {
                 "multiqc_nb_genes_plotted": {
                     "type": "integer",
                     "description": "For each section and each platform, number of genes whose normalised expression is displayed.",
                     "fa_icon": "fas fa-sort-numeric-down",
-                    "minimum": 1,
-                    "help_text": "In the MultiQC report, for each section and each platform, the distribution of normalised expressions is displayed for a shortlist of top-ranked genes. Set this parameter to adjust how many genes are displayed in these boxplots. Caution: above 20, this can drastically increase the size of the MultiQC report, especially with a high number of sections and multiple platforms.",
+                    "minimum": 0,
+                    "help_text": "In the MultiQC report, for each section and each platform, the distribution of normalised expressions is displayed for a shortlist of top-ranked genes. Set this parameter to adjust how many genes are displayed in these boxplots. A value of 0 will remove boxplots from the MultiQC report, making it much lighter. Caution: above 20, this can drastically increase the size of the MultiQC report, especially with a high number of sections and multiple platforms.",
                     "default": 10
+                },
+                "multiqc_title": {
+                    "type": "string",
+                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+                    "fa_icon": "fas fa-file-signature"
+                },
+                "multiqc_config": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "Custom config file to supply to MultiQC.",
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
+                },
+                "multiqc_logo": {
+                    "type": "string",
+                    "description": "Custom logo file to supply to MultiQC. File name must also be set in the MultiQC config file",
+                    "fa_icon": "fas fa-image",
+                    "hidden": true
+                },
+                "multiqc_methods_description": {
+                    "type": "string",
+                    "description": "Custom MultiQC yaml file containing HTML including a methods description.",
+                    "fa_icon": "fas fa-cog"
                 }
             }
         },
@@ -507,24 +525,6 @@
                     "fa_icon": "fas fa-palette",
                     "hidden": true
                 },
-                "multiqc_config": {
-                    "type": "string",
-                    "format": "file-path",
-                    "description": "Custom config file to supply to MultiQC.",
-                    "fa_icon": "fas fa-cog",
-                    "hidden": true
-                },
-                "multiqc_logo": {
-                    "type": "string",
-                    "description": "Custom logo file to supply to MultiQC. File name must also be set in the MultiQC config file",
-                    "fa_icon": "fas fa-image",
-                    "hidden": true
-                },
-                "multiqc_methods_description": {
-                    "type": "string",
-                    "description": "Custom MultiQC yaml file containing HTML including a methods description.",
-                    "fa_icon": "fas fa-cog"
-                },
                 "validate_params": {
                     "type": "boolean",
                     "description": "Boolean whether to validate parameters against the schema at runtime",
@@ -586,7 +586,7 @@
             "$ref": "#/$defs/scalability_options"
         },
         {
-            "$ref": "#/$defs/reporting_options"
+            "$ref": "#/$defs/multiqc_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"
