@@ -9,7 +9,6 @@ include { DOWNLOAD_PUBLIC_DATASETS               } from '../subworkflows/local/d
 include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
 include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
 include { NORMALISATION                          } from '../subworkflows/local/normalisation'
-include { GENE_STATISTICS                        } from '../subworkflows/local/gene_statistics'
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { REPORTING                              } from '../subworkflows/local/reporting'
 
