@@ -2,8 +2,8 @@ include { CLEAN_GENE_IDS                         } from '../../../modules/local/
 include { EXTRACT_GENE_IDS                       } from '../../../modules/local/extract_gene_ids'
 include { COLLECT_ALL_GENE_IDS                   } from '../../../modules/local/collect_all_gene_ids'
 include { GPROFILER_IDMAPPING                    } from '../../../modules/local/gprofiler/idmapping'
-include { DETECT_RARE_GENES                      } from '../../../modules/local/detect_rare_genes'
-include { FILTER_AND_RENAME_GENES                } from '../../../modules/local/filter_and_rename_genes'
+include { DETECT_RARE_GENE_IDS                   } from '../../../modules/local/detect_rare_gene_ids'
+include { FILTER_RENAME_GENE_IDS                 } from '../../../modules/local/filter_rename_gene_ids'
 
 /*
 ========================================================================================
@@ -96,7 +96,7 @@ workflow ID_MAPPING {
         // FILTERING OUT GENE IDS THAT DO NOT HAVE ENOUGH OCCURRENCES
         // -----------------------------------------------------------------
 
-        DETECT_RARE_GENES(
+        DETECT_RARE_GENE_IDS(
             ch_gene_id_mapping,
             COLLECT_ALL_GENE_IDS.out.gene_id_occurrences,
             ch_counts.count(),
@@ -104,7 +104,7 @@ workflow ID_MAPPING {
             min_occurrence_quantile
         )
 
-        ch_valid_gene_ids = DETECT_RARE_GENES.out.valid_gene_ids
+        ch_valid_gene_ids = DETECT_RARE_GENE_IDS.out.valid_gene_ids
                                 .collectFile(
                                     name: 'valid_gene_ids.txt',
                                     newLine: true,
@@ -160,12 +160,12 @@ workflow ID_MAPPING {
 
     if ( !skip_id_mapping || custom_gene_id_mapping ) {
 
-        FILTER_AND_RENAME_GENES(
+        FILTER_RENAME_GENE_IDS(
             ch_counts,
             ch_global_gene_id_mapping.first(),
             ch_valid_gene_ids.collect()
         )
-        ch_counts = FILTER_AND_RENAME_GENES.out.counts
+        ch_counts = FILTER_RENAME_GENE_IDS.out.counts
 
     }
 

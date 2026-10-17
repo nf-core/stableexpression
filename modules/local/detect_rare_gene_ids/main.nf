@@ -1,4 +1,4 @@
-process DETECT_RARE_GENES {
+process DETECT_RARE_GENE_IDS {
 
     label 'process_low_requirements'
 
@@ -22,7 +22,7 @@ process DETECT_RARE_GENES {
 
     script:
     """
-    detect_rare_genes.py \\
+    detect_rare_gene_ids.py \\
         --occurrences $gene_id_occurrences_file \\
         --mappings $gene_id_mapping_file \\
         --nb-datasets $nb_datasets \\

@@ -1,4 +1,4 @@
-process FILTER_AND_RENAME_GENES {
+process FILTER_RENAME_GENE_IDS {
 
     label 'process_low_requirements'
 
@@ -26,7 +26,7 @@ process FILTER_AND_RENAME_GENES {
     def mapping_arg  = gene_id_mapping_file ? "--mappings $gene_id_mapping_file" : ""
     def valid_ids_arg = valid_gene_ids_file ? "--valid-gene-ids $valid_gene_ids_file" : ""
     """
-    filter_and_rename_genes.py \\
+    filter_rename_gene_ids.py \\
         --count-file "$count_file" \\
         $mapping_arg \\
         $valid_ids_arg
