@@ -66,15 +66,6 @@ get_normalised_cpm_counts <- function(count_data) {
     # GeTMM: for normalization purposes, no grouping of samples
     dge <- edgeR::DGEList(counts = counts, group = rep("A", ncol(counts)))
 
-    message("Filtering low-expression genes")
-    keep <- edgeR::filterByExpr(dge)   # conservative default: CPM > 10 in >= n samples
-    dge <- dge[keep, , keep.lib.sizes = FALSE]
-    if (nrow(dge) == 0) {
-        message("No genes left after low-expression filtering.")
-        write("NO GENES LEFT AFTER LOW-EXPRESSION FILTERING", file = FAILURE_REASON_FILE)
-        quit(save = "no", status = 0)
-    }
-
     message("Calculating normalisation factors")
     dge <- edgeR::calcNormFactors(dge)
 

@@ -7,9 +7,8 @@
 include { GET_PUBLIC_ACCESSIONS                  } from '../subworkflows/local/get_public_accessions'
 include { DOWNLOAD_PUBLIC_DATASETS               } from '../subworkflows/local/download_public_datasets'
 include { ID_MAPPING                             } from '../subworkflows/local/idmapping'
-include { SAMPLE_FILTERING                       } from '../subworkflows/local/sample_filtering'
-include { NORMALISATION                          } from '../subworkflows/local/normalisation'
 include { DATASET_ANALYSIS                       } from '../subworkflows/local/dataset_analysis'
+include { NORMALISATION                          } from '../subworkflows/local/normalisation'
 include { GENE_STATISTICS                        } from '../subworkflows/local/gene_statistics'
 include { STABILITY_SCORING                      } from '../subworkflows/local/stability_scoring'
 include { REPORTING                              } from '../subworkflows/local/reporting'
@@ -116,27 +115,20 @@ workflow STABLEEXPRESSION {
         ch_counts = ch_counts_ids_filtered_renamed
 
         // -----------------------------------------------------------------
+        // ANALYSIS OF NORMALISED DATASETS
         // FILTER OUT SAMPLES NOT VALID
         // -----------------------------------------------------------------
 
-        SAMPLE_FILTERING (
+        DATASET_ANALYSIS(
             ch_counts,
             ch_valid_gene_ids,
-            params.max_zero_ratio,
             params.max_null_ratio,
+            params.max_zero_ratio,
             params.outdir
         )
 
-        ch_counts_samples_filtered     = SAMPLE_FILTERING.out.counts
-        ch_ratio_nulls_per_sample_file = SAMPLE_FILTERING.out.ratio_nulls_per_sample_file
-
-        // -----------------------------------------------------------------
-        // ANALYSIS OF NORMALISED DATASETS
-        // -----------------------------------------------------------------
-
-        DATASET_ANALYSIS(
-            ch_counts_samples_filtered
-        )
+        ch_counts_samples_filtered     = DATASET_ANALYSIS.out.counts
+        ch_ratio_nulls_per_sample_file = DATASET_ANALYSIS.out.ratio_nulls_per_sample_file
 
         // -----------------------------------------------------------------
         // NORMALISATION OF COUNTS
