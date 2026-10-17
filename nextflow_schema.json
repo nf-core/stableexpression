@@ -209,24 +209,33 @@
                 }
             }
         },
-        "sample_filtering_options": {
-            "title": "Sample filtering options",
+        "filtering_options": {
+            "title": "Filtering options",
             "type": "object",
             "fa_icon": "fas fa-chart-line",
-            "description": "Options for filtering samples based on their expression levels.",
+            "description": "Options for filtering samples / genes based on null and zero values.",
             "properties": {
-                "max_zero_ratio": {
+                "gene_max_zero_ratio": {
                     "type": "number",
-                    "description": "Maximum ratio of zero counts to total counts",
+                    "description": "Maximum proportion of zero counts across samples to consider a gene as valid",
+                    "fa_icon": "fab fa-creative-commons-zero",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.8,
+                    "help_text": "A filter is set up to avoid genes that contain a high proportion of zero counts across all samples in a platform. All genes with a proportion of zero values above this threshold will be filtered out. This filter is important to avoid distorting the overall count distribution, which could impair both gene value imputation and batch effect correction."
+                },
+                "sample_max_zero_ratio": {
+                    "type": "number",
+                    "description": "Maximum proportion of zero counts for samples",
                     "fa_icon": "fab fa-creative-commons-zero",
                     "minimum": 0,
                     "maximum": 1,
                     "default": 0.9,
                     "help_text": "A filter is set up to avoid samples that contain a high proportion of zero counts. All samples with a ratio of zero counts to total counts above this threshold will be filtered out."
                 },
-                "max_null_ratio": {
+                "sample_max_null_ratio": {
                     "type": "number",
-                    "description": "Maximum ratio of null values",
+                    "description": "Maximum proportion of null values for samples",
                     "fa_icon": "fas fa-dizzy",
                     "minimum": 0,
                     "maximum": 1,
@@ -235,12 +244,12 @@
                 },
                 "max_null_ratio_valid_sample": {
                     "type": "number",
-                    "description": "Maximum ratio of null values in a sample for it to be considered in the computation of the null value malus",
+                    "description": "Maximum proportion of null values in a sample for it to be considered in the computation of the null value penalty in the global stability score",
                     "fa_icon": "far fa-dizzy",
                     "minimum": 0,
                     "maximum": 1,
                     "default": 0.75,
-                    "help_text": "After filtering out samples with a very high proportion of zero counts (via `--max_null_ratio`), a second filter is set up to avoid samples that contain a substantial proportion of null values to be considered in the malus of null values comprised in the stability score."
+                    "help_text": "A penalty is set up to avoid samples that contain a substantial proportion of null values to be considered in the penalty of null values comprised in the global stability score."
                 }
             }
         },
@@ -571,7 +580,7 @@
             "$ref": "#/$defs/idmapping_options"
         },
         {
-            "$ref": "#/$defs/sample_filtering_options"
+            "$ref": "#/$defs/filtering_options"
         },
         {
             "$ref": "#/$defs/normalisation_options"

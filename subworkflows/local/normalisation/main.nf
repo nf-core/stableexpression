@@ -1,6 +1,7 @@
 include { QUANTILE_NORMALISATION as QUANTILE     } from '../../../modules/local/normalisation/quantile'
 include { MERGE_COUNTS as MERGE_BY_PLATFORM      } from '../../../modules/local/merge_counts'
 include { MERGE_COUNTS as REMERGE_BY_PLATFORM    } from '../../../modules/local/merge_counts'
+include { FILTER_GENES                           } from '../../../modules/local/filter_genes'
 include { IMPUTE_MISSING_VALUES                  } from '../../../modules/local/impute_missing_values'
 include { RECOMBAT                               } from '../../../modules/local/recombat'
 include { SEPARATE_COUNTS                        } from '../../../modules/local/separate_counts'
@@ -21,6 +22,7 @@ workflow NORMALISATION {
     species
     ch_valid_gene_ids
     skip_gene_length_normalisation
+    gene_max_zero_ratio
     missing_value_imputer
     quantile_normalisation
     quantile_norm_target_distrib
@@ -74,11 +76,20 @@ workflow NORMALISATION {
     ch_counts_merged_by_platform = MERGE_BY_PLATFORM.out.counts
 
     // -----------------------------------------------------------------
+    // FILTER OUT GENES DISPLAYING A TOO HIGH PROPORTIONS OF ZEROS
+    // -----------------------------------------------------------------
+
+    FILTER_GENES(
+        ch_counts_merged_by_platform,
+        gene_max_zero_ratio
+    )
+
+    // -----------------------------------------------------------------
     // IMPUTE MISSING VALUES
     // -----------------------------------------------------------------
 
     IMPUTE_MISSING_VALUES(
-        ch_counts_merged_by_platform,
+        FILTER_GENES.out.counts,
         missing_value_imputer
     )
 

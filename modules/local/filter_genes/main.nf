@@ -1,8 +1,8 @@
-process FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS {
+process FILTER_GENES {
 
-    label 'process_single_cpu'
+    label 'process_high'
 
-    tag "${meta.dataset}"
+    tag "${meta.platform}"
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
@@ -11,31 +11,29 @@ process FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS {
 
     input:
     tuple val(meta), path(count_file)
-    val(max_zero_ratio)
+    val max_zero_ratio
 
     output:
-    tuple val(meta), path("*.zeros_filtered.parquet"), optional: true,                                          emit: counts
-    tuple val(meta.dataset), path("ratio_zeros.csv"),                                                           topic: ratio_zeros
-    tuple val(meta.dataset), env("NB_KEPT_SAMPLES"), env("NB_REJECTED_SAMPLES"),                                topic: mqc_zero_values_filter_stats
+    tuple val(meta), path("*.genes_filtered.parquet"),                                                          emit: counts
+    tuple val(meta.platform), env("NB_KEPT_GENES"), env("NB_REJECTED_GENES"),                                   topic: mqc_filtered_genes
     tuple val("${task.process}"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("${task.process}"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
     """
-    filter_out_samples_with_too_many_zeros.py \\
+    filter_genes.py \\
         --counts $count_file \\
         --max-zero-ratio $max_zero_ratio
 
-    NB_REJECTED_SAMPLES=\$(cat nb_rejected_samples.csv)
-    NB_KEPT_SAMPLES=\$(cat nb_kept_samples.csv)
+    NB_KEPT_GENES=\$(cat nb_kept_genes.csv)
+    NB_REJECTED_GENES=\$(cat nb_rejected_genes.csv)
     """
 
     stub:
     """
-    touch stub.zeros_filtered.parquet
-    touch ratio_zeros.csv
-    NB_KEPT_SAMPLES=0
-    NB_REJECTED_SAMPLES=0
+    touch stub.genes_filtered.parquet
+    NB_KEPT_GENES=0
+    NB_REJECTED_GENES=0
     """
 
 }

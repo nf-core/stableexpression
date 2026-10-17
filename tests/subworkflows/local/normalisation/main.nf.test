@@ -25,13 +25,14 @@ nextflow_workflow {
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = false
-                input[4] = 'knn'
-                input[5] = false
-                input[6] = "uniform"
-                input[7] = null
-                input[8] = null
+                input[4] = 0.8
+                input[5] = 'knn'
+                input[6] = false
+                input[7] = "uniform"
                 input[9] = null
-                input[10] ="$outputDir"
+                input[9] = null
+                input[10] = null
+                input[11] ="$outputDir"
                 """
             }
         }
@@ -73,13 +74,14 @@ nextflow_workflow {
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = false
-                input[4] = 'iterative'
-                input[5] = true
-                input[6] = "uniform"
-                input[7] = null
-                input[8] = null
+                input[4] = 0.8
+                input[5] = 'iterative'
+                input[6] = true
+                input[7] = "uniform"
                 input[9] = null
-                input[10] ="$outputDir"
+                input[9] = null
+                input[10] = null
+                input[11] ="$outputDir"
                 """
             }
         }
@@ -121,13 +123,14 @@ nextflow_workflow {
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = true
-                input[4] = 'knn'
-                input[5] = false
-                input[6] = "uniform"
-                input[7] = null
-                input[8] = null
+                input[4] = 0.8
+                input[5] = 'knn'
+                input[6] = false
+                input[7] = "uniform"
                 input[9] = null
-                input[10] ="$outputDir"
+                input[9] = null
+                input[10] = null
+                input[11] ="$outputDir"
                 """
             }
         }
@@ -160,13 +163,14 @@ nextflow_workflow {
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = false
-                input[4] = 'knn'
-                input[5] = true
-                input[6] = "normal"
-                input[7] = null
-                input[8] = null
+                input[4] = 0.8
+                input[5] = 'knn'
+                input[6] = true
+                input[7] = "normal"
                 input[9] = null
-                input[10] ="$outputDir"
+                input[9] = null
+                input[10] = null
+                input[11] ="$outputDir"
                 """
             }
         }
