@@ -90,7 +90,7 @@ def main():
     # ----------------------------------------------------
     # align the design on the matrix columns (same order, same samples)
     # ----------------------------------------------------
-    print(design_df['batch'].unique())
+
     samples = [col for col in df.columns if col != config.GENE_ID_COLNAME]
     design_df = (
         pl.DataFrame({"sample": samples})
@@ -98,8 +98,7 @@ def main():
     )
 
     unrelated_samples_df = design_df.filter(pl.col('batch').is_null())
-    print(unrelated_samples_df)
-    import sys; sys.exit()
+
     if not unrelated_samples_df.is_empty():
         unrelated_samples = unrelated_samples_df["sample"].to_list()
         raise ValueError(f"Some samples were not present in the design dataframe: {unrelated_samples}.")
@@ -113,8 +112,6 @@ def main():
 
     if len(batch_series.unique()) == 1:
         logger.info("Only one batch found. Skipping batch correction.")
-        logger.info("Re-scaling data to have only positive values.")
-        #df = df.with_columns([(2 ** pl.col(col) - 1).alias(col) for col in samples])
 
     else:
 
@@ -138,10 +135,6 @@ def main():
         # ----------------------------------------------------
         # RE-SCALING DATA TO HAVE ONLY POSITIVE VALUES
         # ----------------------------------------------------
-
-        # performing 2 ** x - 1 on all data
-        logger.info("Re-scaling data to have only positive values.")
-        #x = np.exp2(x) - 1
 
         transformed_df_without_gene_ids = pl.DataFrame(x.T, schema=df.columns)
         df = pl.concat(
