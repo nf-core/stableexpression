@@ -33,7 +33,7 @@ workflow DATASET_ANALYSIS {
 
     FILTER_SAMPLES (
         ch_counts,
-        ch_valid_gene_ids,
+        ch_valid_gene_ids.collect(),
         sample_max_null_ratio,
         sample_max_zero_ratio
     )
