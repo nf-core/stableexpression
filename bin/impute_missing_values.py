@@ -18,16 +18,13 @@ from pathlib import Path
 import config
 import numpy as np
 import polars as pl
-from common import export_parquet, get_count_columns, get_nb_rows
+from common import export_parquet, get_count_columns
 from fknni import FastKNNImputer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-MIN_NEIGHBOURS = 10
-MAX_NEIGHBOURS = 30
-
-FACTOR_N_SAMPLES_TO_K = 2
+N_NEIGHBOURS = 5
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,38 +81,6 @@ def matrix_to_dataframe(
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# IMPUTERS
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def get_number_of_neighbours(lf: pl.LazyFrame, k_min: int, k_max: int) -> int:
-    """
-    Returns the number of neighbours to use for KNN-imputation based on the
-    number of samples and missing values. The number of neighbours is
-    determined by the square root of the number of samples, scaled by a
-    factor to account for missing values. It is clipped to [k_min, k_max].
-    """
-    # proportion of missing values in the dataframe
-    nb_missing_values = (
-        lf.select(pl.exclude(config.GENE_ID_COLNAME))
-        .null_count()
-        .collect()
-        .sum_horizontal()
-        .item()
-    )
-    n_genes = get_nb_rows(lf)
-    n_samples = len(get_count_columns(lf))
-    missing_fraction = nb_missing_values / (n_genes * n_samples)
-    # return k as a function of the number of samples and missing values, with bounds
-    return int(
-        np.clip(
-            int(np.sqrt(n_samples) / FACTOR_N_SAMPLES_TO_K * (1 + missing_fraction)),
-            k_min,
-            k_max,
-        )
-    )
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MAIN
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -128,11 +93,8 @@ def main():
     logger.info("Applying FAISS KNN imputation")
     count_cols, count_matrix = get_count_matrix(lf)
 
-    n_neighbours = get_number_of_neighbours(lf, MIN_NEIGHBOURS, MAX_NEIGHBOURS)
-    logger.info(f"Using {n_neighbours} neighbours")
-
     # KNN imputation on the full matrix using fknni (FAISS-backed, multithreaded)
-    imputer = FastKNNImputer(n_neighbors=n_neighbours)
+    imputer = FastKNNImputer(n_neighbors=N_NEIGHBOURS)
     imputed_array = imputer.fit_transform(count_matrix)  # shape (n_samples, n_genes)
 
     df = matrix_to_dataframe(lf, count_cols, imputed_array)
