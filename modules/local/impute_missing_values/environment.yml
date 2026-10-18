@@ -4,6 +4,10 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - conda-forge::python=3.14.3
-  - conda-forge::polars==1.39.2
-  - conda-forge::scikit-learn==1.8.0
+  - conda-forge::python=3.14.7
+  - conda-forge::polars==1.41.2
+  - conda-forge::scikit-learn=1.9.1
+  - conda-forge::faiss=1.14.3
+  - pip=26.2.1
+  - pip:
+      - fknni==1.3.0

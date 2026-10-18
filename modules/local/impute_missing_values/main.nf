@@ -7,24 +7,24 @@ process IMPUTE_MISSING_VALUES {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/57/5751f4c7c1eb17d92c2863dec2b7505295e56eafb65ea5a9df66876fbffd24e3/data':
-        'community.wave.seqera.io/library/polars_python_scikit-learn:041254a8f0633213' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/79/79a1048afbb01fd462b7943bdccf16d1ac79fa424a3f9db9f9a76449b5121b88/data':
+        'community.wave.seqera.io/library/python_polars_scikit-learn_faiss_pruned:0cb55f1a2dc6ec0e' }"
 
     input:
     tuple val(meta), path(count_file)
-    val missing_value_imputer
 
     output:
     tuple val(meta), path('*.imputed.parquet'),                                                                         emit: counts
     tuple val("${task.process}"), val('python'),       eval("python3 --version | sed 's/Python //'"),                   topic: versions
     tuple val("${task.process}"), val('polars'),       eval('python3 -c "import polars; print(polars.__version__)"'),   topic: versions
     tuple val("${task.process}"), val('scikit-learn'), eval('python3 -c "import sklearn; print(sklearn.__version__)"'), topic: versions
+    tuple val("${task.process}"), val('faiss'),        eval('python3 -c "import faiss; print(faiss.__version__)"'),     topic: versions
+    tuple val("${task.process}"), val('fknni'),        eval('python3 -c "import fknni; print(fknni.__version__)"'),     topic: versions
 
     script:
     """
     impute_missing_values.py \\
         --counts $count_file \\
-        --imputer $missing_value_imputer \\
         --out ${meta.platform}.imputed.parquet
     """
 

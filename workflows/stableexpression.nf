@@ -139,7 +139,6 @@ workflow STABLEEXPRESSION {
             ch_valid_gene_ids,
             params.skip_gene_length_normalisation,
             params.gene_max_zero_ratio,
-            params.missing_value_imputer,
             params.quantile_normalisation,
             params.quantile_norm_target_distrib,
             params.gff,

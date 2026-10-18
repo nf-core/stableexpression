@@ -23,7 +23,6 @@ workflow NORMALISATION {
     ch_valid_gene_ids
     skip_gene_length_normalisation
     gene_max_zero_ratio
-    missing_value_imputer
     quantile_normalisation
     quantile_norm_target_distrib
     gff_file
@@ -88,10 +87,7 @@ workflow NORMALISATION {
     // IMPUTE MISSING VALUES
     // -----------------------------------------------------------------
 
-    IMPUTE_MISSING_VALUES(
-        FILTER_GENES.out.counts,
-        missing_value_imputer
-    )
+    IMPUTE_MISSING_VALUES( FILTER_GENES.out.counts )
 
     ch_imputed_datasets = IMPUTE_MISSING_VALUES.out.counts
 
