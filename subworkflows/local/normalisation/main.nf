@@ -52,15 +52,15 @@ workflow NORMALISATION {
         gff_url,
         gene_length_file
     )
-    ch_normalised_rnaseq_datasets = RNASEQ.out.normalised
-    ch_annotation                 = RNASEQ.out.annotation
-    ch_gene_length_file           = RNASEQ.out.gene_length_file
+    ch_normalised_rnaseq_counts = RNASEQ.out.normalised
+    ch_annotation               = RNASEQ.out.annotation
+    ch_gene_length_file         = RNASEQ.out.gene_length_file
 
     // -----------------------------------------------------------------
     // MERGE ALL DATASETS TOGETHER FOR EACH PLATFORM SEPARATELY
     // -----------------------------------------------------------------
 
-    ch_rnaseq = ch_normalised_rnaseq_datasets
+    ch_rnaseq = ch_normalised_rnaseq_counts
                     .map { meta, file -> file }
                     .collect( sort: true )
                     .map { files -> [ [ platform: "rnaseq" ], files ] }
@@ -75,37 +75,39 @@ workflow NORMALISATION {
     ch_counts_merged_by_platform = MERGE_BY_PLATFORM.out.counts
 
     // -----------------------------------------------------------------
+    // IMPUTE MISSING VALUES
+    // -----------------------------------------------------------------
+
+    IMPUTE_MISSING_VALUES( ch_counts_merged_by_platform )
+
+    ch_imputed_counts = IMPUTE_MISSING_VALUES.out.counts
+
+    // -----------------------------------------------------------------
     // FILTER OUT GENES DISPLAYING A TOO HIGH PROPORTIONS OF ZEROS
     // -----------------------------------------------------------------
 
     FILTER_GENES(
-        ch_counts_merged_by_platform,
+        ch_imputed_counts,
         gene_max_zero_ratio
     )
 
-    // -----------------------------------------------------------------
-    // IMPUTE MISSING VALUES
-    // -----------------------------------------------------------------
-
-    IMPUTE_MISSING_VALUES( FILTER_GENES.out.counts )
-
-    ch_imputed_datasets = IMPUTE_MISSING_VALUES.out.counts
+    ch_imputed_filtered_counts = FILTER_GENES.out.counts
 
     // -----------------------------------------------------------------
     // MERGE ALL DESIGNS IN A SINGLE TABLE, PLATFORM PER PLATFORM
     // -----------------------------------------------------------------
 
-    ch_rnaseq_whole_design     = mergeDesign(ch_normalised_rnaseq_datasets, "${outdir}/design/", 'rnaseq.whole_design.csv')
+    ch_rnaseq_whole_design     = mergeDesign(ch_normalised_rnaseq_counts, "${outdir}/design/", 'rnaseq.whole_design.csv')
     ch_microarray_whole_design = mergeDesign(ch_datasets.microarray,        "${outdir}/design/", 'microarray.whole_design.csv')
 
     ch_rnaseq_whole_design     = ch_rnaseq_whole_design.map     { file -> [ 'rnaseq' , file ] }
     ch_microarray_whole_design = ch_microarray_whole_design.map { file -> [ 'microarray', file ] }
 
     // joining merged datasets with their design
-    ch_imputed_datasets_with_design = ch_imputed_datasets
-                                        .map { meta, file -> [ meta.platform, meta, file ] }
-                                        .join( ch_rnaseq_whole_design.mix( ch_microarray_whole_design ) )
-                                        .map { platform, meta, file, design -> [ meta, file, design ] }
+    ch_counts_with_design = ch_imputed_filtered_counts
+                                .map { meta, file -> [ meta.platform, meta, file ] }
+                                .join( ch_rnaseq_whole_design.mix( ch_microarray_whole_design ) )
+                                .map { platform, meta, file, design -> [ meta, file, design ] }
 
     if ( !quantile_normalisation ) {
 
@@ -116,9 +118,9 @@ workflow NORMALISATION {
         // first, counts are merged together, platform pre platform
         // then, reCombat is applied on the merged dataframe
 
-        RECOMBAT( ch_imputed_datasets_with_design )
+        RECOMBAT( ch_counts_with_design )
 
-        ch_counts_per_platform = RECOMBAT.out.counts
+        ch_corrected_counts = RECOMBAT.out.counts
 
         // -----------------------------------------------------------------
         // LOGGING NB OF EXCLUDED ORPHAN SAMPLES IF > 0
@@ -142,7 +144,7 @@ workflow NORMALISATION {
         // so we choose to separate datasets again into multiple parquet files, each files corresponding to a batch
         // (separating by batch is only pure convenience)
 
-        SEPARATE_COUNTS( ch_imputed_datasets_with_design )
+        SEPARATE_COUNTS( ch_counts_with_design )
 
         ch_separated_datasets = SEPARATE_COUNTS.out.counts
                                     .map { meta, file -> [ [ dataset: file.baseName, platform: meta.platform ], file ] }
@@ -182,7 +184,7 @@ workflow NORMALISATION {
             ch_qn_rnaseq_counts.concat( ch_microarray )
         )
 
-        ch_counts_per_platform = REMERGE_BY_PLATFORM.out.counts
+        ch_corrected_counts = REMERGE_BY_PLATFORM.out.counts
 
     }
 
@@ -190,17 +192,17 @@ workflow NORMALISATION {
     // ASSOCIATE PLATFORM COUNTS WITH THEIR DESIGN
     // -----------------------------------------------------------------
 
-    ch_merged_counts_with_design = ch_counts_per_platform
-                                    .map { meta, file -> [ meta.platform, meta, file ] }
-                                    .join( ch_rnaseq_whole_design.mix( ch_microarray_whole_design ) )
-                                    .map { platform, meta, file, design -> [ meta, file, design ] }
+    ch_corrected_counts_with_design = ch_corrected_counts
+                                        .map { meta, file -> [ meta.platform, meta, file ] }
+                                        .join( ch_rnaseq_whole_design.mix( ch_microarray_whole_design ) )
+                                        .map { platform, meta, file, design -> [ meta, file, design ] }
 
 
     emit:
-    normalised        = ch_merged_counts_with_design
-    imputed           = ch_imputed_datasets
+    normalised        = ch_corrected_counts_with_design
+    imputed           = ch_imputed_counts
     non_imputed       = ch_counts_merged_by_platform
-    rnaseq_normalised = ch_normalised_rnaseq_datasets
+    rnaseq_normalised = ch_normalised_rnaseq_counts
     gene_length_file  = ch_gene_length_file
     annotation        = ch_annotation
 
