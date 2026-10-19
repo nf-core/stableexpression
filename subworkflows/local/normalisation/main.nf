@@ -75,23 +75,23 @@ workflow NORMALISATION {
     ch_counts_merged_by_platform = MERGE_BY_PLATFORM.out.counts
 
     // -----------------------------------------------------------------
-    // IMPUTE MISSING VALUES
-    // -----------------------------------------------------------------
-
-    IMPUTE_MISSING_VALUES( ch_counts_merged_by_platform )
-
-    ch_imputed_counts = IMPUTE_MISSING_VALUES.out.counts
-
-    // -----------------------------------------------------------------
     // FILTER OUT GENES DISPLAYING A TOO HIGH PROPORTIONS OF ZEROS
     // -----------------------------------------------------------------
 
     FILTER_GENES(
-        ch_imputed_counts,
+        ch_counts_merged_by_platform,
         gene_max_zero_ratio
     )
 
-    ch_imputed_filtered_counts = FILTER_GENES.out.counts
+    ch_filtered_counts = FILTER_GENES.out.counts
+
+    // -----------------------------------------------------------------
+    // IMPUTE MISSING VALUES
+    // -----------------------------------------------------------------
+
+    IMPUTE_MISSING_VALUES( ch_filtered_counts )
+
+    ch_imputed_counts = IMPUTE_MISSING_VALUES.out.counts
 
     // -----------------------------------------------------------------
     // MERGE ALL DESIGNS IN A SINGLE TABLE, PLATFORM PER PLATFORM
@@ -104,7 +104,7 @@ workflow NORMALISATION {
     ch_microarray_whole_design = ch_microarray_whole_design.map { file -> [ 'microarray', file ] }
 
     // joining merged datasets with their design
-    ch_counts_with_design = ch_imputed_filtered_counts
+    ch_counts_with_design = ch_imputed_counts
                                 .map { meta, file -> [ meta.platform, meta, file ] }
                                 .join( ch_rnaseq_whole_design.mix( ch_microarray_whole_design ) )
                                 .map { platform, meta, file, design -> [ meta, file, design ] }
