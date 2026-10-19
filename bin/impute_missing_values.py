@@ -7,10 +7,13 @@ This script imputes missing values in a count table using KNN imputation.
 It takes as inputs:
     - a dataframe whose columns are samples and rows are genes.
     - an output file.
-Missing value imputation is performed using fknni (FAISS-backed KNN imputer).
-To scale to large datasets, the genes (features) are split into random blocks
-that are imputed independently. All samples are kept in each block, so the
-pool of KNN neighbours (samples) is never restricted.
+Missing value imputation is performed using scikit-learn's KNNImputer.
+To scale to large datasets, the samples are split into random groups of at
+most MAX_GROUP_SIZE samples, and each group is imputed independently.
+Multiple passes are performed with different random splits: imputations from
+all passes are averaged per cell, which reduces the variance introduced by
+restricting the neighbour pool to a single group. Groups are imputed in
+parallel with joblib.
 """
 
 import argparse
@@ -21,16 +24,17 @@ import config
 import numpy as np
 import polars as pl
 from common import export_parquet, get_count_columns
-from fknni import FastKNNImputer
+from joblib import Parallel, delayed
+from sklearn.impute import KNNImputer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 N_NEIGHBOURS = 5
-
-GENE_BLOCK_SIZE = 200 # sot that 20000 genes are split into 100 blocks
-
+MAX_GROUP_SIZE = 1000
+N_PASSES = 5
 RANDOM_STATE = 42
+
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,6 +48,12 @@ def parse_args():
     )
     parser.add_argument(
         "--out", type=Path, dest="outfile", required=True, help="Output file"
+    )
+    parser.add_argument(
+        "--threads",
+        type=int,
+        required=True,
+        help="Number of parallel jobs for joblib",
     )
     return parser.parse_args()
 
@@ -67,26 +77,154 @@ def get_count_matrix(lf: pl.LazyFrame) -> tuple[list[str], np.ndarray]:
         lf.select(count_cols)
         .collect()
         .cast(pl.Float32)
-        .to_numpy()
+        .to_numpy()  # replaces null values by NaNs
         .T
     )  # shape (n_samples, n_genes)
     return count_cols, count_matrix
 
 
-def make_gene_blocks(n_genes: int, block_size: int, rng: np.random.Generator) -> list[np.ndarray]:
+def get_global_gene_means(count_matrix: np.ndarray) -> np.ndarray:
     """
-    Split gene indices into random blocks of at most `block_size` genes.
-
-    The assignment is random (shuffled) so that each block is representative of
-    the full gene set: contiguous slices could group correlated genes and bias
-    the per-block distances.
-
-    Returns the list of gene index arrays, in the original gene order.
+    Per-gene mean computed over all samples, ignoring NaNs.
+    Genes with no observed value at all are mapped to 0.0 (safety net).
     """
-    shuffled = rng.permutation(n_genes)
-    blocks = [shuffled[i : i + block_size] for i in range(0, n_genes, block_size)]
-    # keep original gene order within each block so reassembly is trivial
-    return [np.sort(block) for block in blocks]
+    with np.errstate(invalid="ignore"):
+        gene_means = np.nanmean(count_matrix, axis=0)
+    return np.where(np.isnan(gene_means), 0.0, gene_means)
+
+
+def make_random_groups(
+    n_samples: int, group_size: int, rng: np.random.Generator
+) -> list[np.ndarray]:
+    """
+    Randomly split sample indices into groups of at most `group_size` samples.
+    A new call with a different rng state yields a different split.
+    """
+    shuffled = rng.permutation(n_samples)
+    return [shuffled[i : i + group_size] for i in range(0, n_samples, group_size)]
+
+
+def setup_worker_logging():
+    """
+    Configure logging inside a loky worker process. Called once per worker
+    via Parallel(initializer=...). Without this, worker loggers stay at the
+    default WARNING level and INFO messages never show (basicConfig only ran
+    in the main process).
+    """
+    h = logging.StreamHandler()
+    h.setFormatter(logging.Formatter("%(asctime)s %(processName)s %(message)s"))
+    root = logging.getLogger()
+    root.setLevel(logging.INFO)
+    root.handlers[:] = [h]
+
+
+def process_single_group(
+    sample_idx: np.ndarray,
+    sub_matrix: np.ndarray,
+    group_nan_mask: np.ndarray,
+    group_id: int,
+) -> tuple[np.ndarray, np.ndarray | None, np.ndarray, np.ndarray] | None:
+    """
+    Worker function executed in parallel processes (loky backend).
+    Processes a single chunk of samples.
+
+    Returns a tuple (sample_idx, valid_genes_idx, filled, sub_nan_mask)
+    where filled contains the imputed values (0.0 where the cell was observed
+    or not imputed), or None if the chunk is uncomputable (all genes fully
+    missing in this chunk — other passes usually cover it).
+    """
+    logger.info(f"Imputing group {group_id}")
+
+    fully_missing = group_nan_mask.all(axis=0)
+    if fully_missing.all():
+        # all genes have only missing values in this chunk: nothing to impute
+        return None
+
+    imputer = KNNImputer(
+        n_neighbors=N_NEIGHBOURS,
+        weights="distance",
+        keep_empty_features=True,
+    )
+
+    if fully_missing.any():
+        # some genes have only missing values: impute on the valid genes only
+        valid_genes_idx = np.where(~fully_missing)[0]
+        sub_matrix_input = sub_matrix[:, valid_genes_idx]
+        sub_nan_mask = group_nan_mask[:, valid_genes_idx]
+
+        sub_imputed = imputer.fit_transform(sub_matrix_input)
+        filled = np.where(sub_nan_mask, sub_imputed, 0.0)
+
+        return sample_idx, valid_genes_idx, filled, sub_nan_mask
+
+    # all genes have at least one non-missing value
+    else:
+        sub_imputed = imputer.fit_transform(sub_matrix)
+        filled = np.where(group_nan_mask, sub_imputed, 0.0)
+
+        return sample_idx, None, filled, group_nan_mask
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# MULTI-PASS IMPUTATION
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def multi_pass_impute(count_matrix: np.ndarray, n_passes: int, nthreads: int, rng: np.random.Generator) -> np.ndarray:
+    """
+    Impute the matrix with multiple passes over random sample groups.
+    Parallelizes the chunks over the available CPUs with joblib (loky).
+    """
+    nan_mask = np.isnan(count_matrix)
+
+    # store imputed values (float64 to avoid precision loss)
+    imputed_sum = np.zeros(count_matrix.shape, dtype=np.float64)
+    imputed_count = np.zeros(count_matrix.shape, dtype=np.int32)
+
+    for pass_nb in range(1, n_passes + 1):
+        groups = make_random_groups(count_matrix.shape[0], MAX_GROUP_SIZE, rng)
+        logger.info(f"Pass {pass_nb}/{n_passes}: {len(groups)} groups")
+
+        results = Parallel(
+            n_jobs=nthreads,
+            backend="loky",
+            initializer=setup_worker_logging,
+        )(
+            delayed(process_single_group)(
+                sample_idx,
+                count_matrix[sample_idx],
+                nan_mask[sample_idx],
+                group_id,
+            )
+            for group_id, sample_idx in enumerate(groups)
+        )
+
+        # safe sequential aggregation of the results from the different workers
+        for res in results:
+            if res is None:
+                continue
+
+            sample_idx, valid_genes_idx, filled, sub_mask = res
+
+            if valid_genes_idx is not None:
+                imputed_sum[sample_idx[:, None], valid_genes_idx] += filled
+                imputed_count[sample_idx[:, None], valid_genes_idx] += sub_mask
+            else:
+                imputed_sum[sample_idx] += filled
+                imputed_count[sample_idx] += sub_mask
+
+        n_remaining = int((nan_mask & (imputed_count == 0)).sum())
+        logger.info(
+            f"Pass {pass_nb}/{n_passes} done: "
+            f"{100 * (imputed_count > 0).sum() / max(nan_mask.sum(), 1):.1%} of "
+            f"missing cells imputed at least once ({n_remaining} remaining)"
+        )
+
+    # means of imputations (initial values stay unchanged)
+    result = count_matrix.astype(np.float64, copy=True)
+    has_updates = nan_mask & (imputed_count > 0)
+    result[has_updates] = imputed_sum[has_updates] / imputed_count[has_updates]
+
+    return result.astype(np.float32)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,24 +237,25 @@ def main():
     logger.info(f"Parsing {args.count_file.name}")
     lf = pl.scan_parquet(args.count_file)
 
-    logger.info("Applying FAISS KNN imputation")
+    logger.info("Applying KNN imputation")
     count_cols, count_matrix = get_count_matrix(lf)
     n_samples, n_genes = count_matrix.shape
+    logger.info(f"Found {n_samples} samples and {n_genes} genes")
+
+    # pristine gene means, computed before any imputation
+    gene_means = get_global_gene_means(count_matrix)
 
     rng = np.random.default_rng(RANDOM_STATE)
-    gene_blocks = make_gene_blocks(n_genes, GENE_BLOCK_SIZE, rng)
-    logger.info(
-        f"Imputing {n_genes} genes in {len(gene_blocks)} blocks of " +
-        f"~{GENE_BLOCK_SIZE} genes ({n_samples} samples per block)"
-    )
+    count_matrix = multi_pass_impute(count_matrix, N_PASSES, args.threads, rng)
 
-    imputer = FastKNNImputer(n_neighbors=N_NEIGHBOURS)
-
-    # impute each gene block independently, in place
-    for i, gene_idx in enumerate(gene_blocks):
-        logger.info(f"Imputing block {i + 1}/{len(gene_blocks)} ({len(gene_idx)} genes)")
-        block = count_matrix[:, gene_idx]
-        count_matrix[:, gene_idx] = imputer.fit_transform(block)
+    # if some values are still missing after all passes
+    still_missing = np.isnan(count_matrix)
+    if still_missing.any():
+        logger.info(
+            f"{still_missing.sum()} cells still missing after all passes: "
+            "filling with pristine global gene means"
+        )
+        count_matrix[still_missing] = np.take(gene_means, np.where(still_missing)[1])
 
     df = pl.concat(
         [
