@@ -27,14 +27,14 @@ from common import export_parquet, get_count_columns
 from joblib import Parallel, delayed
 from sklearn.impute import KNNImputer
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
+PROCESS_LOGGING_FORMAT = "%(levelname)s:%(processName)s: %(message)s"
 N_NEIGHBOURS = 5
 MAX_GROUP_SIZE = 1000
 N_PASSES = 5
 RANDOM_STATE = 42
 
+logging.basicConfig(level=logging.INFO, format=PROCESS_LOGGING_FORMAT, force=True)
+logger = logging.getLogger(__name__)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -106,16 +106,9 @@ def make_random_groups(
 
 def setup_worker_logging():
     """
-    Configure logging inside a loky worker process. Called once per worker
-    via Parallel(initializer=...). Without this, worker loggers stay at the
-    default WARNING level and INFO messages never show (basicConfig only ran
-    in the main process).
+    Set up logging for worker processes.
     """
-    h = logging.StreamHandler()
-    h.setFormatter(logging.Formatter("%(asctime)s %(processName)s %(message)s"))
-    root = logging.getLogger()
-    root.setLevel(logging.INFO)
-    root.handlers[:] = [h]
+    logging.basicConfig(level=logging.INFO, format=PROCESS_LOGGING_FORMAT, force=True)
 
 
 def process_single_group(
@@ -133,10 +126,10 @@ def process_single_group(
     or not imputed), or None if the chunk is uncomputable (all genes fully
     missing in this chunk — other passes usually cover it).
     """
-    logger.info(f"Imputing group {group_id}")
 
     fully_missing = group_nan_mask.all(axis=0)
     if fully_missing.all():
+        logger.warning(f"Group {group_id}: fully missing")
         # all genes have only missing values in this chunk: nothing to impute
         return None
 
@@ -147,6 +140,8 @@ def process_single_group(
     )
 
     if fully_missing.any():
+        ratio_missing = group_nan_mask.sum() / group_nan_mask.size
+        logger.info(f"Group {group_id}: {ratio_missing:.1%} genes with missing values")
         # some genes have only missing values: impute on the valid genes only
         valid_genes_idx = np.where(~fully_missing)[0]
         sub_matrix_input = sub_matrix[:, valid_genes_idx]
@@ -159,6 +154,7 @@ def process_single_group(
 
     # all genes have at least one non-missing value
     else:
+        logger.info(f"Group {group_id}: no missing value")
         sub_imputed = imputer.fit_transform(sub_matrix)
         filled = np.where(group_nan_mask, sub_imputed, 0.0)
 
@@ -171,7 +167,9 @@ def process_single_group(
 
 def multi_pass_impute(count_matrix: np.ndarray, n_passes: int, nthreads: int, rng: np.random.Generator) -> np.ndarray:
     """
-    Impute the matrix with multiple passes over random sample groups.
+    Impute the matrix with possibly multiple passes over random sample groups.
+    On most dataframes, 1 pass is enough to cover all missing values.
+    Multiple passes are used when count matrix with fully missing values are encountered.
     Parallelizes the chunks over the available CPUs with joblib (loky).
     """
     nan_mask = np.isnan(count_matrix)
@@ -218,6 +216,10 @@ def multi_pass_impute(count_matrix: np.ndarray, n_passes: int, nthreads: int, rn
             f"{100 * (imputed_count > 0).sum() / max(nan_mask.sum(), 1):.1%} of "
             f"missing cells imputed at least once ({n_remaining} remaining)"
         )
+
+        if n_remaining == 0:
+            logger.info("All missing cells imputed at least once")
+            break
 
     # means of imputations (initial values stay unchanged)
     result = count_matrix.astype(np.float64, copy=True)
