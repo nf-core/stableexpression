@@ -26,6 +26,7 @@ process RECOMBAT {
     correct_batch_effects_with_recombat.py \\
         --counts $count_file \\
         --design $design_file \\
+        --threads ${task.cpus} \\
         --out ${prefix}.corrected.parquet
 
     NB_EXCLUDED_ORPHAN_SAMPLES=\$(cat nb_excluded_orphan_samples.txt)

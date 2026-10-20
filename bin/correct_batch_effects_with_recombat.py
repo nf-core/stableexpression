@@ -1,21 +1,60 @@
 #!/usr/bin/env python3
 
-
+# Written by Olivier Coen. Released under the MIT license.
 
 """
 correct_batch_effects.py: apply reCombat to count data
 """
-
+import os
 import argparse
 from pathlib import Path
 import logging
 
-from common import export_parquet
 import config
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PARSING ARGUMENTS
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument(
+    "--counts", type=Path, dest="count_file", required=True, help="Parquet gathering all count data"
+)
+parser.add_argument(
+    "--design", type=Path, dest="design_file", required=True, help="Design file"
+)
+parser.add_argument(
+    "--out", type=Path, dest="outfile", required=True, help="Output file"
+)
+parser.add_argument(
+    "--threads",
+    type=int,
+    required=True,
+    help="Number of parallel threads for numpy",
+)
+
+args = parser.parse_args()
+
+# must be a string
+n_threads = str(args.threads)
+
+# Set the number of threads to 4
+os.environ.update({
+    "OMP_NUM_THREADS": n_threads,
+    "OPENBLAS_NUM_THREADS": n_threads,
+    "MKL_NUM_THREADS": n_threads,
+    "NUMEXPR_NUM_THREADS": n_threads,
+    "POLARS_MAX_THREADS": n_threads,
+})
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ADDITIONAL IMPORTS
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# late import to allow modifying env vars beforehand
 import polars as pl
-import numpy as np
 from recombat import ReComBat
+from common import export_parquet
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,23 +74,6 @@ NB_ORPHANS_OUTFILE = "nb_excluded_orphan_samples.txt"
 NB_CLIPPED_OUTFILE = "nb_clipped_samples.txt"
 OUTFILE = "counts.corrected.parquet"
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# FUNCTIONS
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def parse_args():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Parquet gathering all count data"
-    )
-    parser.add_argument(
-        "--design", type=Path, dest="design_file", required=True, help="Design file"
-    )
-    parser.add_argument(
-        "--out", type=Path, dest="outfile", required=True, help="Output file"
-    )
-    return parser.parse_args()
-
 
 def remove_orphan_samples(df: pl.DataFrame, design_df: pl.DataFrame) -> tuple[pl.DataFrame, int]:
     n_samples_per_batch_df = design_df.group_by('batch').agg(n_samples=pl.col('sample').n_unique())
@@ -68,8 +90,6 @@ def remove_orphan_samples(df: pl.DataFrame, design_df: pl.DataFrame) -> tuple[pl
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def main():
-
-    args = parse_args()
 
     # ----------------------------------------------------
     # PARSING DATA
