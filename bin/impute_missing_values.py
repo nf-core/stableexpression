@@ -19,6 +19,7 @@ parallel with joblib.
 import argparse
 import logging
 from pathlib import Path
+from math import sqrt
 
 import config
 import numpy as np
@@ -30,7 +31,7 @@ from sklearn.impute import KNNImputer
 PROCESS_LOGGING_FORMAT = "%(levelname)s:%(processName)s: %(message)s"
 N_NEIGHBOURS = 5
 MAX_GROUP_SIZE = 1000
-N_PASSES = 5
+MAX_N_PASSES = 5
 RANDOM_STATE = 42
 
 logging.basicConfig(level=logging.INFO, format=PROCESS_LOGGING_FORMAT, force=True)
@@ -109,6 +110,17 @@ def setup_worker_logging():
     Set up logging for worker processes.
     """
     logging.basicConfig(level=logging.INFO, format=PROCESS_LOGGING_FORMAT, force=True)
+
+
+def get_nb_passes(n_samples: int):
+    """
+    Compute the number of passes over the data.
+    The number of passes is the square root of the number of samples divided by
+    the maximum group size.
+    It is clipped between 1 and MAX_N_PASSES.
+    """
+    n_passes = sqrt(n_samples // MAX_GROUP_SIZE)
+    return int(np.clip(n_passes, 1 , MAX_N_PASSES))
 
 
 def process_single_group(
@@ -217,10 +229,6 @@ def multi_pass_impute(count_matrix: np.ndarray, n_passes: int, nthreads: int, rn
             f"missing cells imputed at least once ({n_remaining} remaining)"
         )
 
-        if n_remaining == 0:
-            logger.info("All missing cells imputed at least once")
-            break
-
     # means of imputations (initial values stay unchanged)
     result = count_matrix.astype(np.float64, copy=True)
     has_updates = nan_mask & (imputed_count > 0)
@@ -247,8 +255,11 @@ def main():
     # pristine gene means, computed before any imputation
     gene_means = get_global_gene_means(count_matrix)
 
+    n_passes = get_nb_passes(n_samples)
+    logger.info(f"Will perform {n_passes} passes")
+
     rng = np.random.default_rng(RANDOM_STATE)
-    count_matrix = multi_pass_impute(count_matrix, N_PASSES, args.threads, rng)
+    count_matrix = multi_pass_impute(count_matrix, n_passes, args.threads, rng)
 
     # if some values are still missing after all passes
     still_missing = np.isnan(count_matrix)
