@@ -238,7 +238,7 @@ def multi_pass_impute(count_matrix: np.ndarray, n_passes: int, nthreads: int, rn
         n_remaining = int((nan_mask & (imputed_count == 0)).sum())
         logger.info(
             f"Pass {pass_nb}/{n_passes} done: "
-            f"{100 * (imputed_count > 0).sum() / max(nan_mask.sum(), 1):.1%} of "
+            f"{(imputed_count > 0).sum() / max(nan_mask.sum(), 1):.1%} of "
             f"missing cells imputed at least once ({n_remaining} remaining)"
         )
 
