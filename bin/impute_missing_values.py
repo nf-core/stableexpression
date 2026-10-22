@@ -151,7 +151,7 @@ def process_single_group(
 
     fully_missing = group_nan_mask.all(axis=0)
     if fully_missing.all():
-        logger.warning(f"Group {group_id}: fully missing")
+        logger.warning(f"Group {group_id}: contains missing values for all genes and all samples!")
         # all genes have only missing values in this chunk: nothing to impute
         return None
 
@@ -161,9 +161,12 @@ def process_single_group(
         keep_empty_features=True,
     )
 
+    ratio_missing = group_nan_mask.sum() / group_nan_mask.size
+    logger.info(f"Group {group_id}: {ratio_missing:.1%} of missing values accross genes and samples")
+
     if fully_missing.any():
-        ratio_missing = group_nan_mask.sum() / group_nan_mask.size
-        logger.info(f"Group {group_id}: {ratio_missing:.1%} genes with missing values")
+        ratio_all_missing = fully_missing.sum() / fully_missing.size
+        logger.info(f"Group {group_id}: {ratio_all_missing:.1%} of genes have only missing values")
         # some genes have only missing values: impute on the valid genes only
         valid_genes_idx = np.where(~fully_missing)[0]
         sub_matrix_input = sub_matrix[:, valid_genes_idx]
@@ -176,7 +179,7 @@ def process_single_group(
 
     # all genes have at least one non-missing value
     else:
-        logger.info(f"Group {group_id}: no missing value")
+        logger.info(f"Group {group_id}: no gene having only missing values")
         sub_imputed = imputer.fit_transform(sub_matrix)
         filled = np.where(group_nan_mask, sub_imputed, 0.0)
 
@@ -263,6 +266,8 @@ def main():
         count_cols, count_matrix = get_count_matrix(lf)
         n_samples, n_genes = count_matrix.shape
         logger.info(f"Found {n_samples} samples and {n_genes} genes")
+
+
 
         # pristine gene means, computed before any imputation
         gene_means = get_global_gene_means(count_matrix)
