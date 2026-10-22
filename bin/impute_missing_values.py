@@ -59,6 +59,15 @@ def parse_args():
     return parser.parse_args()
 
 
+def has_missing_values(lf: pl.LazyFrame) -> bool:
+    """
+    Check if there are any missing values in the input counts.
+    """
+    return lf.select(
+        pl.any_horizontal(pl.exclude(config.GENE_ID_COLNAME).is_null()).any()
+    ).collect().item()
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MATRIX HELPERS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -76,6 +85,7 @@ def get_count_matrix(lf: pl.LazyFrame) -> tuple[list[str], np.ndarray]:
     count_cols = get_count_columns(lf)
     count_matrix = (
         lf.select(count_cols)
+        .fill_null(np.nan) # convert all null values to NaN
         .collect()
         .cast(pl.Float32)
         .to_numpy()  # replaces null values by NaNs
@@ -247,38 +257,45 @@ def main():
     logger.info(f"Parsing {args.count_file.name}")
     lf = pl.scan_parquet(args.count_file)
 
-    logger.info("Applying KNN imputation")
-    count_cols, count_matrix = get_count_matrix(lf)
-    n_samples, n_genes = count_matrix.shape
-    logger.info(f"Found {n_samples} samples and {n_genes} genes")
+    if has_missing_values(lf):
 
-    # pristine gene means, computed before any imputation
-    gene_means = get_global_gene_means(count_matrix)
+        logger.info("Applying KNN imputation")
+        count_cols, count_matrix = get_count_matrix(lf)
+        n_samples, n_genes = count_matrix.shape
+        logger.info(f"Found {n_samples} samples and {n_genes} genes")
 
-    n_passes = get_nb_passes(n_samples)
-    logger.info(f"Will perform {n_passes} passes")
+        # pristine gene means, computed before any imputation
+        gene_means = get_global_gene_means(count_matrix)
 
-    rng = np.random.default_rng(RANDOM_STATE)
-    count_matrix = multi_pass_impute(count_matrix, n_passes, args.threads, rng)
+        n_passes = get_nb_passes(n_samples)
+        logger.info(f"Will perform {n_passes} passes")
 
-    # if some values are still missing after all passes
-    still_missing = np.isnan(count_matrix)
-    if still_missing.any():
-        logger.info(
-            f"{still_missing.sum()} cells still missing after all passes: "
-            "filling with pristine global gene means"
+        rng = np.random.default_rng(RANDOM_STATE)
+        count_matrix = multi_pass_impute(count_matrix, n_passes, args.threads, rng)
+
+        # if some values are still missing after all passes
+        still_missing = np.isnan(count_matrix)
+        if still_missing.any():
+            logger.info(
+                f"{still_missing.sum()} cells still missing after all passes: "
+                "filling with pristine global gene means"
+            )
+            count_matrix[still_missing] = np.take(gene_means, np.where(still_missing)[1])
+
+        df = pl.concat(
+            [
+                lf.select(config.GENE_ID_COLNAME).collect(),
+                pl.DataFrame(count_matrix.T, schema=count_cols),  # shape (n_genes, n_samples)
+            ],
+            how="horizontal",
         )
-        count_matrix[still_missing] = np.take(gene_means, np.where(still_missing)[1])
 
-    df = pl.concat(
-        [
-            lf.select(config.GENE_ID_COLNAME).collect(),
-            pl.DataFrame(count_matrix.T, schema=count_cols),  # shape (n_genes, n_samples)
-        ],
-        how="horizontal",
-    )
+        logger.info(f"Exporting imputed counts to {args.outfile}")
+        export_parquet(df, args.outfile)
 
-    export_parquet(df, args.outfile)
+    else:
+        logger.info(f"No missing values found. Exporting counts to {args.outfile}")
+        lf.sink_parquet(args.outfile)
 
     logger.info("Done")
 
