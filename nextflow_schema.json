@@ -393,7 +393,7 @@
                     "fa_icon": "fas fa-sort-numeric-down",
                     "minimum": 0,
                     "help_text": "In the MultiQC report, for each section and each platform, the distribution of normalised expressions is displayed for a shortlist of top-ranked genes. Set this parameter to adjust how many genes are displayed in these boxplots. A value of 0 will remove boxplots from the MultiQC report, making it much lighter. Caution: above 20, this can drastically increase the size of the MultiQC report, especially with a high number of sections and multiple platforms.",
-                    "default": 10
+                    "default": 0
                 },
                 "multiqc_title": {
                     "type": "string",
