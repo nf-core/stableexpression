@@ -18,8 +18,9 @@ import polars as pl
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-OUTFILE = "sections.csv"
+RANDOM_SEED = 42
 
+OUTFILE = "sections.csv"
 
 #####################################################
 #####################################################
@@ -60,7 +61,7 @@ def parse_args():
 def parse_stat_file(file: Path, platform: str) -> pl.DataFrame:
     return pl.scan_csv(file).select(
         pl.col(config.GENE_ID_COLNAME).cast(pl.String()),
-        pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME).cast(pl.Int32()).alias(f"{config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME}.{platform}"),
+        pl.col(config.EXPRESSION_LEVEL_QUANTILE_COLNAME).cast(pl.Int32()).alias(f"{config.EXPRESSION_LEVEL_QUANTILE_COLNAME}.{platform}"),
     ).collect()
 
 
@@ -80,8 +81,13 @@ def parse_expression_level_quantiles(files: list[Path]) -> pl.DataFrame:
                 platform_df,
                 how="full",
                 on=config.GENE_ID_COLNAME,
-                coalesce=True
+                coalesce=True,
+                maintain_order="left_right"
             )
+
+    if df is None:
+        raise ValueError('No stat file found!')
+
     return df
 
 
@@ -98,6 +104,12 @@ def make_sections(df: pl.DataFrame, platform_sizes: dict[str, int], nb_sections:
     weighted_cols = [f"{col}.weighted" for col in cols]
     sum_of_weights = sum([sqrt(size) for size in platform_sizes.values()])
 
+    ranking_kwargs = dict(
+        method="random",
+        seed=RANDOM_SEED,
+        descending=True
+    )
+
     return (
         df.with_columns([
             (pl.col(col) * sqrt(platform_sizes[col.split('.')[-1]])).alias(weighted_col)
@@ -108,7 +120,7 @@ def make_sections(df: pl.DataFrame, platform_sizes: dict[str, int], nb_sections:
             (pl.mean_horizontal(weighted_cols) / sum_of_weights).alias("weighted_mean_expr_level_quantiles")
         ).with_columns(
             (
-                pl.col("weighted_mean_expr_level_quantiles").rank(method="ordinal", descending=True)
+                pl.col("weighted_mean_expr_level_quantiles").rank(**ranking_kwargs)
                 / pl.col("weighted_mean_expr_level_quantiles").count()
                 * nb_sections + 1
             ).floor()
