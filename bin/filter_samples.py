@@ -106,10 +106,9 @@ def main():
         f"Loaded count data with {nb_genes} genes and {nb_samples} samples"
     )
 
-     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     # FILTERING OUT SAMPLES WITH TOO MANY NULLS
-     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # COMPUTING PROPORTION OF MISSING VALUES IN SAMPLES
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info("Computing total number of nulls per sample")
 
@@ -121,21 +120,34 @@ def main():
     nb_missing_genes = nb_valid_genes - nb_genes
 
     # adding the nb of missing genes to the number of null vaues for each sample
-    ratio_values_df = get_ratio_null_values(
+    ratio_null_values_df = get_ratio_null_values(
         nb_null_values_df, nb_missing_genes, nb_valid_genes
     )
 
-    valid_samples = (
-        ratio_values_df.filter(pl.col(config.RATIO_COLNAME) <= args.max_null_ratio)
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # COMPUTING PROPORTION OF ZEROS IN SAMPLES
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    # computing the number of zeros values per sample
+    ratio_zeros_df = count_df.select(
+        pl.exclude(config.GENE_ID_COLNAME).eq(pl.lit(0)).mean()
+    )
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # FILTERING OUT SAMPLES WITH TOO MANY NULLS
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    missing_value_valid_samples = (
+        ratio_null_values_df.filter(pl.col(config.RATIO_COLNAME) <= args.max_null_ratio)
         .select(pl.col(config.SAMPLE_COLNAME))
         .to_series()
         .to_list()
     )
 
-    count_df = count_df.select([config.GENE_ID_COLNAME] + valid_samples)
+    count_df = count_df.select([config.GENE_ID_COLNAME] + missing_value_valid_samples)
     # if at least one valid sample is remaining, making an updated count dataframe
-    if valid_samples:
-        logger.info(f"Filtered out {count_df.width - 1 - len(valid_samples)} columns")
+    if missing_value_valid_samples:
+        logger.info(f"Filtered out {count_df.width - 1 - len(missing_value_valid_samples)} columns")
     else:
         logger.error("No valid columns remaining")
 
@@ -144,23 +156,18 @@ def main():
     # FILTERING OUT SAMPLES WITH TOO MANY ZEROS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    # computing the number of zeros values per sample
-    ratio_zeros_df = count_df.select(
-        pl.exclude(config.GENE_ID_COLNAME).eq(pl.lit(0)).mean()
-    )
-
     # getting the samples with a zero ratio lower than the max zero ratio
-    valid_samples = [
+    zero_value_valid_samples = [
         col
         for col in ratio_zeros_df.columns
-        if ratio_zeros_df[col][0] <= args.max_zero_ratio
+        if col in count_df.columns and ratio_zeros_df[col][0] <= args.max_zero_ratio
     ]
 
     # if at least one valid sample is remaining, making an updated count dataframe
-    if valid_samples:
-        logger.info(f"Filtered out {count_df.width - 1 - len(valid_samples)} columns")
+    if zero_value_valid_samples:
+        logger.info(f"Filtered out {count_df.width - 1 - len(zero_value_valid_samples)} columns")
         count_df = count_df.select(
-            pl.col(config.GENE_ID_COLNAME), pl.col(valid_samples)
+            pl.col(config.GENE_ID_COLNAME), pl.col(zero_value_valid_samples)
         )
 
         outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
@@ -173,26 +180,29 @@ def main():
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # collect all ratio values for export
-    ratio_values = ratio_values_df.select(config.RATIO_COLNAME).to_series().to_list()
+    ratio_null_values = ratio_null_values_df.select(config.RATIO_COLNAME).to_series().to_list()
     with open(RATIO_NULL_VALUES_OUTFILE, "w") as outfile:
         # sorting values in order to having consistent output
-        outfile.write(",".join([str(val) for val in sorted(ratio_values)]))
+        outfile.write(",".join([str(val) for val in sorted(ratio_null_values)]))
 
-    ratio_values_df.write_csv(RATIO_NULL_VALUES_PER_SAMPLE_OUTFILE)
+    ratio_null_values_df.write_csv(RATIO_NULL_VALUES_PER_SAMPLE_OUTFILE)
 
     # collect all ratio values for export
-    ratio_values = list(ratio_zeros_df.row(0))
+    ratio_zero_values = list(ratio_zeros_df.row(0))
     with open(RATIO_ZERO_VALUES_OUTFILE, "w") as outfile:
         # sorting values in order to having consistent output
-        outfile.write(",".join([str(val) for val in sorted(ratio_values)]))
+        outfile.write(",".join([str(val) for val in sorted(ratio_zero_values)]))
 
     ratio_zeros_df.write_csv(RATIO_ZEROS_PER_SAMPLE_OUTFILE)
 
+    nb_kept_samples = len([col for col in count_df.columns if col != config.GENE_ID_COLNAME])
+    nb_rejected_samples = nb_samples - nb_kept_samples
+
     with open(NB_KEPT_SAMPLES_OUTFILE, "w") as fout:
-        fout.write(str(len(valid_samples)))
+        fout.write(str(nb_kept_samples))
 
     with open(NB_REJECTED_SAMPLES_OUTFILE, "w") as fout:
-        fout.write(str(nb_samples - len(valid_samples)))
+        fout.write(str(nb_rejected_samples))
 
     logger.info("Done")
 
