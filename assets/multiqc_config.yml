@@ -8,7 +8,7 @@ report_section_order:
   "nf-core-stableexpression-summary":
     order: -1002
 
-export_plots: true
+export_plots: false
 
 run_modules:
   - custom_content
@@ -22,11 +22,6 @@ table_cond_formatting_colours:
   - second: "#C0C0C0"
   - third: "#CD7F32"
   - between_fourth_and_tenth: "#468F8F"
-  - very_low: "#337ab7"
-  - low: "#5bc0de"
-  - medium: "#5cb85c"
-  - high: "#f0ad4e"
-  - very_high: "#d9534f"
 
 #violin_downsample_after: 10000
 
@@ -122,7 +117,6 @@ custom_data:
     no_violin: true
     description: Warnings during download of GEO datasets
     plot_type: "table"
-
 
 custom_content:
   order:

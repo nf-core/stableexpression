@@ -215,39 +215,7 @@ def get_quantile_intervals(lf: pl.LazyFrame) -> pl.LazyFrame:
         # we want the only value = NB_QUANTILES to be NB_QUANTILES - 1
         # because the last quantile interval is [NB_QUANTILES - 1, NB_QUANTILES]
         .replace({NB_QUANTILES: NB_QUANTILES - 1})
-        .alias(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
-    )
-
-
-def get_status(quantile_interval: int) -> str:
-    """Return the expression level status of the gene given its quantile interval."""
-    if config.NB_EXPRESSION_QUANTILES - 5 <= quantile_interval:
-        return "Very high expression"
-    elif (
-        config.NB_EXPRESSION_QUANTILES - 10 <= quantile_interval < config.NB_EXPRESSION_QUANTILES - 5
-    ):
-        return "High expression"
-    elif 4 < quantile_interval <= 9:
-        return "Low expression"
-    elif quantile_interval <= 4:
-        return "Very low expression"
-    else:
-        return "Medium range"
-
-
-def add_expression_level_status(df: pl.DataFrame) -> pl.DataFrame:
-    """
-    For each platform, add expression level status to the DataFrame based on the quantile interval.
-    """
-    logger.info("Adding expression level status for each platform")
-    mapping_dict = {
-        quantile_interval: get_status(quantile_interval)
-        for quantile_interval in range(config.NB_EXPRESSION_QUANTILES)
-    }
-    return df.with_columns(
-        pl.col(config.EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME)
-        .replace_strict(mapping_dict)
-        .alias(config.EXPRESSION_LEVEL_STATUS_COLNAME)
+        .alias(config.EXPRESSION_LEVEL_QUANTILE_COLNAME)
     )
 
 
@@ -294,9 +262,6 @@ def main():
 
     # getting expression quantile intervals
     stat_lf = get_quantile_intervals(stat_lf)
-
-    # add expression level based on the quntile of mean expression level, for each gene
-    stat_lf = add_expression_level_status(stat_lf)
 
     # exporting computed data
     export_data(stat_lf)

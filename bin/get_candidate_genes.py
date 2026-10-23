@@ -64,10 +64,12 @@ def parse_args():
 
 
 def parse_stats(file: Path) -> pl.DataFrame:
-    str_cols = [config.GENE_ID_COLNAME, config.EXPRESSION_LEVEL_STATUS_COLNAME]
+    str_cols = [config.GENE_ID_COLNAME]
+    int_cols =[config.EXPRESSION_LEVEL_QUANTILE_COLNAME]
     return pl.read_csv(file).select(
         pl.col(str_cols).cast(pl.String()),
-        pl.exclude(str_cols).cast(pl.Float32),
+        pl.col(int_cols).cast(pl.Int32),
+        pl.exclude(str_cols + int_cols).cast(pl.Float32),
     )
 
 

@@ -198,20 +198,12 @@ custom_data:
         title: "MAD [RNA-seq]"
         description: Median absolute deviation of the normalised expression across all samples [RNA-seq only].
         format: "{:,.4f}"
-      expression_level_status.rnaseq:
-        title: "Expression level [RNA-seq]"
-        description: "Indication about the average normalised expression level across all samples (compared to the whole pool of genes) [RNA-seq only]. Expression in [0, 0.05]: Very low expression. Expression in [0.05, 0.1]: Low expression. Expression in [0.1, 0.9]: Medium range. Expression in [0.9, 0.95]: High expression. Expression in [0.95, 1]: Very high expression."
-        cond_formatting_rules:
-          very_high:
-            - s_eq: "Very high expression"
-          high:
-            - s_eq: "High expression"
-          medium:
-            - s_eq: "Medium range"
-          low:
-            - s_eq: "Low expression"
-          very_low:
-            - s_eq: "Very low expression"
+      expression_level_quantile.rnaseq:
+        title: "Quantile of expression level [RNA-seq]"
+        description: "Quantile of the average normalised expression level across all samples (compared to the whole pool of genes) [RNA-seq only]."
+        max: 99
+        min: 0
+        scale: PRGn-rev
 
       normfinder_stability_value.microarray:
         title: "Normfinder stability value [Microarray]"
@@ -245,20 +237,12 @@ custom_data:
         title: "MAD [Microarray]"
         description: Median absolute deviation of the normalised expression across all samples [Microarray only].
         format: "{:,.4f}"
-      expression_level_status.microarray:
-        title: "Expression level [Microarray]"
-        description: "Indication about the average normalised expression level across all samples (compared to the whole pool of genes) [Microarray only]. Expression in [0, 0.05]: Very low expression. Expression in [0.05, 0.1]: Low expression. Expression in [0.1, 0.9]: Medium range. Expression in [0.9, 0.95]: High expression. Expression in [0.95, 1]: Very high expression."
-        cond_formatting_rules:
-          very_high:
-            - s_eq: "Very high expression"
-          high:
-            - s_eq: "High expression"
-          medium:
-            - s_eq: "Medium range"
-          low:
-            - s_eq: "Low expression"
-          very_low:
-            - s_eq: "Very low expression"
+      expression_level_quantile.microarray:
+        title: "Quantile of expression level [Microarray]"
+        description: "Quantile of the average normalised expression level across all samples (compared to the whole pool of genes) [Microarray only]."
+        max: 99
+        min: 0
+        scale: PRGn-rev
 
   expr_distrib_most_stable_genes_template:
     section_name: "Normalised count distributions [PLATFORM]"
