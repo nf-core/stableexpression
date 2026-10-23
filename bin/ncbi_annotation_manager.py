@@ -72,7 +72,11 @@ def send_request_to_ncbi_genome_report(taxid: str | int):
         taxid=str(taxid)
     )
     with httpx.Client() as client:
-        response = client.get(url, headers=NCBI_BASE_HEADERS)
+        response = client.get(
+            url,
+            params=NCBI_GENOME_REPORT_API_PARAMS,
+            headers=NCBI_BASE_HEADERS
+        )
         response.raise_for_status()
         return response.json()
 
@@ -117,6 +121,7 @@ class NCBIAnnotationManager:
         self.species_taxid = self.get_species_taxid(self.species)
         logger.info(f"[NCBI] :: Getting reference genome reports for taxid: {self.species_taxid}")
         self.reports = self.get_assembly_reports()
+        print(len(self.reports ))
 
 
     @staticmethod
