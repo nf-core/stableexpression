@@ -498,8 +498,7 @@ def mergeDesign(ch_datasets, output_dir, filename) {
                     seed: "batch,condition,sample",
                     newLine: true,
                     sort: true,
-                    storeDir: output_dir,
-                    cache: false
+                    storeDir: output_dir
                 ) {
                     item -> "${item.batch},${item.condition},${item.sample}"
                 }
