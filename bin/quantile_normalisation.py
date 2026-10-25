@@ -18,7 +18,7 @@ OUTFILE_SUFFIX = ".quant_norm.parquet"
 
 N_QUANTILES = 1000
 
-ALLOWED_TARGET_DISTRIBUTIONS = ["normal", "uniform"]
+TARGET_DISTRIBUTION = "uniform"
 
 
 #####################################################
@@ -35,24 +35,18 @@ def parse_args():
     parser.add_argument(
         "--counts", type=Path, dest="count_file", required=True, help="Count file"
     )
-    parser.add_argument(
-        "--target-distrib",
-        type=str,
-        dest="target_distribution",
-        required=True,
-        choices=ALLOWED_TARGET_DISTRIBUTIONS,
-        help="Target distribution to map counts to",
-    )
     return parser.parse_args()
 
 
-def quantile_normalise(df: pl.DataFrame, target_distribution: str):
+def quantile_normalise(df: pl.DataFrame):
     """
-    Quantile normalize a dataframe; column by column, based on a target distribution.
+    Quantile normalize a dataframe; column by column.
     """
-    kwargs = dict(
-        n_quantiles=N_QUANTILES, output_distribution=target_distribution, subsample=None
-    )
+    kwargs = {
+        'n_quantiles': N_QUANTILES,
+        'output_distribution': TARGET_DISTRIBUTION,
+        'subsample': None
+    }
     return df.with_columns(
         pl.exclude(config.GENE_ID_COLNAME).map_batches(
             lambda x: quantile_transform(x.to_frame(), **kwargs).flatten(),
@@ -75,7 +69,7 @@ def main():
     count_df = parse_count_table(args.count_file)
 
     logger.info(f"Quantile normalising {args.count_file.name}")
-    quantile_normalized_counts = quantile_normalise(count_df, args.target_distribution)
+    quantile_normalized_counts = quantile_normalise(count_df)
 
     outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name
     export_parquet(quantile_normalized_counts, outfilename)

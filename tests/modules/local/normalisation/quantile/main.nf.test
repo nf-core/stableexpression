@@ -12,9 +12,8 @@ nextflow_process {
                 """
                 input[0] = [
                     [dataset: 'test'],
-                    file( '$projectDir/tests/test_data/modules/scaling_normalisation/count.raw.cpm.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/quantile_normalisation/count.raw.cpm.csv', checkIfExists: true)
                 ]
-                input[1] = "uniform"
                 """
             }
         }
@@ -35,9 +34,8 @@ nextflow_process {
                 """
                 input[0] = [
                     [dataset: 'test'],
-                    file( '$projectDir/tests/test_data/modules/scaling_normalisation/count.raw.cpm.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/quantile_normalisation/count.raw.cpm.csv', checkIfExists: true)
                 ]
-                input[1] = "normal"
                 """
             }
         }

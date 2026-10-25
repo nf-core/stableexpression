@@ -298,14 +298,6 @@
                     "description": "Gene length file",
                     "help_text": "Path to comma-separated file containing gene lengths. Each row represents a gene and gives the length of its longest transcript. The file should be a comma-separated file with 2 columns (gene_id and length) and a header row.",
                     "fa_icon": "fas fa-file-alt"
-                },
-                "quantile_norm_target_distrib": {
-                    "type": "string",
-                    "description": "Target distribution for quantile normalisation",
-                    "fa_icon": "fas fa-chart-bar",
-                    "enum": ["uniform", "normal"],
-                    "default": "uniform",
-                    "help_text": "In order to compare counts between samples and different datasets, all normalised counts are quantile normalised and mapped to a specific distribution. The pipeline uses scikit-learn's quantile_transform function. You can select the target distribution to map counts to."
                 }
             }
         },

@@ -24,7 +24,6 @@ workflow NORMALISATION {
     skip_gene_length_normalisation
     gene_max_zero_ratio
     quantile_normalisation
-    quantile_norm_target_distrib
     gff_file
     gff_url
     gene_length_file
@@ -158,10 +157,7 @@ workflow NORMALISATION {
         // this method is more scalable but definitely less accurate than the per-platform normalisation
         // first, each dataset is quantile normalised independently, then all normalised datasets are merged together
 
-        QUANTILE(
-            ch_separated_datasets,
-            quantile_norm_target_distrib
-        )
+        QUANTILE( ch_separated_datasets)
         ch_quantile_normalised_counts = QUANTILE.out.counts
 
         // -----------------------------------------------------------------

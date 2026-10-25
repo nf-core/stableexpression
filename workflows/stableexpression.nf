@@ -140,7 +140,6 @@ workflow STABLEEXPRESSION {
             params.skip_gene_length_normalisation,
             params.gene_max_zero_ratio,
             params.quantile_normalisation,
-            params.quantile_norm_target_distrib,
             params.gff,
             params.gff_url,
             params.gene_length,
