@@ -121,7 +121,6 @@ class NCBIAnnotationManager:
         self.species_taxid = self.get_species_taxid(self.species)
         logger.info(f"[NCBI] :: Getting reference genome reports for taxid: {self.species_taxid}")
         self.reports = self.get_assembly_reports()
-        print(len(self.reports ))
 
 
     @staticmethod

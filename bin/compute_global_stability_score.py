@@ -9,13 +9,13 @@ from math import sqrt
 
 import config
 import polars as pl
-from common import write_csv_with_floats, zscore_to_unit
+from common import export_parquet, zscore_to_unit
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # outfile names
-STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.csv"
+STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.parquet"
 
 #####################################################
 #####################################################
@@ -62,10 +62,10 @@ def parse_args():
 
 def get_scores(files: list[Path]) -> pl.DataFrame:
     """Retrieve and concatenate stats and scores values from a list of files."""
-    df = pl.read_csv(files[0])
+    df = pl.read_parquet(files[0])
     if len(files) > 1:
         for file in files[1:]:
-            new_df = pl.read_csv(file)
+            new_df = pl.read_parquet(file)
             df = df.join(new_df, on=config.GENE_ID_COLNAME, how="full", coalesce=True)
     return df
 
@@ -96,7 +96,7 @@ def compute_global_score(
             pl.col(score_cols[0]).alias(config.GLOBAL_STABILITY_SCORE_COLNAME)
         )
 
-    # --- Step 1: normalise scores so platforms are comparable ---
+    # normalise scores so platforms are comparable
     # Z-score per platform, then subtract the min so every platform starts at 0.
     normalised_cols = []
     for col in score_cols:
@@ -105,7 +105,7 @@ def compute_global_score(
         df = df.hstack([z])
         normalised_cols.append(normalised_col)
 
-    # --- Step 2: weight by platform size and average ---
+    # weight by platform size and average
     # after normalising, col names are like 'a_string.<platform>.normalised
     # so taking col.split(".")[-2] gives the associated platform
     weights = {
@@ -118,7 +118,7 @@ def compute_global_score(
         for normalised_col, weight in zip(normalised_cols, weights.values())
     ]
 
-    # --- Step 3: combine and apply penalties ---
+    # combine and apply penalties
     weighted_average = (
         pl.sum_horizontal(f"{col}.weighted" for col in normalised_cols)
         / sum_of_weights
@@ -153,7 +153,7 @@ def compute_global_score(
 
 def add_global_rank(df: pl.DataFrame) -> pl.DataFrame:
     """
-
+    Add global rank accross platforms based on the globa stability score.
     """
     return (
         df.sort(
@@ -168,9 +168,8 @@ def add_global_rank(df: pl.DataFrame) -> pl.DataFrame:
 
 
 def export_data(df: pl.DataFrame):
-    """Export gene expression data to CSV files."""
     logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
-    write_csv_with_floats(df, STATISTICS_WITH_SCORES_OUTFILENAME, float_precision=5)
+    export_parquet(df, STATISTICS_WITH_SCORES_OUTFILENAME)
     logger.info("Done")
 
 

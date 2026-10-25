@@ -10,13 +10,13 @@ from typing import ClassVar
 
 import config
 import polars as pl
-from common import write_csv_with_floats, zscore_to_unit
+from common import export_parquet, zscore_to_unit
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # outfile names
-STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.csv"
+STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.parquet"
 
 
 @dataclass
@@ -53,7 +53,7 @@ class StabilityScorer:
     def compute_stability_score(self):
         logger.info("Computing stability score for candidate genes")
 
-        # since Normfinder is always run
+        # since Normfinder is always run for candidate genes
         # we can distinguish between candidate and non-candidate genes easily with this column
         self.df = self.df.with_columns(
             pl.when(pl.col(config.NORMFINDER_STABILITY_VALUE_COLNAME).is_not_null())
@@ -76,17 +76,31 @@ class StabilityScorer:
         null_data = {}
         weight_sum = 0
         # iterate over columns that can participate in stability score calculation
+        cols_for_stability_scoring = []
         for col, weight in self.weights.items():
+
             # if a column is absent, skip it
             if col not in self.df.columns:
+                logger.warning(f"Column {col} not found in dataframe")
                 continue
+
             normalised_col = self.get_normalised_col(col)
-            normalised_data[col] = zscore_to_unit(candidate_df[col]).alias(normalised_col)
             # creating a null column with same name
             null_data[col] = pl.Series(normalised_col, [None] * len(non_candidate_df))
-            # counting the sum of weights corresponding to the columns present
-            # so that we can normalise the weights afterwards
-            weight_sum += weight
+
+            # if all values in column are nulls, skipping it
+            # this may happen for instance for robust_coefficient_of_variation_median
+            # in sections where almost all genes have a median at zero
+            if self.df[col].is_nan().all():
+                logger.warning(f"Column {col} has only null values")
+                normalised_data[col] = self.df[col].alias(normalised_col)
+            else:
+                normalised_data[col] = zscore_to_unit(candidate_df[col]).alias(normalised_col)
+                # counting the sum of weights corresponding to the columns present
+                # so that we can normalise the weights afterwards
+                weight_sum += weight
+                # adding this column to the list of valid cols
+                cols_for_stability_scoring.append(col)
 
         # replacing original data with normalised ones
         candidate_df = candidate_df.with_columns(
@@ -103,16 +117,15 @@ class StabilityScorer:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # GENERAL FORMULA FOR STABILITY
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         # adding penalty for samples with null values
-        # genes with at least one zero value are already excluded at that stage
         stability_scoring_expr = (
             pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME)
             * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
         )
 
         for col, weight in self.weights.items():
-            if col not in self.df.columns:
-                logger.warning(f"Column {col} not found in dataframe")
+            if col not in cols_for_stability_scoring:
                 continue
             normalised_col = self.get_normalised_col(col)
             # we do not want to include null / nan values in the stability score calculation
@@ -205,16 +218,6 @@ def get_stabilities(stability_files: list[Path]) -> pl.DataFrame:
     return df.with_columns(pl.lit(1).alias(config.IS_CANDIDATE_COLNAME))
 
 
-def get_statistics(stat_files: list[Path]) -> pl.DataFrame:
-    """Retrieve and concatenate data from a list of statistics files."""
-    df = pl.read_csv(stat_files[0])
-    if len(stat_files) > 1:
-        for file in stat_files[1:]:
-            new_df = pl.read_csv(file)
-            df = df.join(new_df, on=config.GENE_ID_COLNAME, how="left")
-    return df
-
-
 def rename_columns_for_platform(scored_df: pl.DataFrame, platform: str) -> pl.DataFrame:
     return scored_df.rename({
         col: f"{col}.{platform}" for col in scored_df.columns
@@ -223,9 +226,8 @@ def rename_columns_for_platform(scored_df: pl.DataFrame, platform: str) -> pl.Da
 
 
 def export_data(scored_df: pl.DataFrame):
-    """Export gene expression data to CSV files."""
     logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
-    write_csv_with_floats(scored_df, STATISTICS_WITH_SCORES_OUTFILENAME, float_precision=5)
+    export_parquet(scored_df, STATISTICS_WITH_SCORES_OUTFILENAME)
     logger.info("Done")
 
 
@@ -239,7 +241,7 @@ def export_data(scored_df: pl.DataFrame):
 def main():
     args = parse_args()
 
-    stat_df = pl.read_parquet(args.stats_file)
+    stat_df = pl.read_parquet(args.stats_file).fill_nan(None)
 
     stability_files = [
         Path(file)

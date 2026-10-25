@@ -171,7 +171,6 @@ def main():
         )
         .sort(config.GENE_ID_COLNAME)
     )
-    print(m_df)
 
     sink_csv_with_floats(m_df.lazy(), args.outfile, float_precision=5)
 

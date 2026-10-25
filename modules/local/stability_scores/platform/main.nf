@@ -13,7 +13,7 @@ process PLATFORM_STABILITY_SCORE {
     val stability_score_weights
 
     output:
-    tuple val(meta), path("*.stats_with_scores.csv"),                                                                 emit: stats_with_stability_scores
+    tuple val(meta), path("*.stats_with_scores.parquet"),                                                             emit: stats_with_stability_scores
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
@@ -27,12 +27,12 @@ process PLATFORM_STABILITY_SCORE {
         --normfinder-stability $normfinder_stability_file \\
         $genorm_stability_file_arg
 
-    mv stats_with_scores.csv ${meta.platform}.${meta.section}.stats_with_scores.csv
+    mv stats_with_scores.parquet ${meta.platform}.${meta.section}.stats_with_scores.parquet
     """
 
     stub:
     """
-    touch stub.section_stub.stats_with_scores.csv
+    touch stub.section_stub.stats_with_scores.parquet
     """
 
 }

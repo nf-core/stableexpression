@@ -63,16 +63,6 @@ def parse_args():
     return parser.parse_args()
 
 
-def parse_stats(file: Path) -> pl.DataFrame:
-    str_cols = [config.GENE_ID_COLNAME]
-    int_cols =[config.EXPRESSION_LEVEL_QUANTILE_COLNAME]
-    return pl.read_csv(file).select(
-        pl.col(str_cols).cast(pl.String()),
-        pl.col(int_cols).cast(pl.Int32),
-        pl.exclude(str_cols + int_cols).cast(pl.Float32),
-    )
-
-
 def add_sections(stat_df: pl.DataFrame, section_df: pl.DataFrame):
     """
     Add each gene's section in the dataframe containing statistics
@@ -119,7 +109,7 @@ def get_counts_for_candidates(file: Path, best_candidates: list[str]) -> pl.Data
 def main():
     args = parse_args()
 
-    stat_df = parse_stats(args.stat_file)
+    stat_df = pl.read_parquet(args.stat_file)
 
     # adding gene sections in the stat dataframe
     logger.info("Adding sections")
@@ -142,10 +132,12 @@ def main():
         count_df = get_counts_for_candidates(
             args.count_file, best_candidates
         )
+
         # exporting count data for the best candidates for this section
         export_parquet(
             count_df, CANDIDATE_COUNTS_OUTFILENAME.format(section)
         )
+
         # exporting statistics for all genes in this section
         export_parquet(
             stat_df.filter(pl.col("section") == section),

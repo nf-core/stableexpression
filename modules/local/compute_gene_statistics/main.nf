@@ -15,7 +15,7 @@ process COMPUTE_GENE_STATISTICS {
     val max_null_ratio_valid_sample
 
     output:
-    tuple val(meta), path('*.stats_all_genes.csv'),   emit: stats
+    tuple val(meta), path('*.stats_all_genes.parquet'),   emit: stats
     tuple val("${meta.platform}"), env('NB_SAMPLES'), topic: nb_samples
     tuple val("${task.process}"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("${task.process}"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
@@ -28,14 +28,14 @@ process COMPUTE_GENE_STATISTICS {
         --max-ratio-null-valid-sample $max_null_ratio_valid_sample \\
         --non-imputed-counts non_imputed_count_file.parquet
 
-    mv stats_all_genes.csv ${meta.platform}.stats_all_genes.csv
+    mv stats_all_genes.parquet ${meta.platform}.stats_all_genes.parquet
 
     NB_SAMPLES=\$(cat nb_samples.txt)
     """
 
     stub:
     """
-    touch stub.stats_all_genes.csv
+    touch stub.stats_all_genes.parquet
     NB_SAMPLES=1
     """
 

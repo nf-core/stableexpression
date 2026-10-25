@@ -15,7 +15,7 @@ process GLOBAL_STABILITY_SCORE {
     val null_penalty_weight
 
     output:
-    path "*.stats_with_scores.csv",                                                                                   emit: stats_with_stability_scores
+    path "*.stats_with_scores.parquet",                                                                               emit: stats_with_stability_scores
     tuple val("${task.process}"), val('python'),   eval("python3 --version | sed 's/Python //'"),                     topic: versions
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
@@ -27,12 +27,12 @@ process GLOBAL_STABILITY_SCORE {
         --std-penalty-weight $std_penalty_weight \\
         --null-penalty-weight $null_penalty_weight
 
-    mv stats_with_scores.csv ${meta.section}.stats_with_scores.csv
+    mv stats_with_scores.parquet ${meta.section}.stats_with_scores.parquet
     """
 
     stub:
     """
-    touch section_stub.stats_with_scores.csv
+    touch section_stub.stats_with_scores.parquet
     """
 
 }

@@ -59,9 +59,9 @@ def parse_args():
 
 
 def parse_stat_file(file: Path, platform: str) -> pl.DataFrame:
-    return pl.scan_csv(file).select(
-        pl.col(config.GENE_ID_COLNAME).cast(pl.String()),
-        pl.col(config.EXPRESSION_LEVEL_QUANTILE_COLNAME).cast(pl.Int32()).alias(f"{config.EXPRESSION_LEVEL_QUANTILE_COLNAME}.{platform}"),
+    return pl.scan_parquet(file).select(
+        pl.col(config.GENE_ID_COLNAME),
+        pl.col(config.EXPRESSION_LEVEL_QUANTILE_COLNAME).alias(f"{config.EXPRESSION_LEVEL_QUANTILE_COLNAME}.{platform}"),
     ).collect()
 
 

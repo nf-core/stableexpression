@@ -7,14 +7,14 @@ import logging
 from pathlib import Path
 
 import config
-from common import sink_csv_with_floats, get_count_columns
+from common import export_parquet, get_count_columns
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # outfile names
-ALL_GENES_RESULT_OUTFILE = "stats_all_genes.csv"
+ALL_GENES_RESULT_OUTFILE = "stats_all_genes.parquet"
 NB_SAMPLES_OUTFILE = "nb_samples.txt"
 
 RCV_MULTIPLIER = 1.4826  # see https://pmc.ncbi.nlm.nih.gov/articles/PMC9196089/
@@ -220,9 +220,8 @@ def get_quantile_intervals(lf: pl.LazyFrame) -> pl.LazyFrame:
 
 
 def export_data(lf: pl.LazyFrame):
-    """Export gene expression data to CSV files."""
     logger.info(f"Exporting statistics for all genes to: {ALL_GENES_RESULT_OUTFILE}")
-    sink_csv_with_floats(lf, ALL_GENES_RESULT_OUTFILE)
+    lf.sink_parquet(ALL_GENES_RESULT_OUTFILE)
     logger.info("Done")
 
 
@@ -252,7 +251,6 @@ def main():
     logger.info("Computing statistics and stability score")
     # getting expression statistics
     stat_lf = get_main_statistics(count_lf)
-    print(stat_lf.filter(pl.any_horizontal(pl.exclude(config.GENE_ID_COLNAME).is_nan())).collect())
 
     # adding column for nb of null values for each gene
     stat_lf = stat_lf.join(ratio_nulls_lf, on=config.GENE_ID_COLNAME, how="inner")

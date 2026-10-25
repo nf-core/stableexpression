@@ -93,7 +93,7 @@ def parse_stat_score_file(file: Path) -> pl.DataFrame:
     Parse a file containing statistics and scores into a DataFrame.
     The columns are sorted so that multiple dataframes can be v-stacked later in the script.
     """
-    df = pl.read_csv(file).with_columns(pl.col(config.GENE_ID_COLNAME).cast(pl.String()))
+    df = pl.read_parquet(file)
     return df.select(sorted(df.columns, key=column_sorter))
 
 
@@ -382,10 +382,9 @@ def main():
         # adding the section in the statistics dataframe
         df = df.with_columns(pl.lit(section).alias(config.SECTION_COLNAME))
         stat_score_dfs.append(df)
+
         sections.append(section)
 
-    for stat_score_df in stat_score_dfs:
-        print(stat_score_df.schema)
     stat_score_df = pl.concat(stat_score_dfs, how="vertical")
 
     if stat_score_df.select(config.GENE_ID_COLNAME).is_duplicated().any():
