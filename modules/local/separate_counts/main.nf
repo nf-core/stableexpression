@@ -7,7 +7,7 @@ process SEPARATE_COUNTS {
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/d5/d5eb4245644f836b386e2a49a6fbc6f0e6bd810046a54342efce2d2ccd521747/data':
-        '' }"
+        'community.wave.seqera.io/library/python_polars:0617bafa7c572d35' }"
 
     input:
     tuple val(meta), path(count_file), path(design_file)
