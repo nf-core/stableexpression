@@ -88,6 +88,7 @@ parse_data <- function(count_file) {
 export_data <- function(count_matrix, filename) {
     filename <- sub("\\.parquet$", ".edger_log2.parquet", filename)
     message(paste('Exporting normalised data to:', filename))
+
     # putting row names (gene ids) back in one column
     df <- data.frame(
       gene_id = rownames(count_matrix),
@@ -95,6 +96,16 @@ export_data <- function(count_matrix, filename) {
       row.names = NULL,
       check.names = FALSE
     )
+
+    num_cols <- names(df)[sapply(df, is.numeric)]
+    df[num_cols] <- lapply(df[num_cols], round, digits = 6)
+
+    schema <- arrow::schema(
+      c("gene_id" = arrow::string(),
+        stats::setNames(rep(list(arrow::float32()), length(num_cols)), num_cols))
+    )
+
+    df <- arrow::as_arrow_table(df)$cast(schema)
     arrow::write_parquet(df, filename)
 }
 
