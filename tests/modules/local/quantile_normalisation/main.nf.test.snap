@@ -1,0 +1,98 @@
+{
+    "Uniform target distribution": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "count.raw.cpm.quant_norm.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
+                    ]
+                ],
+                "1": [
+                    [
+                        "QUANTILE_NORMALISATION",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "QUANTILE_NORMALISATION",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "3": [
+                    [
+                        "QUANTILE_NORMALISATION",
+                        "scikit-learn",
+                        "1.8.0"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "count.raw.cpm.quant_norm.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-06-26T09:14:05.680159066",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "Normal target distribution": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "count.raw.cpm.quant_norm.parquet:md5,016bcee1dbaebcb6a90546b00f87ac95"
+                    ]
+                ],
+                "1": [
+                    [
+                        "QUANTILE_NORMALISATION",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "QUANTILE_NORMALISATION",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "3": [
+                    [
+                        "QUANTILE_NORMALISATION",
+                        "scikit-learn",
+                        "1.8.0"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "count.raw.cpm.quant_norm.parquet:md5,016bcee1dbaebcb6a90546b00f87ac95"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-06-26T09:14:17.058511212",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    }
+}

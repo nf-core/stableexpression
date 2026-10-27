@@ -1,0 +1,182 @@
+{
+    "Transcriptome Analysis of the potato (rnaseq)": {
+        "content": [
+            {
+                "0": [
+                    "E_MTAB_552_rnaseq.rnaseq.raw.counts.csv:md5,830f50b60b17b62f9ca2f6a163a2879f"
+                ],
+                "1": [
+                    "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "counts": [
+                    "E_MTAB_552_rnaseq.rnaseq.raw.counts.csv:md5,830f50b60b17b62f9ca2f6a163a2879f"
+                ],
+                "design": [
+                    "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-27T20:43:14.376582637",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "Arabidopsis Geo dataset": {
+        "content": [
+            {
+                "0": [
+                    "E_GEOD_62537_A_AFFY_2.microarray.normalised.counts.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                ],
+                "1": [
+                    "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "counts": [
+                    "E_GEOD_62537_A_AFFY_2.microarray.normalised.counts.csv:md5,673c55171d0ccfc1d036bf43c49ae320"
+                ],
+                "design": [
+                    "E_GEOD_62537_A_AFFY_2.design.csv:md5,7d7dd72be4f5b326dd25a36db01ebf88"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-27T20:43:53.851723017",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "E-MTAB-5132": {
+        "content": [
+            {
+                "0": [
+                    "E_MTAB_5132_rnaseq.rnaseq.raw.counts.csv:md5,8eb16badb742ecb93b7d3a37f6c83466"
+                ],
+                "1": [
+                    "E_MTAB_5132_rnaseq.design.csv:md5,648104817ad2b3a183ff661265d07c58"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "counts": [
+                    "E_MTAB_5132_rnaseq.rnaseq.raw.counts.csv:md5,8eb16badb742ecb93b7d3a37f6c83466"
+                ],
+                "design": [
+                    "E_MTAB_5132_rnaseq.design.csv:md5,648104817ad2b3a183ff661265d07c58"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-27T20:59:46.509065103",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "E-ENAD-11 :: experiment_summary key not found": {
+        "content": [
+            {
+                "0": [
+                    "E_ENAD_11_rnaseq.rnaseq.raw.counts.csv:md5,c7111a816dfdc5de2cb043e6966675c1"
+                ],
+                "1": [
+                    "E_ENAD_11_rnaseq.design.csv:md5,f40ed39a066242faccddfe68ad0cf7cc"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "counts": [
+                    "E_ENAD_11_rnaseq.rnaseq.raw.counts.csv:md5,c7111a816dfdc5de2cb043e6966675c1"
+                ],
+                "design": [
+                    "E_ENAD_11_rnaseq.design.csv:md5,f40ed39a066242faccddfe68ad0cf7cc"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-27T21:05:51.791032159",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    },
+    "Transcription profiling by array of Arabidopsis mutant for fis2 (microarray)": {
+        "content": [
+            {
+                "0": [
+                    "E_TABM_1007_A_AFFY_2.microarray.normalised.counts.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
+                ],
+                "1": [
+                    "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    [
+                        "EXPRESSIONATLAS_GETDATA",
+                        "R",
+                        "4.5.3 (2026-03-11)"
+                    ]
+                ],
+                "counts": [
+                    "E_TABM_1007_A_AFFY_2.microarray.normalised.counts.csv:md5,a3afe33d7eaed3339da9109bf25bb3ed"
+                ],
+                "design": [
+                    "E_TABM_1007_A_AFFY_2.design.csv:md5,120f63cae2193b97d7451483bdbbaab1"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-27T20:43:33.960970946",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}

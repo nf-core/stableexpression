@@ -1,0 +1,84 @@
+{
+    "1 file": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "all_counts.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
+                    ]
+                ],
+                "1": [
+                    [
+                        "MERGE_COUNTS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "MERGE_COUNTS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "platform": "microarray"
+                        },
+                        "all_counts.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-06-26T09:12:17.941476701",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "3 files": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "all_counts.parquet:md5,e64b6447f373377c507ae4136228ffbb"
+                    ]
+                ],
+                "1": [
+                    [
+                        "MERGE_COUNTS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "MERGE_COUNTS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "platform": "rnaseq"
+                        },
+                        "all_counts.parquet:md5,e64b6447f373377c507ae4136228ffbb"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-06-26T09:12:09.161096289",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    }
+}

@@ -10,3 +10,13 @@ null/
 .lineage/
 .nf-test/
 .nf-test.log
+.nf-test*
+.idea/
+.vscode/
+taggers/
+tokenizers/
+corpora/
+.ruff_cache
+TODO
+test/
+output/
