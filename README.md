@@ -7,11 +7,12 @@
 
 [![Open in GitHub Codespaces](https://img.shields.io/badge/Open_In_GitHub_Codespaces-black?labelColor=grey&logo=github)](https://github.com/codespaces/new/nf-core/stableexpression)
 [![GitHub Actions CI Status](https://github.com/nf-core/stableexpression/actions/workflows/nf-test.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/nf-test.yml)
-[![GitHub Actions Linting Status](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/stableexpression/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![GitHub Actions Linting Status](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/stableexpression/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.22895924-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.22895924)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
-[![Nextflow](https://img.shields.io/badge/version-%E2%89%A525.10.4-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
+[![Nextflow](https://img.shields.io/badge/version-%E2%89%A526.04.4-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
 [![nf-core template version](https://img.shields.io/badge/nf--core_template-4.2.1-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/4.2.1)
+[![run with apptainer](https://custom-icon-badges.demolab.com/badge/run%20with-apptainer-4545?logo=apptainer&color=teal&labelColor=000000)](https://apptainer.org/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
@@ -21,54 +22,145 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline that ...
+**nf-core/stableexpression** is a bioinformatics pipeline that aims to identify the most stable genes in one or more expression datasets. These datasets can be downloaded from public databases such as [EBI Expression Atlas](https://www.ebi.ac.uk/gxa/home) and [NCBI GEO Datasets](https://www.ncbi.nlm.nih.gov/gds), or provided directly by the user. Both RNA-seq and microarray count datasets can be used. The pipeline is ideally suited to determining the most suitable RT-qPCR reference genes for a given species.
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+<p align="center">
+    <img title="Stableexpression Workflow" src="docs/images/metromap/nf_core_stableexpression.metromap.png" width=100%>
+</p>
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/community/brand/workflow-schematics#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+It takes as main inputs :
 
-## Usage
+- a species name (mandatory)
+- keywords for Expression Atlas / GEO search (optional)
+- a CSV input file listing your own raw / normalised count datasets (optional).
+
+**Use cases**:
+
+- **find the most suitable genes for use as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
+- download all EBI Expression Atlas and / or NCBI GEO datasets for a species (and optionally keywords)
+
+## Pipeline overview
+
+The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
+
+#### 1. Get accessions from public databases
+
+- Get [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords)
+  This step is run by default but is optional. Set `--skip_fetch_eatlas_accessions` to skip it.
+- Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) dataset accessions corresponding to the provided species (and optionally keywords)
+  This is optional and **NOT** run by default. Set `--fetch_geo_accessions` to run it.
+
+> [!WARNING]
+> Due to the high heterogeneity of formats of NCBI GEO datasets, automated retrieval of expression datasets from NCBI GEO is considered **experimental**.
+
+#### 2. Download data (see [usage](./conf/usage.md#3-provide-your-own-accessions))
+
+- Download [Expression Atlas](https://www.ebi.ac.uk/gxa/home) data if any
+- Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data if any
+
+> [!NOTE]
+> At this stage, the datasets that have been downloaded from public databases are merged with the user datasets (provided with the `--datasets` parameter). See [usage](./conf/usage.md#4-use-your-own-expression-datasets) for more information about user datasets.
+
+#### 3. ID Mapping (see [usage](./conf/usage.md#5-custom-gene-id-mapping--metadata))
+
+- Gene IDs are cleaned
+- Map gene IDS to Ensembl IDs for standardisation among datasets using [`g:Profiler`](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
+- Rare genes are filtered out
+
+#### 4. Sample filtering
+
+Samples that show too high ratios of zeros or missing values are removed from the analysis.
+
+#### 5. Normalisation of expression
+
+##### Pathway A: TPM (Transcripts Per Million)
+
+- Unless provided by the user: download a reference annotation from the Ensembl FTPs ([Ensembl Genomes](https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/) or [Ensembl](https://ftp.ensembl.org/pub/current/)) or using the [NCBI Dataset API](https://api.ncbi.nlm.nih.gov/datasets/v2/)
+- Using the reference annotation, compute the length of the longest transcript for each gene
+- Normalize RNAseq raw data using TPM.
+
+##### Pathway B: CPM (Counts Per Million)
+
+- Normalize RNAseq raw data using CPM.
+
+#### 6. Quantile normalisation
+
+- Perform quantile normalisation on each dataset separately using [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html)
+
+#### 7. Merge all data
+
+All datasets are merged into one single dataframe.
+
+#### 8. Imputation of missing values
+
+Missing values are replaced by imputed values using a specific algorithm provided by [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html). The user can choose the method of imputation with the `--missing_value_imputer` parameter.
+
+> [!NOTE]
+> For better scalability, the full dataset is first clustered by similarity of genes (using the [MiniBatchKMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html) algorithm) prior to missing value imputation.
+
+> [!WARNING]
+> This step takes the longest, especially when working with a large number of datasets.
+
+#### 9. General statistics for each gene
+
+Base statistics are computed for each gene, platform-wide and for each platform separately (RNAseq and microarray).
+
+#### 10. Scoring
+
+- The full list of genes is divided into multiple 'sections' based on their expression levels
+- A shortlist of candidate genes is extracted for each section based on their coefficient of variation
+- Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder)
+- Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034) (run by default; optional)
+- Compute stability score for each candidate gene
+
+#### 11. Reporting
+
+- Result aggregation
+- Make [`MultiQC`](http://multiqc.info/) report
+- Prepare [Dash Plotly](https://dash.plotly.com/) app for further investigation of gene / sample counts
+
+## Test pipeline
+
+You can test the execution of the pipeline locally with:
+
+```bash
+nextflow run nf-core/stableexpression -profile test,<docker/apptainer/conda/micromamba/...>
+```
+
+## Basic usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
-
-First, prepare a samplesheet with your input data that looks as follows:
-
-`samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-```
-
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
-
--->
-
-Now, you can run the pipeline using:
-
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
+To search the most stable genes in a species considering all public datasets, simply run:
 
 ```bash
 nextflow run nf-core/stableexpression \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
-   --outdir <OUTDIR>
+   -profile <PROFILE (docker / apptainer / singularity / conda / micromamba / ...)> \
+   --species <SPECIES (examples: arabidopsis_thaliana / "drosophila melanogaster")> \
+   --outdir <OUTDIR (example: results)> \
+   -resume
 ```
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/running/run-pipelines#using-parameter-files).
 
-For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/stableexpression/usage) and the [parameter documentation](https://nf-co.re/stableexpression/parameters).
+## More advanced usage
+
+For more specific scenarios, such as:
+
+- **fetching datasets related to specific conditions only**
+- **using your own expression dataset(s)**
+
+please refer to the [usage documentation](https://nf-co.re/stableexpression/usage).
+
+## Resource allocation
+
+For setting pipeline CPU / memory usage, see [here](./docs/configuration.md).
+
+## Profiles
+
+See [here](https://nf-co.re/stableexpression/usage#profiles) for more information about profiles.
 
 ## Pipeline output
 
@@ -76,13 +168,31 @@ To see the results of an example test run with a full size dataset refer to the 
 For more details about the output files and reports, please refer to the
 [output documentation](https://nf-co.re/stableexpression/output).
 
+## Support us
+
+If you like nf-core/stableexpression, share it to the community and give it a star on GitHub!
+
+[![stars - stableexpression](https://img.shields.io/github/stars/nf-core/stableexpression?style=social)](https://github.com/nf-core/stableexpression)
+
 ## Credits
 
-nf-core/stableexpression was originally written by Olivier Coen.
+nf-core/stableexpression was originally written and is currently developed by Olivier Coen, first as a personal project and then as a postdoctoral researcher at the [EGCE](https://www.egce.universite-paris-saclay.fr/) ([Université Paris-Saclay](https://www.universite-paris-saclay.fr/), [CNRS](https://www.cnrs.fr/fr)).
 
-We thank the following people for their extensive assistance in the development of this pipeline:
+We thank the following people for their assistance in the development of this pipeline:
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+- Rémy Costa
+- Gaspard Ichas
+- Shaheen Acheche
+- Janine Soares
+
+We also thank the following members of the nf-core organisation for their assistance and reviews:
+
+- Simon Pearce
+- Quentin Blampey
+- Matthias Hörtenhuber
+- Phil Ewels
+- Maxime U Garcia
+- James A. Fellows Yates
 
 ## Contributions and Support
 
@@ -92,10 +202,7 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citations
 
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use nf-core/stableexpression for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
+If you use nf-core/stableexpression for your analysis, please cite it using the following doi: [10.5281/zenodo.22895924](https://doi.org/10.5281/zenodo.22895924)
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 

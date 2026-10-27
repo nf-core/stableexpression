@@ -1,0 +1,47 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1",
+                            "index_1": 0,
+                            "index_2": 1
+                        },
+                        "cross_join.0.1.parquet:md5,10d5591947a85f788dd6db61a1486f14"
+                    ]
+                ],
+                "1": [
+                    [
+                        "GENORM_CROSS_JOIN",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "GENORM_CROSS_JOIN",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "data": [
+                    [
+                        {
+                            "section": "section_1",
+                            "index_1": 0,
+                            "index_2": 1
+                        },
+                        "cross_join.0.1.parquet:md5,10d5591947a85f788dd6db61a1486f14"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-08-11T20:07:09.177233622",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}
