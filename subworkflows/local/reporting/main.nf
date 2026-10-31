@@ -27,6 +27,8 @@ workflow REPORTING {
     target_gene_file
     multiqc_nb_genes_plotted
     skip_dash_app
+    accessions_only
+    download_only
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -37,7 +39,9 @@ workflow REPORTING {
     ch_versions = channel.empty()
     ch_dash_app = channel.empty()
 
-    ch_sorted_normalised_counts = ch_normalised_counts_with_design.map { meta, counts, design -> counts }.collect(sort: true)
+    ch_sorted_normalised_counts = ch_normalised_counts_with_design
+                                    .map { meta, counts, design -> counts }
+                                    .toSortedList { file1, file2 -> file1.name <=> file2.name }
 
     // -----------------------------------------------------------------
     // AGGREGATE ALL RESULTS FOR MULTIQC
@@ -50,7 +54,7 @@ workflow REPORTING {
                         .map { it.trim() }
                         .filter { it != "" }
                         .unique()
-                        .toSortedList()
+                        .toSortedList { file1, file2 -> file1.name <=> file2.name }
 
     ch_custom_content_multiqc_config_template = channel.fromPath(
                                                     "${projectDir}/assets/multiqc_config.custom_content.template.yaml",
@@ -59,7 +63,7 @@ workflow REPORTING {
 
     AGGREGATE_RESULTS (
         ch_sorted_normalised_counts, // as many files as platforms
-        ch_stats_all_genes_with_scores.collect(sort: true).filter{ file -> file != [] }, // as many file as sections; make sure that at least one stat file is present
+        ch_stats_all_genes_with_scores.toSortedList { file1, file2 -> file1.name <=> file2.name }.filter{ file -> file != [] }, // as many file as sections; make sure that at least one stat file is present
         ch_target_gene_list,
         ch_whole_gene_metadata.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
         ch_whole_gene_id_mapping.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
@@ -76,7 +80,7 @@ workflow REPORTING {
     // DASH APPLICATION
     // -----------------------------------------------------------------
 
-    if ( !skip_dash_app ) {
+    if ( !skip_dash_app && !accessions_only && !download_only ) {
 
         MERGE_COUNTS(
             ch_sorted_normalised_counts.map { files -> [ [ platform: 'all'], files ] }
@@ -381,7 +385,7 @@ workflow REPORTING {
                                 )
                             )
                             .flatten()
-                            .toSortedList()
+                            .toSortedList { file1, file2 -> file1.name <=> file2.name }
                             .map{ list -> [ [id: 'Final report'], list ] }
 
     ch_multiqc_config_list = ch_custom_content_multiqc_config

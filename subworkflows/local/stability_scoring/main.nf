@@ -125,7 +125,7 @@ workflow STABILITY_SCORING {
     ch_global_stability_score_input = ch_platform_stats_with_stability_scores
                                         .map { meta, file -> [ meta.section, meta, file] }
                                         .groupTuple()
-                                        .map { section, metas, files -> [ [ section: section ], files ] }
+                                        .map { section, metas, files -> [ [ section: section ], files.toSorted() ] }
 
     GLOBAL_STABILITY_SCORE(
         ch_global_stability_score_input,

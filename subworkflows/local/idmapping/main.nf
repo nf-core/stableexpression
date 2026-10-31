@@ -77,7 +77,7 @@ workflow ID_MAPPING {
 
         // sorting files in order to have a consistent input and be able to retry
         COLLECT_ALL_GENE_IDS(
-            ch_gene_ids.toSortedList()
+            ch_gene_ids.toSortedList { file1, file2 -> file1.name <=> file2.name }
         )
 
         // -----------------------------------------------------------------

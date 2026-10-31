@@ -25,19 +25,21 @@ nextflow_pipeline {
                     stable_path
                 ).match() }
             )
+
             // checking that the gene summary file keeps the same number of rows, columns
             // and that some specific genes have the expected values
             def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
             with( path(gene_summary_file).csv ) {
-                assert rowCount == 27849
-                assert columnCount == 35
+                assert rowCount == 22484
+                assert columnCount == 27
             }
             def table = path(gene_summary_file).csv.table
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSRNA050004025")).doubleColumn("stability_score").get(0) == 0.04468
-                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G169400")).doubleColumn("stability_score").get(0) == 0.35885
-                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G195800")).doubleColumn("stability_score").get(0) == 0.62329
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSRNA050004025")).doubleColumn("global_stability_score").get(0) == 0.0175
+                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G169400")).doubleColumn("global_stability_score").get(0) == 0.1834
+                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G195800")).doubleColumn("global_stability_score").get(0) == 0.0208
             }
+
         }
     }
 
@@ -67,27 +69,29 @@ nextflow_pipeline {
                     stable_path
                 ).match() }
             )
+
             // checking that the gene summary file keeps the same number of rows, columns
             // and that some specific genes have the expected values
             def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
             with( path(gene_summary_file).csv ) {
-                assert rowCount == 15079
-                assert columnCount == 32
+                assert rowCount == 14936
+                assert columnCount == 24
             }
             def table = path(gene_summary_file).csv.table
             // the candidate genes used in publications must have the expected stability scores
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0182068")).doubleColumn("stability_score").get(0) == 0.07614
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0186743")).doubleColumn("stability_score").get(0) == 0.0976
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0194689")).doubleColumn("stability_score").get(0) == 0.11167
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0181924")).doubleColumn("stability_score").get(0) == 0.1139
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0193626")).doubleColumn("stability_score").get(0) == 0.11688
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0184651")).doubleColumn("stability_score").get(0) == 0.1196
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0196300")).doubleColumn("stability_score").get(0) == 0.13177
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0185678")).doubleColumn("stability_score").get(0) == 0.13766
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0188440")).doubleColumn("stability_score").get(0) == 0.14392
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0189846")).doubleColumn("stability_score").get(0) == 0.14852
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0182068")).doubleColumn("global_stability_score").get(0) == 0.0679
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0186743")).doubleColumn("global_stability_score").get(0) == 0.0559
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0194689")).doubleColumn("global_stability_score").get(0) == 0.0639
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0181924")).doubleColumn("global_stability_score").get(0) == 0.0456
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0193626")).doubleColumn("global_stability_score").get(0) == 0.0658
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0184651")).doubleColumn("global_stability_score").get(0) == 0.0948
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0196300")).doubleColumn("global_stability_score").get(0) == 0.07
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0185678")).doubleColumn("global_stability_score").get(0) == 0.0616
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0188440")).doubleColumn("global_stability_score").get(0) == 0.0904
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0189846")).doubleColumn("global_stability_score").get(0) == 0.0593
             }
+
         }
     }
 
@@ -117,19 +121,67 @@ nextflow_pipeline {
                     stable_path
                 ).match() }
             )
+
             // checking that the gene summary file keeps the same number of rows, columns
             // and that some specific genes have the expected values
             def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
             with( path(gene_summary_file).csv ) {
-                assert rowCount == 975
-                assert columnCount == 35
+                assert rowCount == 839
+                assert columnCount == 27
             }
             def table = path(gene_summary_file).csv.table
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000000305")).doubleColumn("stability_score").get(0) == 0.10936
-                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000034187")).doubleColumn("stability_score").get(0) == 0.00467
-                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000107358")).doubleColumn("stability_score").get(0) == 0.5805
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000000305")).doubleColumn("global_stability_score").get(0) == 0.1803
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000034187")).doubleColumn("global_stability_score").get(0) == 0.0458
             }
+
+        }
+    }
+
+    test("-profile test_two_platforms") {
+        tag "test_two_platforms"
+
+        when {
+            params {
+                species = "arabidopsis_thaliana"
+                accessions = 'E-GEOD-28223,E-GEOD-34655,E-GEOD-58856,E-TABM-919'
+                skip_fetch_eatlas_accessions = true
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            // stable_name: All files + folders in ${params.outdir}/ with a stable name
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_path: All files in ${params.outdir}/ with stable content
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    // pipeline versions.yml file for multiqc from which Nextflow ve== 0.074900rsion is removed because we test pipelines on multiple Nextflow versions
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    // All stable path name, with a relative path
+                    stable_name,
+                    // All files with stable contents
+                    stable_path
+                ).match() }
+            )
+
+            // checking that the gene summary file keeps the same number of rows, columns
+            // and that some specific genes have the expected values
+            def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
+            with( path(gene_summary_file).csv ) {
+                assert rowCount == 26346
+                assert columnCount == 51
+            }
+            def table = path(gene_summary_file).csv.table
+            with( table ) {
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT1G01010")).doubleColumn("global_stability_score").get(0) == 0.4413
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G23260")).doubleColumn("global_stability_score").get(0) == 0.4791
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G50920")).doubleColumn("global_stability_score").get(0) == 0.0763
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G41320")).doubleColumn("global_stability_score").get(0) == 3.2276
+            }
+
         }
     }
 
@@ -259,6 +311,7 @@ nextflow_pipeline {
                 skip_id_mapping = true
                 skip_fetch_eatlas_accessions = true
                 gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/solanum_tuberosum/Solanum_tuberosum.SolTub_3.0.63.gff3.gz'
+                skip_dash_app = true
                 outdir = "$outputDir"
             }
         }
@@ -288,6 +341,8 @@ nextflow_pipeline {
                 gene_id_mapping = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/mapping.csv"
                 gene_metadata = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/metadata.csv"
                 gene_length = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/gene_lengths.csv"
+                quantile_normalisation = true
+                skip_dash_app = true
                 outdir = "$outputDir"
             }
         }
@@ -316,13 +371,14 @@ nextflow_pipeline {
                 excluded_accessions = "E-MTAB-4251,E-MTAB-552"
                 accessions_file = "${projectDir}/tests/test_data/workflows/misc/accessions_to_include.txt"
                 excluded_accessions_file = "${projectDir}/tests/test_data/workflows/misc/excluded_accessions.txt"
-                normalisation_method = "cpm"
-                quantile_norm_target_distrib = "normal"
+                quantile_normalisation = true
                 min_occurrence_quantile = 0.15
                 min_occurrence_freq = 0.08
                 max_zero_ratio = 0.8
                 max_null_ratio = 0.85
                 max_null_ratio_valid_sample = 0.7
+                nb_candidates_per_section = 250
+                multiqc_nb_genes_plotted = 10
                 outdir = "$outputDir"
             }
         }
@@ -345,30 +401,5 @@ nextflow_pipeline {
             )
         }
     }
-
-    /*
-    test("-profile test_gprofiler_target_database_entrez") {
-
-        when {
-            params {
-                species = 'beta vulgaris'
-                gprofiler_target_db = 'ENTREZGENE'
-                outdir = "$outputDir"
-            }
-        }
-
-        then {
-            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
-            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
-            assertAll(
-                { assert workflow.success},
-                { assert snapshot(
-                    stable_name,
-                    stable_path
-                ).match() }
-            )
-        }
-    }
-    */
 
 }

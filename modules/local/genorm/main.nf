@@ -12,7 +12,7 @@ process GENORM {
     tuple val(meta), path(count_file)
 
     output:
-    tuple val(meta), path("*.m_measures.csv"),                                                                  emit: m_measures
+    tuple val(meta), path("*.m_measures.parquet"),                                                              emit: m_measures
     tuple val("${task.process}"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("${task.process}"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
@@ -20,12 +20,12 @@ process GENORM {
     """
     genorm.py \\
         --file "$count_file" \\
-        --out ${meta.section}.m_measures.csv
+        --out ${meta.section}.m_measures.parquet
     """
 
     stub:
     """
-    touch stub.m_measures.csv
+    touch stub.m_measures.parquet
     """
 
 }

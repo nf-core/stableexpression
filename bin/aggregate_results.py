@@ -456,7 +456,7 @@ def main():
     write_csv_with_floats(
         all_genes_summary_df.sort(by=config.GENE_ID_COLNAME),
         ALL_GENE_SUMMARY_OUTFILENAME,
-        float_precision=5,
+        float_precision=GENE_SUMMARY_FLOAT_PRECISION,
     )
 
     # --------------------------------------------------

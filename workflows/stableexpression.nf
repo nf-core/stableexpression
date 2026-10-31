@@ -188,6 +188,8 @@ workflow STABLEEXPRESSION {
         params.target_gene_file,
         params.multiqc_nb_genes_plotted,
         params.skip_dash_app,
+        params.accessions_only,
+        params.download_only,
         params.multiqc_config,
         params.multiqc_logo,
         params.multiqc_methods_description,

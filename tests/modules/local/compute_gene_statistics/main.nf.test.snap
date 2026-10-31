@@ -7,7 +7,7 @@
                         {
                             "platform": "rnaseq"
                         },
-                        "rnaseq.stats_all_genes.csv:md5,2aa9e3a354a9c53fcaea918cafdf3844"
+                        "rnaseq.stats_all_genes.parquet:md5,78be9461e1a56f87bbef511a123cab4f"
                     ]
                 ],
                 "1": [
@@ -35,15 +35,15 @@
                         {
                             "platform": "rnaseq"
                         },
-                        "rnaseq.stats_all_genes.csv:md5,2aa9e3a354a9c53fcaea918cafdf3844"
+                        "rnaseq.stats_all_genes.parquet:md5,78be9461e1a56f87bbef511a123cab4f"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-16T11:29:45.283671128",
+        "timestamp": "2026-10-25T18:14:38.929600775",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     }
 }

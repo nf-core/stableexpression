@@ -3,6 +3,7 @@ nextflow_process {
     name "Test Process GLOBAL_STABILITY_SCORE"
     script "modules/local/stability_scores/global/main.nf"
     process "GLOBAL_STABILITY_SCORE"
+    tag "global_stability_score"
 
     test("Two platforms - default weights") {
 
@@ -12,8 +13,8 @@ nextflow_process {
                 input[0] = [
                     [section: "section_1"],
                     [
-                        file( '$projectDir/tests/test_data/modules/stability_scores/platform/rnaseq.section_1.stats_with_scores.csv', checkIfExists: true),
-                        file( '$projectDir/tests/test_data/modules/stability_scores/platform/microarray.section_1.stats_with_scores.csv', checkIfExists: true)
+                        file( '$projectDir/tests/test_data/modules/stability_scores/platform/rnaseq.section_1.stats_with_scores.parquet', checkIfExists: true),
+                        file( '$projectDir/tests/test_data/modules/stability_scores/platform/microarray.section_1.stats_with_scores.parquet', checkIfExists: true)
                     ]
                 ]
                 input[1] = file( '$projectDir/tests/test_data/modules/stability_scores/platform/nb_samples_per_platform.csv', checkIfExists: true)
@@ -39,7 +40,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [section: "section_1"],
-                    file( '$projectDir/tests/test_data/modules/stability_scores/platform/rnaseq.section_1.stats_with_scores.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/stability_scores/platform/rnaseq.section_1.stats_with_scores.parquet', checkIfExists: true)
                 ]
                 input[1] = file( '$projectDir/tests/test_data/modules/stability_scores/platform/nb_samples_per_platform.csv', checkIfExists: true)
                 input[2] = 1.5

@@ -120,12 +120,16 @@ def compute_log2(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def export_parquet(df: pl.DataFrame, outfilename: str):
+def export_parquet(
+    df: pl.DataFrame,
+    outfilename: str,
+    n_digits: int = config.NB_DECIMAL_DIGITS
+):
     logger.info(f"Exporting processed counts to: {outfilename}")
     # round all float columns to avoid inconsistencies during subsequent computations
-    # cast float columns to Float32 to fix the
+    # cast float columns to Float32 to fix this
     df.with_columns(
-        cs.float().round(config.NB_DECIMAL_DIGITS).cast(pl.Float32)
+        cs.float().round(n_digits).cast(pl.Float32)
     ).write_parquet(outfilename)
 
 

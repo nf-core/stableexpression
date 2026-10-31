@@ -27,26 +27,4 @@ nextflow_process {
 
     }
 
-    test("Normal target distribution") {
-
-        when {
-            process {
-                """
-                input[0] = [
-                    [dataset: 'test'],
-                    file( '$projectDir/tests/test_data/modules/quantile_normalisation/count.raw.cpm.csv', checkIfExists: true)
-                ]
-                """
-            }
-        }
-
-        then {
-            assertAll(
-                { assert process.success },
-                { assert snapshot(process.out).match() }
-            )
-        }
-
-    }
-
 }

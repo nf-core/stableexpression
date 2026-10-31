@@ -1,5 +1,5 @@
 {
-    "Four initial chunk files": {
+    "Should not fail": {
         "content": [
             {
                 "0": [
@@ -7,21 +7,21 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,4c8b4cd9f00ab120e501fd3e355c442f"
+                        "section_1.m_measures.parquet:md5,6925161e7ce62b26b0aad718898600c6"
                     ]
                 ],
                 "1": [
                     [
-                        "GENORM_COMPUTE_M_MEASURE",
+                        "GENORM",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "2": [
                     [
-                        "GENORM_COMPUTE_M_MEASURE",
+                        "GENORM",
                         "polars",
-                        "1.41.2"
+                        "1.39.2"
                     ]
                 ],
                 "m_measures": [
@@ -29,15 +29,15 @@
                         {
                             "section": "section_1"
                         },
-                        "m_measures.csv:md5,4c8b4cd9f00ab120e501fd3e355c442f"
+                        "section_1.m_measures.parquet:md5,6925161e7ce62b26b0aad718898600c6"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-08-11T20:07:01.007990418",
+        "timestamp": "2026-10-31T13:53:29.447122093",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.4"
         }
     }
 }

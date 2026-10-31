@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 import config
-from common import sink_csv_with_floats, get_count_columns
+from common import export_parquet, get_count_columns
 import numpy as np
 import polars as pl
 from numba import njit, prange
@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 
 # number of rows processed per Gram block (tunes peak memory, not the result)
 BLOCK_SIZE = 1024
+EXPORT_NB_DIGITS = 3
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -136,7 +137,6 @@ def main():
 
     count_lf = pl.scan_parquet(args.count_file)
     count_cols = get_count_columns(count_lf)
-    n_genes = count_lf.select(pl.len()).collect().item()
 
     # single collect of the count matrix
     count_df = count_lf.collect()
@@ -172,7 +172,8 @@ def main():
         .sort(config.GENE_ID_COLNAME)
     )
 
-    sink_csv_with_floats(m_df.lazy(), args.outfile, float_precision=5)
+    # limit nb of digits to 5 to avoid discrepancies between docker / apptainer and conda runs
+    export_parquet(m_df, args.outfile, EXPORT_NB_DIGITS)
 
     logger.info("Done")
 

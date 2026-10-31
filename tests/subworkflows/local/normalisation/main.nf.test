@@ -27,11 +27,10 @@ nextflow_workflow {
                 input[3] = false
                 input[4] = 0.8
                 input[5] = false
-                input[6] = "uniform"
+                input[6] = null
                 input[7] = null
                 input[8] = null
-                input[9] = null
-                input[10] ="$outputDir"
+                input[9] ="$outputDir"
                 """
             }
         }
@@ -75,11 +74,10 @@ nextflow_workflow {
                 input[3] = true
                 input[4] = 0.8
                 input[5] = false
-                input[6] = "uniform"
+                input[6] = null
                 input[7] = null
                 input[8] = null
-                input[9] = null
-                input[10] ="$outputDir"
+                input[9] ="$outputDir"
                 """
             }
         }
@@ -114,11 +112,10 @@ nextflow_workflow {
                 input[3] = false
                 input[4] = 0.8
                 input[5] = true
-                input[6] = "normal"
+                input[6] = null
                 input[7] = null
                 input[8] = null
-                input[9] = null
-                input[10] ="$outputDir"
+                input[9] ="$outputDir"
                 """
             }
         }

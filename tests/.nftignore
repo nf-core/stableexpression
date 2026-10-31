@@ -2,3 +2,5 @@
 reporting/multiqc_report.html
 **.py
 pipeline_info/*.{html,json,txt,yml}
+reporting/dash_app/data/all_genes_summary.csv
+**.edger_log2.parquet

@@ -7,7 +7,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.edger_log2.parquet:md5,996ced5d17a2b8d815d62ae3a43d2d29"
+                        "counts.edger_log2.parquet:md5,b6c6f8105f1db8813533e894c84bfa46"
                     ]
                 ],
                 "1": [
@@ -35,15 +35,15 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.edger_log2.parquet:md5,996ced5d17a2b8d815d62ae3a43d2d29"
+                        "counts.edger_log2.parquet:md5,b6c6f8105f1db8813533e894c84bfa46"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-05T15:27:06.903389238",
+        "timestamp": "2026-10-26T23:54:04.700271226",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     },
     "RPK": {
@@ -54,7 +54,7 @@
                         {
                             "dataset": "accession"
                         },
-                        "rpk.edger_log2.parquet:md5,fc3644eb0a0e886c73a99114813aeb9e"
+                        "rpk.edger_log2.parquet:md5,8c7269ef1cc91c762898185addf301ca"
                     ]
                 ],
                 "1": [
@@ -82,15 +82,15 @@
                         {
                             "dataset": "accession"
                         },
-                        "rpk.edger_log2.parquet:md5,fc3644eb0a0e886c73a99114813aeb9e"
+                        "rpk.edger_log2.parquet:md5,8c7269ef1cc91c762898185addf301ca"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-05T15:26:57.417916066",
+        "timestamp": "2026-10-26T23:53:53.044871552",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     },
     "Rows with many zeros": {
@@ -101,7 +101,7 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.edger_log2.parquet:md5,442866b703e7e89740fd0c2435b74cb1"
+                        "counts.edger_log2.parquet:md5,e7cdb58276e0b313909e265181046bb4"
                     ]
                 ],
                 "1": [
@@ -129,15 +129,15 @@
                         {
                             "dataset": "test"
                         },
-                        "counts.edger_log2.parquet:md5,442866b703e7e89740fd0c2435b74cb1"
+                        "counts.edger_log2.parquet:md5,e7cdb58276e0b313909e265181046bb4"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-05T15:27:16.417328153",
+        "timestamp": "2026-10-26T23:54:16.16732269",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     }
 }

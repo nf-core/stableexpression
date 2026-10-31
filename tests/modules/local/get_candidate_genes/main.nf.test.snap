@@ -27,14 +27,14 @@
                             "platform": "rnaseq"
                         },
                         [
-                            "section_1.stats.parquet:md5,d83794ff344d5d5c8f0b7883f01e4bdc",
-                            "section_10.stats.parquet:md5,3aa371986b18eddc744790dfe89a925b",
-                            "section_2.stats.parquet:md5,0619ca488512e8e5b9aae17a41f05996",
-                            "section_3.stats.parquet:md5,b82f0447d869ae938f33f045bd95e7d4",
-                            "section_4.stats.parquet:md5,535ee15b539eaac74ecdd2b7c7463a5d",
-                            "section_6.stats.parquet:md5,1cf36bb9cdb5d191f896a51e9a275c80",
-                            "section_7.stats.parquet:md5,6bea66cf8710445fcb8be0b8413cae74",
-                            "section_8.stats.parquet:md5,01f54ddeea50ed0741f2e538d3af828c"
+                            "section_1.stats.parquet:md5,9d2e373db26d75a415d85a303a56c475",
+                            "section_10.stats.parquet:md5,1049925378f258993822a96a3aff928f",
+                            "section_2.stats.parquet:md5,75567d8cc560afdcbca02a10dc273598",
+                            "section_3.stats.parquet:md5,96a54ff91acd4b42c551c1fdac978a6c",
+                            "section_4.stats.parquet:md5,8ad97e3e8338d4ee34e77d47fb93e621",
+                            "section_6.stats.parquet:md5,f1ecc1169ba0fedc548913da11d5fc1f",
+                            "section_7.stats.parquet:md5,eb1caa8b7d2d0f64a23b18fb24ddd31b",
+                            "section_8.stats.parquet:md5,e0f62149a572b87e24a5d08029501d4a"
                         ]
                     ]
                 ],
@@ -77,23 +77,23 @@
                             "platform": "rnaseq"
                         },
                         [
-                            "section_1.stats.parquet:md5,d83794ff344d5d5c8f0b7883f01e4bdc",
-                            "section_10.stats.parquet:md5,3aa371986b18eddc744790dfe89a925b",
-                            "section_2.stats.parquet:md5,0619ca488512e8e5b9aae17a41f05996",
-                            "section_3.stats.parquet:md5,b82f0447d869ae938f33f045bd95e7d4",
-                            "section_4.stats.parquet:md5,535ee15b539eaac74ecdd2b7c7463a5d",
-                            "section_6.stats.parquet:md5,1cf36bb9cdb5d191f896a51e9a275c80",
-                            "section_7.stats.parquet:md5,6bea66cf8710445fcb8be0b8413cae74",
-                            "section_8.stats.parquet:md5,01f54ddeea50ed0741f2e538d3af828c"
+                            "section_1.stats.parquet:md5,9d2e373db26d75a415d85a303a56c475",
+                            "section_10.stats.parquet:md5,1049925378f258993822a96a3aff928f",
+                            "section_2.stats.parquet:md5,75567d8cc560afdcbca02a10dc273598",
+                            "section_3.stats.parquet:md5,96a54ff91acd4b42c551c1fdac978a6c",
+                            "section_4.stats.parquet:md5,8ad97e3e8338d4ee34e77d47fb93e621",
+                            "section_6.stats.parquet:md5,f1ecc1169ba0fedc548913da11d5fc1f",
+                            "section_7.stats.parquet:md5,eb1caa8b7d2d0f64a23b18fb24ddd31b",
+                            "section_8.stats.parquet:md5,e0f62149a572b87e24a5d08029501d4a"
                         ]
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-16T14:19:43.16110233",
+        "timestamp": "2026-10-26T10:19:56.481741967",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     },
     "No candidate genes": {
@@ -124,14 +124,14 @@
                             "platform": "rnaseq"
                         },
                         [
-                            "section_1.stats.parquet:md5,d83794ff344d5d5c8f0b7883f01e4bdc",
-                            "section_10.stats.parquet:md5,3aa371986b18eddc744790dfe89a925b",
-                            "section_2.stats.parquet:md5,0619ca488512e8e5b9aae17a41f05996",
-                            "section_3.stats.parquet:md5,b82f0447d869ae938f33f045bd95e7d4",
-                            "section_4.stats.parquet:md5,535ee15b539eaac74ecdd2b7c7463a5d",
-                            "section_6.stats.parquet:md5,1cf36bb9cdb5d191f896a51e9a275c80",
-                            "section_7.stats.parquet:md5,6bea66cf8710445fcb8be0b8413cae74",
-                            "section_8.stats.parquet:md5,01f54ddeea50ed0741f2e538d3af828c"
+                            "section_1.stats.parquet:md5,9d2e373db26d75a415d85a303a56c475",
+                            "section_10.stats.parquet:md5,1049925378f258993822a96a3aff928f",
+                            "section_2.stats.parquet:md5,75567d8cc560afdcbca02a10dc273598",
+                            "section_3.stats.parquet:md5,96a54ff91acd4b42c551c1fdac978a6c",
+                            "section_4.stats.parquet:md5,8ad97e3e8338d4ee34e77d47fb93e621",
+                            "section_6.stats.parquet:md5,f1ecc1169ba0fedc548913da11d5fc1f",
+                            "section_7.stats.parquet:md5,eb1caa8b7d2d0f64a23b18fb24ddd31b",
+                            "section_8.stats.parquet:md5,e0f62149a572b87e24a5d08029501d4a"
                         ]
                     ]
                 ],
@@ -174,23 +174,23 @@
                             "platform": "rnaseq"
                         },
                         [
-                            "section_1.stats.parquet:md5,d83794ff344d5d5c8f0b7883f01e4bdc",
-                            "section_10.stats.parquet:md5,3aa371986b18eddc744790dfe89a925b",
-                            "section_2.stats.parquet:md5,0619ca488512e8e5b9aae17a41f05996",
-                            "section_3.stats.parquet:md5,b82f0447d869ae938f33f045bd95e7d4",
-                            "section_4.stats.parquet:md5,535ee15b539eaac74ecdd2b7c7463a5d",
-                            "section_6.stats.parquet:md5,1cf36bb9cdb5d191f896a51e9a275c80",
-                            "section_7.stats.parquet:md5,6bea66cf8710445fcb8be0b8413cae74",
-                            "section_8.stats.parquet:md5,01f54ddeea50ed0741f2e538d3af828c"
+                            "section_1.stats.parquet:md5,9d2e373db26d75a415d85a303a56c475",
+                            "section_10.stats.parquet:md5,1049925378f258993822a96a3aff928f",
+                            "section_2.stats.parquet:md5,75567d8cc560afdcbca02a10dc273598",
+                            "section_3.stats.parquet:md5,96a54ff91acd4b42c551c1fdac978a6c",
+                            "section_4.stats.parquet:md5,8ad97e3e8338d4ee34e77d47fb93e621",
+                            "section_6.stats.parquet:md5,f1ecc1169ba0fedc548913da11d5fc1f",
+                            "section_7.stats.parquet:md5,eb1caa8b7d2d0f64a23b18fb24ddd31b",
+                            "section_8.stats.parquet:md5,e0f62149a572b87e24a5d08029501d4a"
                         ]
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-16T14:20:32.370526689",
+        "timestamp": "2026-10-26T10:20:01.862148839",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     },
     "Should not fail": {
@@ -221,14 +221,14 @@
                             "platform": "rnaseq"
                         },
                         [
-                            "section_1.stats.parquet:md5,d83794ff344d5d5c8f0b7883f01e4bdc",
-                            "section_10.stats.parquet:md5,3aa371986b18eddc744790dfe89a925b",
-                            "section_2.stats.parquet:md5,0619ca488512e8e5b9aae17a41f05996",
-                            "section_3.stats.parquet:md5,b82f0447d869ae938f33f045bd95e7d4",
-                            "section_4.stats.parquet:md5,535ee15b539eaac74ecdd2b7c7463a5d",
-                            "section_6.stats.parquet:md5,1cf36bb9cdb5d191f896a51e9a275c80",
-                            "section_7.stats.parquet:md5,6bea66cf8710445fcb8be0b8413cae74",
-                            "section_8.stats.parquet:md5,01f54ddeea50ed0741f2e538d3af828c"
+                            "section_1.stats.parquet:md5,9d2e373db26d75a415d85a303a56c475",
+                            "section_10.stats.parquet:md5,1049925378f258993822a96a3aff928f",
+                            "section_2.stats.parquet:md5,75567d8cc560afdcbca02a10dc273598",
+                            "section_3.stats.parquet:md5,96a54ff91acd4b42c551c1fdac978a6c",
+                            "section_4.stats.parquet:md5,8ad97e3e8338d4ee34e77d47fb93e621",
+                            "section_6.stats.parquet:md5,f1ecc1169ba0fedc548913da11d5fc1f",
+                            "section_7.stats.parquet:md5,eb1caa8b7d2d0f64a23b18fb24ddd31b",
+                            "section_8.stats.parquet:md5,e0f62149a572b87e24a5d08029501d4a"
                         ]
                     ]
                 ],
@@ -271,23 +271,23 @@
                             "platform": "rnaseq"
                         },
                         [
-                            "section_1.stats.parquet:md5,d83794ff344d5d5c8f0b7883f01e4bdc",
-                            "section_10.stats.parquet:md5,3aa371986b18eddc744790dfe89a925b",
-                            "section_2.stats.parquet:md5,0619ca488512e8e5b9aae17a41f05996",
-                            "section_3.stats.parquet:md5,b82f0447d869ae938f33f045bd95e7d4",
-                            "section_4.stats.parquet:md5,535ee15b539eaac74ecdd2b7c7463a5d",
-                            "section_6.stats.parquet:md5,1cf36bb9cdb5d191f896a51e9a275c80",
-                            "section_7.stats.parquet:md5,6bea66cf8710445fcb8be0b8413cae74",
-                            "section_8.stats.parquet:md5,01f54ddeea50ed0741f2e538d3af828c"
+                            "section_1.stats.parquet:md5,9d2e373db26d75a415d85a303a56c475",
+                            "section_10.stats.parquet:md5,1049925378f258993822a96a3aff928f",
+                            "section_2.stats.parquet:md5,75567d8cc560afdcbca02a10dc273598",
+                            "section_3.stats.parquet:md5,96a54ff91acd4b42c551c1fdac978a6c",
+                            "section_4.stats.parquet:md5,8ad97e3e8338d4ee34e77d47fb93e621",
+                            "section_6.stats.parquet:md5,f1ecc1169ba0fedc548913da11d5fc1f",
+                            "section_7.stats.parquet:md5,eb1caa8b7d2d0f64a23b18fb24ddd31b",
+                            "section_8.stats.parquet:md5,e0f62149a572b87e24a5d08029501d4a"
                         ]
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-16T14:19:37.809682423",
+        "timestamp": "2026-10-26T10:19:50.791900032",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     }
 }

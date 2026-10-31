@@ -40,8 +40,8 @@ nextflow_process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = [
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.parquet', checkIfExists: true)
                 ]
                 input[2] = ["ENSRNA049454747", "ENSRNA049434246"]
                 input[3] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
@@ -68,8 +68,8 @@ nextflow_process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = [
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.parquet', checkIfExists: true)
                 ]
                 input[2] = ["ENSRNA049454747", "UNKNOWNGENEID1234"]
                 input[3] = []
@@ -95,7 +95,7 @@ nextflow_process {
             process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.parquet', checkIfExists: true)
                 input[2] = []
                 input[3] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
                 input[4] = []
@@ -120,7 +120,7 @@ nextflow_process {
             process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.parquet', checkIfExists: true)
                 input[2] = []
                 input[3] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
                 input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)

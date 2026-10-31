@@ -17,14 +17,14 @@ from pathlib import Path
 import config
 import numpy as np
 import polars as pl
-from common import write_csv_with_floats
+from common import export_parquet
 from numba import njit, prange
 from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-STABILITY_OUTFILENAME = "stability_values.normfinder.csv"
+STABILITY_OUTFILENAME = "stability_values.normfinder.parquet"
 
 
 ############################################################################
@@ -309,9 +309,9 @@ def parse_args():
 
 
 def export_stability(stabilities: pl.DataFrame):
-    """Export stability values to CSV file."""
+    """Export stability values to parquet file."""
     logger.info(f"Exporting stability values to: {STABILITY_OUTFILENAME}")
-    write_csv_with_floats(stabilities, STABILITY_OUTFILENAME, float_precision=5)
+    export_parquet(stabilities, STABILITY_OUTFILENAME)
 
 
 def main():

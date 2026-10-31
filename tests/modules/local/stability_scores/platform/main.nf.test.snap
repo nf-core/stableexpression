@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.csv:md5,86b7d2cbe0eab160ceadcb84ff9e5bb9"
+                        "null.section_1.stats_with_scores.parquet:md5,6e76e6671c1932c9497bd9b16756ef97"
                     ]
                 ],
                 "1": [
@@ -29,15 +29,15 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.csv:md5,86b7d2cbe0eab160ceadcb84ff9e5bb9"
+                        "null.section_1.stats_with_scores.parquet:md5,6e76e6671c1932c9497bd9b16756ef97"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-16T12:33:11.545893997",
+        "timestamp": "2026-10-31T14:48:30.761798001",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.4"
         }
     },
     "Without Genorm": {
@@ -48,7 +48,7 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.csv:md5,3a1c1e0ba7f59fd7012ff59e3e22e5f4"
+                        "null.section_1.stats_with_scores.parquet:md5,76d3b07aa56f81af9808470a46b49e9e"
                     ]
                 ],
                 "1": [
@@ -70,15 +70,15 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.csv:md5,3a1c1e0ba7f59fd7012ff59e3e22e5f4"
+                        "null.section_1.stats_with_scores.parquet:md5,76d3b07aa56f81af9808470a46b49e9e"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-16T12:33:16.802970909",
+        "timestamp": "2026-10-31T14:48:40.331732095",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.4"
         }
     }
 }

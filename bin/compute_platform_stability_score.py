@@ -15,6 +15,9 @@ from common import export_parquet, zscore_to_unit
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+STABILITY_SCORE_ROUND_NB_DIGITS = 5
+
 # outfile names
 STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.parquet"
 
@@ -142,18 +145,24 @@ class StabilityScorer:
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        # rounding the stability score in order to avoid reproducibility issues
         expr = (
             pl.when(pl.col(config.IS_CANDIDATE_COLNAME) == 1)
-            .then(stability_scoring_expr)
+            .then(stability_scoring_expr.round(STABILITY_SCORE_ROUND_NB_DIGITS))
             .otherwise(None)
         )
         # add stability score column
         self.df = self.df.with_columns(expr.alias(config.STABILITY_SCORE_COLNAME))
 
     def get_statistics_with_stability_scores(self) -> pl.DataFrame:
+        """
+        Build rank for reach gene. If two genes have exactly the same stabiity score,
+        the gene id is used to separate them (useful for reproducibility of results).
+        """
         return (
             self.df.sort(
-                config.STABILITY_SCORE_COLNAME, descending=False, nulls_last=True
+                [config.STABILITY_SCORE_COLNAME, config.GENE_ID_COLNAME], descending=False, nulls_last=True
             )
             .with_row_index(name="index")
             .with_columns((pl.col("index") + 1).alias(config.RANK_COLNAME))
@@ -210,10 +219,10 @@ def parse_args():
 
 def get_stabilities(stability_files: list[Path]) -> pl.DataFrame:
     """Retrieve and concatenate stability values from a list of stability files."""
-    df = pl.read_csv(stability_files[0])
+    df = pl.read_parquet(stability_files[0])
     if len(stability_files) > 1:
         for file in stability_files[1:]:
-            new_df = pl.read_csv(file)
+            new_df = pl.read_parquet(file)
             df = df.join(new_df, on=config.GENE_ID_COLNAME, how="left")
     return df.with_columns(pl.lit(1).alias(config.IS_CANDIDATE_COLNAME))
 

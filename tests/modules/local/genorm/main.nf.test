@@ -1,7 +1,7 @@
 nextflow_process {
 
     name "Test Process GENORM"
-    script "modules/local/genorm/genorm/main.nf"
+    script "modules/local/genorm/main.nf"
     process "GENORM"
 
     test("Should not fail") {

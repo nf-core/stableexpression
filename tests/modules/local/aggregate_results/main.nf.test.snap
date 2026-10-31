@@ -3,7 +3,7 @@
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,ee5e0ee3bc666362ce1b32e8dd7201d7"
+                    "all_genes_summary.csv:md5,e3b151a4f19f3c077522a5edb5a51c42"
                 ],
                 "1": [
                     [
@@ -18,7 +18,7 @@
                     ]
                 ],
                 "3": [
-                    "custom_content_multiqc_config.yaml:md5,ec4e3a56a23fcf909e85e183a514b0cf"
+                    "custom_content_multiqc_config.yaml:md5,0e0a5b3697d7658bab2d6e36c931c82e"
                 ],
                 "4": [
                     [
@@ -42,10 +42,10 @@
                     ]
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,ee5e0ee3bc666362ce1b32e8dd7201d7"
+                    "all_genes_summary.csv:md5,e3b151a4f19f3c077522a5edb5a51c42"
                 ],
                 "custom_content_multiqc_config": [
-                    "custom_content_multiqc_config.yaml:md5,ec4e3a56a23fcf909e85e183a514b0cf"
+                    "custom_content_multiqc_config.yaml:md5,0e0a5b3697d7658bab2d6e36c931c82e"
                 ],
                 "most_stable_genes_summary": [
                     [
@@ -61,17 +61,17 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-16T11:29:24.44826703",
+        "timestamp": "2026-10-27T18:59:50.30722984",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     },
     "No genes to plot": {
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,591f6a939526f50632dcedcf71e748ed"
+                    "all_genes_summary.csv:md5,b5a0699ccd90d3e6dba13681931d568b"
                 ],
                 "1": [
                     "section_1.most_stable_genes_summary.csv:md5,4928f304304a99876f1bdeced1f7984a"
@@ -80,7 +80,7 @@
                     
                 ],
                 "3": [
-                    "custom_content_multiqc_config.yaml:md5,5d596508dfd6bf9805a0140775a9bd78"
+                    "custom_content_multiqc_config.yaml:md5,812dffff90de7df004ae61a231a8542f"
                 ],
                 "4": [
                     [
@@ -104,10 +104,10 @@
                     ]
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,591f6a939526f50632dcedcf71e748ed"
+                    "all_genes_summary.csv:md5,b5a0699ccd90d3e6dba13681931d568b"
                 ],
                 "custom_content_multiqc_config": [
-                    "custom_content_multiqc_config.yaml:md5,5d596508dfd6bf9805a0140775a9bd78"
+                    "custom_content_multiqc_config.yaml:md5,812dffff90de7df004ae61a231a8542f"
                 ],
                 "most_stable_genes_summary": [
                     "section_1.most_stable_genes_summary.csv:md5,4928f304304a99876f1bdeced1f7984a"
@@ -117,17 +117,17 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-16T14:14:49.069911314",
+        "timestamp": "2026-10-27T19:00:07.839374638",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     },
     "One section - no mapping": {
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,2bd3236eec365453ea12f4ba1da30e49"
+                    "all_genes_summary.csv:md5,d93f4a35bfbf85b4a23252a0a3daa943"
                 ],
                 "1": [
                     "section_1.most_stable_genes_summary.csv:md5,f0fe5df10203785e4a912735345e9c2b"
@@ -136,7 +136,7 @@
                     "section_1.count.most_stable_genes_transposed_counts.csv:md5,30f84570c2104f7cfac4289d583b68cd"
                 ],
                 "3": [
-                    "custom_content_multiqc_config.yaml:md5,0c87a533e2f7926560478b4f219aaf41"
+                    "custom_content_multiqc_config.yaml:md5,274c6225560403397c0ff95420e7dea8"
                 ],
                 "4": [
                     [
@@ -160,10 +160,10 @@
                     ]
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,2bd3236eec365453ea12f4ba1da30e49"
+                    "all_genes_summary.csv:md5,d93f4a35bfbf85b4a23252a0a3daa943"
                 ],
                 "custom_content_multiqc_config": [
-                    "custom_content_multiqc_config.yaml:md5,0c87a533e2f7926560478b4f219aaf41"
+                    "custom_content_multiqc_config.yaml:md5,274c6225560403397c0ff95420e7dea8"
                 ],
                 "most_stable_genes_summary": [
                     "section_1.most_stable_genes_summary.csv:md5,f0fe5df10203785e4a912735345e9c2b"
@@ -173,17 +173,17 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-16T14:13:28.949926037",
+        "timestamp": "2026-10-27T19:00:02.024904447",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     },
     "Without targets": {
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,ee5e0ee3bc666362ce1b32e8dd7201d7"
+                    "all_genes_summary.csv:md5,e3b151a4f19f3c077522a5edb5a51c42"
                 ],
                 "1": [
                     [
@@ -198,7 +198,7 @@
                     ]
                 ],
                 "3": [
-                    "custom_content_multiqc_config.yaml:md5,da7417bbf4b8016f5fbfd64beb4ec249"
+                    "custom_content_multiqc_config.yaml:md5,73bffe0e546d2c8d3439d63640d2cd80"
                 ],
                 "4": [
                     [
@@ -222,10 +222,10 @@
                     ]
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,ee5e0ee3bc666362ce1b32e8dd7201d7"
+                    "all_genes_summary.csv:md5,e3b151a4f19f3c077522a5edb5a51c42"
                 ],
                 "custom_content_multiqc_config": [
-                    "custom_content_multiqc_config.yaml:md5,da7417bbf4b8016f5fbfd64beb4ec249"
+                    "custom_content_multiqc_config.yaml:md5,73bffe0e546d2c8d3439d63640d2cd80"
                 ],
                 "most_stable_genes_summary": [
                     [
@@ -241,17 +241,17 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-16T11:29:19.327967947",
+        "timestamp": "2026-10-27T18:59:44.440582685",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     },
     "One invalid target gene - no metadata": {
         "content": [
             {
                 "0": [
-                    "all_genes_summary.csv:md5,a3c745be7c5a2132b9c9150f73f31f80"
+                    "all_genes_summary.csv:md5,7d58949261021b5198b20020bb8d44f1"
                 ],
                 "1": [
                     [
@@ -266,7 +266,7 @@
                     ]
                 ],
                 "3": [
-                    "custom_content_multiqc_config.yaml:md5,04d548041b32e659db2cc99813cae4ed"
+                    "custom_content_multiqc_config.yaml:md5,a151af91bf84a7bf2a716774c9e6e98e"
                 ],
                 "4": [
                     [
@@ -290,10 +290,10 @@
                     ]
                 ],
                 "all_genes_summary": [
-                    "all_genes_summary.csv:md5,a3c745be7c5a2132b9c9150f73f31f80"
+                    "all_genes_summary.csv:md5,7d58949261021b5198b20020bb8d44f1"
                 ],
                 "custom_content_multiqc_config": [
-                    "custom_content_multiqc_config.yaml:md5,04d548041b32e659db2cc99813cae4ed"
+                    "custom_content_multiqc_config.yaml:md5,a151af91bf84a7bf2a716774c9e6e98e"
                 ],
                 "most_stable_genes_summary": [
                     [
@@ -309,10 +309,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-16T14:13:23.777856588",
+        "timestamp": "2026-10-27T18:59:56.333684944",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.2"
         }
     }
 }
