@@ -390,6 +390,7 @@
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "reporting",
+                "reporting/all_genes_summary.csv",
                 "reporting/multiqc_report.html",
                 "statistics",
                 "statistics/missing_values_filter_stats.csv",
@@ -411,6 +412,7 @@
                 "microarray.imputed.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
                 "rnaseq.corrected.parquet:md5,08685307dbe4d6b9ac89b537b779efaa",
                 "rnaseq.imputed.parquet:md5,08685307dbe4d6b9ac89b537b779efaa",
+                "all_genes_summary.csv:md5,8c1c2ac9ad650b102a748bd31af3496f",
                 "missing_values_filter_stats.csv:md5,ebad5386e7c670ff04887eff67c8faae",
                 "ratio_nulls.csv:md5,ab65c49c9b8ba7e242f391438789e080",
                 "ratio_nulls_per_sample.csv:md5,5c2931cb8c5ecb27ffa9136628fc714c",
@@ -418,10 +420,10 @@
                 "skewness.csv:md5,8548072381ff658f8bad12cb0bce1f84"
             ]
         ],
-        "timestamp": "2026-10-27T00:37:21.62947282",
+        "timestamp": "2026-11-01T09:43:15.60393589",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.2"
+            "nextflow": "26.10.4"
         }
     },
     "-profile test_dataset_custom_mapping_and_gene_length": {

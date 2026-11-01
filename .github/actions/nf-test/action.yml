@@ -58,8 +58,8 @@ runs:
 
     - name: Run nf-test
       shell: bash
-      env:
-        NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
+      #env:
+      #  NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
       run: |
         nf-test test \
           --profile=+${{ inputs.profile }} \
@@ -104,17 +104,17 @@ runs:
           echo "| ⚠️ | No test results found | ${{ inputs.profile }} | ${{ inputs.shard }}/${{ inputs.total_shards }} |" >> $GITHUB_STEP_SUMMARY
         fi
 
-    #- name: Upload files for inspection
-    #  ###### NB: comment the lines above to make it work:
-    #  ###### env:
-    #  ######  NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
-    #  if: always()
-    #  uses: actions/upload-artifact@v4
-    #  with:
-    #    name: output
-    #    path: |
-    #      /home/runner/_work/stableexpression/stableexpression/
-    #    retention-days: 7
+    - name: Upload files for inspection
+      ###### NB: comment the lines above to make it work:
+      ###### env:
+      ######  NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: output
+        path: |
+          /home/runner/_work/stableexpression/stableexpression/
+        retention-days: 7
 
     - name: Clean up
       if: always()

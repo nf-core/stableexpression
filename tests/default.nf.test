@@ -309,6 +309,7 @@ nextflow_pipeline {
                 species = 'solanum tuberosum'
                 datasets = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/samplesheet.csv"
                 skip_id_mapping = true
+                nb_sections = 1
                 skip_fetch_eatlas_accessions = true
                 gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/solanum_tuberosum/Solanum_tuberosum.SolTub_3.0.63.gff3.gz'
                 skip_dash_app = true
