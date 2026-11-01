@@ -166,13 +166,13 @@ output {
     }
 
     imputed {
-        path { meta, file ->
+        path { _meta, file ->
             file >> "merged_data/"
         }
     }
 
     corrected {
-        path { meta, file, design ->
+        path { _meta, file, design ->
             file   >> "merged_data/"
             design >> "merged_data/"
         }

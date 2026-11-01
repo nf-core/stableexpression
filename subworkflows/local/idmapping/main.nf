@@ -60,7 +60,7 @@ workflow ID_MAPPING {
 
         ch_valid_gene_ids = ch_gene_ids
                                 .splitText()
-                                .map { it.trim() }
+                                .map { gene_id -> gene_id.trim() }
                                 .unique()
                                 .collectFile(
                                     name: 'unique_gene_ids.txt',

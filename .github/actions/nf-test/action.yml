@@ -113,11 +113,11 @@ runs:
       with:
         name: output
         path: |
-          /home/runner/_work/stableexpression/stableexpression/
+          /home/runner/work/stableexpression/stableexpression/~/tests
         retention-days: 7
 
-    - name: Clean up
-      if: always()
-      shell: bash
-      run: |
-        sudo rm -rf /home/ubuntu/tests/
+    #- name: Clean up
+    #  if: always()
+    #  shell: bash
+    #  run: |
+    #    sudo rm -rf /home/ubuntu/tests/

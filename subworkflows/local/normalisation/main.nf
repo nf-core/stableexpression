@@ -32,7 +32,7 @@ workflow NORMALISATION {
     main:
 
     ch_datasets = ch_datasets.branch {
-        meta, file ->
+        meta, _file ->
             rnaseq: meta.platform == 'rnaseq'
             microarray: meta.platform == 'microarray'
         }
@@ -60,12 +60,12 @@ workflow NORMALISATION {
     // -----------------------------------------------------------------
 
     ch_rnaseq = ch_normalised_rnaseq_counts
-                    .map { meta, file -> file }
+                    .map { _meta, file -> file }
                     .collect( sort: true )
                     .map { files -> [ [ platform: "rnaseq" ], files ] }
 
     ch_microarray = ch_datasets.microarray
-                        .map { meta, file -> file }
+                        .map { _meta, file -> file }
                         .collect( sort: true )
                         .map { files -> [ [ platform: "microarray" ], files ] }
 
@@ -106,7 +106,7 @@ workflow NORMALISATION {
     ch_counts_with_design = ch_imputed_counts
                                 .map { meta, file -> [ meta.platform, meta, file ] }
                                 .join( ch_rnaseq_whole_design.mix( ch_microarray_whole_design ) )
-                                .map { platform, meta, file, design -> [ meta, file, design ] }
+                                .map { _platform, meta, file, design -> [ meta, file, design ] }
 
     if ( !quantile_normalisation ) {
 
@@ -165,19 +165,19 @@ workflow NORMALISATION {
         // -----------------------------------------------------------------
 
         ch_qn_rnaseq_counts = ch_quantile_normalised_counts
-                                .filter { meta, file -> meta.platform == "rnaseq" }
-                                .map { meta, file -> file }
+                                .filter { meta, _file -> meta.platform == "rnaseq" }
+                                .map { _meta, file -> file }
                                 .collect( sort: true )
                                 .map { files -> [ [ platform: "rnaseq" ], files ] }
 
         ch_qn_microarray_datasets = ch_quantile_normalised_counts
-                                        .filter { meta, file -> meta.platform == "microarray" }
-                                        .map { meta, file -> file }
+                                        .filter { meta, _file -> meta.platform == "microarray" }
+                                        .map { _meta, file -> file }
                                         .collect( sort: true )
                                         .map { files -> [ [ platform: "microarray" ], files ] }
 
         REMERGE_BY_PLATFORM (
-            ch_qn_rnaseq_counts.concat( ch_microarray )
+            ch_qn_rnaseq_counts.concat( ch_qn_microarray_datasets )
         )
 
         ch_corrected_counts = REMERGE_BY_PLATFORM.out.counts
@@ -191,7 +191,7 @@ workflow NORMALISATION {
     ch_corrected_counts_with_design = ch_corrected_counts
                                         .map { meta, file -> [ meta.platform, meta, file ] }
                                         .join( ch_rnaseq_whole_design.mix( ch_microarray_whole_design ) )
-                                        .map { platform, meta, file, design -> [ meta, file, design ] }
+                                        .map { _platform, meta, file, design -> [ meta, file, design ] }
 
 
     emit:

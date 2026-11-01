@@ -40,7 +40,7 @@ workflow REPORTING {
     ch_dash_app = channel.empty()
 
     ch_sorted_normalised_counts = ch_normalised_counts_with_design
-                                    .map { meta, counts, design -> counts }
+                                    .map { _meta, counts, _design -> counts }
                                     .toSortedList { file1, file2 -> file1.name <=> file2.name }
 
     // -----------------------------------------------------------------
@@ -51,8 +51,8 @@ workflow REPORTING {
 
     ch_target_gene_list = channel.fromList( target_genes.tokenize(',') )
                         .mix( ch_target_gene_file.splitText() )
-                        .map { it.trim() }
-                        .filter { it != "" }
+                        .map { gene_id -> gene_id.trim() }
+                        .filter { gene_id -> gene_id != "" }
                         .unique()
                         .toSortedList { file1, file2 -> file1.name <=> file2.name }
 
@@ -86,7 +86,7 @@ workflow REPORTING {
             ch_sorted_normalised_counts.map { files -> [ [ platform: 'all'], files ] }
         )
         DASH_APP(
-            MERGE_COUNTS.out.counts.map { meta, file -> file }.collect(),
+            MERGE_COUNTS.out.counts.map { _meta, file -> file }.collect(),
             ch_all_genes_summary.collect()
         )
         ch_dash_app        = DASH_APP.out.app
@@ -407,7 +407,7 @@ workflow REPORTING {
 
     MULTIQC ( ch_multiqc_input )
 
-    ch_multiqc_report = MULTIQC.out.report.map { meta, file -> file }
+    ch_multiqc_report = MULTIQC.out.report.map { _meta, file -> file }
 
     emit:
     multiqc_report          = ch_multiqc_report

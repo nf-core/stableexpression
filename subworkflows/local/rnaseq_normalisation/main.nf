@@ -25,7 +25,7 @@ workflow RNASEQ_NORMALISATION {
     main:
 
     ch_branched_rnaseq_datasets = ch_rnaseq_datasets.branch {
-        meta, file ->
+        meta, _file ->
             raw: meta.normalised == false
             normalised: meta.normalised == true
         }

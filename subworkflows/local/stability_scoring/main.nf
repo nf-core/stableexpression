@@ -28,8 +28,8 @@ workflow STABILITY_SCORING {
 
     main:
 
-    ch_platform_counts = ch_platform_counts_design.map { meta, counts, design -> [ meta, counts ] }
-    ch_platform_design = ch_platform_counts_design.map { meta, counts, design -> [ meta, design ] }
+    ch_platform_counts = ch_platform_counts_design.map { meta, counts, _design -> [ meta, counts ] }
+    ch_platform_design = ch_platform_counts_design.map { meta, _counts, design -> [ meta, design ] }
 
     // -----------------------------------------------------------------
     // PLATFORM-SPECIFIC STATISTICS
@@ -64,7 +64,7 @@ workflow STABILITY_SCORING {
     // -----------------------------------------------------------------
 
     MAKE_SECTIONS(
-        ch_stats.map { meta, file -> file }.collect(),
+        ch_stats.map { _meta, file -> file }.collect(),
         ch_nb_samples_per_platform_file.first(),
         nb_sections
     )
@@ -90,7 +90,7 @@ workflow STABILITY_SCORING {
 
     ch_normfinder_input = ch_candidate_gene_counts.map { meta, counts -> [ meta.platform, meta, counts] }
                             .combine( ch_platform_design.map { meta, design -> [ meta.platform, design ] }, by: 0 )
-                            .map { platform, meta, counts, design -> [ meta, counts, design] }
+                            .map { _platform, meta, counts, design -> [ meta, counts, design] }
 
     NORMFINDER( ch_normfinder_input )
     ch_normfinder_stabilities = NORMFINDER.out.stability_values
@@ -109,7 +109,7 @@ workflow STABILITY_SCORING {
     ch_platform_stability_score_input = ch_normfinder_stabilities.map { meta, file -> [ "${meta.platform}_${meta.section}", meta, file] }
                                         .join( ch_genorm_stability.map { meta, file -> [ "${meta.platform}_${meta.section}", file] }, remainder: true)
                                         .join( ch_section_stats.map { meta, file -> [ "${meta.platform}_${meta.section}", file] } )
-                                        .map { key, meta, file1, file2, file3 -> [ meta, file1, file2, file3 ] }
+                                        .map { _key, meta, file1, file2, file3 -> [ meta, file1, file2, file3 ] }
 
     PLATFORM_STABILITY_SCORE (
         ch_platform_stability_score_input,
@@ -125,7 +125,7 @@ workflow STABILITY_SCORING {
     ch_global_stability_score_input = ch_platform_stats_with_stability_scores
                                         .map { meta, file -> [ meta.section, meta, file] }
                                         .groupTuple()
-                                        .map { section, metas, files -> [ [ section: section ], files.toSorted() ] }
+                                        .map { section, _metas, files -> [ [ section: section ], files.toSorted() ] }
 
     GLOBAL_STABILITY_SCORE(
         ch_global_stability_score_input,
