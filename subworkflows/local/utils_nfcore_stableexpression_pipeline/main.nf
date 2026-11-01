@@ -202,6 +202,16 @@ def validateInputParameters(params) {
         error('You must provide a species name')
     }
 
+    // if nb_candidates_per_section is not null, try casting to int
+    if ( params.nb_candidates_per_section != null ) {
+        try {
+            def nb_candidates_per_section = params.nb_candidates_per_section.toInteger()
+        }
+        catch (NumberFormatException e) {
+            error("ERROR: The `nb_candidates_per_section` parameter must be an integer when not set to null.")
+        }
+    }
+
     // if accessions are provided or excluded, checking that they are well formatted
     check_accession_string( params.accessions )
     check_accession_string( params.excluded_accessions )
@@ -209,10 +219,12 @@ def validateInputParameters(params) {
     check_accession_file( params.accessions_file )
     check_accession_file( params.excluded_accessions_file )
 
+    // if keywords were provided but the pipeline was instructed not to fetch public data
     if ( params.keywords && params.skip_fetch_eatlas_accessions && !params.fetch_geo_accessions ) {
         log.warn "Ignoring keywords as accessions will not be fetched from Expression Atlas or GEO"
     }
 
+    // logs warning if both gff and gff_url params were provided
     if ( params.gff && params.gff_url ) {
         log.warn "Both gff and gff_url parameters are provided. Using gff."
     }
@@ -299,10 +311,10 @@ def toolCitationText() {
             "<li ${style}>Expression Atlas (Papatheodorou et al. 2018)</li>",
             params["fetch_geo_accessions"] ? "<li ${style}>NCBI GEO (Edgar et al. 2002)</li>" : "",
             params["skip_id_mapping"] ? "" : "<li ${style}>g:Profiler (Reimand et al. 2007)</li>",
-            params["normalisation_method"] == "tpm" && !params["gff"] && !params["gene_length"] ? "<li ${style}>Ensembl (Yates et al. 2026)</li>" : "",
+            "<li ${style}>Ensembl (Yates et al. 2026)</li>",
             "<li ${style}>Scikit-learn (Pedregosa et al. 2011)</li>",
             "<li ${style}>NormFinder (Andersen et al. 2004)</li>",
-            params["skip_genorm"] ? "" : "<li ${style}>GeNorm (Vandesompele et al. 2002)</li>",
+            "<li ${style}>GeNorm (Vandesompele et al. 2002)</li>",
             "<li ${style}>MultiQC (Ewels et al. 2016)</li>"
         ].join(' ').trim()
 
@@ -314,10 +326,11 @@ def toolBibliographyText() {
             "<li>Papatheodorou, I., Fonseca, N. A., Keays, M., Tang, Y. A., Barrera, E., Bazant, W., Burke, M., Füllgrabe, A., Fuentes, A. M.-P., George, N., Huerta, L., Koskinen, S., Mohammed, S., Geniza, M., Preece, J., Jaiswal, P., Jarnuczak, A. F., Huber, W., Stegle, O., Vizcaino, J. A., Brazma, A., & Petryszak, R. (2018). Expression Atlas: Gene and protein expression across multiple studies and organisms. Nucleic Acids Research, 46(D1), D246–D251. https://doi.org/10.1093/nar/gkx1158</li>",
             params["fetch_geo_accessions"] ? "<li><Edgar, R., Domrachev, M., & Lash, A. E. (2002). Gene Expression Omnibus: NCBI gene expression and hybridization array data repository. Nucleic Acids Research, 30(1), 207–210. https://doi.org/10.1093/nar/30.1.207</li>" : "",
             params["skip_id_mapping"] ? "" : "<li>Reimand, J., Kull, M., Peterson, H., Hansen, J., & Vilo, J. (2007). g:Profiler—A web-based toolset for functional profiling of gene lists from large-scale experiments. Nucleic Acids Research, 35(suppl_2), W193–W200. https://doi.org/10.1093/nar/gkm226</li>",
-            params["normalisation_method"] == "tpm" && !params["gff"] && !params["gene_length"] ? "<li>Yates, A. D., Austine-Orimoloye, O., Azov, A. G., Barba, M., Barnes, I., Barrera-Enriquez, V. P., Becker, A., Bennett, R., Berry, A., Bhai, J., Bhurji, S. K., Branco Lins, P. R., Brooks, L., Budhanuru Ramaraju, S., Campbell, L. I., Carbajo Martinez, M., Carpenter, J., Charkhchi, M., Cortes, L. A., … Finn, R. D. (2026). Ensembl 2026. Nucleic Acids Research, 54(D1), D1053–D1060. https://doi.org/10.1093/nar/gkaf1239</li>" : "",
+            "<li>Yates, A. D., Austine-Orimoloye, O., Azov, A. G., Barba, M., Barnes, I., Barrera-Enriquez, V. P., Becker, A., Bennett, R., Berry, A., Bhai, J., Bhurji, S. K., Branco Lins, P. R., Brooks, L., Budhanuru Ramaraju, S., Campbell, L. I., Carbajo Martinez, M., Carpenter, J., Charkhchi, M., Cortes, L. A., … Finn, R. D. (2026). Ensembl 2026. Nucleic Acids Research, 54(D1), D1053–D1060. https://doi.org/10.1093/nar/gkaf1239</li>",
+            "<li> Adamer, M. F., Brüningk S. C., Tejada-Arranz A., Estermann F., Basler M., Borgwardt K. (2022). reComBat: batch-effect removal in large-scale multi-source gene-expression data integration. Bioinformatics Advances, Volume 2, Issue 1, 2022, vbac071. https://doi.org/10.1093/bioadv/vbac071</li>",
             "<li>Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., & Duchesnay, É. (2011). Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research, 12(85), 2825–2830.</li>",
             "<li>Andersen, C. L., Jensen, J. L., & Ørntoft, T. F. (2004). Normalization of Real-Time Quantitative Reverse Transcription-PCR Data: A Model-Based Variance Estimation Approach to Identify Genes Suited for Normalization, Applied to Bladder and Colon Cancer Data Sets. Cancer Research, 64(15), 5245–5250. https://doi.org/10.1158/0008-5472.CAN-04-0496</li>",
-            params["skip_genorm"] ? "" : "<li>Vandesompele, J., De Preter, K., Pattyn, F., Poppe, B., Van Roy, N., De Paepe, A., & Speleman, F. (2002). Accurate normalization of real-time quantitative RT-PCR data by geometric averaging of multiple internal control genes. Genome Biology, 3(7), research0034.1. https://doi.org/10.1186/gb-2002-3-7-research0034</li>",
+            "<li>Vandesompele, J., De Preter, K., Pattyn, F., Poppe, B., Van Roy, N., De Paepe, A., & Speleman, F. (2002). Accurate normalization of real-time quantitative RT-PCR data by geometric averaging of multiple internal control genes. Genome Biology, 3(7), research0034.1. https://doi.org/10.1186/gb-2002-3-7-research0034</li>",
             "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: /10.1093/bioinformatics/btw354</li>"
         ].join(' ').trim()
 
@@ -465,6 +478,34 @@ def checkCounts(ch_counts, fetch_geo_accessions) {
 
 /*
 ========================================================================================
+    MERGE DESIGNS
+========================================================================================
+*/
+
+def mergeDesign(ch_datasets, output_dir, filename) {
+    return ch_datasets
+                .flatMap {
+                    meta, file -> // extracts design file and adds batch column whenever missing (for custom datasets)
+                        def design_content = meta.design.splitCsv( header: true )
+                        // if there is no batch, it is custom data
+                        design_content.collect { row ->
+                            row.batch = row.batch ?: "custom_${meta.dataset}"
+                            return row
+                        }
+                }
+                .collectFile(
+                    name: filename,
+                    seed: "batch,condition,sample",
+                    newLine: true,
+                    sort: true,
+                    storeDir: output_dir
+                ) {
+                    item -> "${item.batch},${item.condition},${item.sample}"
+                }
+}
+
+/*
+========================================================================================
     FUNCTION FOR FORMATING OUTPUT FOLDERS
 ========================================================================================
 */
@@ -472,5 +513,5 @@ def checkCounts(ch_counts, fetch_geo_accessions) {
 def getOutputFolder(meta, subfolder) {
     def normalised_status = meta.normalised ? "normalised" : "raw"
     def subfoldername = subfolder ? "${subfolder}/" : ""
-    return "datasets/${meta.platform}/${normalised_status}/${meta.dataset}/${subfoldername}"
+    return "individual_datasets/${meta.platform}/${normalised_status}/${meta.dataset}/${subfoldername}"
 }

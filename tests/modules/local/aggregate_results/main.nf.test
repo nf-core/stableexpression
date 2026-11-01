@@ -5,52 +5,21 @@ nextflow_process {
     process "AGGREGATE_RESULTS"
     tag "aggregate_results"
 
-    test("Without microarray") {
+    test("Without targets") {
 
         when {
             process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = [
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.parquet', checkIfExists: true)
                 ]
-                input[2] = [ file( '$projectDir/tests/test_data/modules/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true) ]
-                input[3] = []
-                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
-                input[5] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
-                input[6] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
-                """
-            }
-        }
-
-        then {
-            assertAll(
-                { assert process.success },
-                { assert snapshot(process.out).match() }
-            )
-        }
-
-    }
-
-    test("With microarray") {
-
-        when {
-            process {
-                """
-                input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = [
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
-                ]
-                input[2] = [
-                    file( '$projectDir/tests/test_data/modules/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/modules/aggregate_results/microarray_stats_all_genes.csv', checkIfExists: true)
-                ]
-                input[3] = []
-                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
-                input[5] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
-                input[6] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
+                input[2] = []
+                input[3] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
+                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
+                input[6] = 10
                 """
             }
         }
@@ -71,17 +40,14 @@ nextflow_process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = [
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.parquet', checkIfExists: true)
                 ]
-                input[2] = [
-                    file( '$projectDir/tests/test_data/modules/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/modules/aggregate_results/microarray_stats_all_genes.csv', checkIfExists: true)
-                ]
-                input[3] = ["ENSRNA049454747", "ENSRNA049434246"]
-                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
-                input[5] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
-                input[6] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
+                input[2] = ["ENSRNA049454747", "ENSRNA049434246"]
+                input[3] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
+                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
+                input[6] = 1
                 """
             }
         }
@@ -95,24 +61,21 @@ nextflow_process {
 
     }
 
-    test("One invalid target gene") {
+    test("One invalid target gene - no metadata") {
 
         when {
             process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 input[1] = [
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.csv', checkIfExists: true)
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.parquet', checkIfExists: true),
+                    file( '$projectDir/tests/test_data/modules/base_statistics/output/section_2.stats_with_scores.parquet', checkIfExists: true)
                 ]
-                input[2] = [
-                    file( '$projectDir/tests/test_data/modules/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true),
-                    file( '$projectDir/tests/test_data/modules/aggregate_results/microarray_stats_all_genes.csv', checkIfExists: true)
-                ]
-                input[3] = ["ENSRNA049454747", "UNKNOWNGENEID1234"]
-                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
-                input[5] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
-                input[6] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
+                input[2] = ["ENSRNA049454747", "UNKNOWNGENEID1234"]
+                input[3] = []
+                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
+                input[6] = 20
                 """
             }
         }
@@ -126,18 +89,43 @@ nextflow_process {
 
     }
 
-    test("One section") {
+    test("One section - no mapping") {
 
         when {
             process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
-                input[1] = file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.csv', checkIfExists: true)
-                input[2] = [ file( '$projectDir/tests/test_data/modules/aggregate_results/rnaseq_stats_all_genes.csv', checkIfExists: true) ]
-                input[3] = []
-                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
-                input[5] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
-                input[6] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.parquet', checkIfExists: true)
+                input[2] = []
+                input[3] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
+                input[4] = []
+                input[5] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
+                input[6] = 10
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("No genes to plot") {
+
+        when {
+            process {
+                """
+                input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
+                input[1] = file( '$projectDir/tests/test_data/modules/base_statistics/output/section_1.stats_with_scores.parquet', checkIfExists: true)
+                input[2] = []
+                input[3] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
+                input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
+                input[5] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
+                input[6] = 0
                 """
             }
         }

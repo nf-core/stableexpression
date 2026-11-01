@@ -1,9 +1,9 @@
 nextflow_process {
 
-    name "Test Process FILTER_AND_RENAME_GENES"
-    script "modules/local/filter_and_rename_genes/main.nf"
-    process "FILTER_AND_RENAME_GENES"
-    tag "filter_and_rename_genes"
+    name "Test Process FILTER_RENAME_GENE_IDS"
+    script "modules/local/filter_rename_gene_ids/main.nf"
+    process "FILTER_RENAME_GENE_IDS"
+    tag "filter_rename_gene_ids"
 
     test("Map Ensembl IDs") {
 

@@ -57,6 +57,8 @@ def detect_separator(file: Path, candidates: list[str]) -> str:
         if n_cols > best_score:
             best_score = n_cols
             best_sep = sep
+    if best_sep is None:
+        raise ValueError("No separator found among candidates")
     return best_sep
 
 
@@ -94,6 +96,10 @@ def get_nb_rows(lf: pl.LazyFrame):
     return lf.select(pl.len()).collect().item()
 
 
+def get_count_columns(lf: pl.LazyFrame) -> list[str]:
+    return [col for col in lf.select(pl.exclude(config.GENE_ID_COLNAME)).collect_schema().names()]
+
+
 def parse_count_table(file: Path):
     df = parse_table(file)
     first_col = df.columns[0]
@@ -114,12 +120,16 @@ def compute_log2(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def export_parquet(df: pl.DataFrame, outfilename: str):
+def export_parquet(
+    df: pl.DataFrame,
+    outfilename: str,
+    n_digits: int = config.NB_DECIMAL_DIGITS
+):
     logger.info(f"Exporting processed counts to: {outfilename}")
     # round all float columns to avoid inconsistencies during subsequent computations
-    # cast float columns to Float32 to fix the
+    # cast float columns to Float32 to fix this
     df.with_columns(
-        cs.float().round(config.NB_DECIMAL_DIGITS).cast(pl.Float32)
+        cs.float().round(n_digits).cast(pl.Float32)
     ).write_parquet(outfilename)
 
 
@@ -141,3 +151,20 @@ def sink_csv_with_floats(
     lf.with_columns(
         cs.float().round(float_precision).cast(pl.Float32)
     ).sink_csv(outfilename, float_precision=float_precision)
+
+
+def zscore_to_unit(x: pl.Series, clip: float = 3.0) -> pl.Series:
+    """
+    Convert a series to unit scale using zscore.
+    First compute zscore, then clip upper values to clip * <initial_std>,
+    add the minimum value to shift the range to [0, clip * <initial_std>],
+    then divide by clip * <initial_std> to get a range of [0, 1].
+    This ensures that data on the left side on the curve stay around 0, while extreme values on the right side are clipped.
+    The final division by clip ensures that the range corresponds to the structure of the data.
+    We do not force the max value to be 1, because we want to preserve the structure of the data.
+    """
+    mean = x.drop_nans().mean()
+    std = x.drop_nans().std(ddof=0)
+    z_scaled = (x - mean) / std
+    z_scaled_clipped_upper_positive = z_scaled.clip(upper_bound=clip) - z_scaled.min()
+    return z_scaled_clipped_upper_positive / clip

@@ -1,0 +1,43 @@
+{
+    "Should not fail": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "section_1.m_measures.parquet:md5,6925161e7ce62b26b0aad718898600c6"
+                    ]
+                ],
+                "1": [
+                    [
+                        "GENORM",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "GENORM",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "m_measures": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "section_1.m_measures.parquet:md5,6925161e7ce62b26b0aad718898600c6"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-31T13:53:29.447122093",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    }
+}

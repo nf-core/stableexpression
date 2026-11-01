@@ -11,11 +11,11 @@ ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME = (
 )
 STANDARD_DEVIATION_COLNAME = "standard_deviation"
 STABILITY_SCORE_COLNAME = "stability_score"
+GLOBAL_STABILITY_SCORE_COLNAME = "global_stability_score"
 MEAN_COLNAME = "mean"
 MEDIAN_COLNAME = "median"
 MAD_COLNAME = "median_absolute_deviation"
-EXPRESSION_LEVEL_STATUS_COLNAME = "expression_level_status"
-EXPRESSION_LEVEL_QUANTILE_INTERVAL_COLNAME = "expression_level_quantile_interval"
+EXPRESSION_LEVEL_QUANTILE_COLNAME = "expression_level_quantile"
 RATIO_NULLS_COLNAME = "ratio_nulls_in_all_samples"
 RATIO_NULLS_VALID_SAMPLES_COLNAME = "ratio_nulls_in_valid_samples"
 RATIO_ZEROS_COLNAME = "ratio_zeros"
@@ -43,3 +43,6 @@ RATIOS_STD_COLNAME = "ratios_stds"
 
 NB_DECIMAL_DIGITS = 8
 DEFAULT_CSV_FLOAT_PRECISION = 6
+
+# quantile intervals
+NB_EXPRESSION_QUANTILES = 100

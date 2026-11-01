@@ -1,0 +1,84 @@
+{
+    "With Genorm": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "null.section_1.stats_with_scores.parquet:md5,6e76e6671c1932c9497bd9b16756ef97"
+                    ]
+                ],
+                "1": [
+                    [
+                        "PLATFORM_STABILITY_SCORE",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "PLATFORM_STABILITY_SCORE",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats_with_stability_scores": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "null.section_1.stats_with_scores.parquet:md5,6e76e6671c1932c9497bd9b16756ef97"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-31T14:48:30.761798001",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    },
+    "Without Genorm": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "null.section_1.stats_with_scores.parquet:md5,76d3b07aa56f81af9808470a46b49e9e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "PLATFORM_STABILITY_SCORE",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "PLATFORM_STABILITY_SCORE",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats_with_stability_scores": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "null.section_1.stats_with_scores.parquet:md5,76d3b07aa56f81af9808470a46b49e9e"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-31T14:48:40.331732095",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    }
+}

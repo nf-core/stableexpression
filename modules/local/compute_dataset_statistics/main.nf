@@ -18,7 +18,6 @@ process COMPUTE_DATASET_STATISTICS {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),       topic: versions
 
     script:
-    def prefix = task.ext.prefix ?: "${meta.dataset}"
     """
     compute_dataset_statistics.py \\
         --counts $count_file

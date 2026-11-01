@@ -31,29 +31,6 @@ class DataManager:
         ]
         return stat_df.select(cols_to_select)
 
-    """
-    def get_samples_grouped_by_dataset(self) -> list[dict]:
-
-        samples_grouped_by_dataset = []
-
-        design_file = f"{config.DATA_FOLDER}/{config.ALL_DESIGNS_FILENAME}"
-        design_df = pd.read_csv(design_file)
-
-        for group, samples in design_df.groupby(["batch", "condition"])["sample"]:
-            batch, condition = group  # unpacking
-            batch_condition_samples_dict = {
-                "group": f"Dataset: {batch} || Condition: {condition}",
-                "items": [
-                    {"value": sample, "label": sample}
-                    for sample in samples.to_list()
-                    if sample in samples_in_count_data
-                ],
-            }
-            samples_grouped_by_dataset.append(batch_condition_samples_dict)
-
-        return samples_grouped_by_dataset
-    """
-
     def get_sorted_genes(self) -> list[str]:
         return (
             self.all_genes_stat_df.sort(

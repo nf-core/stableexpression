@@ -19,36 +19,39 @@
                     "pandas": "2.3.3",
                     "python": "3.13.7"
                 },
-                "COMPUTE_CPM": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
                 "COMPUTE_GENE_STATISTICS": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "COMPUTE_STABILITY_SCORES": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
+                "COMPUTE_GENE_TRANSCRIPT_LENGTHS": {
+                    "pandas": "2.3.3",
+                    "python": "3.13.7"
                 },
                 "DASH_APP": {
-                    "python": "3.14.3",
                     "dash": "3.3.0",
+                    "dash-ag-grid": "32.3.2",
                     "dash-extensions": "2.0.4",
                     "dash-mantine-components": "2.4.0",
-                    "dash-ag-grid": "32.3.2",
-                    "polars": "1.39.2",
                     "pandas": "2.3.3",
+                    "polars": "1.39.2",
                     "pyarrow": "23.0.1",
+                    "python": "3.14.3",
                     "scipy": "1.17.1"
                 },
-                "DESCRIPTIVE_STATISTICS": {
-                    "polars": "1.37.1",
-                    "python": "3.12.8"
-                },
-                "DETECT_RARE_GENES": {
+                "DETECT_RARE_GENE_IDS": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
+                },
+                "DOWNLOAD_GENOME_ANNOTATION": {
+                    "bs4": "4.14.3",
+                    "httpx": "0.28.1",
+                    "pandas": "3.0.1",
+                    "python": "3.14.3",
+                    "tqdm": "4.67.3"
+                },
+                "EDGER_LOG2": {
+                    "R": "4.5.3 (2026-03-11)",
+                    "edgeR": "4.8.2"
                 },
                 "EXPRESSION_ATLAS": {
                     "R": "4.5.3 (2026-03-11)",
@@ -62,39 +65,27 @@
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "FILTER_AND_RENAME_GENES": {
+                "FILTER_GENES": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "FILTER_OUT_SAMPLES_WITH_TOO_MANY_MISSING_VALUES": {
+                "FILTER_RENAME_GENE_IDS": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS": {
+                "FILTER_SAMPLES": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "GENORM_COMPUTE_M_MEASURE": {
-                    "polars": "1.41.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_CROSS_JOIN": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_EXPRESSION_RATIO": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_MAKE_CHUNKS": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_RATIO_STANDARD_VARIATION": {
+                "GENORM": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
                 "GET_CANDIDATE_GENES": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "GLOBAL_STABILITY_SCORE": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
@@ -104,9 +95,18 @@
                     "python": "3.14.3"
                 },
                 "IMPUTE_MISSING_VALUES": {
+                    "joblib": "1.6.0",
+                    "polars": "1.41.2",
+                    "python": "3.14.7",
+                    "scikit-learn": "1.9.1"
+                },
+                "MAKE_SECTIONS": {
                     "polars": "1.39.2",
-                    "python": "3.14.3",
-                    "scikit-learn": "1.8.0"
+                    "python": "3.14.3"
+                },
+                "MERGE_BY_PLATFORM": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
                 },
                 "MERGE_COUNTS": {
                     "polars": "1.39.2",
@@ -119,10 +119,30 @@
                     "python": "3.14.3",
                     "tqdm": "4.67.3"
                 },
-                "QUANTILE_NORMALISATION": {
+                "PLATFORM_STABILITY_SCORE": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "QUANTILE": {
                     "polars": "1.39.2",
                     "python": "3.14.3",
                     "scikit-learn": "1.8.0"
+                },
+                "REMERGE_BY_PLATFORM": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "RPK": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "SEPARATE_COUNTS": {
+                    "polars": "1.44.2",
+                    "python": "3.14.7"
+                },
+                "STATISTICS": {
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
                 },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.1.0"
@@ -132,30 +152,39 @@
                 "accessions",
                 "accessions/expression_atlas",
                 "accessions/expression_atlas/accessions.txt",
-                "datasets",
-                "datasets/rnaseq",
-                "datasets/rnaseq/raw",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/0.downloaded/E_MTAB_552_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/1.id_filtered_renamed/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/2.samples_filtered",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/2.samples_filtered/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/3.cpm_normalised",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/3.cpm_normalised/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/4.quantile_normalised",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/4.quantile_normalised/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet",
-                "datasets/rnaseq/raw/E_MTAB_552_rnaseq/E_MTAB_552_rnaseq.design.csv",
+                "annotation",
+                "annotation/gene_transcript_lengths.csv",
+                "annotation/selected",
+                "annotation/selected/Solanum_tuberosum.SolTub_3.0.63.gff3.gz",
+                "design",
+                "design/nb_samples_per_platform.csv",
+                "design/rnaseq.whole_design.csv",
                 "errors",
+                "errors/renaming_failure_reasons.tsv",
                 "id_mapping",
                 "id_mapping/global_gene_id_mapping.csv",
                 "id_mapping/global_gene_metadata.csv",
                 "id_mapping/valid_gene_ids.txt",
+                "individual_datasets",
+                "individual_datasets/rnaseq",
+                "individual_datasets/rnaseq/raw",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/0.downloaded",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/0.downloaded/E_GEOD_34655_rnaseq.rnaseq.raw.counts.csv",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/E_GEOD_34655_rnaseq.design.csv",
+                "individual_datasets/rnaseq/raw/E_MTAB_552_rnaseq",
+                "individual_datasets/rnaseq/raw/E_MTAB_552_rnaseq/0.downloaded",
+                "individual_datasets/rnaseq/raw/E_MTAB_552_rnaseq/0.downloaded/E_MTAB_552_rnaseq.rnaseq.raw.counts.csv",
+                "individual_datasets/rnaseq/raw/E_MTAB_552_rnaseq/1.id_filtered_renamed",
+                "individual_datasets/rnaseq/raw/E_MTAB_552_rnaseq/1.id_filtered_renamed/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
+                "individual_datasets/rnaseq/raw/E_MTAB_552_rnaseq/2.samples_filtered",
+                "individual_datasets/rnaseq/raw/E_MTAB_552_rnaseq/2.samples_filtered/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet",
+                "individual_datasets/rnaseq/raw/E_MTAB_552_rnaseq/3.normalised",
+                "individual_datasets/rnaseq/raw/E_MTAB_552_rnaseq/3.normalised/E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.rpk.edger_log2.parquet",
+                "individual_datasets/rnaseq/raw/E_MTAB_552_rnaseq/E_MTAB_552_rnaseq.design.csv",
                 "merged_data",
-                "merged_data/all_counts.imputed.parquet",
-                "merged_data/all_counts.parquet",
-                "merged_data/whole_design.csv",
+                "merged_data/rnaseq.imputed.parquet",
+                "merged_data/rnaseq.merged.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "reporting",
@@ -165,9 +194,8 @@
                 "reporting/dash_app/assets",
                 "reporting/dash_app/assets/style.css",
                 "reporting/dash_app/data",
-                "reporting/dash_app/data/all_counts.imputed.parquet",
+                "reporting/dash_app/data/all.merged.parquet",
                 "reporting/dash_app/data/all_genes_summary.csv",
-                "reporting/dash_app/data/whole_design.csv",
                 "reporting/dash_app/environment.yml",
                 "reporting/dash_app/src",
                 "reporting/dash_app/src/callbacks",
@@ -197,42 +225,42 @@
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
                 "statistics/skewness.csv",
-                "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
             [
                 "accessions.txt:md5,e38a0aaf5191ba5f94cb7a96b8d30aa7",
-                "E_MTAB_552_rnaseq.rnaseq.raw.counts.csv:md5,830f50b60b17b62f9ca2f6a163a2879f",
-                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,92174ad8c2424ef81102d6aca083b979",
-                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,92174ad8c2424ef81102d6aca083b979",
-                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.parquet:md5,a27eaf9a3a4c869e401d7dd11da59261",
-                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.cpm.quant_norm.parquet:md5,fe057dde03876b3f64d8515fdf021e40",
-                "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c",
+                "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39",
+                "Solanum_tuberosum.SolTub_3.0.63.gff3.gz:md5,2cd34d7db3d162f8fae7bf82d56ff744",
+                "nb_samples_per_platform.csv:md5,72550f5f47ea26ba518e5791dfc79ce4",
+                "rnaseq.whole_design.csv:md5,eb4519bb6d76c2b393e37b2251bcf089",
+                "renaming_failure_reasons.tsv:md5,79bd4e5646ed50ece19369d7a946123e",
                 "global_gene_id_mapping.csv:md5,a86823539deb80c0aa44378d3078969d",
                 "global_gene_metadata.csv:md5,e33e0ed63a3dec26bc95fe422f02844c",
                 "valid_gene_ids.txt:md5,81bb2277904f2e0ff6118ea0bc696af9",
-                "all_counts.imputed.parquet:md5,d61f45a28a4897a36e37588e324d40ba",
-                "all_counts.parquet:md5,fe057dde03876b3f64d8515fdf021e40",
-                "whole_design.csv:md5,eb4519bb6d76c2b393e37b2251bcf089",
-                "all_genes_summary.csv:md5,1b7fe77668345209744a8c33b8267d2a",
+                "E_GEOD_34655_rnaseq.rnaseq.raw.counts.csv:md5,a59a384f230287af1acb2daefdc98356",
+                "E_GEOD_34655_rnaseq.design.csv:md5,67e793cbd23c47e7fc3c0d8c286cf37a",
+                "E_MTAB_552_rnaseq.rnaseq.raw.counts.csv:md5,830f50b60b17b62f9ca2f6a163a2879f",
+                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,92174ad8c2424ef81102d6aca083b979",
+                "E_MTAB_552_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet:md5,92174ad8c2424ef81102d6aca083b979",
+                "E_MTAB_552_rnaseq.design.csv:md5,b81490696f638e90c1cf14236bb0c08c",
+                "rnaseq.imputed.parquet:md5,50a38c6b62214e84cb6aadfc653d9781",
+                "rnaseq.merged.parquet:md5,a12b9c184dbda1c3069934ca7cef3a42",
+                "all_genes_summary.csv:md5,05945c93a6860045773d67c34278ea62",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,d61f45a28a4897a36e37588e324d40ba",
-                "all_genes_summary.csv:md5,1b7fe77668345209744a8c33b8267d2a",
-                "whole_design.csv:md5,eb4519bb6d76c2b393e37b2251bcf089",
+                "all.merged.parquet:md5,a12b9c184dbda1c3069934ca7cef3a42",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
-                "id_mapping_stats.csv:md5,e1da683aacc11fbf42e59eb6b02d8e82",
+                "id_mapping_stats.csv:md5,1f8a4c43b30d101abc02245809e2396d",
                 "missing_values_filter_stats.csv:md5,70d91c8a7e03ee89edc0d165996d6ccc",
                 "ratio_nulls.csv:md5,d573479b5249c7a6431800e2829281ea",
                 "ratio_nulls_per_sample.csv:md5,45208d3909e1bef1e80fab995c7cebd7",
                 "ratio_zeros.csv:md5,0f15f8124e542e7e5d8504352422626f",
-                "skewness.csv:md5,3bd34c5a5eeb65f2716e884d327f4e6d",
-                "zero_values_filter_stats.csv:md5,70d91c8a7e03ee89edc0d165996d6ccc"
+                "skewness.csv:md5,74b1a511e3a0438a04c5c894260274d8"
             ]
         ],
-        "timestamp": "2026-09-23T23:31:27.520806921",
+        "timestamp": "2026-10-31T10:54:32.400506037",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.4"
         }
     },
     "-profile test_datasets_dsim": {
@@ -240,30 +268,28 @@
             [
                 "annotation",
                 "annotation/gene_transcript_lengths.csv",
-                "datasets",
-                "datasets/rnaseq",
-                "datasets/rnaseq/raw",
-                "datasets/rnaseq/raw/R1_001_gene.counts.csv",
-                "datasets/rnaseq/raw/R1_001_gene.counts.csv/2.samples_filtered",
-                "datasets/rnaseq/raw/R1_001_gene.counts.csv/2.samples_filtered/R1_001_gene.counts.csv.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/R1_001_gene.counts.csv/3.tpm_normalised",
-                "datasets/rnaseq/raw/R1_001_gene.counts.csv/3.tpm_normalised/R1_001_gene.counts.csv.zeros_filtered.nulls_filtered.tpm.parquet",
-                "datasets/rnaseq/raw/R1_001_gene.counts.csv/4.quantile_normalised",
-                "datasets/rnaseq/raw/R1_001_gene.counts.csv/4.quantile_normalised/R1_001_gene.counts.csv.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv",
-                "datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv/2.samples_filtered",
-                "datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv/2.samples_filtered/count_matrix_AutosomeSup.formated.csv.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv/3.tpm_normalised",
-                "datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv/3.tpm_normalised/count_matrix_AutosomeSup.formated.csv.zeros_filtered.nulls_filtered.tpm.parquet",
-                "datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv/4.quantile_normalised",
-                "datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv/4.quantile_normalised/count_matrix_AutosomeSup.formated.csv.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "design",
+                "design/nb_samples_per_platform.csv",
+                "design/rnaseq.whole_design.csv",
                 "errors",
                 "id_mapping",
                 "id_mapping/unique_gene_ids.txt",
+                "individual_datasets",
+                "individual_datasets/rnaseq",
+                "individual_datasets/rnaseq/raw",
+                "individual_datasets/rnaseq/raw/R1_001_gene.counts.csv",
+                "individual_datasets/rnaseq/raw/R1_001_gene.counts.csv/2.samples_filtered",
+                "individual_datasets/rnaseq/raw/R1_001_gene.counts.csv/2.samples_filtered/R1_001_gene.counts.csv.filtered.parquet",
+                "individual_datasets/rnaseq/raw/R1_001_gene.counts.csv/3.normalised",
+                "individual_datasets/rnaseq/raw/R1_001_gene.counts.csv/3.normalised/R1_001_gene.counts.csv.filtered.rpk.edger_log2.parquet",
+                "individual_datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv",
+                "individual_datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv/2.samples_filtered",
+                "individual_datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv/2.samples_filtered/count_matrix_AutosomeSup.formated.csv.filtered.parquet",
+                "individual_datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv/3.normalised",
+                "individual_datasets/rnaseq/raw/count_matrix_AutosomeSup.formated.csv/3.normalised/count_matrix_AutosomeSup.formated.csv.filtered.rpk.edger_log2.parquet",
                 "merged_data",
-                "merged_data/all_counts.imputed.parquet",
-                "merged_data/all_counts.parquet",
-                "merged_data/whole_design.csv",
+                "merged_data/rnaseq.corrected.parquet",
+                "merged_data/rnaseq.imputed.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "reporting",
@@ -273,9 +299,8 @@
                 "reporting/dash_app/assets",
                 "reporting/dash_app/assets/style.css",
                 "reporting/dash_app/data",
-                "reporting/dash_app/data/all_counts.imputed.parquet",
+                "reporting/dash_app/data/all.merged.parquet",
                 "reporting/dash_app/data/all_genes_summary.csv",
-                "reporting/dash_app/data/whole_design.csv",
                 "reporting/dash_app/environment.yml",
                 "reporting/dash_app/src",
                 "reporting/dash_app/src/callbacks",
@@ -304,39 +329,32 @@
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
                 "statistics/skewness.csv",
-                "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
             [
                 "gene_transcript_lengths.csv:md5,f72d6af0bb3fe4472a8d134ef235586f",
-                "R1_001_gene.counts.csv.zeros_filtered.nulls_filtered.parquet:md5,eedf8d68f84c4c617964a791ebd1d01d",
-                "R1_001_gene.counts.csv.zeros_filtered.nulls_filtered.tpm.parquet:md5,b89f8485bcf0e92f2a9042e1fa427481",
-                "R1_001_gene.counts.csv.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,d7c80b09ad6c7f9d8c6055d92b2937fa",
-                "count_matrix_AutosomeSup.formated.csv.zeros_filtered.nulls_filtered.parquet:md5,f4fe0155c63f4165f4d67270c43955ea",
-                "count_matrix_AutosomeSup.formated.csv.zeros_filtered.nulls_filtered.tpm.parquet:md5,cae966f7dd43f15d75538ca9816f8802",
-                "count_matrix_AutosomeSup.formated.csv.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,9dbb3916d2a3c82b481975c13d45e428",
+                "nb_samples_per_platform.csv:md5,6cb95a04a2b0ff1d0c9b469a4bd5b4c4",
+                "rnaseq.whole_design.csv:md5,dcca152e11ae0f05de6a1f37d8a8fa64",
                 "unique_gene_ids.txt:md5,bb650be83e0d3f50b54dcb24405d9cfa",
-                "all_counts.imputed.parquet:md5,674b047c409b161909b6dfc88bebcf00",
-                "all_counts.parquet:md5,937a76e3949add72c3ade9d1f92be702",
-                "whole_design.csv:md5,dcca152e11ae0f05de6a1f37d8a8fa64",
-                "all_genes_summary.csv:md5,ed29b95e06633cf72547d3e2976f05d3",
+                "R1_001_gene.counts.csv.filtered.parquet:md5,eedf8d68f84c4c617964a791ebd1d01d",
+                "count_matrix_AutosomeSup.formated.csv.filtered.parquet:md5,f4fe0155c63f4165f4d67270c43955ea",
+                "rnaseq.corrected.parquet:md5,48403d0e997f34bd72023edebd5ee9f4",
+                "rnaseq.imputed.parquet:md5,7a461798df8eca7601f32b0beb4f2be5",
+                "all_genes_summary.csv:md5,6728604533a59d283d51ec4a9222a759",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,674b047c409b161909b6dfc88bebcf00",
-                "all_genes_summary.csv:md5,ed29b95e06633cf72547d3e2976f05d3",
-                "whole_design.csv:md5,dcca152e11ae0f05de6a1f37d8a8fa64",
+                "all.merged.parquet:md5,48403d0e997f34bd72023edebd5ee9f4",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "missing_values_filter_stats.csv:md5,116323a0cecd689b5db3610cce629531",
                 "ratio_nulls.csv:md5,98a31c9f237d9bb1e517bd99a3fee1e8",
                 "ratio_nulls_per_sample.csv:md5,7b67e050724f21ee7d1ee9eb22715bc2",
                 "ratio_zeros.csv:md5,9582ae61105397338c603e15a12666d1",
-                "skewness.csv:md5,9d559e6b34ee2e908fd662a0611a2f30",
-                "zero_values_filter_stats.csv:md5,116323a0cecd689b5db3610cce629531"
+                "skewness.csv:md5,ef335a74710692648c3d2ff604755afa"
             ]
         ],
-        "timestamp": "2026-09-23T20:21:26.462504381",
+        "timestamp": "2026-10-30T12:16:36.411680799",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.4"
         }
     },
     "-profile test_skip_id_mapping": {
@@ -344,35 +362,35 @@
             [
                 "annotation",
                 "annotation/gene_transcript_lengths.csv",
-                "datasets",
-                "datasets/microarray",
-                "datasets/microarray/normalised",
-                "datasets/microarray/normalised/microarray.normalised",
-                "datasets/microarray/normalised/microarray.normalised/2.samples_filtered",
-                "datasets/microarray/normalised/microarray.normalised/2.samples_filtered/microarray.normalised.zeros_filtered.nulls_filtered.parquet",
-                "datasets/microarray/normalised/microarray.normalised/3.tpm_normalised",
-                "datasets/microarray/normalised/microarray.normalised/3.tpm_normalised/microarray.normalised.zeros_filtered.nulls_filtered.parquet",
-                "datasets/microarray/normalised/microarray.normalised/4.quantile_normalised",
-                "datasets/microarray/normalised/microarray.normalised/4.quantile_normalised/microarray.normalised.zeros_filtered.nulls_filtered.quant_norm.parquet",
-                "datasets/rnaseq",
-                "datasets/rnaseq/raw",
-                "datasets/rnaseq/raw/rnaseq.raw",
-                "datasets/rnaseq/raw/rnaseq.raw/2.samples_filtered",
-                "datasets/rnaseq/raw/rnaseq.raw/2.samples_filtered/rnaseq.raw.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/rnaseq.raw/3.tpm_normalised",
-                "datasets/rnaseq/raw/rnaseq.raw/3.tpm_normalised/rnaseq.raw.zeros_filtered.nulls_filtered.tpm.parquet",
-                "datasets/rnaseq/raw/rnaseq.raw/4.quantile_normalised",
-                "datasets/rnaseq/raw/rnaseq.raw/4.quantile_normalised/rnaseq.raw.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "design",
+                "design/microarray.whole_design.csv",
+                "design/nb_samples_per_platform.csv",
+                "design/rnaseq.whole_design.csv",
                 "errors",
                 "id_mapping",
                 "id_mapping/unique_gene_ids.txt",
+                "individual_datasets",
+                "individual_datasets/microarray",
+                "individual_datasets/microarray/normalised",
+                "individual_datasets/microarray/normalised/microarray.normalised",
+                "individual_datasets/microarray/normalised/microarray.normalised/2.samples_filtered",
+                "individual_datasets/microarray/normalised/microarray.normalised/2.samples_filtered/microarray.normalised.filtered.parquet",
+                "individual_datasets/rnaseq",
+                "individual_datasets/rnaseq/raw",
+                "individual_datasets/rnaseq/raw/rnaseq.raw",
+                "individual_datasets/rnaseq/raw/rnaseq.raw/2.samples_filtered",
+                "individual_datasets/rnaseq/raw/rnaseq.raw/2.samples_filtered/rnaseq.raw.filtered.parquet",
+                "individual_datasets/rnaseq/raw/rnaseq.raw/3.normalised",
+                "individual_datasets/rnaseq/raw/rnaseq.raw/3.normalised/rnaseq.raw.filtered.rpk.edger_log2.parquet",
                 "merged_data",
-                "merged_data/all_counts.imputed.parquet",
-                "merged_data/all_counts.parquet",
-                "merged_data/whole_design.csv",
+                "merged_data/microarray.corrected.parquet",
+                "merged_data/microarray.imputed.parquet",
+                "merged_data/rnaseq.corrected.parquet",
+                "merged_data/rnaseq.imputed.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "reporting",
+                "reporting/all_genes_summary.csv",
                 "reporting/multiqc_report.html",
                 "statistics",
                 "statistics/missing_values_filter_stats.csv",
@@ -380,33 +398,32 @@
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
                 "statistics/skewness.csv",
-                "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
             [
                 "gene_transcript_lengths.csv:md5,217aa7c1e227ce2f78a905138d8e5b39",
-                "microarray.normalised.zeros_filtered.nulls_filtered.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
-                "microarray.normalised.zeros_filtered.nulls_filtered.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
-                "microarray.normalised.zeros_filtered.nulls_filtered.quant_norm.parquet:md5,362b17780fe521129f49a7e040beee64",
-                "rnaseq.raw.zeros_filtered.nulls_filtered.parquet:md5,311e3a1cac8b0219f3916eb187e123f2",
-                "rnaseq.raw.zeros_filtered.nulls_filtered.tpm.parquet:md5,cb6ac5b7a2e2917beae36fd77ec7c07f",
-                "rnaseq.raw.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,e6b853e4614ac4de5f4d00f657189355",
+                "microarray.whole_design.csv:md5,7ef6a60672414b14349dcf6b1ca10702",
+                "nb_samples_per_platform.csv:md5,891fa59756724d047942acc128c93a02",
+                "rnaseq.whole_design.csv:md5,d2a0b7c9debb2ae8ec31bd06deb17409",
                 "unique_gene_ids.txt:md5,831b47f91a0808802967aa0e53a25de9",
-                "all_counts.imputed.parquet:md5,d0bd9aaacf61dec405ce8597d9881f2d",
-                "all_counts.parquet:md5,c9c68c6ec9a467993d779cb5442500dd",
-                "whole_design.csv:md5,70d6c2673e619ca52d2774fb3e368382",
+                "microarray.normalised.filtered.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
+                "rnaseq.raw.filtered.parquet:md5,311e3a1cac8b0219f3916eb187e123f2",
+                "microarray.corrected.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
+                "microarray.imputed.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
+                "rnaseq.corrected.parquet:md5,08685307dbe4d6b9ac89b537b779efaa",
+                "rnaseq.imputed.parquet:md5,08685307dbe4d6b9ac89b537b779efaa",
+                "all_genes_summary.csv:md5,8c1c2ac9ad650b102a748bd31af3496f",
                 "missing_values_filter_stats.csv:md5,ebad5386e7c670ff04887eff67c8faae",
                 "ratio_nulls.csv:md5,ab65c49c9b8ba7e242f391438789e080",
                 "ratio_nulls_per_sample.csv:md5,5c2931cb8c5ecb27ffa9136628fc714c",
                 "ratio_zeros.csv:md5,1837a5a03a551fdb0a7bba2869157559",
-                "skewness.csv:md5,d5f2e94b7c172c5ddfe78e3e2feed3b3",
-                "zero_values_filter_stats.csv:md5,ebad5386e7c670ff04887eff67c8faae"
+                "skewness.csv:md5,8548072381ff658f8bad12cb0bce1f84"
             ]
         ],
-        "timestamp": "2026-06-30T16:11:43.917332407",
+        "timestamp": "2026-11-01T09:43:15.60393589",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.10.4"
         }
     },
     "-profile test_dataset_custom_mapping_and_gene_length": {
@@ -416,7 +433,7 @@
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "FILTER_AND_RENAME_GENES": {
+                "FILTER_RENAME_GENE_IDS": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
@@ -425,13 +442,13 @@
                 }
             },
             [
+                "design",
                 "errors",
                 "errors/renaming_failure_reasons.tsv",
                 "id_mapping",
                 "id_mapping/global_gene_id_mapping.csv",
                 "id_mapping/global_gene_metadata.csv",
                 "id_mapping/unique_gene_ids.txt",
-                "merged_data",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "reporting",
@@ -448,10 +465,10 @@
                 "id_mapping_stats.csv:md5,20bd1443c864cb013c97efc760465e9c"
             ]
         ],
-        "timestamp": "2026-06-30T16:12:14.451237957",
+        "timestamp": "2026-10-23T21:20:43.530885882",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.10.2"
         }
     },
     "-profile test": {
@@ -462,30 +479,30 @@
                 "accessions/expression_atlas/accessions.txt",
                 "annotation",
                 "annotation/gene_transcript_lengths.csv",
-                "datasets",
-                "datasets/rnaseq",
-                "datasets/rnaseq/raw",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/0.downloaded/E_ENAD_3_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/1.id_filtered_renamed/E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/2.samples_filtered",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/2.samples_filtered/E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/3.tpm_normalised",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/3.tpm_normalised/E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/4.quantile_normalised",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/4.quantile_normalised/E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "datasets/rnaseq/raw/E_ENAD_3_rnaseq/E_ENAD_3_rnaseq.design.csv",
+                "design",
+                "design/nb_samples_per_platform.csv",
+                "design/rnaseq.whole_design.csv",
                 "errors",
                 "id_mapping",
                 "id_mapping/global_gene_id_mapping.csv",
                 "id_mapping/global_gene_metadata.csv",
                 "id_mapping/valid_gene_ids.txt",
+                "individual_datasets",
+                "individual_datasets/rnaseq",
+                "individual_datasets/rnaseq/raw",
+                "individual_datasets/rnaseq/raw/E_ENAD_3_rnaseq",
+                "individual_datasets/rnaseq/raw/E_ENAD_3_rnaseq/0.downloaded",
+                "individual_datasets/rnaseq/raw/E_ENAD_3_rnaseq/0.downloaded/E_ENAD_3_rnaseq.rnaseq.raw.counts.csv",
+                "individual_datasets/rnaseq/raw/E_ENAD_3_rnaseq/1.id_filtered_renamed",
+                "individual_datasets/rnaseq/raw/E_ENAD_3_rnaseq/1.id_filtered_renamed/E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
+                "individual_datasets/rnaseq/raw/E_ENAD_3_rnaseq/2.samples_filtered",
+                "individual_datasets/rnaseq/raw/E_ENAD_3_rnaseq/2.samples_filtered/E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet",
+                "individual_datasets/rnaseq/raw/E_ENAD_3_rnaseq/3.normalised",
+                "individual_datasets/rnaseq/raw/E_ENAD_3_rnaseq/3.normalised/E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.rpk.edger_log2.parquet",
+                "individual_datasets/rnaseq/raw/E_ENAD_3_rnaseq/E_ENAD_3_rnaseq.design.csv",
                 "merged_data",
-                "merged_data/all_counts.imputed.parquet",
-                "merged_data/all_counts.parquet",
-                "merged_data/whole_design.csv",
+                "merged_data/rnaseq.corrected.parquet",
+                "merged_data/rnaseq.imputed.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "reporting",
@@ -495,9 +512,8 @@
                 "reporting/dash_app/assets",
                 "reporting/dash_app/assets/style.css",
                 "reporting/dash_app/data",
-                "reporting/dash_app/data/all_counts.imputed.parquet",
+                "reporting/dash_app/data/all.merged.parquet",
                 "reporting/dash_app/data/all_genes_summary.csv",
-                "reporting/dash_app/data/whole_design.csv",
                 "reporting/dash_app/environment.yml",
                 "reporting/dash_app/src",
                 "reporting/dash_app/src/callbacks",
@@ -527,43 +543,38 @@
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
                 "statistics/skewness.csv",
-                "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
             [
                 "accessions.txt:md5,c1a80aeb676be48beefb1df23a80da5b",
                 "gene_transcript_lengths.csv:md5,bfc9c380f930da1eae6460b64f080e7f",
-                "E_ENAD_3_rnaseq.rnaseq.raw.counts.csv:md5,856b851cb139c3ddef5883efe2d85cfe",
-                "E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,7e50c1e67c2995ec5fed2c46d5a940f3",
-                "E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,7e50c1e67c2995ec5fed2c46d5a940f3",
-                "E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,e365880a92a7ce281ca06f3dd64762e5",
-                "E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,10dc743c550de97d567ec85ea3c82157",
-                "E_ENAD_3_rnaseq.design.csv:md5,376b9275a5b04892372bdecd1e51738d",
+                "nb_samples_per_platform.csv:md5,9592b7f1b15eb39c6b84b9af53c23fd6",
+                "rnaseq.whole_design.csv:md5,e6b2a08b65fa02b470829a652593e161",
                 "global_gene_id_mapping.csv:md5,dddb3e3dfbd118a6152837df2160b3a8",
                 "global_gene_metadata.csv:md5,8a93b691384b34e7d2cc30781532f952",
                 "valid_gene_ids.txt:md5,6c0d50acffdb66024e8ec1a9a605fa98",
-                "all_counts.imputed.parquet:md5,e9b73fdeb3bf2ce8cdd7f1cc9ed1d88f",
-                "all_counts.parquet:md5,10dc743c550de97d567ec85ea3c82157",
-                "whole_design.csv:md5,e6b2a08b65fa02b470829a652593e161",
-                "all_genes_summary.csv:md5,b82ded5e0cc98bf449bf35707c77ee01",
+                "E_ENAD_3_rnaseq.rnaseq.raw.counts.csv:md5,856b851cb139c3ddef5883efe2d85cfe",
+                "E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,7e50c1e67c2995ec5fed2c46d5a940f3",
+                "E_ENAD_3_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet:md5,7e50c1e67c2995ec5fed2c46d5a940f3",
+                "E_ENAD_3_rnaseq.design.csv:md5,376b9275a5b04892372bdecd1e51738d",
+                "rnaseq.corrected.parquet:md5,6841c0869e5ea301c87a0127d6ff6de9",
+                "rnaseq.imputed.parquet:md5,6841c0869e5ea301c87a0127d6ff6de9",
+                "all_genes_summary.csv:md5,543be617915fcc40f7ef90bf2b59a9a5",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,e9b73fdeb3bf2ce8cdd7f1cc9ed1d88f",
-                "all_genes_summary.csv:md5,b82ded5e0cc98bf449bf35707c77ee01",
-                "whole_design.csv:md5,e6b2a08b65fa02b470829a652593e161",
+                "all.merged.parquet:md5,6841c0869e5ea301c87a0127d6ff6de9",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "id_mapping_stats.csv:md5,574b7a35bd7fb4bb0122e5c7742d2b64",
                 "missing_values_filter_stats.csv:md5,a6fdf3c5250dc46a43f79a9ec5a1355d",
                 "ratio_nulls.csv:md5,f9d04a18f447dc5df3076cd3cebec755",
                 "ratio_nulls_per_sample.csv:md5,9606b597f36ab94930be607b2207c88b",
                 "ratio_zeros.csv:md5,72926e3905e83dd22a5a2dc62aa98d1d",
-                "skewness.csv:md5,6655dc12173b1869abfaf7838ac73235",
-                "zero_values_filter_stats.csv:md5,a6fdf3c5250dc46a43f79a9ec5a1355d"
+                "skewness.csv:md5,f0a5eafba776c716373f026b9e8b9d6e"
             ]
         ],
-        "timestamp": "2026-09-23T19:39:57.704459647",
+        "timestamp": "2026-10-31T09:54:26.156733081",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.4"
         }
     },
     "-profile test_accessions_only": {
@@ -630,74 +641,53 @@
                     "pandas": "2.3.3",
                     "python": "3.13.7"
                 },
-                "COMPUTE_STABILITY_SCORES": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "COMPUTE_TPM": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
                 "DASH_APP": {
-                    "python": "3.14.3",
                     "dash": "3.3.0",
+                    "dash-ag-grid": "32.3.2",
                     "dash-extensions": "2.0.4",
                     "dash-mantine-components": "2.4.0",
-                    "dash-ag-grid": "32.3.2",
-                    "polars": "1.39.2",
                     "pandas": "2.3.3",
+                    "polars": "1.39.2",
                     "pyarrow": "23.0.1",
+                    "python": "3.14.3",
                     "scipy": "1.17.1"
                 },
-                "DESCRIPTIVE_STATISTICS": {
-                    "polars": "1.37.1",
-                    "python": "3.12.8"
-                },
-                "DETECT_RARE_GENES": {
+                "DETECT_RARE_GENE_IDS": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
+                "EDGER_LOG2": {
+                    "R": "4.5.3 (2026-03-11)",
+                    "edgeR": "4.8.2"
+                },
                 "EXPRESSION_ATLAS": {
-                   "R": "4.5.3 (2026-03-11)"
-
+                    "R": "4.5.3 (2026-03-11)"
                 },
                 "EXTRACT_GENE_IDS": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "FILTER_AND_RENAME_GENES": {
+                "FILTER_GENES": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "FILTER_OUT_SAMPLES_WITH_TOO_MANY_MISSING_VALUES": {
+                "FILTER_RENAME_GENE_IDS": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS": {
+                "FILTER_SAMPLES": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "GENORM_COMPUTE_M_MEASURE": {
-                    "polars": "1.41.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_CROSS_JOIN": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_EXPRESSION_RATIO": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_MAKE_CHUNKS": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_RATIO_STANDARD_VARIATION": {
+                "GENORM": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
                 "GET_CANDIDATE_GENES": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "GLOBAL_STABILITY_SCORE": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
@@ -707,9 +697,18 @@
                     "python": "3.14.3"
                 },
                 "IMPUTE_MISSING_VALUES": {
+                    "joblib": "1.6.0",
+                    "polars": "1.41.2",
+                    "python": "3.14.7",
+                    "scikit-learn": "1.9.1"
+                },
+                "MAKE_SECTIONS": {
                     "polars": "1.39.2",
-                    "python": "3.14.3",
-                    "scikit-learn": "1.8.0"
+                    "python": "3.14.3"
+                },
+                "MERGE_BY_PLATFORM": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
                 },
                 "MERGE_COUNTS": {
                     "polars": "1.39.2",
@@ -722,10 +721,22 @@
                     "python": "3.14.3",
                     "tqdm": "4.67.3"
                 },
-                "QUANTILE_NORMALISATION": {
+                "PLATFORM_STABILITY_SCORE": {
                     "polars": "1.39.2",
-                    "python": "3.14.3",
-                    "scikit-learn": "1.8.0"
+                    "python": "3.14.3"
+                },
+                "RECOMBAT": {
+                    "polars": "1.44.2",
+                    "python": "3.14.7",
+                    "scikit-learn": "1.9.1"
+                },
+                "RPK": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "STATISTICS": {
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
                 },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.1.0"
@@ -734,30 +745,30 @@
             [
                 "annotation",
                 "annotation/gene_transcript_lengths.csv",
-                "datasets",
-                "datasets/rnaseq",
-                "datasets/rnaseq/raw",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/0.downloaded/E_GEOD_51720_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/1.id_filtered_renamed/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/2.samples_filtered",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/2.samples_filtered/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/3.tpm_normalised",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/3.tpm_normalised/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/4.quantile_normalised",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/4.quantile_normalised/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "datasets/rnaseq/raw/E_GEOD_51720_rnaseq/E_GEOD_51720_rnaseq.design.csv",
+                "design",
+                "design/nb_samples_per_platform.csv",
+                "design/rnaseq.whole_design.csv",
                 "errors",
                 "id_mapping",
                 "id_mapping/global_gene_id_mapping.csv",
                 "id_mapping/global_gene_metadata.csv",
                 "id_mapping/valid_gene_ids.txt",
+                "individual_datasets",
+                "individual_datasets/rnaseq",
+                "individual_datasets/rnaseq/raw",
+                "individual_datasets/rnaseq/raw/E_GEOD_51720_rnaseq",
+                "individual_datasets/rnaseq/raw/E_GEOD_51720_rnaseq/0.downloaded",
+                "individual_datasets/rnaseq/raw/E_GEOD_51720_rnaseq/0.downloaded/E_GEOD_51720_rnaseq.rnaseq.raw.counts.csv",
+                "individual_datasets/rnaseq/raw/E_GEOD_51720_rnaseq/1.id_filtered_renamed",
+                "individual_datasets/rnaseq/raw/E_GEOD_51720_rnaseq/1.id_filtered_renamed/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
+                "individual_datasets/rnaseq/raw/E_GEOD_51720_rnaseq/2.samples_filtered",
+                "individual_datasets/rnaseq/raw/E_GEOD_51720_rnaseq/2.samples_filtered/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet",
+                "individual_datasets/rnaseq/raw/E_GEOD_51720_rnaseq/3.normalised",
+                "individual_datasets/rnaseq/raw/E_GEOD_51720_rnaseq/3.normalised/E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.rpk.edger_log2.parquet",
+                "individual_datasets/rnaseq/raw/E_GEOD_51720_rnaseq/E_GEOD_51720_rnaseq.design.csv",
                 "merged_data",
-                "merged_data/all_counts.imputed.parquet",
-                "merged_data/all_counts.parquet",
-                "merged_data/whole_design.csv",
+                "merged_data/rnaseq.corrected.parquet",
+                "merged_data/rnaseq.imputed.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "reporting",
@@ -767,9 +778,8 @@
                 "reporting/dash_app/assets",
                 "reporting/dash_app/assets/style.css",
                 "reporting/dash_app/data",
-                "reporting/dash_app/data/all_counts.imputed.parquet",
+                "reporting/dash_app/data/all.merged.parquet",
                 "reporting/dash_app/data/all_genes_summary.csv",
-                "reporting/dash_app/data/whole_design.csv",
                 "reporting/dash_app/environment.yml",
                 "reporting/dash_app/src",
                 "reporting/dash_app/src/callbacks",
@@ -799,42 +809,37 @@
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
                 "statistics/skewness.csv",
-                "statistics/zero_values_filter_stats.csv",
                 "warnings"
             ],
             [
                 "gene_transcript_lengths.csv:md5,06b4612031f4f300a6d67f36e7625492",
-                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.csv:md5,07cd448196fc2fea4663bd9705da2b98",
-                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,7dd50c27f72ec9c66b8f90b6552882b3",
-                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,f6403f08db9572cc93ec05452ad19011",
-                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,a93ee72b5c135fc447fd78c196c3373c",
-                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,1b03a6a65da5dd96d5d995b9138af5dc",
-                "E_GEOD_51720_rnaseq.design.csv:md5,80805afb29837b6fbb73a6aa6f3a461b",
+                "nb_samples_per_platform.csv:md5,0381a53ed959ed58854fba72ceeecbb6",
+                "rnaseq.whole_design.csv:md5,d3aa542c4ad07d0051a84482fe6cd81c",
                 "global_gene_id_mapping.csv:md5,42491ef436cce231258c0358e1af5745",
                 "global_gene_metadata.csv:md5,b35e20500269d4e6787ef1a3468f16bc",
                 "valid_gene_ids.txt:md5,31862f98e8ce0e5b751375c4f3554536",
-                "all_counts.imputed.parquet:md5,7c5456b1ceca821c29da213e2d8be7b9",
-                "all_counts.parquet:md5,1b03a6a65da5dd96d5d995b9138af5dc",
-                "whole_design.csv:md5,d3aa542c4ad07d0051a84482fe6cd81c",
-                "all_genes_summary.csv:md5,6d6efbdcc2a6cd38844cb4ff217f72e6",
+                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.csv:md5,07cd448196fc2fea4663bd9705da2b98",
+                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,7dd50c27f72ec9c66b8f90b6552882b3",
+                "E_GEOD_51720_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet:md5,f6403f08db9572cc93ec05452ad19011",
+                "E_GEOD_51720_rnaseq.design.csv:md5,80805afb29837b6fbb73a6aa6f3a461b",
+                "rnaseq.corrected.parquet:md5,2c622150fe381c547d671c4e4bd3fec2",
+                "rnaseq.imputed.parquet:md5,2c622150fe381c547d671c4e4bd3fec2",
+                "all_genes_summary.csv:md5,7e897215d6bd27f31fdc16d54d6a51c5",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,7c5456b1ceca821c29da213e2d8be7b9",
-                "all_genes_summary.csv:md5,6d6efbdcc2a6cd38844cb4ff217f72e6",
-                "whole_design.csv:md5,d3aa542c4ad07d0051a84482fe6cd81c",
+                "all.merged.parquet:md5,2c622150fe381c547d671c4e4bd3fec2",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "id_mapping_stats.csv:md5,cd17a5d4afa6b86a48adb03868d3073f",
-                "missing_values_filter_stats.csv:md5,cd1ab16f9c485f8e739a54344cde1aed",
-                "ratio_nulls.csv:md5,9c496b3b8c098a1bc17c6be7a87f2331",
-                "ratio_nulls_per_sample.csv:md5,9211cb6081071e8825119194faf6241f",
+                "missing_values_filter_stats.csv:md5,766d888e41179e8a785f634b3b606bc9",
+                "ratio_nulls.csv:md5,67b35471efdac2de109f77e2488f1f75",
+                "ratio_nulls_per_sample.csv:md5,ac2de876075af1057e41ecdf6f986e50",
                 "ratio_zeros.csv:md5,17b7bde6ca29e11bb1e28db6b8053add",
-                "skewness.csv:md5,2735b356380b9e9542b5076a6a34a9ab",
-                "zero_values_filter_stats.csv:md5,766d888e41179e8a785f634b3b606bc9"
+                "skewness.csv:md5,60ebdc7a28be81b07f411ce480f851d7"
             ]
         ],
-        "timestamp": "2026-09-23T23:22:33.751219573",
+        "timestamp": "2026-10-31T10:47:15.042233879",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.4"
         }
     },
     "-profile test_download_only": {
@@ -856,14 +861,14 @@
                 "accessions",
                 "accessions/expression_atlas",
                 "accessions/expression_atlas/accessions.txt",
-                "datasets",
-                "datasets/rnaseq",
-                "datasets/rnaseq/raw",
-                "datasets/rnaseq/raw/E_MTAB_5309_rnaseq",
-                "datasets/rnaseq/raw/E_MTAB_5309_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_MTAB_5309_rnaseq/0.downloaded/E_MTAB_5309_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_MTAB_5309_rnaseq/E_MTAB_5309_rnaseq.design.csv",
                 "errors",
+                "individual_datasets",
+                "individual_datasets/rnaseq",
+                "individual_datasets/rnaseq/raw",
+                "individual_datasets/rnaseq/raw/E_MTAB_5309_rnaseq",
+                "individual_datasets/rnaseq/raw/E_MTAB_5309_rnaseq/0.downloaded",
+                "individual_datasets/rnaseq/raw/E_MTAB_5309_rnaseq/0.downloaded/E_MTAB_5309_rnaseq.rnaseq.raw.counts.csv",
+                "individual_datasets/rnaseq/raw/E_MTAB_5309_rnaseq/E_MTAB_5309_rnaseq.design.csv",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "reporting",
@@ -877,10 +882,10 @@
                 "E_MTAB_5309_rnaseq.design.csv:md5,2556c1fd31b15eda7e4bbe042c83cc39"
             ]
         ],
-        "timestamp": "2026-06-30T16:02:32.237113893",
+        "timestamp": "2026-10-16T16:04:05.915995349",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.10.2"
         }
     },
     "-profile test_all_public_data_and_minimal_custom_dataset": {
@@ -893,34 +898,34 @@
                 "accessions/geo/accessions.txt",
                 "annotation",
                 "annotation/gene_transcript_lengths.csv",
-                "datasets",
-                "datasets/rnaseq",
-                "datasets/rnaseq/raw",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/0.downloaded",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/0.downloaded/E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/1.id_filtered_renamed/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/2.samples_filtered",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/2.samples_filtered/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/3.tpm_normalised",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/3.tpm_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/4.quantile_normalised",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/4.quantile_normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
-                "datasets/rnaseq/raw/E_MTAB_8187_rnaseq/E_MTAB_8187_rnaseq.design.csv",
-                "datasets/rnaseq/raw/beta_vulgaris.rnaseq.raw.counts",
-                "datasets/rnaseq/raw/beta_vulgaris.rnaseq.raw.counts/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/beta_vulgaris.rnaseq.raw.counts/1.id_filtered_renamed/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.parquet",
+                "design",
+                "design/nb_samples_per_platform.csv",
+                "design/rnaseq.whole_design.csv",
                 "errors",
                 "geo",
                 "id_mapping",
                 "id_mapping/global_gene_id_mapping.csv",
                 "id_mapping/global_gene_metadata.csv",
                 "id_mapping/valid_gene_ids.txt",
+                "individual_datasets",
+                "individual_datasets/rnaseq",
+                "individual_datasets/rnaseq/raw",
+                "individual_datasets/rnaseq/raw/E_MTAB_8187_rnaseq",
+                "individual_datasets/rnaseq/raw/E_MTAB_8187_rnaseq/0.downloaded",
+                "individual_datasets/rnaseq/raw/E_MTAB_8187_rnaseq/0.downloaded/E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv",
+                "individual_datasets/rnaseq/raw/E_MTAB_8187_rnaseq/1.id_filtered_renamed",
+                "individual_datasets/rnaseq/raw/E_MTAB_8187_rnaseq/1.id_filtered_renamed/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
+                "individual_datasets/rnaseq/raw/E_MTAB_8187_rnaseq/2.samples_filtered",
+                "individual_datasets/rnaseq/raw/E_MTAB_8187_rnaseq/2.samples_filtered/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet",
+                "individual_datasets/rnaseq/raw/E_MTAB_8187_rnaseq/3.normalised",
+                "individual_datasets/rnaseq/raw/E_MTAB_8187_rnaseq/3.normalised/E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.rpk.edger_log2.parquet",
+                "individual_datasets/rnaseq/raw/E_MTAB_8187_rnaseq/E_MTAB_8187_rnaseq.design.csv",
+                "individual_datasets/rnaseq/raw/beta_vulgaris.rnaseq.raw.counts",
+                "individual_datasets/rnaseq/raw/beta_vulgaris.rnaseq.raw.counts/1.id_filtered_renamed",
+                "individual_datasets/rnaseq/raw/beta_vulgaris.rnaseq.raw.counts/1.id_filtered_renamed/beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.parquet",
                 "merged_data",
-                "merged_data/all_counts.imputed.parquet",
-                "merged_data/all_counts.parquet",
-                "merged_data/whole_design.csv",
+                "merged_data/rnaseq.corrected.parquet",
+                "merged_data/rnaseq.imputed.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "reporting",
@@ -930,9 +935,8 @@
                 "reporting/dash_app/assets",
                 "reporting/dash_app/assets/style.css",
                 "reporting/dash_app/data",
-                "reporting/dash_app/data/all_counts.imputed.parquet",
+                "reporting/dash_app/data/all.merged.parquet",
                 "reporting/dash_app/data/all_genes_summary.csv",
-                "reporting/dash_app/data/whole_design.csv",
                 "reporting/dash_app/environment.yml",
                 "reporting/dash_app/src",
                 "reporting/dash_app/src/callbacks",
@@ -962,7 +966,6 @@
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
                 "statistics/skewness.csv",
-                "statistics/zero_values_filter_stats.csv",
                 "warnings",
                 "warnings/geo_warning_reasons.csv"
             ],
@@ -970,39 +973,320 @@
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
                 "accessions.txt:md5,63a651d9df354aef24400cebe56dd5ec",
                 "gene_transcript_lengths.csv:md5,458c7dfd3598bdcbcb6ceb76ccba189f",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,ad10b7c6696cf5f4c6dd345339843413",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,ad10b7c6696cf5f4c6dd345339843413",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,71fa88ce52b77b8106437ca009d441a9",
-                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,aa90efa47083cb64b6146a478812eaac",
-                "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
-                "beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.parquet:md5,8fad2b60d065444b07531ce8eba13161",
+                "nb_samples_per_platform.csv:md5,03cb600896a9524f41ecb805d7c7dceb",
+                "rnaseq.whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
                 "global_gene_id_mapping.csv:md5,7eecbd2d88adaf5f213f238a72d28b99",
                 "global_gene_metadata.csv:md5,cc8d4afdbaf03cd39a4e10f2a9040b7e",
                 "valid_gene_ids.txt:md5,60a0406c1d56424cfc394c438de50c99",
-                "all_counts.imputed.parquet:md5,4de0062e60572148d42386e1b843183e",
-                "all_counts.parquet:md5,aa90efa47083cb64b6146a478812eaac",
-                "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
-                "all_genes_summary.csv:md5,71dcbf65e6d388f7c30e39950f38d74d",
+                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.csv:md5,fe221fd94f66df7120b0590091e14eb1",
+                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,ad10b7c6696cf5f4c6dd345339843413",
+                "E_MTAB_8187_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet:md5,ad10b7c6696cf5f4c6dd345339843413",
+                "E_MTAB_8187_rnaseq.design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
+                "beta_vulgaris.rnaseq.raw.counts.cleaned.renamed.parquet:md5,8fad2b60d065444b07531ce8eba13161",
+                "rnaseq.corrected.parquet:md5,804992af6062e671cb2edd415d2c9d82",
+                "rnaseq.imputed.parquet:md5,804992af6062e671cb2edd415d2c9d82",
+                "all_genes_summary.csv:md5,b8b2215a93735f45922a52432a72524a",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,4de0062e60572148d42386e1b843183e",
-                "all_genes_summary.csv:md5,71dcbf65e6d388f7c30e39950f38d74d",
-                "whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
+                "all.merged.parquet:md5,804992af6062e671cb2edd415d2c9d82",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "id_mapping_stats.csv:md5,dc2d9d7f34e570411c8cf5885b447719",
                 "missing_values_filter_stats.csv:md5,7db5e238928f520d761bd4792334304b",
                 "ratio_nulls.csv:md5,62625b0e4f7f36a59dfe077a4c709a94",
                 "ratio_nulls_per_sample.csv:md5,be115e6d6c5ed7b7206891ebaa0f7a67",
                 "ratio_zeros.csv:md5,96bbe4bd2d4c29ab5701588132af9684",
-                "skewness.csv:md5,1044ecb8397f5a260ba0c41b6144bd12",
-                "zero_values_filter_stats.csv:md5,17fc6d525450d34445bf9cc25defe18a",
+                "skewness.csv:md5,d5e7be1d063115c4489618ad711ddd73",
                 "geo_warning_reasons.csv:md5,dbbc71e929cf78f07a341ade39cb366b"
             ]
         ],
-        "timestamp": "2026-09-23T23:15:07.984472057",
+        "timestamp": "2026-10-31T10:35:22.015176695",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.4"
+        }
+    },
+    "-profile test_two_platforms": {
+        "content": [
+            {
+                "AGGREGATE_RESULTS": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3",
+                    "pyyaml": "6.0.3"
+                },
+                "CLEAN_GENE_IDS": {
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
+                },
+                "COLLECT_ALL_GENE_IDS": {
+                    "python": "3.14.2",
+                    "tqdm": "4.67.1"
+                },
+                "COLLECT_STATISTICS": {
+                    "pandas": "2.3.3",
+                    "python": "3.13.7"
+                },
+                "COMPUTE_GENE_STATISTICS": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "COMPUTE_GENE_TRANSCRIPT_LENGTHS": {
+                    "pandas": "2.3.3",
+                    "python": "3.13.7"
+                },
+                "DASH_APP": {
+                    "dash": "3.3.0",
+                    "dash-ag-grid": "32.3.2",
+                    "dash-extensions": "2.0.4",
+                    "dash-mantine-components": "2.4.0",
+                    "pandas": "2.3.3",
+                    "polars": "1.39.2",
+                    "pyarrow": "23.0.1",
+                    "python": "3.14.3",
+                    "scipy": "1.17.1"
+                },
+                "DETECT_RARE_GENE_IDS": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "DOWNLOAD_GENOME_ANNOTATION": {
+                    "bs4": "4.14.3",
+                    "httpx": "0.28.1",
+                    "pandas": "3.0.1",
+                    "python": "3.14.3",
+                    "tqdm": "4.67.3"
+                },
+                "EDGER_LOG2": {
+                    "R": "4.5.3 (2026-03-11)",
+                    "edgeR": "4.8.2"
+                },
+                "EXPRESSION_ATLAS": {
+                    "R": "4.5.3 (2026-03-11)"
+                },
+                "EXTRACT_GENE_IDS": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "FILTER_GENES": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "FILTER_RENAME_GENE_IDS": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "FILTER_SAMPLES": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "GENORM": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "GET_CANDIDATE_GENES": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "GLOBAL_STABILITY_SCORE": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "GPROFILER_IDMAPPING": {
+                    "httpx": "0.28.1",
+                    "pandas": "3.0.1",
+                    "python": "3.14.3"
+                },
+                "IMPUTE_MISSING_VALUES": {
+                    "joblib": "1.6.0",
+                    "polars": "1.41.2",
+                    "python": "3.14.7",
+                    "scikit-learn": "1.9.1"
+                },
+                "MAKE_SECTIONS": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "MERGE_BY_PLATFORM": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "MERGE_COUNTS": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "NORMFINDER": {
+                    "numba": "0.64.0",
+                    "numpy": "2.4.3",
+                    "polars": "1.39.2",
+                    "python": "3.14.3",
+                    "tqdm": "4.67.3"
+                },
+                "PLATFORM_STABILITY_SCORE": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "RECOMBAT": {
+                    "polars": "1.44.2",
+                    "python": "3.14.7",
+                    "scikit-learn": "1.9.1"
+                },
+                "RPK": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "STATISTICS": {
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
+                },
+                "Workflow": {
+                    "nf-core/stableexpression": "v1.1.0"
+                }
+            },
+            [
+                "annotation",
+                "annotation/gene_transcript_lengths.csv",
+                "annotation/selected",
+                "annotation/selected/Arabidopsis_thaliana.TAIR10.63.gff3.gz",
+                "design",
+                "design/microarray.whole_design.csv",
+                "design/nb_samples_per_platform.csv",
+                "design/rnaseq.whole_design.csv",
+                "errors",
+                "id_mapping",
+                "id_mapping/global_gene_id_mapping.csv",
+                "id_mapping/global_gene_metadata.csv",
+                "id_mapping/valid_gene_ids.txt",
+                "individual_datasets",
+                "individual_datasets/microarray",
+                "individual_datasets/microarray/normalised",
+                "individual_datasets/microarray/normalised/E_GEOD_28223_A_AFFY_2",
+                "individual_datasets/microarray/normalised/E_GEOD_28223_A_AFFY_2/0.downloaded",
+                "individual_datasets/microarray/normalised/E_GEOD_28223_A_AFFY_2/0.downloaded/E_GEOD_28223_A_AFFY_2.microarray.normalised.counts.csv",
+                "individual_datasets/microarray/normalised/E_GEOD_28223_A_AFFY_2/1.id_filtered_renamed",
+                "individual_datasets/microarray/normalised/E_GEOD_28223_A_AFFY_2/1.id_filtered_renamed/E_GEOD_28223_A_AFFY_2.microarray.normalised.counts.cleaned.renamed.parquet",
+                "individual_datasets/microarray/normalised/E_GEOD_28223_A_AFFY_2/2.samples_filtered",
+                "individual_datasets/microarray/normalised/E_GEOD_28223_A_AFFY_2/2.samples_filtered/E_GEOD_28223_A_AFFY_2.microarray.normalised.counts.cleaned.renamed.filtered.parquet",
+                "individual_datasets/microarray/normalised/E_GEOD_28223_A_AFFY_2/E_GEOD_28223_A_AFFY_2.design.csv",
+                "individual_datasets/microarray/normalised/E_TABM_919_A_AFFY_2",
+                "individual_datasets/microarray/normalised/E_TABM_919_A_AFFY_2/0.downloaded",
+                "individual_datasets/microarray/normalised/E_TABM_919_A_AFFY_2/0.downloaded/E_TABM_919_A_AFFY_2.microarray.normalised.counts.csv",
+                "individual_datasets/microarray/normalised/E_TABM_919_A_AFFY_2/1.id_filtered_renamed",
+                "individual_datasets/microarray/normalised/E_TABM_919_A_AFFY_2/1.id_filtered_renamed/E_TABM_919_A_AFFY_2.microarray.normalised.counts.cleaned.renamed.parquet",
+                "individual_datasets/microarray/normalised/E_TABM_919_A_AFFY_2/2.samples_filtered",
+                "individual_datasets/microarray/normalised/E_TABM_919_A_AFFY_2/2.samples_filtered/E_TABM_919_A_AFFY_2.microarray.normalised.counts.cleaned.renamed.filtered.parquet",
+                "individual_datasets/microarray/normalised/E_TABM_919_A_AFFY_2/E_TABM_919_A_AFFY_2.design.csv",
+                "individual_datasets/rnaseq",
+                "individual_datasets/rnaseq/raw",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/0.downloaded",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/0.downloaded/E_GEOD_34655_rnaseq.rnaseq.raw.counts.csv",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/1.id_filtered_renamed",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/1.id_filtered_renamed/E_GEOD_34655_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/2.samples_filtered",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/2.samples_filtered/E_GEOD_34655_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/3.normalised",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/3.normalised/E_GEOD_34655_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.rpk.edger_log2.parquet",
+                "individual_datasets/rnaseq/raw/E_GEOD_34655_rnaseq/E_GEOD_34655_rnaseq.design.csv",
+                "individual_datasets/rnaseq/raw/E_GEOD_58856_rnaseq",
+                "individual_datasets/rnaseq/raw/E_GEOD_58856_rnaseq/0.downloaded",
+                "individual_datasets/rnaseq/raw/E_GEOD_58856_rnaseq/0.downloaded/E_GEOD_58856_rnaseq.rnaseq.raw.counts.csv",
+                "individual_datasets/rnaseq/raw/E_GEOD_58856_rnaseq/1.id_filtered_renamed",
+                "individual_datasets/rnaseq/raw/E_GEOD_58856_rnaseq/1.id_filtered_renamed/E_GEOD_58856_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet",
+                "individual_datasets/rnaseq/raw/E_GEOD_58856_rnaseq/2.samples_filtered",
+                "individual_datasets/rnaseq/raw/E_GEOD_58856_rnaseq/2.samples_filtered/E_GEOD_58856_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet",
+                "individual_datasets/rnaseq/raw/E_GEOD_58856_rnaseq/3.normalised",
+                "individual_datasets/rnaseq/raw/E_GEOD_58856_rnaseq/3.normalised/E_GEOD_58856_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.rpk.edger_log2.parquet",
+                "individual_datasets/rnaseq/raw/E_GEOD_58856_rnaseq/E_GEOD_58856_rnaseq.design.csv",
+                "merged_data",
+                "merged_data/microarray.corrected.parquet",
+                "merged_data/microarray.imputed.parquet",
+                "merged_data/rnaseq.corrected.parquet",
+                "merged_data/rnaseq.imputed.parquet",
+                "pipeline_info",
+                "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
+                "reporting",
+                "reporting/all_genes_summary.csv",
+                "reporting/dash_app",
+                "reporting/dash_app/app.py",
+                "reporting/dash_app/assets",
+                "reporting/dash_app/assets/style.css",
+                "reporting/dash_app/data",
+                "reporting/dash_app/data/all.merged.parquet",
+                "reporting/dash_app/data/all_genes_summary.csv",
+                "reporting/dash_app/environment.yml",
+                "reporting/dash_app/src",
+                "reporting/dash_app/src/callbacks",
+                "reporting/dash_app/src/callbacks/common.py",
+                "reporting/dash_app/src/callbacks/genes.py",
+                "reporting/dash_app/src/callbacks/samples.py",
+                "reporting/dash_app/src/components",
+                "reporting/dash_app/src/components/graphs.py",
+                "reporting/dash_app/src/components/icons.py",
+                "reporting/dash_app/src/components/right_sidebar.py",
+                "reporting/dash_app/src/components/settings",
+                "reporting/dash_app/src/components/settings/genes.py",
+                "reporting/dash_app/src/components/settings/samples.py",
+                "reporting/dash_app/src/components/stores.py",
+                "reporting/dash_app/src/components/tables.py",
+                "reporting/dash_app/src/components/tooltips.py",
+                "reporting/dash_app/src/components/top.py",
+                "reporting/dash_app/src/utils",
+                "reporting/dash_app/src/utils/config.py",
+                "reporting/dash_app/src/utils/data_management.py",
+                "reporting/dash_app/src/utils/style.py",
+                "reporting/multiqc_report.html",
+                "statistics",
+                "statistics/id_mapping_stats.csv",
+                "statistics/missing_values_filter_stats.csv",
+                "statistics/ratio_nulls.csv",
+                "statistics/ratio_nulls_per_sample.csv",
+                "statistics/ratio_zeros.csv",
+                "statistics/skewness.csv",
+                "warnings"
+            ],
+            [
+                "gene_transcript_lengths.csv:md5,06b4612031f4f300a6d67f36e7625492",
+                "Arabidopsis_thaliana.TAIR10.63.gff3.gz:md5,ee02d70eb655f0440af19a3f3f40b15c",
+                "microarray.whole_design.csv:md5,836b1358617de4ac0539742dbb8f5990",
+                "nb_samples_per_platform.csv:md5,aebaeee3d2cd7a23c8bdc992259a90cd",
+                "rnaseq.whole_design.csv:md5,0f2607a17ec31200939b7fcd4332c0a4",
+                "global_gene_id_mapping.csv:md5,35d77ec784cc351bf8c117e83314335c",
+                "global_gene_metadata.csv:md5,b35e20500269d4e6787ef1a3468f16bc",
+                "valid_gene_ids.txt:md5,31862f98e8ce0e5b751375c4f3554536",
+                "E_GEOD_28223_A_AFFY_2.microarray.normalised.counts.csv:md5,26b12f6aa95a923c15eff7e41d899280",
+                "E_GEOD_28223_A_AFFY_2.microarray.normalised.counts.cleaned.renamed.parquet:md5,2a934ff9562233d61029bcf5bddaabe5",
+                "E_GEOD_28223_A_AFFY_2.microarray.normalised.counts.cleaned.renamed.filtered.parquet:md5,2a934ff9562233d61029bcf5bddaabe5",
+                "E_GEOD_28223_A_AFFY_2.design.csv:md5,2ed3ed9965a0424fa99d8597c7f00210",
+                "E_TABM_919_A_AFFY_2.microarray.normalised.counts.csv:md5,d89603f5357a44135aae77315a3f3dab",
+                "E_TABM_919_A_AFFY_2.microarray.normalised.counts.cleaned.renamed.parquet:md5,baee4aa59b34debfeb6eed05669c2f67",
+                "E_TABM_919_A_AFFY_2.microarray.normalised.counts.cleaned.renamed.filtered.parquet:md5,baee4aa59b34debfeb6eed05669c2f67",
+                "E_TABM_919_A_AFFY_2.design.csv:md5,cbaf8d05faccc9c8ea352fdf41633cff",
+                "E_GEOD_34655_rnaseq.rnaseq.raw.counts.csv:md5,a59a384f230287af1acb2daefdc98356",
+                "E_GEOD_34655_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,dd7f29b4e56e1ac534f8224c60c59238",
+                "E_GEOD_34655_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet:md5,dd7f29b4e56e1ac534f8224c60c59238",
+                "E_GEOD_34655_rnaseq.design.csv:md5,67e793cbd23c47e7fc3c0d8c286cf37a",
+                "E_GEOD_58856_rnaseq.rnaseq.raw.counts.csv:md5,dc117ced86a5d5db1195c3e9ff335283",
+                "E_GEOD_58856_rnaseq.rnaseq.raw.counts.cleaned.renamed.parquet:md5,2b29d9bf34a1a74ae3532cae048e3e8e",
+                "E_GEOD_58856_rnaseq.rnaseq.raw.counts.cleaned.renamed.filtered.parquet:md5,2b29d9bf34a1a74ae3532cae048e3e8e",
+                "E_GEOD_58856_rnaseq.design.csv:md5,f2284fc23bc0773a85dce99a297298e2",
+                "microarray.corrected.parquet:md5,cd69a59e099380c80ad5b628dd2da029",
+                "microarray.imputed.parquet:md5,cc6347b99a377911677f704b7a83a1d9",
+                "rnaseq.corrected.parquet:md5,47b127d8b4216820f8b52208c9958e2a",
+                "rnaseq.imputed.parquet:md5,e2b3a9b155f872e0479a06604f1f3429",
+                "all_genes_summary.csv:md5,0977b7a1aa648508190bb456fecea4f7",
+                "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
+                "all.merged.parquet:md5,951ebcb74965870c6d847faeccfbe2a8",
+                "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
+                "id_mapping_stats.csv:md5,46ee871d1726ed7d5861eac21f38fdaf",
+                "missing_values_filter_stats.csv:md5,9571f48d4f0982eef70a0d5b286f19ec",
+                "ratio_nulls.csv:md5,6dda9f0cc44bc0e192daa9c1d1441dee",
+                "ratio_nulls_per_sample.csv:md5,c19404b4703f0c673f8daa6333644aa5",
+                "ratio_zeros.csv:md5,94216f98bf9e78361c1bdc3e4e1e209d",
+                "skewness.csv:md5,eabb41efffbf916775a0138314aea461"
+            ]
+        ],
+        "timestamp": "2026-10-29T19:24:35.235034626",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
         }
     },
     "-profile test_dataset_mus_musculus": {
@@ -1033,70 +1317,50 @@
                     "pandas": "2.3.3",
                     "python": "3.13.7"
                 },
-                "COMPUTE_STABILITY_SCORES": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "COMPUTE_TPM": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
                 "DASH_APP": {
-                    "python": "3.14.3",
                     "dash": "3.3.0",
+                    "dash-ag-grid": "32.3.2",
                     "dash-extensions": "2.0.4",
                     "dash-mantine-components": "2.4.0",
-                    "dash-ag-grid": "32.3.2",
-                    "polars": "1.39.2",
                     "pandas": "2.3.3",
+                    "polars": "1.39.2",
                     "pyarrow": "23.0.1",
+                    "python": "3.14.3",
                     "scipy": "1.17.1"
                 },
-                "DESCRIPTIVE_STATISTICS": {
-                    "polars": "1.37.1",
-                    "python": "3.12.8"
-                },
-                "DETECT_RARE_GENES": {
+                "DETECT_RARE_GENE_IDS": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
+                },
+                "EDGER_LOG2": {
+                    "R": "4.5.3 (2026-03-11)",
+                    "edgeR": "4.8.2"
                 },
                 "EXTRACT_GENE_IDS": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "FILTER_AND_RENAME_GENES": {
+                "FILTER_GENES": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "FILTER_OUT_SAMPLES_WITH_TOO_MANY_MISSING_VALUES": {
+                "FILTER_RENAME_GENE_IDS": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "FILTER_OUT_SAMPLES_WITH_TOO_MANY_ZEROS": {
+                "FILTER_SAMPLES": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "GENORM_COMPUTE_M_MEASURE": {
-                    "polars": "1.41.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_CROSS_JOIN": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_EXPRESSION_RATIO": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_MAKE_CHUNKS": {
-                    "polars": "1.39.2",
-                    "python": "3.14.3"
-                },
-                "GENORM_RATIO_STANDARD_VARIATION": {
+                "GENORM": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
                 "GET_CANDIDATE_GENES": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "GLOBAL_STABILITY_SCORE": {
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
@@ -1106,9 +1370,18 @@
                     "python": "3.14.3"
                 },
                 "IMPUTE_MISSING_VALUES": {
+                    "joblib": "1.6.0",
+                    "polars": "1.41.2",
+                    "python": "3.14.7",
+                    "scikit-learn": "1.9.1"
+                },
+                "MAKE_SECTIONS": {
                     "polars": "1.39.2",
-                    "python": "3.14.3",
-                    "scikit-learn": "1.8.0"
+                    "python": "3.14.3"
+                },
+                "MERGE_BY_PLATFORM": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
                 },
                 "MERGE_COUNTS": {
                     "polars": "1.39.2",
@@ -1121,10 +1394,22 @@
                     "python": "3.14.3",
                     "tqdm": "4.67.3"
                 },
-                "QUANTILE_NORMALISATION": {
+                "PLATFORM_STABILITY_SCORE": {
                     "polars": "1.39.2",
-                    "python": "3.14.3",
-                    "scikit-learn": "1.8.0"
+                    "python": "3.14.3"
+                },
+                "RECOMBAT": {
+                    "polars": "1.44.2",
+                    "python": "3.14.7",
+                    "scikit-learn": "1.9.1"
+                },
+                "RPK": {
+                    "polars": "1.39.2",
+                    "python": "3.14.3"
+                },
+                "STATISTICS": {
+                    "polars": "1.37.1",
+                    "python": "3.12.8"
                 },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.1.0"
@@ -1133,27 +1418,27 @@
             [
                 "annotation",
                 "annotation/gene_transcript_lengths.csv",
-                "datasets",
-                "datasets/rnaseq",
-                "datasets/rnaseq/raw",
-                "datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay",
-                "datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/1.id_filtered_renamed",
-                "datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/1.id_filtered_renamed/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.parquet",
-                "datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/2.samples_filtered",
-                "datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/2.samples_filtered/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.parquet",
-                "datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/3.tpm_normalised",
-                "datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/3.tpm_normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet",
-                "datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/4.quantile_normalised",
-                "datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/4.quantile_normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet",
+                "design",
+                "design/nb_samples_per_platform.csv",
+                "design/rnaseq.whole_design.csv",
                 "errors",
                 "id_mapping",
                 "id_mapping/global_gene_id_mapping.csv",
                 "id_mapping/global_gene_metadata.csv",
                 "id_mapping/valid_gene_ids.txt",
+                "individual_datasets",
+                "individual_datasets/rnaseq",
+                "individual_datasets/rnaseq/raw",
+                "individual_datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay",
+                "individual_datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/1.id_filtered_renamed",
+                "individual_datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/1.id_filtered_renamed/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.parquet",
+                "individual_datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/2.samples_filtered",
+                "individual_datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/2.samples_filtered/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.filtered.parquet",
+                "individual_datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/3.normalised",
+                "individual_datasets/rnaseq/raw/SRP254919.salmon.merged.gene_counts.top1000cov.assay/3.normalised/SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.filtered.rpk.edger_log2.parquet",
                 "merged_data",
-                "merged_data/all_counts.imputed.parquet",
-                "merged_data/all_counts.parquet",
-                "merged_data/whole_design.csv",
+                "merged_data/rnaseq.corrected.parquet",
+                "merged_data/rnaseq.imputed.parquet",
                 "pipeline_info",
                 "pipeline_info/nf_core_stableexpression_software_mqc_versions.yml",
                 "reporting",
@@ -1163,9 +1448,8 @@
                 "reporting/dash_app/assets",
                 "reporting/dash_app/assets/style.css",
                 "reporting/dash_app/data",
-                "reporting/dash_app/data/all_counts.imputed.parquet",
+                "reporting/dash_app/data/all.merged.parquet",
                 "reporting/dash_app/data/all_genes_summary.csv",
-                "reporting/dash_app/data/whole_design.csv",
                 "reporting/dash_app/environment.yml",
                 "reporting/dash_app/src",
                 "reporting/dash_app/src/callbacks",
@@ -1195,42 +1479,37 @@
                 "statistics/ratio_nulls_per_sample.csv",
                 "statistics/ratio_zeros.csv",
                 "statistics/skewness.csv",
-                "statistics/zero_values_filter_stats.csv",
                 "warnings",
                 "warnings/renaming_warning_reasons.tsv"
             ],
             [
                 "gene_transcript_lengths.csv:md5,78ae74c7e706e1fe9e935ad7444d14b2",
-                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.parquet:md5,5efe271d45e48088734b01ba6a527da8",
-                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.parquet:md5,5efe271d45e48088734b01ba6a527da8",
-                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.parquet:md5,c4b01cdce51e64454f3e36eacf563526",
-                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.zeros_filtered.nulls_filtered.tpm.quant_norm.parquet:md5,5efb16685986b1a6c06cdc50e621edbe",
+                "nb_samples_per_platform.csv:md5,a5944d3759c7d06a1554fbe6adaf84dd",
+                "rnaseq.whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
                 "global_gene_id_mapping.csv:md5,78934d2ac5fe7d863f114c5703f57a06",
                 "global_gene_metadata.csv:md5,3b7a412c544dc438d9ebd2d4e02ad232",
                 "valid_gene_ids.txt:md5,4ad21987dcaa73c26149c65ee9234814",
-                "all_counts.imputed.parquet:md5,2639e4852c292a8581475ebb649e6840",
-                "all_counts.parquet:md5,65a4e6f5c37f73ca0ad13fdd36807913",
-                "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
-                "all_genes_summary.csv:md5,c77da25875776db937e6315b8c7a55cd",
+                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.parquet:md5,5efe271d45e48088734b01ba6a527da8",
+                "SRP254919.salmon.merged.gene_counts.top1000cov.assay.cleaned.renamed.filtered.parquet:md5,5efe271d45e48088734b01ba6a527da8",
+                "rnaseq.corrected.parquet:md5,4988e2a3e7066e83398bae1f81791756",
+                "rnaseq.imputed.parquet:md5,4988e2a3e7066e83398bae1f81791756",
+                "all_genes_summary.csv:md5,6cf3a7214b5e4c97f02f5efa9441a265",
                 "style.css:md5,e6ba182eaf06980dbda49920efbf6e64",
-                "all_counts.imputed.parquet:md5,2639e4852c292a8581475ebb649e6840",
-                "all_genes_summary.csv:md5,c77da25875776db937e6315b8c7a55cd",
-                "whole_design.csv:md5,f29515bc2c783e593fb9028127342593",
+                "all.merged.parquet:md5,4988e2a3e7066e83398bae1f81791756",
                 "environment.yml:md5,dd081780e1f98d34b13289d019f8bb5b",
                 "id_mapping_stats.csv:md5,b47d6ebd34e3fb11a40665b0a38db3da",
                 "missing_values_filter_stats.csv:md5,310182ec872cf37ffb81370dfcd01207",
                 "ratio_nulls.csv:md5,2272ebcf58ac8bb283d238f87d508b96",
                 "ratio_nulls_per_sample.csv:md5,375371c6d3e58ae69430f0e96b71920d",
                 "ratio_zeros.csv:md5,2272ebcf58ac8bb283d238f87d508b96",
-                "skewness.csv:md5,d70240070d381aedd27be71cb2f8df32",
-                "zero_values_filter_stats.csv:md5,310182ec872cf37ffb81370dfcd01207",
+                "skewness.csv:md5,a769865d9b44d51926ca24659c4fa47f",
                 "renaming_warning_reasons.tsv:md5,0a11a59b5b547a39ab7a0e4dac622173"
             ]
         ],
-        "timestamp": "2026-09-23T20:25:36.077135309",
+        "timestamp": "2026-10-31T09:49:09.775773918",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.10.4"
         }
     }
 }
