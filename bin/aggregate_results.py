@@ -23,7 +23,7 @@ SUMMARY_OUTFILENAME_SUFFIX = "most_stable_genes_summary.csv"
 COUNTS_OUTFILENAME_SUFFIX = "most_stable_genes_transposed_counts.csv"
 CUSTOM_CONTENT_MULTIQC_CONFIG_FILE = "custom_content_multiqc_config.yaml"
 
-GENE_SUMMARY_FLOAT_PRECISION = 4
+GENE_SUMMARY_FLOAT_PRECISION = 3
 
 #####################################################
 #####################################################

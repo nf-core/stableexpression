@@ -140,7 +140,7 @@
                         {
                             "platform": "microarray"
                         },
-                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
+                        "microarray.merged.parquet:md5,510a34e1e8a78bb22b29ce78b2a1fe11",
                         "microarray.whole_design.csv:md5,4c2932b70f07ddbb290f372d79f151d7"
                     ]
                 ],
@@ -196,7 +196,7 @@
                         {
                             "platform": "microarray"
                         },
-                        "microarray.merged.parquet:md5,bbf65ff3e4c374cc4f8d7db8e5bf42d2",
+                        "microarray.merged.parquet:md5,510a34e1e8a78bb22b29ce78b2a1fe11",
                         "microarray.whole_design.csv:md5,4c2932b70f07ddbb290f372d79f151d7"
                     ]
                 ],
@@ -205,10 +205,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-22T12:44:08.224010805",
+        "timestamp": "2026-11-01T18:42:56.993867622",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.2"
+            "nextflow": "26.10.4"
         }
     },
     "GeTMM - KNN imputation": {

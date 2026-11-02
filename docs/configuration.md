@@ -93,7 +93,7 @@ This is an example `launch_nf_core_stableexpression.sh` script to run the pipeli
 #SBATCH --mem 2GB
 
 module load nextflow
-# or load specific version: module load nextflow=26.04.4
+# or load specific version: module load nextflow=26.10.4
 
 # set location of apptainer cache directory
 export NXF_APPTAINER_CACHEDIR=apptainer_cache

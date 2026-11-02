@@ -35,9 +35,9 @@ nextflow_pipeline {
             }
             def table = path(gene_summary_file).csv.table
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSRNA050004025")).doubleColumn("global_stability_score").get(0) == 0.0175
-                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G169400")).doubleColumn("global_stability_score").get(0) == 0.1834
-                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G195800")).doubleColumn("global_stability_score").get(0) == 0.0208
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSRNA050004025")).doubleColumn("global_stability_score").get(0) == 0.017
+                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G169400")).doubleColumn("global_stability_score").get(0) == 0.183
+                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G195800")).doubleColumn("global_stability_score").get(0) == 0.021
             }
 
         }
@@ -80,16 +80,16 @@ nextflow_pipeline {
             def table = path(gene_summary_file).csv.table
             // the candidate genes used in publications must have the expected stability scores
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0182068")).doubleColumn("global_stability_score").get(0) == 0.0679
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0186743")).doubleColumn("global_stability_score").get(0) == 0.0559
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0194689")).doubleColumn("global_stability_score").get(0) == 0.0639
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0181924")).doubleColumn("global_stability_score").get(0) == 0.0456
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0193626")).doubleColumn("global_stability_score").get(0) == 0.0658
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0184651")).doubleColumn("global_stability_score").get(0) == 0.0948
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0182068")).doubleColumn("global_stability_score").get(0) == 0.068
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0186743")).doubleColumn("global_stability_score").get(0) == 0.056
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0194689")).doubleColumn("global_stability_score").get(0) == 0.064
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0181924")).doubleColumn("global_stability_score").get(0) == 0.046
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0193626")).doubleColumn("global_stability_score").get(0) == 0.066
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0184651")).doubleColumn("global_stability_score").get(0) == 0.095
                 assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0196300")).doubleColumn("global_stability_score").get(0) == 0.07
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0185678")).doubleColumn("global_stability_score").get(0) == 0.0616
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0188440")).doubleColumn("global_stability_score").get(0) == 0.0904
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0189846")).doubleColumn("global_stability_score").get(0) == 0.0593
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0185678")).doubleColumn("global_stability_score").get(0) == 0.062
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0188440")).doubleColumn("global_stability_score").get(0) == 0.090
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0189846")).doubleColumn("global_stability_score").get(0) == 0.059
             }
 
         }
@@ -131,8 +131,8 @@ nextflow_pipeline {
             }
             def table = path(gene_summary_file).csv.table
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000000305")).doubleColumn("global_stability_score").get(0) == 0.1803
-                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000034187")).doubleColumn("global_stability_score").get(0) == 0.0458
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000000305")).doubleColumn("global_stability_score").get(0) == 0.180
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000034187")).doubleColumn("global_stability_score").get(0) == 0.046
             }
 
         }
@@ -176,10 +176,10 @@ nextflow_pipeline {
             }
             def table = path(gene_summary_file).csv.table
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("AT1G01010")).doubleColumn("global_stability_score").get(0) == 0.4413
-                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G23260")).doubleColumn("global_stability_score").get(0) == 0.4791
-                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G50920")).doubleColumn("global_stability_score").get(0) == 0.0763
-                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G41320")).doubleColumn("global_stability_score").get(0) == 3.2276
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT1G01010")).doubleColumn("global_stability_score").get(0) == 0.441
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G23260")).doubleColumn("global_stability_score").get(0) == 0.479
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G50920")).doubleColumn("global_stability_score").get(0) == 0.076
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G41320")).doubleColumn("global_stability_score").get(0) == 3.228
             }
 
         }
