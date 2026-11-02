@@ -67,62 +67,6 @@
             "nextflow": "26.10.4"
         }
     },
-    "No genes to plot": {
-        "content": [
-            {
-                "0": [
-                    "all_genes_summary.csv:md5,7750f329d86d0d5e4bb3abaa58247a7c"
-                ],
-                "1": [
-                    "section_1.most_stable_genes_summary.csv:md5,4928f304304a99876f1bdeced1f7984a"
-                ],
-                "2": [
-                    
-                ],
-                "3": [
-                    "custom_content_multiqc_config.yaml:md5,812dffff90de7df004ae61a231a8542f"
-                ],
-                "4": [
-                    [
-                        "AGGREGATE_RESULTS",
-                        "python",
-                        "3.14.3"
-                    ]
-                ],
-                "5": [
-                    [
-                        "AGGREGATE_RESULTS",
-                        "polars",
-                        "1.39.2"
-                    ]
-                ],
-                "6": [
-                    [
-                        "AGGREGATE_RESULTS",
-                        "pyyaml",
-                        "6.0.3"
-                    ]
-                ],
-                "all_genes_summary": [
-                    "all_genes_summary.csv:md5,7750f329d86d0d5e4bb3abaa58247a7c"
-                ],
-                "custom_content_multiqc_config": [
-                    "custom_content_multiqc_config.yaml:md5,812dffff90de7df004ae61a231a8542f"
-                ],
-                "most_stable_genes_summary": [
-                    "section_1.most_stable_genes_summary.csv:md5,4928f304304a99876f1bdeced1f7984a"
-                ],
-                "most_stable_genes_transposed_counts_filtered": [
-                    
-                ]
-            }
-        ],
-        "timestamp": "2026-11-02T13:26:03.000613679",
-        "meta": {
-            "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
-        }
-    },
     "One section - no mapping": {
         "content": [
             {
@@ -133,10 +77,10 @@
                     "section_1.most_stable_genes_summary.csv:md5,f0fe5df10203785e4a912735345e9c2b"
                 ],
                 "2": [
-                    "section_1.count.most_stable_genes_transposed_counts.csv:md5,30f84570c2104f7cfac4289d583b68cd"
+                    
                 ],
                 "3": [
-                    "custom_content_multiqc_config.yaml:md5,274c6225560403397c0ff95420e7dea8"
+                    "custom_content_multiqc_config.yaml:md5,812dffff90de7df004ae61a231a8542f"
                 ],
                 "4": [
                     [
@@ -163,17 +107,17 @@
                     "all_genes_summary.csv:md5,0efaf2012d54b6141e8dccf71cf536b0"
                 ],
                 "custom_content_multiqc_config": [
-                    "custom_content_multiqc_config.yaml:md5,274c6225560403397c0ff95420e7dea8"
+                    "custom_content_multiqc_config.yaml:md5,812dffff90de7df004ae61a231a8542f"
                 ],
                 "most_stable_genes_summary": [
                     "section_1.most_stable_genes_summary.csv:md5,f0fe5df10203785e4a912735345e9c2b"
                 ],
                 "most_stable_genes_transposed_counts_filtered": [
-                    "section_1.count.most_stable_genes_transposed_counts.csv:md5,30f84570c2104f7cfac4289d583b68cd"
+                    
                 ]
             }
         ],
-        "timestamp": "2026-11-02T13:25:57.400448923",
+        "timestamp": "2026-11-02T22:57:00.671459188",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
