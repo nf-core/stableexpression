@@ -10,7 +10,7 @@
 [![GitHub Actions Linting Status](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/stableexpression/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.22895924-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.22895924)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
-[![Nextflow](https://img.shields.io/badge/version-%E2%89%A526.04.4-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
+[![Nextflow](https://img.shields.io/badge/version-%E2%89%A526.10.4-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
 [![nf-core template version](https://img.shields.io/badge/nf--core_template-4.1.0-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/4.1.0)
 [![run with apptainer](https://custom-icon-badges.demolab.com/badge/run%20with-apptainer-4545?logo=apptainer&color=teal&labelColor=000000)](https://apptainer.org/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
@@ -71,7 +71,32 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 Samples that show too high ratios of zeros or missing values are removed from the analysis.
 
-#### 5. Normalisation of expression
+#### 5. Normalisation of RNA-seq datasets
+
+> [!IMPORTANT]
+> Whenever possible, RNA-seq data should always be provided raw.
+
+##### Raw RNA-seq data
+
+- Unless provided by the user: download a reference annotation from the Ensembl FTPs ([Ensembl Genomes](https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/) or [Ensembl](https://ftp.ensembl.org/pub/current/)) or using the [NCBI Dataset API](https://api.ncbi.nlm.nih.gov/datasets/v2/)
+- Compute the length of the longest transcript for each gene
+- Raw RNA-seq data are normalised using [GeTMM](https://link.springer.com/article/10.1186/s12859-018-2246-7)
+
+##### Already normalised RNA-seq data
+
+Already normalised RNA-seq data are converted to TPM (Transcripts Per Million).
+
+> [!NOTE]
+> Following normalisation, `log2` is computed on all RNA-seq counts.
+
+#### 6. Imputation of missing values
+
+> [!NOTE]
+> At this stage, genes showing a too high proportion of zeros across samples in a specific platform are filtered out.
+
+Counts are merged platform by platform (RNA-seq / Microarray) and missing values are replaced by imputed values using [KNN Imputation](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html).
+
+#### 7. Scaling / Correction of batch effects
 
 ##### Pathway A: TPM (Transcripts Per Million)
 
@@ -79,7 +104,7 @@ Samples that show too high ratios of zeros or missing values are removed from th
 - Using the reference annotation, compute the length of the longest transcript for each gene
 - Normalize RNAseq raw data using TPM.
 
-##### Pathway B: CPM (Counts Per Million)
+##### Pathway B: Quantile normalisation
 
 - Normalize RNAseq raw data using CPM.
 
@@ -90,16 +115,6 @@ Samples that show too high ratios of zeros or missing values are removed from th
 #### 7. Merge all data
 
 All datasets are merged into one single dataframe.
-
-#### 8. Imputation of missing values
-
-Missing values are replaced by imputed values using a specific algorithm provided by [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html). The user can choose the method of imputation with the `--missing_value_imputer` parameter.
-
-> [!NOTE]
-> For better scalability, the full dataset is first clustered by similarity of genes (using the [MiniBatchKMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html) algorithm) prior to missing value imputation.
-
-> [!WARNING]
-> This step takes the longest, especially when working with a large number of datasets.
 
 #### 9. General statistics for each gene
 
