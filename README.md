@@ -22,22 +22,20 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline that aims to identify the most stable genes in one or more expression datasets. These datasets can be downloaded from public databases such as [EBI Expression Atlas](https://www.ebi.ac.uk/gxa/home) and [NCBI GEO Datasets](https://www.ncbi.nlm.nih.gov/gds), or provided directly by the user. Both RNA-seq and microarray count datasets can be used. The pipeline is ideally suited to determining the most suitable RT-qPCR reference genes for a given species.
+**nf-core/stableexpression** is a bioinformatics pipeline that aims to identify the most stable genes in one or more expression datasets. These datasets can be downloaded from public databases such as [EBI Expression Atlas](https://www.ebi.ac.uk/gxa/home) and [NCBI GEO Datasets](https://www.ncbi.nlm.nih.gov/gds), or provided directly by the user. Both RNA-seq and microarray count datasets can be used.
+
+> [!TIP]
+> This pipeline is ideal for identifying the most suitable RT-qPCR reference genes for a given species.
 
 <p align="center">
     <img title="Stableexpression Workflow" src="docs/images/metromap/nf_core_stableexpression.metromap.png" width=100%>
 </p>
 
-It takes as main inputs :
+The main inputs are:
 
 - a species name (mandatory)
 - keywords for Expression Atlas / GEO search (optional)
-- a CSV input file listing your own raw / normalised count datasets (optional).
-
-**Use cases**:
-
-- **find the most suitable genes for use as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
-- download all EBI Expression Atlas and / or NCBI GEO datasets for a species (and optionally keywords)
+- a `YAML` / `CSV` input file listing your own raw / normalised count datasets (optional).
 
 ## Pipeline overview
 
@@ -45,31 +43,27 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 #### 1. Get accessions from public databases
 
-- Get [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords)
+- Fetch [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords)
   This step is run by default but is optional. Set `--skip_fetch_eatlas_accessions` to skip it.
-- Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) dataset accessions corresponding to the provided species (and optionally keywords)
-  This is optional and **NOT** run by default. Set `--fetch_geo_accessions` to run it.
-
-> [!WARNING]
-> Due to the high heterogeneity of formats of NCBI GEO datasets, automated retrieval of expression datasets from NCBI GEO is considered **experimental**.
+- Fetch NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) dataset accessions corresponding to the provided species (and optionally keywords).
+  This step is optional and **not** run by default. Set `--fetch_geo_accessions` to run it. ⚠️ Due to the heterogeneous formats of NCBI GEO datasets, the retrieval of expression datasets from NCBI GEO is considered **experimental**. ⚠️
 
 #### 2. Download data (see [usage](./conf/usage.md#3-provide-your-own-accessions))
 
 - Download [Expression Atlas](https://www.ebi.ac.uk/gxa/home) data if any
 - Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data if any
 
-> [!NOTE]
-> At this stage, the datasets that have been downloaded from public databases are merged with the user datasets (provided with the `--datasets` parameter). See [usage](./conf/usage.md#4-use-your-own-expression-datasets) for more information about user datasets.
+🔌 At this stage, the datasets that have been downloaded from public databases are merged with the user datasets provided using the `--datasets` parameter. See [usage](./conf/usage.md#4-use-your-own-expression-datasets) for more information about user datasets.
 
 #### 3. ID Mapping (see [usage](./conf/usage.md#5-custom-gene-id-mapping--metadata))
 
-- Gene IDs are cleaned
-- Map gene IDS to Ensembl IDs for standardisation among datasets using [`g:Profiler`](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
-- Rare genes are filtered out
+- Gene IDs are cleaned.
+- Map gene IDS to Ensembl IDs using [`g:Profiler`](https://biit.cs.ut.ee/gprofiler/gost) to standardise gene IDs across datasets (run by default; optional).
+- Rare gene IDs are filtered out.
 
 #### 4. Sample filtering
 
-Samples that show too high ratios of zeros or missing values are removed from the analysis.
+Samples showing too many zeros or missing values are removed from the analysis.
 
 #### 5. Normalisation of RNA-seq datasets
 
@@ -78,55 +72,49 @@ Samples that show too high ratios of zeros or missing values are removed from th
 
 ##### Raw RNA-seq data
 
-- Unless provided by the user: download a reference annotation from the Ensembl FTPs ([Ensembl Genomes](https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/) or [Ensembl](https://ftp.ensembl.org/pub/current/)) or using the [NCBI Dataset API](https://api.ncbi.nlm.nih.gov/datasets/v2/)
-- Compute the length of the longest transcript for each gene
-- Raw RNA-seq data are normalised using [GeTMM](https://link.springer.com/article/10.1186/s12859-018-2246-7)
+- Unless provided by the user: download a reference annotation from the Ensembl FTPs ([Ensembl Genomes](https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/) or [Ensembl](https://ftp.ensembl.org/pub/current/)) or using the [NCBI Dataset API](https://api.ncbi.nlm.nih.gov/datasets/v2/).
+- Compute the length of the longest transcript for each gene.
+- Normalise the raw RNA-seq data using GeTMM [GeTMM](https://link.springer.com/article/10.1186/s12859-018-2246-7).
 
-##### Already normalised RNA-seq data
+##### RNA-seq data already normalised (not recommended)
 
 Already normalised RNA-seq data are converted to TPM (Transcripts Per Million).
 
-> [!NOTE]
-> Following normalisation, `log2` is computed on all RNA-seq counts.
+📉 Following normalisation, `log2` is computed on all RNA-seq counts.
 
-#### 6. Imputation of missing values
+#### 6. Data merging & gene filtering
 
-> [!NOTE]
-> At this stage, genes showing a too high proportion of zeros across samples in a specific platform are filtered out.
+- All the datasets are merged into a single dataframe for each platform (RNA-seq / Microarray).
+- Genes with a too high proportion of zeros across samples on a specific platform are filtered out.
 
-Counts are merged platform by platform (RNA-seq / Microarray) and missing values are replaced by imputed values using [KNN Imputation](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html).
+#### 7. Imputation of missing values
 
-#### 7. Scaling / Correction of batch effects
+Missing values are replaced by imputed values using [KNN Imputation](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html).
 
-##### Pathway A: TPM (Transcripts Per Million)
+#### 8. Scaling / Correction of batch effects
 
-- Unless provided by the user: download a reference annotation from the Ensembl FTPs ([Ensembl Genomes](https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/) or [Ensembl](https://ftp.ensembl.org/pub/current/)) or using the [NCBI Dataset API](https://api.ncbi.nlm.nih.gov/datasets/v2/)
-- Using the reference annotation, compute the length of the longest transcript for each gene
-- Normalize RNAseq raw data using TPM.
+##### Pathway A: ReCombat (default)
+
+Correction of batch effect is performed for each platform separately using [reComBat](https://academic.oup.com/bioinformaticsadvances/article/2/1/vbac071/6728137?login=false).
 
 ##### Pathway B: Quantile normalisation
 
-- Normalize RNAseq raw data using CPM.
+In case reComBat encounters memory issues, quantile normalisation is proposed as a more scalable alternative.
 
-#### 6. Quantile normalisation
-
-- Perform quantile normalisation on each dataset separately using [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html)
-
-#### 7. Merge all data
-
-All datasets are merged into one single dataframe.
+> [!NOTE]
+> Please note that quantile normalisation erases the internal structure of the count distributions. Consequently, reCombat is largely preferred over quantile normalisation whenever data fit in memory.
 
 #### 9. General statistics for each gene
 
-Base statistics are computed for each gene, platform-wide and for each platform separately (RNAseq and microarray).
+Base statistics are computed for each gene, for each platform separately (RNAseq and microarray).
 
 #### 10. Scoring
 
 - The full list of genes is divided into multiple 'sections' based on their expression levels
-- A shortlist of candidate genes is extracted for each section based on their coefficient of variation
 - Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder)
-- Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034) (run by default; optional)
-- Compute stability score for each candidate gene
+- Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034)
+- Compute stability score for each gene and for each platform
+- Compute a global stability score for each gene considering all platforms
 
 #### 11. Reporting
 
