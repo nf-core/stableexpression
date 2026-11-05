@@ -3,15 +3,15 @@
 # Only the parametric part was kept, without X nor C
 
 import logging
+
 import numpy as np
-from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
+from sklearn.linear_model import ElasticNet, Lasso, LinearRegression, Ridge
 
 logger = logging.getLogger(__name__)
 
 
 class ReComBat:
-    """
-    ReComBat class
+    """ReComBat class.
 
     Parameters
     ----------
@@ -27,6 +27,7 @@ class ReComBat:
     max_iter : int, optional
         The maximum number of steps of the parametric empirical Bayes optimization.
         The detault is 1000.
+
     """
 
     model: str
@@ -43,7 +44,7 @@ class ReComBat:
 
     def __init__(
         self,
-        model: str = 'linear',
+        model: str = "linear",
         config: dict | None = None,
         conv_criterion: float = 1e-4,
         max_iter: int = 1000,
@@ -68,28 +69,35 @@ class ReComBat:
         self.beta_c_ = None
         self.sigma_ = None
 
-
     def fit_transform(self, data: np.ndarray, batches: np.ndarray) -> np.ndarray:
-        '''
-        Fit and transform in one go.
-        '''
+        """Fit and transform in one go."""
         self.fit(data, batches)
         return self.transform(data, batches)
 
-
     @staticmethod
     def get_dummies(batches: np.ndarray) -> np.ndarray:
+        """Convert batches to dummy variables.
+
+        Parameters
+        ----------
+        batches : np.ndarray
+            A numpy array containing the batches.
+
+        Returns
+        -------
+        np.ndarray
+            A numpy array containing the dummy variables.
+
+        """
         categories, codes = np.unique(batches.astype(str), return_inverse=True)
         return np.eye(len(categories), dtype=int)[codes]
-
 
     # -------------------------------------------------------
     # FIT
     # -------------------------------------------------------
 
     def fit(self, data: np.ndarray, batches: np.ndarray) -> None:
-        """
-        Fit method.
+        """Fit method.
 
         Parameters
         ----------
@@ -102,6 +110,7 @@ class ReComBat:
         Returns
         -------
         None
+
         """
         logger.info("Starting to fit reComBat.")
         if np.isnan(data).any().any():
@@ -128,91 +137,95 @@ class ReComBat:
         self.is_fitted = True
         logger.info("reComBat is fitted.")
 
-
     def fit_model_(self, data: np.ndarray, batches_one_hot: np.ndarray) -> np.ndarray:
-        '''
-        Fit the linear model.
-        '''
-
+        """Fit the linear model."""
         # Create the design matrix
         num_batches = batches_one_hot.shape[1]
-        Covariates = batches_one_hot
+        covariates = batches_one_hot
 
         # Initialise the model class
-        if self.model == 'linear':
+        if self.model == "linear":
             model = LinearRegression(fit_intercept=False, **self.config)
-        elif self.model == 'ridge':
+        elif self.model == "ridge":
             model = Ridge(fit_intercept=False, **self.config)
-        elif self.model == 'Lasso':
+        elif self.model == "Lasso":
             model = Lasso(fit_intercept=False, **self.config)
-        elif self.model == 'elastic_net':
+        elif self.model == "elastic_net":
             model = ElasticNet(fit_intercept=False, **self.config)
         else:
-            raise ValueError('Model not implemented')
+            raise ValueError("Model not implemented")
 
-        model.fit(Covariates, data)
+        model.fit(covariates, data)
 
         # Save the fitted parameters
         # Note that alpha is computed implicitly via the contraints on the batch parameters.
         self.alpha_ = np.matmul(
             batches_one_hot.sum(axis=0, keepdims=True) / batches_one_hot.sum(),
-            model.coef_.T[:num_batches]
+            model.coef_.T[:num_batches],
         )
 
-        self.beta_x_ = model.coef_.T[num_batches: num_batches]
+        self.beta_x_ = model.coef_.T[num_batches:num_batches]
         self.beta_c_ = model.coef_.T[num_batches:]
 
         # Compute the standard deviation of the reconstructed data.
-        data_hat = np.matmul(Covariates, model.coef_.T)
+        data_hat = np.matmul(covariates, model.coef_.T)
         self.sigma_ = np.mean(
-            (data - data_hat)**2,
+            (data - data_hat) ** 2,
             axis=0,
-            keepdims=True
+            keepdims=True,
         )
 
         # Standardise the data.
-        a = np.matmul(Covariates[:, num_batches: num_batches], self.beta_x_)
-        b = np.matmul(Covariates[:, num_batches:], self.beta_c_)
+        a = np.matmul(covariates[:, num_batches:num_batches], self.beta_x_)
+        b = np.matmul(covariates[:, num_batches:], self.beta_c_)
         return (data.copy() - a - b - self.alpha_) / np.sqrt(self.sigma_)
 
-
-    def parametric_optimization_(self, Z: np.ndarray, batches_one_hot: np.ndarray):
-        '''
-        Perform parametric optimization.
-        '''
-        gamma_hat, gamma_bar, delta_hat_squared, tau_bar_squared, lambda_bar, theta_bar = self.compute_init_values_parametric_(Z, batches_one_hot)
+    def parametric_optimization_(self, Z: np.ndarray, batches_one_hot: np.ndarray) -> None:
+        """Perform parametric optimization."""
+        gamma_hat, gamma_bar, delta_hat_squared, tau_bar_squared, lambda_bar, theta_bar = (
+            self.compute_init_values_parametric_(Z, batches_one_hot)
+        )
         n = batches_one_hot.sum(axis=0)
 
         gamma_star = gamma_hat.copy()
         delta_star_squared = delta_hat_squared.copy()
 
         for i in range(batches_one_hot.shape[1]):
-            gamma_star[i], delta_star_squared[i] = self.parametric_update_(gamma_star[i],
-                                                                    delta_star_squared[i],
-                                                                    n[i],
-                                                                    tau_bar_squared[i],
-                                                                    gamma_hat[i],
-                                                                    gamma_bar[i],
-                                                                    theta_bar[i],
-                                                                    lambda_bar[i],
-                                                                    Z[batches_one_hot[:,i] == 1])
+            gamma_star[i], delta_star_squared[i] = self.parametric_update_(
+                gamma_star[i],
+                delta_star_squared[i],
+                n[i],
+                tau_bar_squared[i],
+                gamma_hat[i],
+                gamma_bar[i],
+                theta_bar[i],
+                lambda_bar[i],
+                Z[batches_one_hot[:, i] == 1],
+            )
 
         self.gamma_star_hat_ = gamma_star
         self.delta_star_squared_hat_ = delta_star_squared
 
-
     def compute_init_values_parametric_(
         self,
         Z: np.ndarray,
-        batches_one_hot: np.ndarray
+        batches_one_hot: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        '''
-        Compute the starting values of the Bayesian optimization.
-        '''
-        gamma_hat = np.array([np.mean(Z[batches_one_hot[:,i] == 1], axis=0) for i in range(batches_one_hot.shape[1])])
+        """Compute the starting values of the Bayesian optimization."""
+        gamma_hat = np.array(
+            [
+                np.mean(Z[batches_one_hot[:, i] == 1], axis=0)
+                for i in range(batches_one_hot.shape[1])
+            ],
+        )
         gamma_bar = np.mean(gamma_hat, axis=1)
         tau_bar_squared = np.var(gamma_hat, axis=1, ddof=1)
-        delta_hat_squared = np.array([np.var(Z[batches_one_hot[:,i] == 1], axis=0, ddof=1) for i in range(batches_one_hot.shape[1])])
+        delta_hat_squared = np.array(
+            [
+                np.var(Z[batches_one_hot[:, i] == 1], axis=0, ddof=1)
+                for i in range(batches_one_hot.shape[1])
+            ],
+        )
         V_bar = np.mean(delta_hat_squared, axis=1)
         S_bar_squared = np.var(delta_hat_squared, axis=1, ddof=1)
 
@@ -220,7 +233,6 @@ class ReComBat:
         theta_bar = (V_bar**3 + V_bar * S_bar_squared) / S_bar_squared
 
         return gamma_hat, gamma_bar, delta_hat_squared, tau_bar_squared, lambda_bar, theta_bar
-
 
     def parametric_update_(
         self,
@@ -232,41 +244,47 @@ class ReComBat:
         gamma_bar_i: np.ndarray,
         theta_bar_i: np.ndarray,
         lambda_bar_i: np.ndarray,
-        Z_i: np.ndarray
-    ):
-        '''
-        Perform the optimization for one batch at a time
-        '''
+        Z_i: np.ndarray,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Perform the optimization for one batch at a time."""
         gamma_star_new_i = gamma_star_i.copy()
         delta_star_squared_new_i = delta_star_squared_i.copy()
 
         iterations = 0
         convergence = self.conv_criterion + 1
         while (convergence > self.conv_criterion) and (iterations < self.max_iter):
-            gamma_star_new_i = self.new_gamma_parametric_(n_i,
-                                                          tau_bar_squared_i,
-                                                          gamma_hat_i,
-                                                          delta_star_squared_i,
-                                                          gamma_bar_i)
-            delta_star_squared_new_i = self.new_delta_star_squared_parametric_(theta_bar_i,
-                                                                               Z_i,
-                                                                               gamma_star_new_i,
-                                                                               n_i,
-                                                                               lambda_bar_i)
+            gamma_star_new_i = self.new_gamma_parametric_(
+                n_i,
+                tau_bar_squared_i,
+                gamma_hat_i,
+                delta_star_squared_i,
+                gamma_bar_i,
+            )
+            delta_star_squared_new_i = self.new_delta_star_squared_parametric_(
+                theta_bar_i,
+                Z_i,
+                gamma_star_new_i,
+                n_i,
+                lambda_bar_i,
+            )
 
-            convergence = np.max([
-                np.max(np.abs(gamma_star_new_i - gamma_star_i) / gamma_star_i),
-                np.max(np.abs(delta_star_squared_new_i - delta_star_squared_i) / delta_star_squared_i)
-            ])
+            convergence = np.max(
+                [
+                    np.max(np.abs(gamma_star_new_i - gamma_star_i) / gamma_star_i),
+                    np.max(
+                        np.abs(delta_star_squared_new_i - delta_star_squared_i)
+                        / delta_star_squared_i,
+                    ),
+                ],
+            )
             gamma_star_i = gamma_star_new_i
             delta_star_squared_i = delta_star_squared_new_i
             iterations += 1
 
-        if (iterations >= self.max_iter):
+        if iterations >= self.max_iter:
             logger.warning("Maximum number of iterations reached")
 
         return gamma_star_i, delta_star_squared_i
-
 
     @staticmethod
     def new_gamma_parametric_(
@@ -276,6 +294,7 @@ class ReComBat:
         delta_star_squared_i: np.ndarray,
         gamma_bar_i: np.ndarray,
     ) -> np.ndarray:
+        """Comute the new gamma parameter."""
         numerator = n_i * tau_bar_squared_i * gamma_hat_i + delta_star_squared_i * gamma_bar_i
         denominator = n_i * tau_bar_squared_i + delta_star_squared_i
         return numerator / denominator
@@ -288,19 +307,17 @@ class ReComBat:
         n_i: int,
         lambda_bar_i: np.ndarray,
     ) -> np.ndarray:
-        numerator = (theta_bar_i + 0.5 * np.sum((Z_i - gamma_star_new_i)**2, axis=0))
-        denominator = (0.5 * n_i + lambda_bar_i - 1)
+        """Comute the new delta star squared parameter."""
+        numerator = theta_bar_i + 0.5 * np.sum((Z_i - gamma_star_new_i) ** 2, axis=0)
+        denominator = 0.5 * n_i + lambda_bar_i - 1
         return numerator / denominator
-
 
     # -------------------------------------------------------
     # TRANSFORM
     # -------------------------------------------------------
 
     def transform(self, data: np.ndarray, batches: np.ndarray) -> np.ndarray:
-        """
-        Transform method.
-        ----------------
+        """Transform method.
 
         Adjusts a dataframe. Please make sure that the number of batches,
         features and design matrix features match.
@@ -316,8 +333,8 @@ class ReComBat:
         Returns
         -------
         A numpy array of the same shape as the input array.
-        """
 
+        """
         logger.info("Starting to transform.")
         batches_one_hot = self.get_dummies(batches)
 
@@ -325,7 +342,7 @@ class ReComBat:
             raise AttributeError("reComBat has not been fitted yet.")
 
         if data.shape[1] != self.alpha_.shape[1]:
-                raise ValueError("Wrong number of features.")
+            raise ValueError("Wrong number of features.")
 
         if batches_one_hot.shape[1] != self.gamma_star_hat_.shape[0]:
             raise ValueError("Wrong number of batches.")
@@ -337,13 +354,12 @@ class ReComBat:
         logger.info("Transform finished.")
         return data_adjusted
 
-
-    def adjust_data_(self, Z: np.ndarray, batches_one_hot: np.ndarray):
-        '''
-        Perform the final adjustment step.
-        '''
+    def adjust_data_(self, Z: np.ndarray, batches_one_hot: np.ndarray) -> np.ndarray:
+        """Perform the final adjustment step."""
         tmp = np.zeros_like(Z)
         for i in range(batches_one_hot.shape[1]):
-            tmp[batches_one_hot[:, i] == 1] = (Z[batches_one_hot[:, i] == 1] - self.gamma_star_hat_[i]) / np.sqrt(self.delta_star_squared_hat_[i])
+            tmp[batches_one_hot[:, i] == 1] = (
+                Z[batches_one_hot[:, i] == 1] - self.gamma_star_hat_[i]
+            ) / np.sqrt(self.delta_star_squared_hat_[i])
         data_adjusted = np.sqrt(self.sigma_) * tmp + self.alpha_
         return data_adjusted

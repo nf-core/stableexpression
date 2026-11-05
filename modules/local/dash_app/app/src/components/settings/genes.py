@@ -34,7 +34,7 @@ gene_selection_stack = dmc.Stack(
                 "shadow": "md",
                 "transitionProps": {"transition": "pop", "duration": 200},
             },
-        )
+        ),
     ],
     align="stretch",
     gap="xl",
@@ -43,7 +43,8 @@ gene_selection_stack = dmc.Stack(
 gene_graph_stats_display_stack = dmc.Stack(
     [
         dmc.Text(
-            "Display mean / standard deviation", style=style.STACK_SUBSECTION_TITLE
+            "Display mean / standard deviation",
+            style=style.STACK_SUBSECTION_TITLE,
         ),
         dmc.SegmentedControl(
             id="gene-graph-boxmean",
@@ -76,7 +77,8 @@ gene_graph_points_display_stack = dmc.Stack(
             mb=10,
         ),
         dmc.Text(
-            "Position of points relatively to boxes", style=style.STACK_SUBSECTION_TITLE
+            "Position of points relatively to boxes",
+            style=style.STACK_SUBSECTION_TITLE,
         ),
         dmc.Slider(
             id="gene-graph-pointpos",
@@ -91,7 +93,8 @@ gene_graph_points_display_stack = dmc.Stack(
             mb=35,
         ),
         dmc.Text(
-            "Spreading of displayed points (jitter)", style=style.STACK_SUBSECTION_TITLE
+            "Spreading of displayed points (jitter)",
+            style=style.STACK_SUBSECTION_TITLE,
         ),
         dmc.Slider(
             id="gene-graph-jitter",

@@ -48,9 +48,3 @@ repos:
         name: Prevent committing output from pipeline test runs to the pipeline code itself
         entry: ./.hooks/block_pipeline_outdir.sh
         language: script
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.17.3
-    hooks:
-      - id: ruff-check
-        args: [--fix]
-      - id: ruff-format

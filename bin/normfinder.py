@@ -14,12 +14,13 @@ import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import config
 import numpy as np
 import polars as pl
-from common import export_parquet
 from numba import njit, prange
 from tqdm import tqdm
+
+import config
+from common import export_parquet
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -46,8 +47,7 @@ def nanmean(a: np.ndarray, axis: int | None = None) -> np.ndarray:
 
 @njit(parallel=True, cache=True)
 def compute_minvars(z: np.ndarray, target_idx: np.ndarray) -> np.ndarray:
-    """
-    z: (n_genes, n_samples) array, NaN = missing
+    """z: (n_genes, n_samples) array, NaN = missing
     target_idx: indices of genes for which to compute the minvar statistic
     returns: 1D array of length len(target_idx)
 
@@ -99,8 +99,7 @@ def compute_minvars(z: np.ndarray, target_idx: np.ndarray) -> np.ndarray:
             var = (s2 - n * m * m) / (n - 1)
             if var < 0.0:  # guard against catastrophic cancellation
                 var = 0.0
-            if var < minv:
-                minv = var
+            minv = min(minv, var)
         minvars[k] = minv / 4.0 if np.isfinite(minv) else np.inf
     return minvars
 
@@ -112,6 +111,8 @@ def compute_minvars(z: np.ndarray, target_idx: np.ndarray) -> np.ndarray:
 
 @dataclass
 class NormFinder:
+    """Class to compute the NormFinder stability score for each gene in the dataset."""
+
     count_lf: pl.LazyFrame
     design_df: pl.DataFrame
 
@@ -130,13 +131,13 @@ class NormFinder:
         # format_design
         self.design_df = self.design_df.with_columns(
             pl.concat_str([pl.col("batch"), pl.col("condition")], separator="_").alias(
-                "group"
-            )
+                "group",
+            ),
         ).select("sample", "group")
 
         # make dict associating a group to the list of its samples
         group_to_sample_df = self.design_df.group_by("group", maintain_order=True).agg(
-            "sample"
+            "sample",
         )  # maintain order is better for repeatability and testing
 
         self.group_to_samples_dict = {
@@ -146,9 +147,7 @@ class NormFinder:
         groups = list(self.group_to_samples_dict.keys())
         self.n_groups = len(groups)
 
-        self.genes = (
-            self.count_lf.select(config.GENE_ID_COLNAME).collect().to_series().to_list()
-        )
+        self.genes = self.count_lf.select(config.GENE_ID_COLNAME).collect().to_series().to_list()
         self.n_genes = len(self.genes)
 
         if self.n_genes <= 2:
@@ -159,8 +158,7 @@ class NormFinder:
         self.samples = self.design_df["sample"].to_list()
         count_df = self.count_lf.select(self.samples).collect()
         self.matrix = (
-            count_df
-            .cast(pl.Float32)
+            count_df.cast(pl.Float32)
             .fill_null(np.nan)  # unify nulls and NaNs
             .to_numpy()
         )  # (n_genes, n_samples), row order = self.genes
@@ -170,8 +168,7 @@ class NormFinder:
         return np.array([pos[s] for s in samples], dtype=np.int64)
 
     def _intragroup_variance(self, Y: np.ndarray) -> np.ndarray:
-        """
-        Unbiased intragroup variance for one group.
+        """Unbiased intragroup variance for one group.
 
         Y: (n_genes, ng) slice of X for this group's samples.
         Returns (n_genes,) vector.
@@ -206,10 +203,11 @@ class NormFinder:
         return var
 
     def _intergroup_variance(
-        self, gene_means_in_groups: np.ndarray, dataset_overall_mean: float
+        self,
+        gene_means_in_groups: np.ndarray,
+        dataset_overall_mean: float,
     ) -> np.ndarray:
-        """
-        Unbiased intergroup variance.
+        """Unbiased intergroup variance.
 
         gene_means_in_groups: (n_genes, n_groups) matrix of per-group gene means.
         Returns (n_groups, n_genes) matrix of squared residuals:
@@ -235,6 +233,7 @@ class NormFinder:
         return max(first_term - second_term, 0.0)  # set to 0 if negative
 
     def compute_stability_scoring(self) -> pl.DataFrame:
+        """Compute stability scores for all genes."""
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # UNBIASED INTRAGROUP VARIANCE
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -260,9 +259,7 @@ class NormFinder:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         logger.info("Computing intergroup variances")
         valid_overall_means = group_overall_means[~np.isnan(group_overall_means)]
-        dataset_overall_mean = (
-            nanmean(valid_overall_means) if valid_overall_means.size else np.nan
-        )
+        dataset_overall_mean = nanmean(valid_overall_means) if valid_overall_means.size else np.nan
         inter = self._intergroup_variance(gene_means_in_groups, dataset_overall_mean)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -273,20 +270,19 @@ class NormFinder:
         logger.info(f"Gamma factor: {gamma:.6g}")
 
         difnew = inter * gamma / (gamma + group_mean_variance)
-        varnew = group_mean_variance + gamma * group_mean_variance / (
-            gamma + group_mean_variance
-        )
+        varnew = group_mean_variance + gamma * group_mean_variance / (gamma + group_mean_variance)
 
         logger.info("Computing stability values")
         stability = nanmean(
-            np.abs(difnew) + np.sqrt(varnew), axis=0
+            np.abs(difnew) + np.sqrt(varnew),
+            axis=0,
         )  # mean over groups, (n_genes,)
 
         return pl.DataFrame(
             {
                 config.GENE_ID_COLNAME: self.genes,
                 config.NORMFINDER_STABILITY_VALUE_COLNAME: stability,
-            }
+            },
         )
 
 
@@ -295,20 +291,29 @@ class NormFinder:
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Compute NormFinder stability values for each gene in the dataset"
+        description="Compute NormFinder stability values for each gene in the dataset",
     )
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts",
+        type=Path,
+        dest="count_file",
+        required=True,
+        help="Count file",
     )
     parser.add_argument(
-        "--design", type=Path, dest="design_file", required=True, help="Design file"
+        "--design",
+        type=Path,
+        dest="design_file",
+        required=True,
+        help="Design file",
     )
     return parser.parse_args()
 
 
-def export_stability(stabilities: pl.DataFrame):
+def export_stability(stabilities: pl.DataFrame) -> None:
     """Export stability values to parquet file."""
     logger.info(f"Exporting stability values to: {STABILITY_OUTFILENAME}")
     export_parquet(stabilities, STABILITY_OUTFILENAME)
@@ -324,7 +329,7 @@ def main():
     design_df = pl.read_csv(args.design_file)
     # filter design df to keep only samples that are present in the count dataframe
     design_df = design_df.filter(
-        pl.col("sample").is_in(count_lf.collect_schema().names())
+        pl.col("sample").is_in(count_lf.collect_schema().names()),
     )
 
     nfd = NormFinder(count_lf, design_df)

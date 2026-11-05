@@ -7,8 +7,9 @@ import logging
 from collections import Counter
 from pathlib import Path
 
-import config
 from tqdm import tqdm
+
+import config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,10 +25,15 @@ GENE_ID_OCCURRENCES_OUTFILE = "gene_id_occurrences.csv"
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Collect gene IDs from count files")
     parser.add_argument(
-        "--ids", type=str, dest="gene_id_files", required=True, help="Gene ID files"
+        "--ids",
+        type=str,
+        dest="gene_id_files",
+        required=True,
+        help="Gene ID files",
     )
     return parser.parse_args()
 
@@ -48,7 +54,7 @@ def main():
     unique_gene_ids = set()
     counter = Counter()
     for gene_id_file in tqdm(gene_id_files):
-        with open(gene_id_file, "r") as fin:
+        with open(gene_id_file) as fin:
             gene_ids = [line.strip() for line in fin]
             unique_gene_ids.update(gene_ids)
             counter.update(gene_ids)
@@ -58,10 +64,9 @@ def main():
 
     with open(GENE_ID_OCCURRENCES_OUTFILE, "w") as fout:
         fout.write(
-            f"{config.ORIGINAL_GENE_ID_COLNAME},{config.GENE_ID_COUNT_COLNAME}\n"
+            f"{config.ORIGINAL_GENE_ID_COLNAME},{config.GENE_ID_COUNT_COLNAME}\n",
         )
-        for gene_id, count in sorted(counter.items()):
-            fout.write(f"{gene_id},{count}\n")
+        fout.writelines(f"{gene_id},{count}\n" for gene_id, count in sorted(counter.items()))
 
 
 if __name__ == "__main__":

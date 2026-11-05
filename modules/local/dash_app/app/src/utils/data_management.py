@@ -18,9 +18,7 @@ class DataManager:
 
     def get_sorted_samples(self) -> list[str]:
         return sorted(
-            self.all_counts_lf.select(pl.exclude(config.GENE_ID_COLNAME))
-            .collect_schema()
-            .names()
+            self.all_counts_lf.select(pl.exclude(config.GENE_ID_COLNAME)).collect_schema().names(),
         )
 
     def get_all_genes_stat_data(self) -> pl.DataFrame:
@@ -52,13 +50,7 @@ class DataManager:
         )
 
     def get_sample_counts(self, sample: str) -> pd.Series:
-        return (
-            self.all_counts_lf.select(sample)
-            .drop_nulls()
-            .collect()
-            .to_pandas()
-            .iloc[:, 0]
-        )
+        return self.all_counts_lf.select(sample).drop_nulls().collect().to_pandas().iloc[:, 0]
 
     def get_nb_sections(self) -> int:
         return self.all_genes_stat_df.select(config.SECTION_COLNAME).n_unique()

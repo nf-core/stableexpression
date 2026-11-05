@@ -6,8 +6,9 @@ import argparse
 import logging
 from pathlib import Path
 
-import config
 import polars as pl
+
+import config
 from common import export_parquet, parse_count_table
 
 logging.basicConfig(level=logging.INFO)
@@ -27,10 +28,15 @@ NB_KEPT_SAMPLES_OUTFILE = "nb_kept_samples.csv"
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Filter out samples not valid")
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts",
+        type=Path,
+        dest="count_file",
+        required=True,
+        help="Count file",
     )
     parser.add_argument(
         "--valid-gene-ids",
@@ -56,15 +62,15 @@ def parse_args():
     return parser.parse_args()
 
 
-
 def get_nb_valid_genes(valid_gene_ids_file: Path) -> int:
-    with open(valid_gene_ids_file, "r") as fin:
+    """Get the number of valid genes from the number of lines in the valid gene IDs file."""
+    with open(valid_gene_ids_file) as fin:
         return len(fin.readlines())
 
 
 def get_nb_internal_nulls(df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Get the number of null values per sample.
+    """Get the number of null values per sample.
+
     :return:
     A polars dataframe containing 2 columns:
         - sample: name of the sample
@@ -78,14 +84,22 @@ def get_nb_internal_nulls(df: pl.DataFrame) -> pl.DataFrame:
 
 
 def get_ratio_null_values(
-    df: pl.DataFrame, nb_missing_genes: int, nb_valid_genes: int
+    df: pl.DataFrame,
+    nb_missing_genes: int,
+    nb_valid_genes: int,
 ) -> pl.DataFrame:
+    """Get the ratio of null values per sample.
+
+    :return:
+    A polars dataframe containing 2 columns:
+        - sample: name of the sample
+        - ratio: ratio of null values
+    """
     return df.select(
         pl.col(config.SAMPLE_COLNAME),
-        (
-            (pl.col(config.GENE_COUNT_COLNAME) + pl.lit(nb_missing_genes))
-            / nb_valid_genes
-        ).alias(config.RATIO_COLNAME),
+        ((pl.col(config.GENE_COUNT_COLNAME) + pl.lit(nb_missing_genes)) / nb_valid_genes).alias(
+            config.RATIO_COLNAME,
+        ),
     )
 
 
@@ -103,7 +117,7 @@ def main():
     nb_genes = count_df.height
     nb_samples = count_df.width - 1
     logger.info(
-        f"Loaded count data with {nb_genes} genes and {nb_samples} samples"
+        f"Loaded count data with {nb_genes} genes and {nb_samples} samples",
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,7 +135,9 @@ def main():
 
     # adding the nb of missing genes to the number of null vaues for each sample
     ratio_null_values_df = get_ratio_null_values(
-        nb_null_values_df, nb_missing_genes, nb_valid_genes
+        nb_null_values_df,
+        nb_missing_genes,
+        nb_valid_genes,
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -130,7 +146,7 @@ def main():
 
     # computing the number of zeros values per sample
     ratio_zeros_df = count_df.select(
-        pl.exclude(config.GENE_ID_COLNAME).eq(pl.lit(0)).mean()
+        pl.exclude(config.GENE_ID_COLNAME).eq(pl.lit(0)).mean(),
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -151,7 +167,6 @@ def main():
     else:
         logger.error("No valid columns remaining")
 
-
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # FILTERING OUT SAMPLES WITH TOO MANY ZEROS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -167,7 +182,8 @@ def main():
     if zero_value_valid_samples:
         logger.info(f"Filtered out {count_df.width - 1 - len(zero_value_valid_samples)} columns")
         count_df = count_df.select(
-            pl.col(config.GENE_ID_COLNAME), pl.col(zero_value_valid_samples)
+            pl.col(config.GENE_ID_COLNAME),
+            pl.col(zero_value_valid_samples),
         )
 
         outfilename = args.count_file.with_suffix(OUTFILE_SUFFIX).name

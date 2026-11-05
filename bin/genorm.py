@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 # Written by Olivier Coen. Highly optimised by Mistral. Released under the MIT license.
-"""
-genorm.py - Compute M-measure for each gene (scalable NumPy + Numba version).
+"""genorm.py - Compute M-measure for each gene (scalable NumPy + Numba version).
 
 Polars is used for I/O only (parquet in, csv out).
 
@@ -23,12 +22,13 @@ import logging
 import sys
 from pathlib import Path
 
-import config
-from common import export_parquet, get_count_columns
 import numpy as np
 import polars as pl
 from numba import njit, prange
 from tqdm import tqdm
+
+import config
+from common import export_parquet, get_count_columns
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -42,7 +42,9 @@ EXPORT_NB_DIGITS = 3
 # PARSE ARGS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def parse_args():
+
+def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--file",
@@ -65,10 +67,10 @@ def parse_args():
 # NUMBA-ACCELERATED KERNEL
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 @njit(parallel=True, cache=True)
 def _m_sums_for_block(var_block: np.ndarray) -> np.ndarray:
-    """
-    var_block: (block, n_genes) matrix of Var0(a_i - b_j) / n_samples
+    """var_block: (block, n_genes) matrix of Var0(a_i - b_j) / n_samples
     Returns, for each row i, the sum over j of sqrt(var) with negatives
     (numerical cancellation) treated as zero.
     """
@@ -88,9 +90,9 @@ def _m_sums_for_block(var_block: np.ndarray) -> np.ndarray:
 # COMPUTATION OF M-MEASURES
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 def compute_m_measures(L: np.ndarray, block_size: int = BLOCK_SIZE) -> np.ndarray:
-    """
-    L: (n_genes, n_samples) matrix of log2 counts.
+    """L: (n_genes, n_samples) matrix of log2 counts.
     Returns the M-measure of each gene: the mean over all other genes of the
     std (ddof=0, across samples) of the pairwise log2 expression ratios.
     """
@@ -130,6 +132,7 @@ def compute_m_measures(L: np.ndarray, block_size: int = BLOCK_SIZE) -> np.ndarra
 # MAIN
 #####################################################
 
+
 def main():
     args = parse_args()
 
@@ -142,17 +145,13 @@ def main():
     count_df = count_lf.collect()
     genes = count_df[config.GENE_ID_COLNAME].to_list()
     X = (
-        count_df
-        .select(count_cols)
-        .cast(pl.Float32)
-        .fill_null(np.nan)
-        .to_numpy()
+        count_df.select(count_cols).cast(pl.Float32).fill_null(np.nan).to_numpy()
     )  # (n_genes, n_samples), row order = genes
 
     if not np.isfinite(X).all() or (X < 0).any():
         logger.error(
             "Count matrix contains missing, non-finite or negative values; "
-            "geNorm requires complete positive counts (impute first)"
+            "geNorm requires complete positive counts (impute first)",
         )
         sys.exit(100)
 
@@ -162,15 +161,12 @@ def main():
 
     m_measures = compute_m_measures(L)
 
-    m_df = (
-        pl.DataFrame(
-            {
-                config.GENE_ID_COLNAME: genes,
-                config.GENORM_M_MEASURE_COLNAME: m_measures,
-            }
-        )
-        .sort(config.GENE_ID_COLNAME)
-    )
+    m_df = pl.DataFrame(
+        {
+            config.GENE_ID_COLNAME: genes,
+            config.GENORM_M_MEASURE_COLNAME: m_measures,
+        },
+    ).sort(config.GENE_ID_COLNAME)
 
     # limit nb of digits to 5 to avoid discrepancies between docker / apptainer and conda runs
     export_parquet(m_df, args.outfile, EXPORT_NB_DIGITS)

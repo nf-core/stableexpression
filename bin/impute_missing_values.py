@@ -2,8 +2,8 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
-"""
-This script imputes missing values in a count table using KNN imputation.
+"""Imputes missing values in a count table using KNN imputation.
+
 It takes as inputs:
     - a dataframe whose columns are samples and rows are genes.
     - an output file.
@@ -18,15 +18,16 @@ parallel with joblib.
 
 import argparse
 import logging
-from pathlib import Path
 from math import sqrt
+from pathlib import Path
 
-import config
 import numpy as np
 import polars as pl
-from common import export_parquet, get_count_columns
 from joblib import Parallel, delayed
 from sklearn.impute import KNNImputer
+
+import config
+from common import export_parquet, get_count_columns
 
 PROCESS_LOGGING_FORMAT = "%(levelname)s:%(processName)s: %(message)s"
 N_NEIGHBOURS = 5
@@ -42,13 +43,23 @@ logger = logging.getLogger(__name__)
 # CLI
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def parse_args():
+
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Perform KNN imputation on count data")
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts",
+        type=Path,
+        dest="count_file",
+        required=True,
+        help="Count file",
     )
     parser.add_argument(
-        "--out", type=Path, dest="outfile", required=True, help="Output file"
+        "--out",
+        type=Path,
+        dest="outfile",
+        required=True,
+        help="Output file",
     )
     parser.add_argument(
         "--threads",
@@ -60,21 +71,24 @@ def parse_args():
 
 
 def has_missing_values(lf: pl.LazyFrame) -> bool:
-    """
-    Check if there are any missing values in the input counts.
-    """
-    return lf.select(
-        pl.any_horizontal(pl.exclude(config.GENE_ID_COLNAME).is_null()).any()
-    ).collect().item()
+    """Check if there are any missing values in the input counts."""
+    return (
+        lf.select(
+            pl.any_horizontal(pl.exclude(config.GENE_ID_COLNAME).is_null()).any(),
+        )
+        .collect()
+        .item()
+    )
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MATRIX HELPERS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 def get_count_matrix(lf: pl.LazyFrame) -> tuple[list[str], np.ndarray]:
-    """
-    Extract the count matrix as float32 numpy array of shape (n_samples, n_genes).
+    """Extract the count matrix as float32 numpy array of shape (n_samples, n_genes).
+
     Rows are samples and columns are genes so that the imputer uses gene
     expression values as features. The transposition is performed on the numpy
     array because it is zero-copy (it only changes memory strides).
@@ -85,7 +99,7 @@ def get_count_matrix(lf: pl.LazyFrame) -> tuple[list[str], np.ndarray]:
     count_cols = get_count_columns(lf)
     count_matrix = (
         lf.select(count_cols)
-        .fill_null(np.nan) # convert all null values to NaN
+        .fill_null(np.nan)  # convert all null values to NaN
         .collect()
         .cast(pl.Float32)
         .to_numpy()  # replaces null values by NaNs
@@ -95,8 +109,8 @@ def get_count_matrix(lf: pl.LazyFrame) -> tuple[list[str], np.ndarray]:
 
 
 def get_global_gene_means(count_matrix: np.ndarray) -> np.ndarray:
-    """
-    Per-gene mean computed over all samples, ignoring NaNs.
+    """Per-gene mean computed over all samples, ignoring NaNs.
+
     Genes with no observed value at all are mapped to 0.0 (safety net).
     """
     with np.errstate(invalid="ignore"):
@@ -105,32 +119,32 @@ def get_global_gene_means(count_matrix: np.ndarray) -> np.ndarray:
 
 
 def make_random_groups(
-    n_samples: int, group_size: int, rng: np.random.Generator
+    n_samples: int,
+    group_size: int,
+    rng: np.random.Generator,
 ) -> list[np.ndarray]:
-    """
-    Randomly split sample indices into groups of at most `group_size` samples.
+    """Randomly split sample indices into groups of at most `group_size` samples.
+
     A new call with a different rng state yields a different split.
     """
     shuffled = rng.permutation(n_samples)
     return [shuffled[i : i + group_size] for i in range(0, n_samples, group_size)]
 
 
-def setup_worker_logging():
-    """
-    Set up logging for worker processes.
-    """
+def setup_worker_logging() -> None:
+    """Set up logging for worker processes."""
     logging.basicConfig(level=logging.INFO, format=PROCESS_LOGGING_FORMAT, force=True)
 
 
-def get_nb_passes(n_samples: int):
-    """
-    Compute the number of passes over the data.
+def get_nb_passes(n_samples: int) -> int:
+    """Compute the number of passes over the data.
+
     The number of passes is the square root of the number of samples divided by
     the maximum group size.
     It is clipped between 1 and MAX_N_PASSES.
     """
     n_passes = sqrt(n_samples // MAX_GROUP_SIZE)
-    return int(np.clip(n_passes, 1 , MAX_N_PASSES))
+    return int(np.clip(n_passes, 1, MAX_N_PASSES))
 
 
 def process_single_group(
@@ -139,16 +153,14 @@ def process_single_group(
     group_nan_mask: np.ndarray,
     group_id: int,
 ) -> tuple[np.ndarray, np.ndarray | None, np.ndarray, np.ndarray] | None:
-    """
-    Worker function executed in parallel processes (loky backend).
-    Processes a single chunk of samples.
+    """Worker function executed in parallel processes (loky backend).
 
+    Processes a single chunk of samples.
     Returns a tuple (sample_idx, valid_genes_idx, filled, sub_nan_mask)
     where filled contains the imputed values (0.0 where the cell was observed
     or not imputed), or None if the chunk is uncomputable (all genes fully
     missing in this chunk — other passes usually cover it).
     """
-
     fully_missing = group_nan_mask.all(axis=0)
     if fully_missing.all():
         logger.warning(f"Group {group_id}: contains missing values for all genes and all samples!")
@@ -162,7 +174,9 @@ def process_single_group(
     )
 
     ratio_missing = group_nan_mask.sum() / group_nan_mask.size
-    logger.info(f"Group {group_id}: {ratio_missing:.1%} of missing values accross genes and samples")
+    logger.info(
+        f"Group {group_id}: {ratio_missing:.1%} of missing values accross genes and samples",
+    )
 
     if fully_missing.any():
         ratio_all_missing = fully_missing.sum() / fully_missing.size
@@ -178,21 +192,26 @@ def process_single_group(
         return sample_idx, valid_genes_idx, filled, sub_nan_mask
 
     # all genes have at least one non-missing value
-    else:
-        logger.info(f"Group {group_id}: no gene having only missing values")
-        sub_imputed = imputer.fit_transform(sub_matrix)
-        filled = np.where(group_nan_mask, sub_imputed, 0.0)
+    logger.info(f"Group {group_id}: no gene having only missing values")
+    sub_imputed = imputer.fit_transform(sub_matrix)
+    filled = np.where(group_nan_mask, sub_imputed, 0.0)
 
-        return sample_idx, None, filled, group_nan_mask
+    return sample_idx, None, filled, group_nan_mask
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MULTI-PASS IMPUTATION
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def multi_pass_impute(count_matrix: np.ndarray, n_passes: int, nthreads: int, rng: np.random.Generator) -> np.ndarray:
-    """
-    Impute the matrix with possibly multiple passes over random sample groups.
+
+def multi_pass_impute(
+    count_matrix: np.ndarray,
+    n_passes: int,
+    nthreads: int,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    """Impute the matrix with possibly multiple passes over random sample groups.
+
     On most dataframes, 1 pass is enough to cover all missing values.
     Multiple passes are used when count matrix with fully missing values are encountered.
     Parallelizes the chunks over the available CPUs with joblib (loky).
@@ -239,7 +258,7 @@ def multi_pass_impute(count_matrix: np.ndarray, n_passes: int, nthreads: int, rn
         logger.info(
             f"Pass {pass_nb}/{n_passes} done: "
             f"{(imputed_count > 0).sum() / max(nan_mask.sum(), 1):.1%} of "
-            f"missing cells imputed at least once ({n_remaining} remaining)"
+            f"missing cells imputed at least once ({n_remaining} remaining)",
         )
 
     # means of imputations (initial values stay unchanged)
@@ -254,6 +273,7 @@ def multi_pass_impute(count_matrix: np.ndarray, n_passes: int, nthreads: int, rn
 # MAIN
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 def main():
     args = parse_args()
 
@@ -261,13 +281,10 @@ def main():
     lf = pl.scan_parquet(args.count_file)
 
     if has_missing_values(lf):
-
         logger.info("Applying KNN imputation")
         count_cols, count_matrix = get_count_matrix(lf)
         n_samples, n_genes = count_matrix.shape
         logger.info(f"Found {n_samples} samples and {n_genes} genes")
-
-
 
         # pristine gene means, computed before any imputation
         gene_means = get_global_gene_means(count_matrix)
@@ -283,7 +300,7 @@ def main():
         if still_missing.any():
             logger.info(
                 f"{still_missing.sum()} cells still missing after all passes: "
-                "filling with pristine global gene means"
+                "filling with pristine global gene means",
             )
             count_matrix[still_missing] = np.take(gene_means, np.where(still_missing)[1])
 

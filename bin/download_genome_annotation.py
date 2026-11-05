@@ -4,14 +4,14 @@
 
 import argparse
 import logging
-import sys
 import shutil
+import sys
+from pathlib import Path
+
 import pandas as pd
-from tenacity import RetryError
 from ensembl_annotation_manager import EnsemblAnnotationManager
 from ncbi_annotation_manager import NCBIAnnotationManager
-
-from pathlib import Path
+from tenacity import RetryError
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -41,7 +41,8 @@ OUTPUT_DIR = "selected"
 ##################################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser("Get GEO Datasets accessions")
     parser.add_argument(
         "--species",
@@ -60,18 +61,18 @@ def parse_args():
     parser.add_argument(
         "--skip-ensembl",
         action="store_true",
-        dest="skip_ensembl"
+        dest="skip_ensembl",
     )
     parser.add_argument(
         "--skip-ncbi",
         action="store_true",
-        dest="skip_ncbi"
+        dest="skip_ncbi",
     )
     return parser.parse_args()
 
 
 def get_ensembl_annotations(species: str) -> list[Path]:
-
+    """Get ensembl annotations for a given species."""
     manager = EnsemblAnnotationManager(species, ENSEMBL_ANNOTATION_LOCAL_FOLDER)
     logger.info("[Ensembl] :: Searching for appropriate annotations")
     try:
@@ -91,10 +92,7 @@ def get_ensembl_annotations(species: str) -> list[Path]:
 
 
 def get_ncbi_annotations(species: str) -> list[Path]:
-    """
-    Downloading genome annotation
-    """
-
+    """Download genome annotation."""
     target_folder = Path(NCBI_ANNOTATION_LOCAL_FOLDER)
     target_folder.mkdir(parents=True, exist_ok=True)
 
@@ -102,18 +100,24 @@ def get_ncbi_annotations(species: str) -> list[Path]:
     reference_reports = NCBIAnnotationManager(species).get_sorted_reference_genome_reports()
 
     if reference_reports:
-        logger.info(f"[NCBI] :: Found {len(reference_reports)} assembly reports for species {species}")
+        logger.info(
+            f"[NCBI] :: Found {len(reference_reports)} assembly reports for species {species}",
+        )
     else:
         logger.info(f"[NCBI] :: No assembly reports found for species {species}")
         return []
 
     annotation_files = []
     for report in reference_reports:
-        accession = report['accession']
+        accession = report["accession"]
         logger.info(f"[NCBI] :: Trying to download annotation of assembly {accession}.")
         try:
             download_archive = NCBIAnnotationManager.download_genome_annotation(accession)
-            annotation_file = NCBIAnnotationManager.extract_annotation_file_from_archive(download_archive, accession, target_folder)
+            annotation_file = NCBIAnnotationManager.extract_annotation_file_from_archive(
+                download_archive,
+                accession,
+                target_folder,
+            )
             annotation_files.append(annotation_file)
         except Exception as e:
             logger.error(f"[NCBI] :: Error downloading annotation for accession {accession}: {e}")
@@ -125,11 +129,13 @@ def get_ncbi_annotations(species: str) -> list[Path]:
 
 
 def parse_gene_ids(file: Path) -> list[str]:
-    with open(file, "r") as fin:
+    """Parse gene IDs from a file, one per line."""
+    with open(file) as fin:
         return sorted({line.strip() for line in fin})
 
 
 def parse_annotation(annotation_file: Path) -> pd.DataFrame:
+    """Parse a GFF3 annotation file into a pandas DataFrame."""
     return pd.read_csv(
         annotation_file,
         sep="\t",
@@ -141,13 +147,11 @@ def parse_annotation(annotation_file: Path) -> pd.DataFrame:
 
 
 def parse_gene_ids_from_annotation(file: Path) -> list[str]:
-    """
-    Extract gene ID from attributes column for each gene feature
-    """
+    """Extract gene ID from attributes column for each gene feature."""
     logger.info(f"Parsing gene IDs from annotation file {file}")
     df = parse_annotation(file)
 
-    suffix = file.suffix if file.suffix != '.gz' else file.suffixes[-2]
+    suffix = file.suffix if file.suffix != ".gz" else file.suffixes[-2]
     if suffix in [".gff3", ".gff"]:
         pattern = r"ID=gene[:\-]([^;]+)"
     elif suffix == ".gtf":
@@ -157,13 +161,10 @@ def parse_gene_ids_from_annotation(file: Path) -> list[str]:
 
     # getting all types of gene features
     # it contains of course 'gene', but also 'ncRNA_gene', etc.
-    gene_cols = [
-        feature for feature in df["feature"].unique()
-        if "gene" in feature
-    ]
+    gene_cols = [feature for feature in df["feature"].unique() if "gene" in feature]
 
     return (
-        df.loc[df["feature"].isin(gene_cols)]['attributes']
+        df.loc[df["feature"].isin(gene_cols)]["attributes"]
         .str.extract(pattern, expand=False)
         .drop_duplicates()
         .dropna()
@@ -171,20 +172,26 @@ def parse_gene_ids_from_annotation(file: Path) -> list[str]:
     )
 
 
-def get_annotation_matching_gene_ids(annotations: list[Path], unique_gene_ids: list[str]) -> Path | None:
-    """
-    Find the annotation file that contains the most gene IDs in common with the list provided.
-    """
+def get_annotation_matching_gene_ids(
+    annotations: list[Path],
+    unique_gene_ids: list[str],
+) -> Path | None:
+    """Find the annotation file that contains the most gene IDs in common with the list provided."""
     annotation_file_to_nb_common_gene_ids = {}
     for annotation_file in annotations:
-
         annotation_gene_ids = parse_gene_ids_from_annotation(annotation_file)
         if annotation_gene_ids:
-            genes_to_show = [str(gene_id) for gene_id in annotation_gene_ids[:min(3, len(annotation_gene_ids))]]
-            logger.info(f"{annotation_file.name} :: found {len(annotation_gene_ids)} gene IDs like {', '.join(genes_to_show)}")
+            genes_to_show = [
+                str(gene_id) for gene_id in annotation_gene_ids[: min(3, len(annotation_gene_ids))]
+            ]
+            logger.info(
+                f"{annotation_file.name} :: found {len(annotation_gene_ids)} gene IDs like {', '.join(genes_to_show)}",
+            )
 
             gene_id_intersection = set(annotation_gene_ids).intersection(unique_gene_ids)
-            logger.info(f"{annotation_file.name} :: {len(gene_id_intersection)} gene IDs in commmon")
+            logger.info(
+                f"{annotation_file.name} :: {len(gene_id_intersection)} gene IDs in commmon",
+            )
 
             annotation_file_to_nb_common_gene_ids[annotation_file] = len(gene_id_intersection)
 
@@ -194,13 +201,16 @@ def get_annotation_matching_gene_ids(annotations: list[Path], unique_gene_ids: l
 
     max_nb_common_gene_ids = max(annotation_file_to_nb_common_gene_ids.values())
     if max_nb_common_gene_ids == 0:
-        logger.error("Could not find any annotation file having gene IDs in common with list provided...")
+        logger.error(
+            "Could not find any annotation file having gene IDs in common with list provided...",
+        )
         return None
 
     # if multiple annotation file share the same number of common gene IDs
     # taking the first one
     best_annotations = [
-        file for file, nb_common_gene_ids in annotation_file_to_nb_common_gene_ids.items()
+        file
+        for file, nb_common_gene_ids in annotation_file_to_nb_common_gene_ids.items()
         if nb_common_gene_ids == max_nb_common_gene_ids
     ]
     return best_annotations[0]
@@ -233,10 +243,12 @@ def main():
             ensembl_annotations = get_ensembl_annotations(species)
             selected_annotation = get_annotation_matching_gene_ids(
                 ensembl_annotations,
-                unique_gene_ids
+                unique_gene_ids,
             )
             if selected_annotation is None:
-                logger.warning("[Ensembl] :: Could not find any suitable annotation in Ensembl. Trying with NCBI")
+                logger.warning(
+                    "[Ensembl] :: Could not find any suitable annotation in Ensembl. Trying with NCBI",
+                )
             else:
                 search_on_ncbi = False
 
@@ -249,13 +261,12 @@ def main():
             ncbi_annotations = get_ncbi_annotations(species)
             selected_annotation = get_annotation_matching_gene_ids(
                 ncbi_annotations,
-                unique_gene_ids
+                unique_gene_ids,
             )
 
-    except RetryError as e: # if servers are unavailable for some reason
+    except RetryError as e:  # if servers are unavailable for some reason
         logger.exception(e)
-        sys.exit(101) # retrying at the module level
-
+        sys.exit(101)  # retrying at the module level
 
     ## ################################################################
     # MOVING THE SELECTED ANNOTATION TO THE PLACE

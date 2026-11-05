@@ -27,7 +27,7 @@ def main():
 
     logger.info("Collecting statistics...")
     # parsing file manually because it's not a standard CSV format
-    with open(args.file, "r") as f:
+    with open(args.file) as f:
         lines = f.readlines()
     data = [line.strip().split(",") for line in lines]
 

@@ -2,13 +2,14 @@
 
 # Written by Olivier Coen. Released under the MIT license.
 
-import logging
 import gzip
+import logging
 from pathlib import Path
 
-import config
 import polars as pl
 import polars.selectors as cs
+
+import config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,16 +20,16 @@ COL_SCHEMA = pl.Schema(
     {
         "gene_id": pl.String(),
         "original_gene_id": pl.String(),
-
-    }
+    },
 )
 
 
-def parse_header(file: Path, sep: str):
+def parse_header(file: Path, sep: str) -> list[str]:
+    """Parse the header of a file, and return it as a list of strings."""
     if file.suffix == ".gz":
         fin = gzip.open(file, "rt")
     else:
-        fin = open(file, "r")
+        fin = open(file)
     header = fin.readline().strip().split(sep)
     first_row = fin.readline().strip().split(sep)
 
@@ -36,15 +37,15 @@ def parse_header(file: Path, sep: str):
 
     if len(header) == len(first_row):
         return header
-    elif len(header) == len(first_row) - 1:
-        return [config.GENE_ID_COLNAME] + header
-    else:
-        raise ValueError(
-            f"Header has length: {len(header)} while first row has length: {len(first_row)}. Header: {header} / first row: {first_row}"
-        )
+    if len(header) == len(first_row) - 1:
+        return [config.GENE_ID_COLNAME, *header]
+    raise ValueError(
+        f"Header has length: {len(header)} while first row has length: {len(first_row)}. Header: {header} / first row: {first_row}",
+    )
 
 
 def detect_separator(file: Path, candidates: list[str]) -> str:
+    """Detect the separator of a file."""
     best_sep, best_score = None, -1
     for sep in candidates:
         try:
@@ -62,19 +63,17 @@ def detect_separator(file: Path, candidates: list[str]) -> str:
     return best_sep
 
 
-def parse_table(file: Path):
+def parse_table(file: Path) -> pl.DataFrame:
+    """Parse a table file into a Polars DataFrame."""
     # parsing header first
-    if file.suffix == ".gz":
-        ext = file.suffixes[-2]
-    else:
-        ext = file.suffix
+    ext = file.suffixes[-2] if file.suffix == ".gz" else file.suffix
     if ext in ALLOWED_FILE_FORMATS:
         # parsing header manually
         if ext == ".csv":
             sep = ","
         elif ext == "\t":
             sep = "\t"
-        else: # .dat
+        else:  # .dat
             sep = detect_separator(file, candidates=[",", ";", "\t", "|", ":"])
         header = parse_header(file, sep)
         return pl.read_csv(
@@ -86,21 +85,23 @@ def parse_table(file: Path):
             new_columns=header,
             null_values=["NA", "N/A", "na", "n/a"],
         )
-    elif ext == ".parquet":
+    if ext == ".parquet":
         return pl.read_parquet(file)
-    else:
-        raise ValueError(f"Unsupported file format: {ext}")
+    raise ValueError(f"Unsupported file format: {ext}")
 
 
-def get_nb_rows(lf: pl.LazyFrame):
+def get_nb_rows(lf: pl.LazyFrame) -> int:
+    """Get the number of rows in a LazyFrame."""
     return lf.select(pl.len()).collect().item()
 
 
 def get_count_columns(lf: pl.LazyFrame) -> list[str]:
+    """Get the list of columns that are not the gene_id column."""
     return [col for col in lf.select(pl.exclude(config.GENE_ID_COLNAME)).collect_schema().names()]
 
 
-def parse_count_table(file: Path):
+def parse_count_table(file: Path) -> pl.DataFrame:
+    """Parse a count table."""
     df = parse_table(file)
     first_col = df.columns[0]
     # whatever the name of the first col, rename it to "gene_id"
@@ -111,9 +112,7 @@ def parse_count_table(file: Path):
 
 
 def compute_log2(df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Compute log2 values.
-    """
+    """Compute log2 values."""
     return df.select(
         pl.col(config.GENE_ID_COLNAME),
         (pl.exclude(config.GENE_ID_COLNAME) + 1).log(base=2),
@@ -123,13 +122,14 @@ def compute_log2(df: pl.DataFrame) -> pl.DataFrame:
 def export_parquet(
     df: pl.DataFrame,
     outfilename: str,
-    n_digits: int = config.NB_DECIMAL_DIGITS
-):
+    n_digits: int = config.NB_DECIMAL_DIGITS,
+) -> None:
+    """Export a DataFrame to a parquet file."""
     logger.info(f"Exporting processed counts to: {outfilename}")
     # round all float columns to avoid inconsistencies during subsequent computations
     # cast float columns to Float32 to fix this
     df.with_columns(
-        cs.float().round(n_digits).cast(pl.Float32)
+        cs.float().round(n_digits).cast(pl.Float32),
     ).write_parquet(outfilename)
 
 
@@ -137,9 +137,10 @@ def write_csv_with_floats(
     df: pl.DataFrame,
     outfilename: str,
     float_precision: int = config.DEFAULT_CSV_FLOAT_PRECISION,
-):
+) -> None:
+    """Write a DataFrame to a CSV file with a given float precision."""
     df.with_columns(
-        cs.float().round(float_precision).cast(pl.Float32)
+        cs.float().round(float_precision).cast(pl.Float32),
     ).write_csv(outfilename, float_precision=float_precision)
 
 
@@ -147,15 +148,16 @@ def sink_csv_with_floats(
     lf: pl.LazyFrame,
     outfilename: str,
     float_precision: int = config.DEFAULT_CSV_FLOAT_PRECISION,
-):
+) -> None:
+    """Write a LazyFrame to a CSV file with a given float precision."""
     lf.with_columns(
-        cs.float().round(float_precision).cast(pl.Float32)
+        cs.float().round(float_precision).cast(pl.Float32),
     ).sink_csv(outfilename, float_precision=float_precision)
 
 
 def zscore_to_unit(x: pl.Series, clip: float = 3.0) -> pl.Series:
-    """
-    Convert a series to unit scale using zscore.
+    """Convert a series to unit scale using zscore.
+
     First compute zscore, then clip upper values to clip * <initial_std>,
     add the minimum value to shift the range to [0, clip * <initial_std>],
     then divide by clip * <initial_std> to get a range of [0, 1].

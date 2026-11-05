@@ -8,8 +8,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ClassVar
 
-import config
 import polars as pl
+
+import config
 from common import export_parquet, zscore_to_unit
 
 logging.basicConfig(level=logging.INFO)
@@ -24,6 +25,8 @@ STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.parquet"
 
 @dataclass
 class StabilityScorer:
+    """Compute a stability score for each gene based on the statistics computed by the previous steps."""
+
     N_QUANTILES: ClassVar[int] = 1000
 
     WEIGHT_FIELDS: ClassVar[list[str]] = [
@@ -43,17 +46,22 @@ class StabilityScorer:
         self.parse_stability_score_weights()
         self.compute_stability_score()
 
-    def parse_stability_score_weights(self):
+    def parse_stability_score_weights(self) -> None:
+        """Parse the stability score weights from the provided string attribute."""
         for weight_field, weight in zip(
-            self.WEIGHT_FIELDS, self.stability_score_weights_str.split(",")
+            self.WEIGHT_FIELDS,
+            self.stability_score_weights_str.split(","),
+            strict=True,
         ):
             self.weights[weight_field] = float(weight)
 
     @staticmethod
     def get_normalised_col(col: str) -> str:
+        """Return the name of the normalised column for a given column."""
         return f"{col}_normalised"
 
-    def compute_stability_score(self):
+    def compute_stability_score(self) -> None:
+        """Compute the stability score for each gene."""
         logger.info("Computing stability score for candidate genes")
 
         # since Normfinder is always run for candidate genes
@@ -62,12 +70,12 @@ class StabilityScorer:
             pl.when(pl.col(config.NORMFINDER_STABILITY_VALUE_COLNAME).is_not_null())
             .then(1)
             .otherwise(0)
-            .alias(config.IS_CANDIDATE_COLNAME)
+            .alias(config.IS_CANDIDATE_COLNAME),
         )
 
         # dividing the dataframe into two parts: candidate and non-candidate genes
         candidate_df = self.df.filter(
-            pl.col(config.IS_CANDIDATE_COLNAME) == 1
+            pl.col(config.IS_CANDIDATE_COLNAME) == 1,
         )  # keep only candidate genes
         non_candidate_df = self.df.filter(pl.col(config.IS_CANDIDATE_COLNAME) == 0)
 
@@ -81,7 +89,6 @@ class StabilityScorer:
         # iterate over columns that can participate in stability score calculation
         cols_for_stability_scoring = []
         for col, weight in self.weights.items():
-
             # if a column is absent, skip it
             if col not in self.df.columns:
                 logger.warning(f"Column {col} not found in dataframe")
@@ -106,13 +113,9 @@ class StabilityScorer:
                 cols_for_stability_scoring.append(col)
 
         # replacing original data with normalised ones
-        candidate_df = candidate_df.with_columns(
-            data for data in normalised_data.values()
-        )
+        candidate_df = candidate_df.with_columns(data for data in normalised_data.values())
         # adding null columns to the non-candidate df to allow concatenation
-        non_candidate_df = non_candidate_df.with_columns(
-            data for data in null_data.values()
-        )
+        non_candidate_df = non_candidate_df.with_columns(data for data in null_data.values())
 
         # concatenating with non candidate genes to have all genes
         self.df = pl.concat([candidate_df, non_candidate_df])
@@ -123,8 +126,7 @@ class StabilityScorer:
 
         # adding penalty for samples with null values
         stability_scoring_expr = (
-            pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME)
-            * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
+            pl.col(config.RATIO_NULLS_VALID_SAMPLES_COLNAME) * self.WEIGHT_RATIO_NB_NULLS_TO_SCORING
         )
 
         for col, weight in self.weights.items():
@@ -136,8 +138,7 @@ class StabilityScorer:
             # since setting 0 for these samples would favour them, we add the max value of the distribution for these samples
             stability_scoring_expr += (
                 pl.when(
-                    pl.col(normalised_col).is_not_null()
-                    & pl.col(normalised_col).is_not_nan()
+                    pl.col(normalised_col).is_not_null() & pl.col(normalised_col).is_not_nan(),
                 )
                 .then(pl.col(normalised_col) * weight)
                 .otherwise(pl.col(normalised_col).max())
@@ -156,13 +157,16 @@ class StabilityScorer:
         self.df = self.df.with_columns(expr.alias(config.STABILITY_SCORE_COLNAME))
 
     def get_statistics_with_stability_scores(self) -> pl.DataFrame:
-        """
+        """Build the dataframe containing statistics, stability scores and ranks.
+
         Build rank for reach gene. If two genes have exactly the same stabiity score,
         the gene id is used to separate them (useful for reproducibility of results).
         """
         return (
             self.df.sort(
-                [config.STABILITY_SCORE_COLNAME, config.GENE_ID_COLNAME], descending=False, nulls_last=True
+                [config.STABILITY_SCORE_COLNAME, config.GENE_ID_COLNAME],
+                descending=False,
+                nulls_last=True,
             )
             .with_row_index(name="index")
             .with_columns((pl.col("index") + 1).alias(config.RANK_COLNAME))
@@ -177,9 +181,10 @@ class StabilityScorer:
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Computes stability score for each gene for a specific platform"
+        description="Computes stability score for each gene for a specific platform",
     )
     parser.add_argument(
         "--platform",
@@ -228,13 +233,14 @@ def get_stabilities(stability_files: list[Path]) -> pl.DataFrame:
 
 
 def rename_columns_for_platform(scored_df: pl.DataFrame, platform: str) -> pl.DataFrame:
-    return scored_df.rename({
-        col: f"{col}.{platform}" for col in scored_df.columns
-        if col != config.GENE_ID_COLNAME
-    })
+    """Rename columns to include platform name, except for the gene ID column."""
+    return scored_df.rename(
+        {col: f"{col}.{platform}" for col in scored_df.columns if col != config.GENE_ID_COLNAME},
+    )
 
 
-def export_data(scored_df: pl.DataFrame):
+def export_data(scored_df: pl.DataFrame) -> None:
+    """Export the scored DataFrame to a parquet file."""
     logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
     export_parquet(scored_df, STATISTICS_WITH_SCORES_OUTFILENAME)
     logger.info("Done")

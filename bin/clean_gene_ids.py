@@ -7,9 +7,10 @@ import logging
 import sys
 from pathlib import Path
 
-import config
 import polars as pl
-from common import parse_count_table, export_parquet
+
+import config
+from common import export_parquet, parse_count_table
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -28,36 +29,38 @@ FAILURE_REASON_FILE = "failure_reason.txt"
 ##################################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser("Rename gene IDs using mapped IDs")
     parser.add_argument(
-        "--count-file", type=Path, required=True, help="Input file containing counts"
+        "--count-file",
+        type=Path,
+        required=True,
+        help="Input file containing counts",
     )
     return parser.parse_args()
 
 
-def clean_ensembl_gene_id_versioning(df: pl.DataFrame):
-    """
-    Clean Ensembl gene IDs by removing version numbers.
+def clean_ensembl_gene_id_versioning(df: pl.DataFrame) -> pl.DataFrame:
+    """Clean Ensembl gene IDs by removing version numbers.
+
     Remove the dot and the numbers after it in IDs like ENSG00000000003.17
     """
     return df.with_columns(
         pl.when(pl.col(config.GENE_ID_COLNAME).str.starts_with("ENSG"))
         .then(pl.col(config.GENE_ID_COLNAME).str.extract(r"^(ENSG[a-zA-Z0-9]+)", 1))
         .otherwise(pl.col(config.GENE_ID_COLNAME))
-        .alias(config.GENE_ID_COLNAME)
+        .alias(config.GENE_ID_COLNAME),
     )
 
 
-def clean_mirna_ids(df: pl.DataFrame):
-    """
-    Clean miRNA IDs by removing the 5p / 3p identifier.
-    """
+def clean_mirna_ids(df: pl.DataFrame) -> pl.DataFrame:
+    """Clean miRNA IDs by removing the 5p / 3p identifier."""
     return df.with_columns(
         pl.when(pl.col(config.GENE_ID_COLNAME).str.contains(r"-[53]p$"))
         .then(pl.col(config.GENE_ID_COLNAME).str.extract(r"^(.*?)-[53]p$"))
         .otherwise(pl.col(config.GENE_ID_COLNAME))
-        .alias(config.GENE_ID_COLNAME)
+        .alias(config.GENE_ID_COLNAME),
     )
 
 
@@ -99,9 +102,7 @@ def main():
     #############################################################
 
     logger.info("Writing count file with cleaned IDs")
-    count_outfile = args.count_file.with_name(
-        args.count_file.stem + CLEANED_COUNTS_SUFFIX
-    )
+    count_outfile = args.count_file.with_name(args.count_file.stem + CLEANED_COUNTS_SUFFIX)
     export_parquet(df, count_outfile)
 
 

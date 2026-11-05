@@ -4,11 +4,12 @@
 
 import argparse
 import logging
-from pathlib import Path
 from math import sqrt
+from pathlib import Path
+
+import polars as pl
 
 import config
-import polars as pl
 from common import export_parquet, zscore_to_unit
 
 logging.basicConfig(level=logging.INFO)
@@ -26,7 +27,7 @@ STATISTICS_WITH_SCORES_OUTFILENAME = "stats_with_scores.parquet"
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Computes global stability score for each gene"
+        description="Computes global stability score for each gene",
     )
     parser.add_argument(
         "--platform-stats-scores",
@@ -54,7 +55,7 @@ def parse_args():
         dest="null_penalty_weight",
         type=float,
         required=True,
-        default = 3,
+        default=3,
         help="Weight parameter for the null values penalty",
     )
     return parser.parse_args()
@@ -76,8 +77,7 @@ def compute_global_score(
     std_penalty_weight: float,
     null_penalty_weight: float,
 ) -> pl.DataFrame:
-    """
-    Compute the global stability score by weighting stability scores from multiple platforms.
+    """Compute the global stability score by weighting stability scores from multiple platforms.
 
     Steps:
       1. Z-score-normalise each platform's stability score (shifted so the min is 0).
@@ -85,15 +85,12 @@ def compute_global_score(
       3. Subtract penalties: cross-platform score dispersion and missing platforms.
     """
     original_columns = df.columns
-    score_cols = [
-        col for col in df.columns
-        if col.startswith(config.STABILITY_SCORE_COLNAME)
-    ]
+    score_cols = [col for col in df.columns if col.startswith(config.STABILITY_SCORE_COLNAME)]
 
     # With a single platform, its score is the global score as-is.
     if len(score_cols) == 1:
         return df.with_columns(
-            pl.col(score_cols[0]).alias(config.GLOBAL_STABILITY_SCORE_COLNAME)
+            pl.col(score_cols[0]).alias(config.GLOBAL_STABILITY_SCORE_COLNAME),
         )
 
     # normalise scores so platforms are comparable
@@ -108,20 +105,17 @@ def compute_global_score(
     # weight by platform size and average
     # after normalising, col names are like 'a_string.<platform>.normalised
     # so taking col.split(".")[-2] gives the associated platform
-    weights = {
-        col: sqrt(platform_sizes[col.split(".")[-2]]) for col in normalised_cols
-    }
+    weights = {col: sqrt(platform_sizes[col.split(".")[-2]]) for col in normalised_cols}
     sum_of_weights = sum(weights.values())
 
     weighted_cols = [
         (pl.col(normalised_col) * weight).alias(f"{normalised_col}.weighted")
-        for normalised_col, weight in zip(normalised_cols, weights.values())
+        for normalised_col, weight in zip(normalised_cols, weights.values(), strict=True)
     ]
 
     # combine and apply penalties
     weighted_average = (
-        pl.sum_horizontal(f"{col}.weighted" for col in normalised_cols)
-        / sum_of_weights
+        pl.sum_horizontal(f"{col}.weighted" for col in normalised_cols) / sum_of_weights
     ).alias("stability_score_weighted_average")
 
     score_dispersion = (
@@ -132,9 +126,8 @@ def compute_global_score(
         .alias("stability_score_std")
     )
 
-    missing_platforms = (
-        pl.sum_horizontal(pl.col(score_cols).is_null())
-        .alias("nb_null_stability_scores")
+    missing_platforms = pl.sum_horizontal(pl.col(score_cols).is_null()).alias(
+        "nb_null_stability_scores",
     )
 
     global_score = (
@@ -147,19 +140,25 @@ def compute_global_score(
         df.with_columns(weighted_cols)
         .with_columns(weighted_average, score_dispersion, missing_platforms)
         .with_columns(global_score.alias(config.GLOBAL_STABILITY_SCORE_COLNAME))
-        .select(original_columns + normalised_cols + ["stability_score_std", "nb_null_stability_scores", config.GLOBAL_STABILITY_SCORE_COLNAME])
+        .select(
+            original_columns
+            + normalised_cols
+            + [
+                "stability_score_std",
+                "nb_null_stability_scores",
+                config.GLOBAL_STABILITY_SCORE_COLNAME,
+            ],
+        )
     )
 
 
 def add_global_rank(df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Add global rank accross platforms based on the globa stability score.
-    """
+    """Add global rank accross platforms based on the globa stability score."""
     return (
         df.sort(
             [config.GLOBAL_STABILITY_SCORE_COLNAME, config.GENE_ID_COLNAME],
             descending=[False, False],
-            nulls_last=True
+            nulls_last=True,
         )
         .with_row_index(name="index")
         .with_columns((pl.col("index") + 1).alias(config.RANK_COLNAME))
@@ -167,7 +166,8 @@ def add_global_rank(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def export_data(df: pl.DataFrame):
+def export_data(df: pl.DataFrame) -> None:
+    """Export data to parquet file."""
     logger.info(f"Exporting stability scores to: {STATISTICS_WITH_SCORES_OUTFILENAME}")
     export_parquet(df, STATISTICS_WITH_SCORES_OUTFILENAME)
     logger.info("Done")
@@ -183,10 +183,12 @@ def export_data(df: pl.DataFrame):
 def main():
     args = parse_args()
 
-    df = get_scores(args.platform_stats_scores_file.split(' '))
+    df = get_scores(args.platform_stats_scores_file.split(" "))
 
     platform_size_df = pl.read_csv(args.platform_size_file)
-    platform_sizes = dict(zip(platform_size_df["platform"], platform_size_df["nb_samples"]))
+    platform_sizes = dict(
+        zip(platform_size_df["platform"], platform_size_df["nb_samples"], strict=True),
+    )
 
     df = compute_global_score(df, platform_sizes, args.std_penalty_weight, args.null_penalty_weight)
 

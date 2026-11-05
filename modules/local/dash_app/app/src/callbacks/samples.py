@@ -1,8 +1,7 @@
-import plotly.graph_objects as go
 import numpy as np
+import plotly.graph_objects as go
+from dash_extensions.enrich import Input, Output, Serverside, State, callback
 from scipy.stats import gaussian_kde
-from dash_extensions.enrich import Input, Output, State, callback, Serverside
-
 from src.utils.data_management import DataManager
 
 data_manager = DataManager()
@@ -23,14 +22,15 @@ def register_callbacks():
         # prevent_initial_call=True,
     )
     def update_stored_data(
-        sample_dropdown_values: list[str], stored_sample_counts: dict
+        sample_dropdown_values: list[str],
+        stored_sample_counts: dict,
     ):
         updated_stored_sample_counts = dict(stored_sample_counts)  # deep copy
 
         # deleting stored data for samples not anymore in the selected list
-        for stored_sample in (
-            stored_sample_counts
-        ):  # we need to copy the list of keys before changing the dict
+        for (
+            stored_sample
+        ) in stored_sample_counts:  # we need to copy the list of keys before changing the dict
             if stored_sample not in sample_dropdown_values:
                 del updated_stored_sample_counts[stored_sample]
 
@@ -102,7 +102,7 @@ def register_callbacks():
                         boxmean=boxmean,
                         customdata=sample_data["genes"],
                         hovertemplate="Gene: %{customdata}<br>Count: %{x}<br><extra></extra>",
-                    )
+                    ),
                 )
                 # update the layout to remove y-axis labels
                 fig.update_layout(yaxis=dict(showticklabels=False))

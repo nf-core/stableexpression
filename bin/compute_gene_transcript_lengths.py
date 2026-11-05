@@ -6,8 +6,9 @@ import argparse
 import logging
 from pathlib import Path
 
-import config
 import pandas as pd
+
+import config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -36,8 +37,8 @@ DTYPES = {
     "chromosome": str,
     "source": str,
     "feature": str,
-    "start": 'Int64',
-    "end": 'Int64',
+    "start": "Int64",
+    "end": "Int64",
     "score": str,
     "strand": str,
     "phase": str,
@@ -69,6 +70,7 @@ def parse_args():
 
 
 def parse_gff3_file(annotation_file: Path) -> pd.DataFrame:
+    """Parse GFF3 file into a dataframe."""
     df = pd.read_csv(
         annotation_file,
         sep="\t",
@@ -78,17 +80,23 @@ def parse_gff3_file(annotation_file: Path) -> pd.DataFrame:
         on_bad_lines="warn",
     )
     df = df[COLUMNS_TO_KEEP]
-    return df[pd.notnull(df["start"]) & pd.notnull(df["end"]) & pd.notnull(df["feature"]) & pd.notnull("attributes")]
+    return df[
+        pd.notnull(df["start"])
+        & pd.notnull(df["end"])
+        & pd.notnull(df["feature"])
+        & pd.notnull("attributes")
+    ]
 
 
 def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Get total length for each transcript:
-        - extract exon features from annotation
-        - extract transcript (rna) ID for each exon
-        - computes length for each exon
-        - group by transcript ID
-        - computes sum of exon lengths for each transcript
+    """Compute total length for each transcript.
+
+    Performs the following steps:
+    - extract exon features from annotation
+    - extract transcript (rna) ID for each exon
+    - computes length for each exon
+    - group by transcript ID
+    - computes sum of exon lengths for each transcript
     """
     exon_df = df.loc[df["feature"] == "exon"].copy()
     # extract transcript ID from attributes column for each exon
@@ -98,20 +106,22 @@ def compute_transcript_lengths(df: pd.DataFrame) -> pd.DataFrame:
     exon_df = exon_df[["transcript_id", config.CDNA_LENGTH_COLNAME]]
     # compute transcript length as the sum of the lengths of its exons
     return exon_df.groupby("transcript_id", as_index=False).agg(
-        {config.CDNA_LENGTH_COLNAME: "sum"}
+        {config.CDNA_LENGTH_COLNAME: "sum"},
     )
 
 
 def compute_max_transcript_lengths_per_gene(
-    df: pd.DataFrame, transcript_lengths_df: pd.DataFrame
+    df: pd.DataFrame,
+    transcript_lengths_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    """
-    Compute maximum of transript lengths for each gene:
-        - get all transcript / RNA features
-        - extract their transcript ID + gene ID
-        - merge with dataframe containing total length for each transcript
-        - groupby gene ID
-        - compute max of transcript length for each gene (longest isoform)
+    """Compute maximum of transript lengths for each gene.
+
+     Performs the following steps:
+    - get all transcript / RNA features
+    - extract their transcript ID + gene ID
+    - merge with dataframe containing total length for each transcript
+    - groupby gene ID
+    - compute max of transcript length for each gene (longest isoform)
     """
     # catching all kings of RNAs (mRNA, snRNA, lnc_RNA, ...)
     # (we don't necessarily want only mRNA)
@@ -132,12 +142,12 @@ def compute_max_transcript_lengths_per_gene(
     # merge with transcript lengths dataframe to get length
     merged_df = rna_df.merge(transcript_lengths_df, how="left", on="transcript_id")
     logger.info(
-        f"Got length for {len(merged_df) / len(rna_df) * 100:.2f}% of transcripts"
+        f"Got length for {len(merged_df) / len(rna_df) * 100:.2f}% of transcripts",
     )
     # compute max transcript length per gene
     merged_df = merged_df[[config.GENE_ID_COLNAME, config.CDNA_LENGTH_COLNAME]]
     return merged_df.groupby(config.GENE_ID_COLNAME, as_index=False).agg(
-        {config.CDNA_LENGTH_COLNAME: "max"}
+        {config.CDNA_LENGTH_COLNAME: "max"},
     )
 
 

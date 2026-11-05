@@ -1,5 +1,4 @@
-from dash_extensions.enrich import Input, Trigger, Output, State, callback
-
+from dash_extensions.enrich import Input, Output, State, Trigger, callback
 
 ##############################################
 ##############################################
@@ -25,7 +24,9 @@ def register_callbacks():
         State("sidebar-samples-items", "style"),
     )
     def manage_drawer_content(
-        tabs_value: str, gene_stack_style: dict, sample_stack_style: dict
+        tabs_value: str,
+        gene_stack_style: dict,
+        sample_stack_style: dict,
     ):
         if tabs_value == "genes":
             gene_stack_style["display"] = "block"

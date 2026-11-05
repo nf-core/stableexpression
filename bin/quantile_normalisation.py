@@ -6,10 +6,11 @@ import argparse
 import logging
 from pathlib import Path
 
-import config
 import polars as pl
-from common import export_parquet, parse_count_table
 from sklearn.preprocessing import quantile_transform
+
+import config
+from common import export_parquet, parse_count_table
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -28,30 +29,33 @@ TARGET_DISTRIBUTION = "uniform"
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Quantile normalise count data for each sample in the dataset"
+        description="Quantile normalise count data for each sample in the dataset",
     )
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts",
+        type=Path,
+        dest="count_file",
+        required=True,
+        help="Count file",
     )
     return parser.parse_args()
 
 
-def quantile_normalise(df: pl.DataFrame):
-    """
-    Quantile normalize a dataframe; column by column.
-    """
+def quantile_normalise(df: pl.DataFrame) -> pl.DataFrame:
+    """Quantile normalize a dataframe; column by column."""
     kwargs = {
-        'n_quantiles': N_QUANTILES,
-        'output_distribution': TARGET_DISTRIBUTION,
-        'subsample': None
+        "n_quantiles": N_QUANTILES,
+        "output_distribution": TARGET_DISTRIBUTION,
+        "subsample": None,
     }
     return df.with_columns(
         pl.exclude(config.GENE_ID_COLNAME).map_batches(
             lambda x: quantile_transform(x.to_frame(), **kwargs).flatten(),
             return_dtype=pl.Float32,
-        )
+        ),
     )
 
 

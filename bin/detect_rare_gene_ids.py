@@ -6,8 +6,9 @@ import argparse
 import logging
 from pathlib import Path
 
-import config
 import polars as pl
+
+import config
 from common import parse_table
 
 logging.basicConfig(level=logging.INFO)
@@ -21,7 +22,8 @@ TOTAL_OCCURRENCES_OUTFILE = "total_gene_id_occurrence_quantiles.csv"
 ##################################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser("Get genes with good occurrence")
     parser.add_argument(
         "--occurrences",
@@ -81,7 +83,7 @@ def main():
     )
 
     total_gene_id_occurrence_df = df.group_by(config.GENE_ID_COLNAME).agg(
-        pl.col(config.GENE_ID_COUNT_COLNAME).sum().alias("total_occurrences")
+        pl.col(config.GENE_ID_COUNT_COLNAME).sum().alias("total_occurrences"),
     )
 
     df = (
@@ -91,19 +93,16 @@ def main():
         )
         .with_columns(
             total_occurrences_quantile=(
-                pl.col("total_occurrences").rank(method="max")
-                / pl.col("total_occurrences").count()
+                pl.col("total_occurrences").rank(method="max") / pl.col("total_occurrences").count()
             ),
-            total_occurrences_frequency=(
-                pl.col("total_occurrences") / args.nb_datasets
-            ),
+            total_occurrences_frequency=(pl.col("total_occurrences") / args.nb_datasets),
         )
         .select(
             [
                 config.GENE_ID_COLNAME,
                 "total_occurrences_frequency",
                 "total_occurrences_quantile",
-            ]
+            ],
         )
         .unique()
     )
@@ -112,8 +111,11 @@ def main():
     df = df.sort(["total_occurrences_quantile", "gene_id"], descending=[True, False])
 
     # writing total occurrences in a csv before filtering
-    df.select([config.GENE_ID_COLNAME, "total_occurrences_quantile"]).write_csv(
-        TOTAL_OCCURRENCES_OUTFILE
+    (
+        df.select(
+            config.GENE_ID_COLNAME,
+            "total_occurrences_quantile",
+        ).write_csv(TOTAL_OCCURRENCES_OUTFILE)
     )
 
     # filtering genes
@@ -133,7 +135,7 @@ def main():
     nb_valid_genes = len(valid_gene_ids)
 
     logger.info(
-        f"Found {nb_valid_genes} valid gene IDs ({nb_valid_genes / nb_mapped_genes:.2%})"
+        f"Found {nb_valid_genes} valid gene IDs ({nb_valid_genes / nb_mapped_genes:.2%})",
     )
 
 

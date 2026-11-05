@@ -7,13 +7,10 @@ import logging
 import sys
 from pathlib import Path
 
-import config
 import polars as pl
-from common import (
-    compute_log2,
-    export_parquet,
-    parse_count_table
-)
+
+import config
+from common import compute_log2, export_parquet, parse_count_table
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,10 +29,15 @@ FAILURE_REASON_FILE = "failure_reason.txt"
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Normalise data to TPM")
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts",
+        type=Path,
+        dest="count_file",
+        required=True,
+        help="Count file",
     )
     return parser.parse_args()
 
@@ -77,14 +79,12 @@ def is_tpm(df: pl.DataFrame) -> bool:
     # setting the tolerance to 100
     is_tpm_col_df = sample_sums_df.select((pl.all() - 1e6).abs() < 1e2)
     return is_tpm_col_df.select(
-        pl.any_horizontal(pl.all())
+        pl.any_horizontal(pl.all()),
     ).item()  # Allow for floating-point precision
 
 
 def compute_tpm_from_rpkm(rpkm_df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Process RPKM to TPM.
-    """
+    """Process RPKM to TPM."""
     logger.info("Computing TPM from RPKM.")
     sums = rpkm_df.select(pl.exclude(config.GENE_ID_COLNAME).sum())
     # Divide each column by its sum and multiply by 1e6
@@ -96,18 +96,17 @@ def compute_tpm_from_rpkm(rpkm_df: pl.DataFrame) -> pl.DataFrame:
 
 
 def compute_tpm(df: pl.DataFrame) -> pl.DataFrame:
-    """
-    FPKM, or RPKM to TPM.
-    """
+    """FPKM, or RPKM to TPM."""
     if is_raw_counts(df):
-        raise ValueError("Raw counts detected. These counts should not be processed here. Please provide them as 'raw' in the input samplesheet.")
-    elif is_tpm(df):
+        raise ValueError(
+            "Raw counts detected. These counts should not be processed here. Please provide them as 'raw' in the input samplesheet.",
+        )
+    if is_tpm(df):
         logger.info("Data are already TPM. No conversion needed.")
         return df
-    else:
-        # Convert FPKM/RPKM to TPM
-        logger.warning("Count data are assumed not to be TPM. Assuming FPKM/RPKM normalisation.")
-        return compute_tpm_from_rpkm(df)
+    # Convert FPKM/RPKM to TPM
+    logger.warning("Count data are assumed not to be TPM. Assuming FPKM/RPKM normalisation.")
+    return compute_tpm_from_rpkm(df)
 
 
 #####################################################
@@ -126,7 +125,7 @@ def main():
 
         # casting to Float64 to avoid inconsistency during the subsequent computations
         count_df = count_df.with_columns(
-            pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64)
+            pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64),
         )
 
         logger.info("Converting data types")

@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
 # Written by Olivier Coen. Released under the MIT license.
-"""
-Aggregate results from count data for each gene
-"""
+"""Aggregate results from count data for each gene."""
 
 import argparse
 import logging
 from pathlib import Path
 
-import config
 import polars as pl
 import yaml
+
+import config
 from common import write_csv_with_floats
 
 logging.basicConfig(level=logging.INFO)
@@ -32,10 +31,16 @@ GENE_SUMMARY_FLOAT_PRECISION = 3
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--counts", type=Path, nargs="+", dest="count_files", required=True, help="Count file"
+        "--counts",
+        type=Path,
+        nargs="+",
+        dest="count_files",
+        required=True,
+        help="Count file",
     )
     parser.add_argument(
         "--target-genes",
@@ -67,30 +72,34 @@ def parse_args():
         help="Metadata file",
     )
     parser.add_argument(
-        "--mappings", type=str, dest="mapping_files", help="Mapping file"
+        "--mappings",
+        type=str,
+        dest="mapping_files",
+        help="Mapping file",
     )
     parser.add_argument(
-        "--nb-genes-plotted", type=int, dest="nb_genes_plotted", help="Number of genes to plot in the MultiQC report"
+        "--nb-genes-plotted",
+        type=int,
+        dest="nb_genes_plotted",
+        help="Number of genes to plot in the MultiQC report",
     )
     return parser.parse_args()
 
 
 def column_sorter(col: str) -> int:
-    """
-    Return integer corresponding to the column name. This function is used for sorting columns.
+    """Return integer corresponding to the column name. This function is used for sorting columns.
     The first columns are the ones without '.' in their name.
     The other columns are sorted by the first character of the second part of the column name.
     """
-    splitted = col.split('.')
-    if len(splitted) == 1: # if no '.' if the column name, it should be return in the first columns
-       return 0
-    else: # return ascii value of the first character
-        return ord(splitted[1][1])
+    splitted = col.split(".")
+    if len(splitted) == 1:  # if no '.' if the column name, it should be return in the first columns
+        return 0
+    # return ascii value of the first character
+    return ord(splitted[1][1])
 
 
 def parse_stat_score_file(file: Path) -> pl.DataFrame:
-    """
-    Parse a file containing statistics and scores into a DataFrame.
+    """Parse a file containing statistics and scores into a DataFrame.
     The columns are sorted so that multiple dataframes can be v-stacked later in the script.
     """
     df = pl.read_parquet(file)
@@ -98,19 +107,15 @@ def parse_stat_score_file(file: Path) -> pl.DataFrame:
 
 
 def get_non_empty_dataframes(files: list[Path]) -> list[pl.DataFrame]:
-    """
-    Read and return non-empty DataFrames from a list of files.
-    """
+    """Read and return non-empty DataFrames from a list of files."""
     dfs = [pl.read_csv(file) for file in files]
     return [df for df in dfs if not df.is_empty()]
 
 
 def cast_cols_to_string(df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Cast all columns in the DataFrame to String.
-    """
+    """Cast all columns in the DataFrame to String."""
     return df.select(
-        [pl.col(column).cast(pl.String) for column in df.collect_schema().names()]
+        [pl.col(column).cast(pl.String) for column in df.collect_schema().names()],
     )
 
 
@@ -130,9 +135,7 @@ def concat_cast_to_string_and_drop_duplicates(files: list[Path]) -> pl.DataFrame
 
 
 def cast_count_columns_to_float(df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Cast count columns (excluding the gene ID column) to Float32.
-    """
+    """Cast count columns (excluding the gene ID column) to Float32."""
     return df.select(
         pl.col(config.GENE_ID_COLNAME),
         pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float32),
@@ -148,8 +151,8 @@ def join_data_on_gene_id(stat_df: pl.DataFrame, *dfs: pl.DataFrame) -> pl.DataFr
 
 
 def get_counts(file: Path) -> pl.DataFrame:
-    """
-    Read and return the counts DataFrame from a Parquet file.
+    """Read and return the counts DataFrame from a Parquet file.
+
     Sorts the DataFrame by gene ID in ascending order.
     """
     # sorting dataframe (necessary to get consistent output)
@@ -166,8 +169,8 @@ def get_metadata(metadata_files: list[Path]) -> pl.DataFrame | None:
 
 
 def get_mappings(mapping_files: list[Path]) -> pl.DataFrame | None:
-    """
-    Retrieve and concatenate mappings from a list of mapping files.
+    """Retrieve and concatenate mappings from a list of mapping files.
+
     Aggregates the original gene IDs for each gene ID.
     """
     if not mapping_files:
@@ -181,16 +184,16 @@ def get_mappings(mapping_files: list[Path]) -> pl.DataFrame | None:
         .unique()
         .sort()
         .str.join(";")
-        .alias(config.ORIGINAL_GENE_IDS_COLNAME)
+        .alias(config.ORIGINAL_GENE_IDS_COLNAME),
     )
 
 
 def get_most_stable_genes_counts(
-    log_count_df: pl.DataFrame, stat_summary_df: pl.DataFrame, nb_genes_plotted: int
+    log_count_df: pl.DataFrame,
+    stat_summary_df: pl.DataFrame,
+    nb_genes_plotted: int,
 ) -> pl.DataFrame:
-    """
-    Get counts of the most stable genes
-    """
+    """Get counts of the most stable genes."""
     top_genes_with_order = (
         stat_summary_df.head(nb_genes_plotted)
         .select(config.GENE_ID_COLNAME)
@@ -199,7 +202,9 @@ def get_most_stable_genes_counts(
 
     # join to get only existing genes and maintain order
     sorted_transposed_counts_df = log_count_df.join(
-        top_genes_with_order, on=config.GENE_ID_COLNAME, how="inner"
+        top_genes_with_order,
+        on=config.GENE_ID_COLNAME,
+        how="inner",
     ).sort("sort_order", descending=False)
 
     # get the actual gene names that were found (in order)
@@ -207,15 +212,19 @@ def get_most_stable_genes_counts(
         sorted_transposed_counts_df.select(config.GENE_ID_COLNAME).to_series().to_list()
     )
     return sorted_transposed_counts_df.drop(
-        ["sort_order", config.GENE_ID_COLNAME]
+        ["sort_order", config.GENE_ID_COLNAME],
     ).transpose(column_names=actual_gene_names)
 
 
 def format_multiqc_section(
-    section: str, nb_sections: int, template_dict: dict, found_target_genes: list[dict], platform: str | None = None
-):
-    """
-    Format the dict for a specific MultiQC section.
+    section: str,
+    nb_sections: int,
+    template_dict: dict,
+    found_target_genes: list[dict],
+    platform: str | None = None,
+) -> dict:
+    """Format the dict for a specific MultiQC section.
+
     The function replaces placeholders in the template dictionary with the actual section name, number of sections, and found target genes.
 
     Args:
@@ -227,27 +236,27 @@ def format_multiqc_section(
 
     Returns:
         dict: The formatted dictionary for the MultiQC section.
+
     """
     section_dict = dict(template_dict)
 
     if platform is not None:
-        section_dict['section_name'] = section_dict['section_name'].replace('PLATFORM', platform.capitalize())
-        section_dict['description'] = section_dict['description'].replace('PLATFORM', platform)
+        section_dict["section_name"] = section_dict["section_name"].replace(
+            "PLATFORM",
+            platform.capitalize(),
+        )
+        section_dict["description"] = section_dict["description"].replace("PLATFORM", platform)
 
     parent_id = section.replace("_", " ")
-    parent_name = (
-        f"{section.replace('_', ' ').capitalize()} / {nb_sections}: most stable genes"
-    )
+    parent_name = f"{section.replace('_', ' ').capitalize()} / {nb_sections}: most stable genes"
     parent_description = (
         f"Most stable genes and distribution of their normalised counts for {section.replace('_', ' ')} / {nb_sections}"
-        + " (section 1 corresponding to the most expressed genes)"
+        " (section 1 corresponding to the most expressed genes)"
     )
 
     additional_name = ""
     if found_target_genes:
-        additional_names = [
-            f"{d['target_gene']} ({d['gene']})" for d in found_target_genes
-        ]
+        additional_names = [f"{d['target_gene']} ({d['gene']})" for d in found_target_genes]
         additional_name = ". Comprises " + ", ".join(additional_names)
 
     section_dict["parent_id"] = parent_id
@@ -257,15 +266,14 @@ def format_multiqc_section(
     return section_dict
 
 
-def format_multiqc_sp(section: str, template_dict: dict, platform: str | None = None):
-    """
-    Modify the dict for a specific MultiQC section in order to update the corresponding file name to search for
-    among all the MultiQC files
+def format_multiqc_sp(section: str, template_dict: dict, platform: str | None = None) -> dict:
+    """Modify the dict for a specific MultiQC section in order to update the corresponding file name to search for among all the MultiQC files.
 
     Args:
         section: the section to search for
         template_dict: the dict to modify
         platform: the platform to search for
+
     """
     sp_dict = dict(template_dict)
     sp_dict["fn"] = sp_dict["fn"].replace("SECTION", section)
@@ -275,21 +283,20 @@ def format_multiqc_sp(section: str, template_dict: dict, platform: str | None = 
 
 
 def format_genes(genes: list[str]) -> pl.Series:
-    """
-    Format a list of genes by removing any characters in "-_." and converting to lowercase.
+    """Format a list of genes by removing any characters in "-_." and converting to lowercase.
+
     Returns as a polars Series.
     """
     # str.maketrans("", "", "-_.") makes a mapping table for str.translate() that
     # removes all occurrences of any character in "-_." from the input string
     # it's faster than re.sub
     return pl.Series(
-        [gene.lower().translate(str.maketrans("", "", "-_.")).strip() for gene in genes]
+        [gene.lower().translate(str.maketrans("", "", "-_.")).strip() for gene in genes],
     )
 
 
 def search_target_genes(df: pl.DataFrame, target_genes: list[str]) -> list[dict]:
-    """
-    Search for target genes in a DataFrame.
+    """Search for target genes in a DataFrame.
 
     Args:
         df (pl.DataFrame): The DataFrame to search in.
@@ -297,8 +304,8 @@ def search_target_genes(df: pl.DataFrame, target_genes: list[str]) -> list[dict]
 
     Returns:
         list[dict]: A list of dictionaries associating each found target gene with its corresponding gene ID in the datasets.
-    """
 
+    """
     unique_gene_ids = set(df[config.GENE_ID_COLNAME].to_list())
 
     if config.GENE_NAME_COLNAME in df.columns:
@@ -307,7 +314,7 @@ def search_target_genes(df: pl.DataFrame, target_genes: list[str]) -> list[dict]
     if config.ORIGINAL_GENE_IDS_COLNAME in df.columns:
         original_gene_ids = (
             df.select(
-                pl.col(config.ORIGINAL_GENE_IDS_COLNAME).str.split(by=",").explode()
+                pl.col(config.ORIGINAL_GENE_IDS_COLNAME).str.split(by=",").explode(),
             )
             .to_series()
             .to_list()
@@ -324,7 +331,7 @@ def search_target_genes(df: pl.DataFrame, target_genes: list[str]) -> list[dict]
             lambda x: format_genes(x),
             return_dtype=pl.String,
         )
-        .alias("formatted_gene")
+        .alias("formatted_gene"),
     )
 
     # formatting target genes
@@ -334,12 +341,14 @@ def search_target_genes(df: pl.DataFrame, target_genes: list[str]) -> list[dict]
             lambda x: format_genes(x),
             return_dtype=pl.String,
         )
-        .alias("formatted_gene")
+        .alias("formatted_gene"),
     )
 
     return (
         formated_gene_ids_df.join(
-            formated_target_genes_df, on="formatted_gene", how="inner"
+            formated_target_genes_df,
+            on="formatted_gene",
+            how="inner",
         )
         .select(["target_gene", "gene"])
         .sort("target_gene")
@@ -365,7 +374,7 @@ def main():
     # so the platform can be directly extracted from the file name
     counts = {}
     for file in args.count_files:
-        platform = file.name.split('.')[0]
+        platform = file.name.split(".")[0]
         counts[platform] = get_counts(file)
 
     # --------------------------------------------------
@@ -397,20 +406,14 @@ def main():
     # Parsing MultiQC template config for custom content
     # --------------------------------------------------
 
-    with open(args.multiqc_config, "r") as f:
+    with open(args.multiqc_config) as f:
         multiqc_config = yaml.safe_load(f.read())
 
     # putting template parts aside
-    ranking_dict = multiqc_config["custom_data"][
-        "ranked_most_stable_genes_summary_template"
-    ]
+    ranking_dict = multiqc_config["custom_data"]["ranked_most_stable_genes_summary_template"]
     ranking_sp_dict = multiqc_config["sp"]["ranked_most_stable_genes_summary_template"]
-    expr_distrib_dict = multiqc_config["custom_data"][
-        "expr_distrib_most_stable_genes_template"
-    ]
-    expr_distrib_sp_dict = multiqc_config["sp"][
-        "expr_distrib_most_stable_genes_template"
-    ]
+    expr_distrib_dict = multiqc_config["custom_data"]["expr_distrib_most_stable_genes_template"]
+    expr_distrib_sp_dict = multiqc_config["sp"]["expr_distrib_most_stable_genes_template"]
     other_sections = multiqc_config["custom_content"]["order"]
 
     del multiqc_config["custom_data"]["ranked_most_stable_genes_summary_template"]
@@ -421,7 +424,8 @@ def main():
 
     # filling dynamically the number of genes to show in box plots
     expr_distrib_dict["description"] = expr_distrib_dict["description"].replace(
-        "NB_GENES", str(args.nb_genes_plotted)
+        "NB_GENES",
+        str(args.nb_genes_plotted),
     )
 
     # --------------------------------------------------
@@ -470,7 +474,6 @@ def main():
 
     logger.info("Making new sections in the MultiQC config")
     for section in sections:
-
         # --------------------------------------------------
         # BUILDING AND MAKING CONFIG FOR THE RANKING TABLE
         # --------------------------------------------------
@@ -492,12 +495,16 @@ def main():
 
         # making multiqc config for this table
         new_mqc_config_sections[f"genes_{section}"] = format_multiqc_section(
-            section, nb_sections, ranking_dict, found_target_genes
+            section,
+            nb_sections,
+            ranking_dict,
+            found_target_genes,
         )
 
         # sp sections
         new_mqc_config_sp[f"genes_{section}"] = format_multiqc_sp(
-            section, ranking_sp_dict
+            section,
+            ranking_sp_dict,
         )
 
         # --------------------------------------------------
@@ -514,17 +521,23 @@ def main():
                 # making new sections in the MultiQC config
                 new_mqc_config_sections[f"normalised_expr_distrib_{section}_{platform}"] = (
                     format_multiqc_section(
-                        section, nb_sections, expr_distrib_dict, found_target_genes, platform
+                        section,
+                        nb_sections,
+                        expr_distrib_dict,
+                        found_target_genes,
+                        platform,
                     )
                 )
-                new_mqc_config_sp[f"normalised_expr_distrib_{section}_{platform}"] = format_multiqc_sp(
-                    section, expr_distrib_sp_dict, platform
+                new_mqc_config_sp[f"normalised_expr_distrib_{section}_{platform}"] = (
+                    format_multiqc_sp(
+                        section,
+                        expr_distrib_sp_dict,
+                        platform,
+                    )
                 )
 
     # adding new sections
-    multiqc_config["custom_data"] = (
-        new_mqc_config_sections | multiqc_config["custom_data"]
-    )
+    multiqc_config["custom_data"] = new_mqc_config_sections | multiqc_config["custom_data"]
     # specifying the filenames linked to the new sections
     multiqc_config["sp"] = new_mqc_config_sp | multiqc_config["sp"]
     # specifying the section order

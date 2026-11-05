@@ -7,9 +7,10 @@ import logging
 import sys
 from pathlib import Path
 
-import config
 import polars as pl
-from common import parse_count_table, parse_table, export_parquet
+
+import config
+from common import export_parquet, parse_count_table, parse_table
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -34,10 +35,14 @@ FINAL_FILE_SUFFIX = "final.txt"
 ##################################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser("Rename gene IDs using mapped IDs")
     parser.add_argument(
-        "--count-file", type=Path, required=True, help="Input file containing counts"
+        "--count-file",
+        type=Path,
+        required=True,
+        help="Input file containing counts",
     )
     parser.add_argument(
         "--mappings",
@@ -86,7 +91,7 @@ def main():
         zip(
             mapping_df[config.ORIGINAL_GENE_ID_COLNAME],
             mapping_df[config.GENE_ID_COLNAME],
-        )
+        ),
     )
 
     #############################################################
@@ -100,7 +105,6 @@ def main():
     rejected_df = df.filter(~pl.col(config.GENE_ID_COLNAME).is_in(mapping_dict.keys()))
     nb_unmapped_genes = len(rejected_df)
 
-    # df = df.loc[df.index.isin(mapping_dict)]
     df = df.filter(pl.col(config.GENE_ID_COLNAME).is_in(mapping_dict.keys()))
     nb_mapped_genes = len(df)
 
@@ -109,9 +113,7 @@ def main():
 
     if df.is_empty():
         sample_size = min(5, nb_unmapped_genes)
-        example_rejected_genes = (
-            rejected_df[config.GENE_ID_COLNAME].head(sample_size).to_list()
-        )
+        example_rejected_genes = rejected_df[config.GENE_ID_COLNAME].head(sample_size).to_list()
         msg = f"NO GENES WERE MAPPED. EXAMPLE OF GENE IDS: {example_rejected_genes}"
         logger.error(msg)
         with open(FAILURE_REASON_FILE, "w") as f:
@@ -128,27 +130,23 @@ def main():
 
     if len(df) < original_nb_genes:
         sample_size = min(5, nb_unmapped_genes)
-        example_rejected_genes = (
-            rejected_df[config.GENE_ID_COLNAME].head(sample_size).to_list()
-        )
+        example_rejected_genes = rejected_df[config.GENE_ID_COLNAME].head(sample_size).to_list()
         msg = (
             f"{nb_mapped_genes / original_nb_genes:.2%} of genes were mapped ({nb_mapped_genes} out of {original_nb_genes}). "
-            + f"Example of unmapped genes: {example_rejected_genes}"
+            f"Example of unmapped genes: {example_rejected_genes}"
         )
         logger.warning(msg)
         with open(WARNING_REASON_FILE, "a") as f:
             f.write(msg)
     else:
         logger.info(
-            f"All genes were mapped ({nb_mapped_genes} out of {original_nb_genes})"
+            f"All genes were mapped ({nb_mapped_genes} out of {original_nb_genes})",
         )
 
     logger.info("Renaming gene names")
     # renaming gene names to mapped ids using mapping dict
     df = df.with_columns(
-        pl.col(config.GENE_ID_COLNAME)
-        .replace(mapping_dict)
-        .alias(config.GENE_ID_COLNAME)
+        pl.col(config.GENE_ID_COLNAME).replace(mapping_dict).alias(config.GENE_ID_COLNAME),
     )
 
     #############################################################
@@ -158,14 +156,14 @@ def main():
     logger.info("Keeping only genes with sufficient occurrence over datasets")
     nb_genes_before_validation = len(df)
 
-    with open(args.valid_gene_ids_file, "r") as fin:
-        valid_gene_ids = [line.strip() for line in fin.readlines()]
+    with open(args.valid_gene_ids_file) as fin:
+        valid_gene_ids = [line.strip() for line in fin]
 
     df = df.filter(pl.col(config.GENE_ID_COLNAME).is_in(valid_gene_ids))
 
     nb_not_valid_genes = nb_genes_before_validation - len(df)
     logger.info(
-        f"{nb_not_valid_genes} ({nb_not_valid_genes / nb_genes_before_validation:.2%}) genes were not valid"
+        f"{nb_not_valid_genes} ({nb_not_valid_genes / nb_genes_before_validation:.2%}) genes were not valid",
     )
 
     with open(NOT_VALID_FILE_SUFFIX, "w") as f:
@@ -199,7 +197,7 @@ def main():
 
     logger.info("Computing max counts for genes with duplicate IDs")
     df = df.group_by(config.GENE_ID_COLNAME, maintain_order=True).agg(
-        pl.exclude(config.GENE_ID_COLNAME).max()
+        pl.exclude(config.GENE_ID_COLNAME).max(),
     )
 
     #############################################################

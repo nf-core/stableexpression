@@ -7,8 +7,9 @@ import logging
 import sys
 from pathlib import Path
 
-import config
 import polars as pl
+
+import config
 from common import (
     export_parquet,
     parse_count_table,
@@ -32,10 +33,15 @@ FAILURE_REASON_FILE = "failure_reason.txt"
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Normalise data to RPK")
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts",
+        type=Path,
+        dest="count_file",
+        required=True,
+        help="Count file",
     )
     parser.add_argument(
         "--gene-lengths",
@@ -48,20 +54,19 @@ def parse_args():
 
 
 def compute_rpk(df: pl.DataFrame, cdna_length_df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Process raw counts to RPK.
-    """
+    """Process raw counts to RPK."""
     logger.info("Computing RPK.")
     df = df.join(cdna_length_df, on=config.GENE_ID_COLNAME)
     return df.select(
         pl.col(config.GENE_ID_COLNAME),
         pl.exclude([config.GENE_ID_COLNAME, config.CDNA_LENGTH_COLNAME]).truediv(
-            pl.col(config.CDNA_LENGTH_COLNAME)
+            pl.col(config.CDNA_LENGTH_COLNAME),
         ),
     )
 
 
 def parse_gene_length(file: Path) -> pl.DataFrame:
+    """Parse gene lengths file."""
     df = parse_table(file)
     return df.with_columns(pl.col(config.CDNA_LENGTH_COLNAME).cast(pl.UInt32))
 
@@ -83,7 +88,7 @@ def main():
 
         # casting to Float64 to avoid inconsistency during the subsequent computations
         count_df = count_df.with_columns(
-            pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64)
+            pl.exclude(config.GENE_ID_COLNAME).cast(pl.Float64),
         )
 
         logger.info(f"Normalising {args.count_file.name}")

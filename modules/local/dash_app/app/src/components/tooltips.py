@@ -2,7 +2,10 @@ import dash_mantine_components as dmc
 
 
 def get_tooltip(
-    classname: str, label: str, position: str = "bottom", multiline: bool = True
+    classname: str,
+    label: str,
+    position: str = "bottom",
+    multiline: bool = True,
 ):
     return dmc.Tooltip(
         target=f".{classname}",
@@ -23,7 +26,8 @@ def get_tooltip(
 
 
 genes_tabitem_tooltip = get_tooltip(
-    classname="genes-tabitem", label="Distribution of normalised counts gene per gene"
+    classname="genes-tabitem",
+    label="Distribution of normalised counts gene per gene",
 )
 
 samples_tabitem_tooltip = get_tooltip(

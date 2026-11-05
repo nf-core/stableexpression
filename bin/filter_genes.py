@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
 # Written by Olivier Coen. Released under the MIT license.
-"""
-Filter out genes with too many zeros across samples
-"""
+"""Filter out genes with too many zeros across samples."""
 
 import argparse
 import logging
 from pathlib import Path
 
-import config
 import polars as pl
+
+import config
 from common import export_parquet, parse_count_table
 
 logging.basicConfig(level=logging.INFO)
@@ -26,10 +25,15 @@ NB_KEPT_GENES_OUTFILE = "nb_kept_genes.csv"
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts",
+        type=Path,
+        dest="count_file",
+        required=True,
+        help="Count file",
     )
     parser.add_argument(
         "--max-zero-ratio",
@@ -39,6 +43,7 @@ def parse_args():
         help="Maximum ratio of zeros allowed",
     )
     return parser.parse_args()
+
 
 #####################################################
 # MAIN
@@ -57,7 +62,8 @@ def main():
     # filtering out genes with too many zeros
     logger.info("Filtering out genes with too many zeros...")
     count_df = count_df.filter(
-        pl.sum_horizontal(pl.exclude(config.GENE_ID_COLNAME) == 0) / n_samples <= args.max_zero_ratio
+        pl.sum_horizontal(pl.exclude(config.GENE_ID_COLNAME) == 0) / n_samples
+        <= args.max_zero_ratio,
     )
 
     n_kept_genes = count_df.height

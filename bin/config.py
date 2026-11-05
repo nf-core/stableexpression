@@ -6,9 +6,7 @@ RANK_COLNAME = "rank"
 
 # base statistics
 COEFFICIENT_OF_VARIATION_COLNAME = "coefficient_of_variation"
-ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME = (
-    "robust_coefficient_of_variation_median"
-)
+ROBUST_COEFFICIENT_OF_VARIATION_MEDIAN_COLNAME = "robust_coefficient_of_variation_median"
 STANDARD_DEVIATION_COLNAME = "standard_deviation"
 STABILITY_SCORE_COLNAME = "stability_score"
 GLOBAL_STABILITY_SCORE_COLNAME = "global_stability_score"
