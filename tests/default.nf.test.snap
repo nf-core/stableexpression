@@ -32,14 +32,14 @@
                     "python": "3.14.3"
                 },
                 "DASH_APP": {
-                    "python": "3.14.3",
                     "dash": "3.3.0",
+                    "dash-ag-grid": "32.3.2",
                     "dash-extensions": "2.0.4",
                     "dash-mantine-components": "2.4.0",
-                    "dash-ag-grid": "32.3.2",
-                    "polars": "1.39.2",
                     "pandas": "2.3.3",
+                    "polars": "1.39.2",
                     "pyarrow": "23.0.1",
+                    "python": "3.14.3",
                     "scipy": "1.17.1"
                 },
                 "DESCRIPTIVE_STATISTICS": {
@@ -639,14 +639,14 @@
                     "python": "3.14.3"
                 },
                 "DASH_APP": {
-                    "python": "3.14.3",
                     "dash": "3.3.0",
+                    "dash-ag-grid": "32.3.2",
                     "dash-extensions": "2.0.4",
                     "dash-mantine-components": "2.4.0",
-                    "dash-ag-grid": "32.3.2",
-                    "polars": "1.39.2",
                     "pandas": "2.3.3",
+                    "polars": "1.39.2",
                     "pyarrow": "23.0.1",
+                    "python": "3.14.3",
                     "scipy": "1.17.1"
                 },
                 "DESCRIPTIVE_STATISTICS": {
@@ -1042,14 +1042,14 @@
                     "python": "3.14.3"
                 },
                 "DASH_APP": {
-                    "python": "3.14.3",
                     "dash": "3.3.0",
+                    "dash-ag-grid": "32.3.2",
                     "dash-extensions": "2.0.4",
                     "dash-mantine-components": "2.4.0",
-                    "dash-ag-grid": "32.3.2",
-                    "polars": "1.39.2",
                     "pandas": "2.3.3",
+                    "polars": "1.39.2",
                     "pyarrow": "23.0.1",
+                    "python": "3.14.3",
                     "scipy": "1.17.1"
                 },
                 "DESCRIPTIVE_STATISTICS": {
