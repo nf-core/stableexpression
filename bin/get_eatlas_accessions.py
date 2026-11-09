@@ -24,9 +24,6 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 ALLOWED_PLATFORMS = ["rnaseq", "microarray"]
-# accessions that should not be fetched automatically:
-# - E-GTEX-8 contains 17350 samples (way too big)
-EXCLUDED_ACCESSION_PATTERNS = ["E-GTEX-"]
 
 ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
 ACCESSION_OUTFILE_NAME = "accessions.txt"
@@ -308,33 +305,6 @@ def get_experiment_data(exp_dict: dict) -> dict:
     return get_data(exp_url)
 
 
-def filter_out_excluded_accessions(experiments: list[dict]) -> list[dict]:
-    """Filter out experiments whose accession matches any of the exclusion patterns.
-
-    Parameters
-    ----------
-    experiments : list[dict]
-        The list of experiments to filter
-
-    Returns
-    -------
-    valid_experiments : list[dict]
-        The list of experiments with excluded accessions filtered out
-
-    """
-    valid_experiments = []
-    for exp_dict in experiments:
-        for accession_pattern in EXCLUDED_ACCESSION_PATTERNS:
-            if exp_dict["experimentAccession"].startswith(accession_pattern):
-                logger.warning(
-                    f"Skipping experiment {exp_dict['experimentAccession']} due to exclusion pattern",
-                )
-                break
-        else:
-            valid_experiments.append(exp_dict)
-    return valid_experiments
-
-
 def parse_experiment(exp_dict: dict) -> dict:
     """Parse an experiment dictionary to extract relevant information.
 
@@ -512,9 +482,6 @@ def main():
 
     logger.info("Filtering experiments based on platform")
     experiments = filter_by_platform(experiments, args.platform)
-
-    logger.info("Filtering out excluded accessions")
-    experiments = filter_out_excluded_accessions(experiments)
 
     logger.info("Parsing experiments")
     with Pool(processes=args.nb_cpus) as pool:
