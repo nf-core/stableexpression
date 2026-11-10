@@ -145,7 +145,7 @@
                     "python": "3.12.8"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.1.0"
+                    "nf-core/stableexpression": "v1.2.0"
                 }
             },
             [
@@ -422,7 +422,7 @@
                     "python": "3.14.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.1.0"
+                    "nf-core/stableexpression": "v1.2.0"
                 }
             },
             [
@@ -567,7 +567,7 @@
                     "pyyaml": "6.0.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.1.0"
+                    "nf-core/stableexpression": "v1.2.0"
                 }
             },
             [
@@ -718,7 +718,7 @@
                     "python": "3.12.8"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.1.0"
+                    "nf-core/stableexpression": "v1.2.0"
                 }
             },
             [
@@ -828,7 +828,7 @@
                     "pyyaml": "6.0.3"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.1.0"
+                    "nf-core/stableexpression": "v1.2.0"
                 }
             },
             [
@@ -1105,7 +1105,7 @@
                     "python": "3.12.8"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.1.0"
+                    "nf-core/stableexpression": "v1.2.0"
                 }
             },
             [
@@ -1367,7 +1367,7 @@
                     "python": "3.12.8"
                 },
                 "Workflow": {
-                    "nf-core/stableexpression": "v1.1.0"
+                    "nf-core/stableexpression": "v1.2.0"
                 }
             },
             [
