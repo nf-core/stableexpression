@@ -2,9 +2,9 @@
 
 ## Pipeline reports (TLDR)
 
-The main output of the pipeline is the MultiQC report, which summarises results at the end of the pipeline. This report is located at `<OUTDIR>/reporting/multiqc_report.html` and can be opened in your favorite browser.
+The main output of the pipeline is the MultiQC report, which provides a summary of the results at the end of the process. This report can be found at `<OUTDIR>/reporting/multiqc_report.html` and can be opened in your preferred browser.
 
-For advanced users who seek to explore more deeply the distributions of normalised counts gene per gene or sample per sample, a Dash Plotly app is readily prepared at the end of each pipeline run. See [here](#dash-plotly-app) for explanation on how to run the app.
+Advanced users seeking to explore the distributions of normalised counts in more depth, either gene by gene or sample by sample, will find a Dash Plotly app ready at `<OUTDIR>/reporting/dash_app/`. See [here](#dash-plotly-app) for an explanation on how to run the app.
 
 ## Introduction
 
@@ -23,7 +23,9 @@ This report is located at `reporting/multiqc_report.html` and can be opened in a
 You can view the MultiQC report by opening `multiqc_report.html` in your browser.
 
 >[!NOTE]
->Genes are divided into sections according to their mean normalised expression level. Those in Section 1 are the most highly expressed, while those in the final section are the least. Users can adjust the number of sections (and thus the level of granularity of the analysis) by setting the `--nb_sections` parameter.
+>
+> - Genes are divided into sections according to their mean normalised expression level. Those in Section 1 are the most highly expressed, while those in the final section are the least. Users can adjust the number of sections (and thus the level of granularity of the analysis) by setting the `--nb_sections` parameter.
+> - From version 1.2.0 onwards, the expression boxplots have been disabled by default in order to limit the size of the Multiqc report. Set `--multiqc_nb_genes_plotted` to a non `null` value (`10` being a reasonable choice) to display them.
 
 >[!WARNING]
 >Be careful when setting the `--nb_sections` parameter. A value over `20` may result in a very large `multiqc_report.html`, which could be difficult to open in a browser.
@@ -49,8 +51,6 @@ The number of genes displayed is determined by the `--multiqc_nb_genes_plotted` 
     <img title="Gene normalised expression" src="images/multiqc/test.section_1.graph.png" width=100%>
 </p>
 
-> [!NOTE]
-> From version 1.2.0 onwards, the expression boxplots have been disabled by default in order to limit the size of the Multiqc report.
 
 #### Dataset statistics
 

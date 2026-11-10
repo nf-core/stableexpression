@@ -89,7 +89,7 @@ Of course, you can provide your own count datasets and experimental designs.
 > [!IMPORTANT]
 >
 > - To ensure that all RNA-seq datasets are processed in the same way, users should provide **raw counts**.
-> - If normalised counts are provided, the same normalisation process must be applied to all of them.
+> - If normalised counts are provided, using the same normalisation process to all of them is recommended. The provided counts should never be log2-transformed.
 > - Microarray data must already be normalised. When combining your own datasets with public ones in a single run, you should use the RMA method to ensure compliance with Expression Atlas datasets.
 
 First, prepare a CSV samplesheet listing the datasets you want to use. Each row represents a specific dataset and must contain the following information:
@@ -165,16 +165,14 @@ nextflow run nf-core/stableexpression \
 > - In the example above, the `--skip_fetch_eatlas_accessions` parameter is provided to demonstrate how to analyse your own dataset only. If you want to mix your dataset(s) with public ones, you can remove this parameter.
 
 > [!IMPORTANT]
-> By default, the pipeline attempts to map gene IDs to Ensembl gene IDs. **All genes that cannot be mapped are discarded from the analysis**. This ensures that all genes are named consistently across datasets, enabling comparison of multiple datasets. However, if you are confident that the names of your genes are consistent across your different datasets, or if you think that your gene IDs simply won't map properly, you can disable this mapping by adding the '--skip_id_mapping' parameter. In this case, we recommend that users supply their own gene ID mapping and gene metadata files using the `--gene_id_mapping` and `--gene_metadata` parameters, respectively.
+> By default, the pipeline attempts to map gene IDs to Ensembl gene IDs. **Any genes that cannot be mapped are discarded from the analysis**. This ensures consistent gene naming across datasets, enabling comparison of multiple datasets. In case of issues with the `g:Profiler` gene ID mapping step, users can disable it using the '--skip_id_mapping' parameter. This will not have any consequences if the dataset is single or if all datasets share the same gene IDs.
 >
-> Both files are totally optional, however:
-> - a custom gene ID mapping might help to merge datasets properly.
-> - custom gene metadata (the association between gene ID, gene name and gene description) will provide the MultiQC report with relevant metadata.
+> However, if multiple datasets contain different sets of gene IDs, **the pipeline results may be incorrect**, as different gene IDs that correspond to the same gene will be treated as if they came from different genes. In this case, users must supply their own gene ID mapping file using the `--gene_id_mapping` parameter. We also recommend that users provide a gene metadata file using the `--gene_metadata` parameter. This will not affect the pipeline result but will enrich the MultiQC report and help to associate a gene ID with a name and putative functions.
 >
-> See [next section](custom-gene-id-mapping--metadata) for further details.
+> See the [next section](custom-gene-id-mapping--metadata) for further details.
 
 > [!TIP]
-> You can check if your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
+> You can check whether your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
 
 ### Custom gene ID mapping / metadata
 
@@ -215,7 +213,7 @@ OTHERmappedgeneID,My OTHER Gene,Another description
 
 By default, raw RNA-seq counts are normalised using [GeTMM](https://link.springer.com/article/10.1186/s12859-018-2246-7), which requires the knowledge of gene length. To achieve this, the pipeline first downloads the public genome annotation that best aligns with the gene IDs present in the datasets. It then computes the length of the longest transcript for each gene. If the species of interest does not have a public annotation or if you encounter network issues, you can provide your own genome annotation or a file associating gene IDs with gene lengths directly using the `--gff` (local), `--gff_url` (remote URL) and `--gene_length` parameters, respectively.
 
-If users do not have access to genome annotations or gene lengths, they can use the `--skip_gene_length_normalisation` flag. The pipeline will then run edgeR without computing RPK normalisation. As the counts will not be normalised by length, this will result in a bias towards long genes.
+If users do not have access to genome annotations or gene lengths, they can use the `--skip_gene_length_normalisation` flag. The pipeline will then run edgeR without computing RPK normalisation. As the counts will not be normalised by length, **this will result in a bias in favor of longer genes**.
 
 The genome annotation must be in `GFF` format and have the `.gff` or `.gff3` extension. The [`AGAT`](https://github.com/NBISweden/AGAT) package can be used to convert other genome annotation formats to GFF.
 

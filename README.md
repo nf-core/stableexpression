@@ -22,17 +22,20 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline that aims to identify the most stable genes in one or more expression datasets. These datasets can be downloaded from public databases such as [EBI Expression Atlas](https://www.ebi.ac.uk/gxa/home) and [NCBI GEO Datasets](https://www.ncbi.nlm.nih.gov/gds), or provided directly by the user. Both RNA-seq and microarray count datasets can be used.
-
-> [!NOTE]
-> This pipeline is ideal for identifying the most suitable RT-qPCR reference genes for a given species.
+**nf-core/stableexpression** is a highly scalable bioinformatics pipeline that identifies the most stable genes in one or more expression datasets. These datasets can be downloaded from public databases such as [EBI Expression Atlas](https://www.ebi.ac.uk/gxa/home) and [NCBI GEO Datasets](https://www.ncbi.nlm.nih.gov/gds), or provided directly by the user. Both RNA-seq and Microarray count datasets can be used.
 
 > [!TIP]
-> nf-core/stableexpression is available in the [Galaxy Toolshed](https://toolshed.g2.bx.psu.edu/repositories/ab1194062ff0759f). Ask your Galaxy administrator to install it.
+> **nf-core/stableexpression** is available in the [Galaxy Toolshed](https://toolshed.g2.bx.psu.edu/repositories/ab1194062ff0759f). Ask your Galaxy administrator to install it.
 
-<p align="center">
-    <img title="Stableexpression Workflow" src="docs/images/metromap/nf_core_stableexpression.metromap.drawio.png" width=100%>
-</p>
+## Selection of reference (housekeeping) genes for RT-qPCR / digital PCR
+
+The selection of the most suitable reference (housekeeping) genes for RT-qPCR / digital PCR normalisation is a critical step in the analysis of gene expression data. However, as the expression of all genes is controlled by external factors such as tissue type, developmental stage, stress and age, the concept of a perfect reference gene is unrealistic, and the selection of reference genes must be closely adapted to the user's experiment.
+
+The **nf-core/stableexpression** pipeline is ideally suited to preselecting high-confidence candidates for use as RT-qPCR / digital PCR housekeeping genes, as it integrates normalised counts from a specific set of RNA-seq / Microarray data and selects the genes displaying the highest stability under such conditions.
+
+Please read the [guidelines for selecting RT-qPCR reference gene candidates](./docs/rt_pqc_reference_genes.md) before running the pipeline for your reference gene selection.
+
+## Pipeline overview
 
 The main inputs are:
 
@@ -40,7 +43,9 @@ The main inputs are:
 - keywords for Expression Atlas / GEO search (optional)
 - a `YAML` / `CSV` input file listing your own raw / normalised count datasets (optional).
 
-## Pipeline overview
+<p align="center">
+    <img title="Stableexpression Workflow" src="docs/images/metromap/nf_core_stableexpression.metromap.drawio.png" width=100%>
+</p>
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
@@ -70,7 +75,9 @@ Samples showing too many zeros or missing values are removed from the analysis.
 #### 5. Normalisation of RNA-seq datasets
 
 > [!IMPORTANT]
-> Whenever possible, RNA-seq data should always be provided raw.
+>
+> - Whenever possible, RNA-seq data should always be provided in their raw form.
+> - If using normalised data is unavoidable, choose data that have not been log2-transformed.
 
 ##### Raw RNA-seq data
 
@@ -82,8 +89,7 @@ Samples showing too many zeros or missing values are removed from the analysis.
 
 Already normalised RNA-seq data are converted to TPM (Transcripts Per Million).
 
-> [!NOTE]
-> Following normalisation, `log2` is computed on all RNA-seq counts.
+🧮 Following normalisation, `log2` is computed on all RNA-seq counts.
 
 #### 6. Data merging & gene filtering
 
@@ -109,7 +115,7 @@ In case reComBat encounters memory issues, quantile normalisation is proposed as
 
 #### 9. General statistics for each gene
 
-Base statistics are computed for each gene, for each platform separately (RNAseq and microarray).
+General statistics are computed for each gene and for each platform separately (RNAseq and microarray).
 
 #### 10. Division in sections
 
@@ -162,10 +168,6 @@ For more specific scenarios, such as:
 - **using your own expression dataset(s)**
 
 please refer to the [usage documentation](https://nf-co.re/stableexpression/usage).
-
-## Guidelines for selection of RT-qPCR reference (housekeeping) genes
-
-If, like most users, your goal is to find the best candidates as references genes for your RT-qPCR experiments, read the [guidelines for the selection of RT-qPCR reference gene candidates](./docs/rt_pqc_reference_genes.md).
 
 ## Resource allocation
 
