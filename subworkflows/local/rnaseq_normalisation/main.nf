@@ -1,5 +1,4 @@
 include { NORMALISATION_TPM_LOG2 as TPM_LOG2             } from '../../../modules/local/normalisation/tpm_log2'
-include { QUANTILE_NORMALISATION                         } from '../../../modules/local/normalisation/quantile'
 include { NORMALISATION_EDGER_LOG2 as EDGER_LOG2        } from '../../../modules/local/normalisation/edger_log2'
 
 include { GET_TRANSCRIPT_LENGTHS                         } from '../../../subworkflows/local/get_transcript_lengths'
