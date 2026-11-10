@@ -4,7 +4,6 @@
 
 import logging
 
-import config
 import httpx
 import pandas as pd
 from tenacity import (
@@ -14,6 +13,8 @@ from tenacity import (
     wait_exponential,
 )
 
+import config
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -22,12 +23,10 @@ logger = logging.getLogger(__name__)
 # CONSTANTS
 ##################################################################
 
-GPROFILER_ORGANISM_LIST_ENDPOINT = 'https://biit.cs.ut.ee/gprofiler/api/util/organisms_list'
+GPROFILER_ORGANISM_LIST_ENDPOINT = "https://biit.cs.ut.ee/gprofiler/api/util/organisms_list"
 
 GPROFILER_CONVERT_API_ENDPOINT = "https://biit.cs.ut.ee/gprofiler/api/convert/convert/"
-GPROFILER_CONVERT_BETA_API_ENDPOINT = (
-    "https://biit.cs.ut.ee/gprofiler_beta/api/convert/convert/"
-)
+GPROFILER_CONVERT_BETA_API_ENDPOINT = "https://biit.cs.ut.ee/gprofiler_beta/api/convert/convert/"
 
 CHUNKSIZE = 2000  # number of IDs to convert at a time - may create trouble if > 2000
 
@@ -48,16 +47,17 @@ GPROFILER_ERROR_MESSAGE = (
 
 
 class GProfilerConnectionError(Exception):
-    pass
+    """Exception raised when the g:Profiler server is down."""
 
 
 def format_species_name(species: str) -> str:
-    return ' '.join(species.capitalize().replace('_', ' ').split(' '))
+    """Format the species name to be used in the g:Profiler API."""
+    return " ".join(species.capitalize().replace("_", " ").split(" "))
 
 
 def get_candidate_organism_identifiers(species: str) -> list[str]:
-    """
-    Get the candidate organism identifiers of the species in the g:Profiler database.
+    """Get the candidate organism identifiers of the species in the g:Profiler database.
+
     For one single species name, there may be multiple corresponding identifiers.
     Example:
         Arabidopsis thaliana -> [athaliana]
@@ -72,6 +72,7 @@ def get_candidate_organism_identifiers(species: str) -> list[str]:
     -------
     list[str]
         The candidate organism identifiers in the g:Profiler database.
+
     """
     candidate_identifiers = []
     response = httpx.get(GPROFILER_ORGANISM_LIST_ENDPOINT)
@@ -79,8 +80,8 @@ def get_candidate_organism_identifiers(species: str) -> list[str]:
     species_records = response.json()
     formatted_species = format_species_name(species)
     for species_record in species_records:
-        if species_record['scientific_name'].startswith(formatted_species):
-            candidate_identifiers.append(species_record['id'])
+        if species_record["scientific_name"].startswith(formatted_species):
+            candidate_identifiers.append(species_record["id"])
     return candidate_identifiers
 
 
@@ -96,29 +97,10 @@ def request_conversion(
     url: str = GPROFILER_CONVERT_API_ENDPOINT,
     attempts: int = 0,
 ) -> list[str]:
-    """
-    Send a request to the g:Profiler API to convert a list of gene IDs.
-
-    Parameters
-    ----------
-    gene_ids : list
-        The list of gene IDs to convert.
-    species : str
-        The species to convert the IDs for.
-    url : str, optional
-        The URL to send the request to, by default GPROFILER_CONVERT_API_ENDPOINT
-    attempts : int, optional
-        The number of attempts already performed, by default 0
-
-    Returns
-    -------
-    list
-        The list of dicts corresponding to the converted IDs.
-    """
-
+    """Send a request to the g:Profiler API to convert a list of gene IDs."""
     if attempts > 0:
         logger.warning(
-            "g:Profiler main server appears down, trying with the beta server..."
+            "g:Profiler main server appears down, trying with the beta server...",
         )
 
     server_appears_down = False
@@ -139,14 +121,14 @@ def request_conversion(
                 server_appears_down = True
             else:
                 logger.error(
-                    f"Error {response.status_code} while converting IDs: {err}"
+                    f"Error {response.status_code} while converting IDs: {err}",
                 )
                 raise err
 
     if server_appears_down:
         if attempts == 0:
             logger.warning(
-                "g:Profiler main server appears down, trying with the beta server..."
+                "g:Profiler main server appears down, trying with the beta server...",
             )
             return request_conversion(
                 gene_ids,
@@ -155,36 +137,19 @@ def request_conversion(
                 url=GPROFILER_CONVERT_BETA_API_ENDPOINT,  # backup endpoint
                 attempts=1,
             )
-        else:
-            # both servers appear down, we stop here...
-            logger.error(GPROFILER_ERROR_MESSAGE)
-            raise GProfilerConnectionError(GPROFILER_ERROR_MESSAGE)
+        # both servers appear down, we stop here...
+        logger.error(GPROFILER_ERROR_MESSAGE)
+        raise GProfilerConnectionError(GPROFILER_ERROR_MESSAGE)
 
-    else:
-        return response.json()["result"]
+    return response.json()["result"]
 
 
 def convert_chunk_of_ids(
-    gene_ids: list[str], organism: str, gprofiler_target_db: str
+    gene_ids: list[str],
+    organism: str,
+    gprofiler_target_db: str,
 ) -> tuple[dict[str, str], pd.DataFrame]:
-    """
-    Wrapper function that converts a list of gene IDs to another namespace.
-
-    Parameters
-    ----------
-    species : str
-        The species to convert the IDs for.
-    gene_ids : list
-        The IDs to convert.
-    target_database : str
-        The target database to convert to.
-
-    Returns
-    -------
-    dict
-        A dictionary where the keys are the original IDs and the values are the converted IDs.
-    """
-
+    """Convert a list of gene IDs to another namespace."""
     results = request_conversion(gene_ids, organism, gprofiler_target_db)
     df = pd.DataFrame.from_records(results)
 
@@ -199,7 +164,7 @@ def convert_chunk_of_ids(
 
     # DataFrame associating converted IDs to name and description
     meta_df = df.drop(columns=["incoming"]).rename(
-        columns={"converted": config.GENE_ID_COLNAME}
+        columns={"converted": config.GENE_ID_COLNAME},
     )
 
     meta_df["name"] = meta_df["name"].str.replace(",", ";")
@@ -215,7 +180,7 @@ def convert_chunk_of_ids(
 
 
 def chunk_list(lst: list[str], chunksize: int) -> list[list[str]]:
-    """Splits a list into chunks of a given size.
+    """Split a list into chunks of a given size.
 
     Args:
         lst (list): The list to split.
@@ -223,15 +188,18 @@ def chunk_list(lst: list[str], chunksize: int) -> list[list[str]]:
 
     Returns:
         list: A list of chunks, where each chunk is a list of len(chunksize).
+
     """
     return [lst[i : i + chunksize] for i in range(0, len(lst), chunksize)]
 
 
 def convert_ids(
-    ids: list[str], organism: str, gprofiler_target_db: str
+    ids: list[str],
+    organism: str,
+    gprofiler_target_db: str,
 ) -> tuple[dict[str, str], pd.DataFrame]:
-    """
-    Converts a list of gene IDs to Gene IDs using the g:PROFILER API.
+    """Convert a list of gene IDs to Gene IDs using the g:PROFILER API.
+
     First converts the IDs in chunks to avoid exceeding the API's rate limit.
 
     Parameters
@@ -242,6 +210,7 @@ def convert_ids(
         The g:Profiler organism identifier to use for the conversion.
     gprofiler_target_db : str
         The target database to use for the conversion.
+
     """
     mapping_dict = {}
     gene_metadata_dfs = []
@@ -250,7 +219,9 @@ def convert_ids(
     for chunk_gene_ids in chunks:
         # converting to Gene IDs for all IDs comprised in this chunk
         gene_mapping, meta_df = convert_chunk_of_ids(
-            chunk_gene_ids, organism, gprofiler_target_db
+            chunk_gene_ids,
+            organism,
+            gprofiler_target_db,
         )
         mapping_dict.update(gene_mapping)
         gene_metadata_dfs.append(meta_df)

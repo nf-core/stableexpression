@@ -1,21 +1,18 @@
 import socket
-import dash_mantine_components as dmc
 
+import dash_mantine_components as dmc
 from dash_extensions.enrich import (
     DashProxy,
-    html,
     ServersideOutputTransform,
     TriggerTransform,
+    html,
 )
 from dash_extensions.logging import NotificationsLogHandler
-
-from src.utils import config, style
-from src.components import stores, tooltips
-from src.components import top, right_sidebar
 from src.callbacks import common, genes, samples
+from src.components import right_sidebar, stores, tooltips, top
+from src.utils import config, style
 
 DEBUG = True
-# DEBUG = False
 
 # -------------------- SETUP LOGGING --------------------
 
@@ -39,7 +36,8 @@ app = DashProxy(
 # -------------------- LAYOUT --------------------
 
 
-def serve_layout():
+def serve_layout() -> dmc.MantineProvider:
+    """Return the layout of the app."""
     return dmc.MantineProvider(
         children=[
             html.Div(
@@ -52,8 +50,8 @@ def serve_layout():
                 + log_handler.embed(),
                 id="layout",
                 style=style.LAYOUT,
-            )
-        ]
+            ),
+        ],
     )
 
 
@@ -69,12 +67,11 @@ samples.register_callbacks()
 
 
 def find_port(port: int) -> int:
-    """Find a port not in use starting at given port"""
+    """Find a port not in use starting at given port."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if s.connect_ex(("localhost", port)) == 0:
             return find_port(port=port + 1)
-        else:
-            return port
+        return port
 
 
 if __name__ == "__main__":

@@ -24,13 +24,9 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 ALLOWED_PLATFORMS = ["rnaseq", "microarray"]
-# accessions that should not be fetched automatically:
-# - E-GTEX-8 contains 17350 samples (way too big)
-EXCLUDED_ACCESSION_PATTERNS = ["E-GTEX-"]
 
 ALL_EXP_URL = "https://www.ebi.ac.uk/gxa/json/experiments/"
 ACCESSION_OUTFILE_NAME = "accessions.txt"
-# ALL_EXPERIMENTS_METADATA_OUTFILE_NAME = "all_experiments.metadata.tsv"
 SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME = "species_experiments.metadata.tsv"
 SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME = "selected_experiments.metadata.tsv"
 FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME = "filtered_experiments.keywords.yaml"
@@ -45,7 +41,8 @@ SAMPLING_QUOTA_OUTFILE = "sampling_quota.txt"
 ##################################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser("Get expression atlas accessions")
     parser.add_argument(
         "--species",
@@ -60,7 +57,10 @@ def parse_args():
         help="Keywords to search for in experiment description",
     )
     parser.add_argument(
-        "--platform", type=str, help="Platform type", choices=ALLOWED_PLATFORMS
+        "--platform",
+        type=str,
+        help="Platform type",
+        choices=ALLOWED_PLATFORMS,
     )
     parser.add_argument(
         "--random-sampling-size",
@@ -75,7 +75,11 @@ def parse_args():
         help="Random sampling seed",
     )
     parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+        "--cpus",
+        type=int,
+        dest="nb_cpus",
+        required=True,
+        help="Number of CPUs",
     )
     return parser.parse_args()
 
@@ -86,8 +90,7 @@ def parse_args():
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
 def get_data(url: str) -> dict:
-    """
-    Queries a URL and returns the data as a JSON object
+    """Query a URL and returns the data as a JSON object.
 
     Parameters
     ----------
@@ -103,6 +106,7 @@ def get_data(url: str) -> dict:
     ------
     RuntimeError
         If the query fails
+
     """
     # timeout of 10 minutes since the EBI may take a while to respond
     response = httpx.get(url, timeout=360.0)
@@ -111,8 +115,7 @@ def get_data(url: str) -> dict:
 
 
 def get_experiment_description(exp_dict: dict) -> str:
-    """
-    Gets the description from an experiment dictionary
+    """Get the description from an experiment dictionary.
 
     Parameters
     ----------
@@ -128,21 +131,19 @@ def get_experiment_description(exp_dict: dict) -> str:
     ------
     KeyError
         If the description field is not found in the experiment dictionary
+
     """
     if "experiment" in exp_dict:
         if "description" in exp_dict["experiment"]:
             return exp_dict["experiment"]["description"]
-        else:
-            raise KeyError(f"Could not find description field in {exp_dict}")
-    elif "experimentDescription" in exp_dict:
-        return exp_dict["experimentDescription"]
-    else:
         raise KeyError(f"Could not find description field in {exp_dict}")
+    if "experimentDescription" in exp_dict:
+        return exp_dict["experimentDescription"]
+    raise KeyError(f"Could not find description field in {exp_dict}")
 
 
 def get_experiment_accession(exp_dict: dict) -> str:
-    """
-    Gets the accession from an experiment dictionary
+    """Get the accession from an experiment dictionary.
 
     Parameters
     ----------
@@ -158,21 +159,19 @@ def get_experiment_accession(exp_dict: dict) -> str:
     ------
     KeyError
         If the accession field is not found in the experiment dictionary
+
     """
     if "experiment" in exp_dict:
         if "accession" in exp_dict["experiment"]:
             return exp_dict["experiment"]["accession"]
-        else:
-            raise KeyError(f"Could not find accession field in {exp_dict}")
-    elif "experimentAccession" in exp_dict:
-        return exp_dict["experimentAccession"]
-    else:
         raise KeyError(f"Could not find accession field in {exp_dict}")
+    if "experimentAccession" in exp_dict:
+        return exp_dict["experimentAccession"]
+    raise KeyError(f"Could not find accession field in {exp_dict}")
 
 
 def get_properties_values(exp_dict: dict) -> list:
-    """
-    Gets all values from properties from an experiment dictionary
+    """Get all values from properties from an experiment dictionary.
 
     Parameters
     ----------
@@ -183,6 +182,7 @@ def get_properties_values(exp_dict: dict) -> list:
     -------
     values : list
         A list of all values from properties
+
     """
     values = []
     for column_header_dict in exp_dict["columnHeaders"]:
@@ -202,29 +202,27 @@ def get_properties_values(exp_dict: dict) -> list:
 
 
 def get_eatlas_experiments() -> list[dict]:
-    """
-    Gets all experiments from Expression Atlas
-
-    Parameters
-    ----------
+    """Get all experiments from Expression Atlas.
 
     Returns
     -------
     experiments : list
         A list of experiment dictionaries
+
     """
     data = get_data(ALL_EXP_URL)
     return data["experiments"]
 
 
 def filter_by_platform(experiments: list[dict], platform: str | None) -> list[dict]:
-    """
-    Gets all experiments for a given platform from Expression Atlas
+    """Get all experiments for a given platform from Expression Atlas.
+
     Possible platforms in Expression Atlas are 'rnaseq', 'microarray', 'proteomics'
 
     Parameters
     ----------
     experiments: list[str]
+        A list of experiment dictionaries
     platform : str
         Name of platform. Example: "rnaseq"
 
@@ -232,49 +230,45 @@ def filter_by_platform(experiments: list[dict], platform: str | None) -> list[di
     -------
     experiments : list
         A list of experiment dictionaries
+
     """
     platform_experiments = []
     for exp_dict in experiments:
         if technology_type := exp_dict.get("technologyType"):
             parsed_technology_type = (
-                technology_type[0]
-                if isinstance(technology_type, list)
-                else technology_type
+                technology_type[0] if isinstance(technology_type, list) else technology_type
             )
             # parsed_platform is in ["rnaseq", "microarray", "proteomics", ...]
-            parsed_platform = (
-                parsed_technology_type.lower().split(" ")[0].replace("-", "")
-            )
+            parsed_platform = parsed_technology_type.lower().split(" ")[0].replace("-", "")
 
             if platform is not None:
                 if parsed_platform == platform:
                     platform_experiments.append(exp_dict)
-            else:
-                if parsed_platform in ALLOWED_PLATFORMS:
-                    platform_experiments.append(exp_dict)
+            elif parsed_platform in ALLOWED_PLATFORMS:
+                platform_experiments.append(exp_dict)
 
         else:
             logger.warning(
-                f"Technology type not found for experiment {exp_dict['accession']}"
+                f"Technology type not found for experiment {exp_dict['accession']}",
             )
     return platform_experiments
 
 
 def get_species_name_without_subspecies(species: str) -> str:
-    """
-    Returns the species name without the subspecies part.
+    """Return the species name without the subspecies part.
+
     Ex: Hordeum vulgare subsp. vulgare -> Hordeum vulgare
     """
     return " ".join(species.split(" ")[:2])
 
 
 def get_species_experiments(experiments: list[dict], species: str) -> list[dict]:
-    """
-    Gets all experiments for a given species from Expression Atlas
+    """Get all experiments for a given species from Expression Atlas.
 
     Parameters
     ----------
     experiments: list[str]
+        A list of experiment dictionaries
     species : str
         Name of species. Example: "Arabidopsis thaliana"
 
@@ -282,6 +276,7 @@ def get_species_experiments(experiments: list[dict], species: str) -> list[dict]
     -------
     experiments : list
         A list of experiment dictionaries
+
     """
     species_experiments = []
     for exp_dict in experiments:
@@ -293,8 +288,7 @@ def get_species_experiments(experiments: list[dict], species: str) -> list[dict]
 
 
 def get_experiment_data(exp_dict: dict) -> dict:
-    """
-    Gets the full data for an experiment given its dictionary
+    """Get the full data for an experiment given its dictionary.
 
     Parameters
     ----------
@@ -305,26 +299,26 @@ def get_experiment_data(exp_dict: dict) -> dict:
     -------
     exp_data : dict
         The full experiment data
+
     """
     exp_url = ALL_EXP_URL + exp_dict["experimentAccession"]
     return get_data(exp_url)
 
 
-def filter_out_excluded_accessions(experiments: list[dict]) -> list[dict]:
-    valid_experiments = []
-    for exp_dict in experiments:
-        for accession_pattern in EXCLUDED_ACCESSION_PATTERNS:
-            if exp_dict["experimentAccession"].startswith(accession_pattern):
-                logger.warning(
-                    f"Skipping experiment {exp_dict['experimentAccession']} due to exclusion pattern"
-                )
-                break
-        else:
-            valid_experiments.append(exp_dict)
-    return valid_experiments
-
-
 def parse_experiment(exp_dict: dict) -> dict:
+    """Parse an experiment dictionary to extract relevant information.
+
+    Parameters
+    ----------
+    exp_dict : dict
+        The experiment dictionary to parse
+
+    Returns
+    -------
+    dict
+        A dictionary containing the accession, description, and properties of the experiment
+
+    """
     # getting accession and description
     accession = get_experiment_accession(exp_dict)
     description = get_experiment_description(exp_dict)
@@ -340,19 +334,49 @@ def parse_experiment(exp_dict: dict) -> dict:
 
 
 def filter_experiment_with_keywords(exp_dict: dict, keywords: list[str]) -> dict | None:
+    """Filter an experiment dictionary based on keywords.
+
+    Parameters
+    ----------
+    exp_dict : dict
+        The experiment dictionary to filter.
+    keywords : list[str]
+        The list of keywords to search for in the experiment.
+
+    Returns
+    -------
+    dict | None
+        The filtered experiment dictionary if keywords are found, otherwise None.
+
+    """
     all_searchable_fields = [exp_dict["description"]] + exp_dict["properties"]
     found_keywords = keywords_in_fields(all_searchable_fields, keywords)
     # only returning experiments if found keywords
     if found_keywords:
         exp_dict["found_keywords"] = list(set(found_keywords))
         return exp_dict
-    else:
-        return None
+    return None
 
 
 def get_metadata_for_selected_experiments(
-    experiments: list[dict], results: list[dict]
+    experiments: list[dict],
+    results: list[dict],
 ) -> list[dict]:
+    """Get the metadata for the selected experiments.
+
+    Parameters
+    ----------
+    experiments : list[dict]
+        The list of experiments to filter.
+    results : list[dict]
+        The list of results to filter the experiments with.
+
+    Returns
+    -------
+    list[dict]
+        The filtered list of experiments.
+
+    """
     filtered_accessions = [result_dict["accession"] for result_dict in results]
     return [
         exp_dict
@@ -362,8 +386,27 @@ def get_metadata_for_selected_experiments(
 
 
 def sample_experiments_randomly(
-    experiments: list[dict], sampling_size: int, seed: int
+    experiments: list[dict],
+    sampling_size: int,
+    seed: int,
 ) -> tuple[list[str], bool]:
+    """Sample experiments randomly.
+
+    Parameters
+    ----------
+    experiments : list[dict]
+        The list of experiments to sample.
+    sampling_size : int
+        The number of samples to sample.
+    seed : int
+        The seed to use for the random sampling.
+
+    Returns
+    -------
+    tuple[list[str], bool]
+        The list of sampled experiments and a boolean indicating if the sampling quota was reached.
+
+    """
     random.seed(seed)
     sampled_experiments = []
 
@@ -404,6 +447,7 @@ def sample_experiments_randomly(
 
 
 def format_species_name(species: str) -> str:
+    """Format species name for Expression Atlas."""
     return species.replace("_", " ").capitalize().strip()
 
 
@@ -439,9 +483,6 @@ def main():
     logger.info("Filtering experiments based on platform")
     experiments = filter_by_platform(experiments, args.platform)
 
-    logger.info("Filtering out excluded accessions")
-    experiments = filter_out_excluded_accessions(experiments)
-
     logger.info("Parsing experiments")
     with Pool(processes=args.nb_cpus) as pool:
         results = pool.map(parse_experiment, experiments)
@@ -452,7 +493,7 @@ def main():
         with Pool(processes=args.nb_cpus) as pool:
             results = [res for res in pool.map(func, results) if res is not None]
         logger.info(
-            f"Found {len(results)} experiments corresponding to keywords {keywords}"
+            f"Found {len(results)} experiments corresponding to keywords {keywords}",
         )
 
     # getting accessions of selected experiments
@@ -479,7 +520,7 @@ def main():
             args.random_sampling_seed,
         )
         logger.info(
-            f"Kept {len(selected_accessions)} experiments after random sampling"
+            f"Kept {len(selected_accessions)} experiments after random sampling",
         )
 
         if sampling_quota_reached:
@@ -495,7 +536,7 @@ def main():
 
     if not selected_accessions:
         logger.warning(
-            f"Could not find experiments for species {species_name} and keywords {keywords}"
+            f"Could not find experiments for species {species_name} and keywords {keywords}",
         )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -509,16 +550,19 @@ def main():
 
     # exporting metadata
     logger.info(
-        f"Writing metadata of all experiments for species {species_name} to {SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME}"
+        f"Writing metadata of all experiments for species {species_name} to {SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME}",
     )
     df = pd.DataFrame.from_dict(experiments)
     df.to_csv(
-        SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME, sep="\t", index=False, header=True
+        SPECIES_EXPERIMENTS_METADATA_OUTFILE_NAME,
+        sep="\t",
+        index=False,
+        header=True,
     )
 
     if selected_experiments:
         logger.info(
-            f"Writing metadata of filtered experiments to {SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME}"
+            f"Writing metadata of filtered experiments to {SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME}",
         )
         df = pd.DataFrame.from_dict(selected_experiments)
         df.to_csv(
@@ -531,7 +575,7 @@ def main():
     if results:
         # exporting list of selected experiments with their keywords
         logger.info(
-            f"Writing filtered experiments with keywords to {FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME}"
+            f"Writing filtered experiments with keywords to {FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME}",
         )
         with open(FILTERED_EXPERIMENTS_WITH_KEYWORDS_OUTFILE_NAME, "w") as fout:
             yaml.dump(results, fout)

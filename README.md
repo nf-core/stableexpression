@@ -10,7 +10,7 @@
 [![GitHub Actions Linting Status](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/stableexpression/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/stableexpression/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.22895924-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.22895924)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
-[![Nextflow](https://img.shields.io/badge/version-%E2%89%A526.04.4-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
+[![Nextflow](https://img.shields.io/badge/version-%E2%89%A526.10.4-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
 [![nf-core template version](https://img.shields.io/badge/nf--core_template-4.1.0-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/4.1.0)
 [![run with apptainer](https://custom-icon-badges.demolab.com/badge/run%20with-apptainer-4545?logo=apptainer&color=teal&labelColor=000000)](https://apptainer.org/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
@@ -22,98 +22,113 @@
 
 ## Introduction
 
-**nf-core/stableexpression** is a bioinformatics pipeline that aims to identify the most stable genes in one or more expression datasets. These datasets can be downloaded from public databases such as [EBI Expression Atlas](https://www.ebi.ac.uk/gxa/home) and [NCBI GEO Datasets](https://www.ncbi.nlm.nih.gov/gds), or provided directly by the user. Both RNA-seq and microarray count datasets can be used. The pipeline is ideally suited to determining the most suitable RT-qPCR reference genes for a given species.
+**nf-core/stableexpression** is a highly scalable bioinformatics pipeline that identifies the most stable genes in one or more expression datasets. These datasets can be downloaded from public databases such as [EBI Expression Atlas](https://www.ebi.ac.uk/gxa/home) and [NCBI GEO Datasets](https://www.ncbi.nlm.nih.gov/gds), or provided directly by the user. Both RNA-seq and Microarray count datasets can be used.
 
-<p align="center">
-    <img title="Stableexpression Workflow" src="docs/images/metromap/nf_core_stableexpression.metromap.png" width=100%>
-</p>
+> [!TIP]
+> **nf-core/stableexpression** is available in the [Galaxy Toolshed](https://toolshed.g2.bx.psu.edu/repositories/ab1194062ff0759f). Ask your Galaxy administrator to install it.
 
-It takes as main inputs :
+## Selection of reference (housekeeping) genes for RT-qPCR / digital PCR
+
+The selection of the most suitable reference (housekeeping) genes for RT-qPCR / digital PCR normalisation is a critical step in the analysis of gene expression data. However, as the expression of all genes is controlled by external factors such as tissue type, developmental stage, stress and age, the concept of a perfect reference gene is unrealistic, and the selection of reference genes must be closely adapted to the user's experiment.
+
+The **nf-core/stableexpression** pipeline is ideally suited to preselecting high-confidence candidates for use as RT-qPCR / digital PCR housekeeping genes, as it integrates normalised counts from a specific set of RNA-seq / Microarray data and selects the genes displaying the highest stability under such conditions.
+
+Please read the [guidelines for selecting RT-qPCR reference gene candidates](./docs/rt_pqc_reference_genes.md) before running the pipeline for your reference gene selection.
+
+## Pipeline overview
+
+The main inputs are:
 
 - a species name (mandatory)
 - keywords for Expression Atlas / GEO search (optional)
-- a CSV input file listing your own raw / normalised count datasets (optional).
+- a `YAML` / `CSV` input file listing your own raw / normalised count datasets (optional).
 
-**Use cases**:
-
-- **find the most suitable genes for use as RT-qPCR reference genes for a specific species (and optionally specific conditions)**
-- download all EBI Expression Atlas and / or NCBI GEO datasets for a species (and optionally keywords)
-
-## Pipeline overview
+<p align="center">
+    <img title="Stableexpression Workflow" src="docs/images/metromap/nf_core_stableexpression.metromap.drawio.png" width=100%>
+</p>
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
 #### 1. Get accessions from public databases
 
-- Get [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords)
-  This step is run by default but is optional. Set `--skip_fetch_eatlas_accessions` to skip it.
-- Get NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) dataset accessions corresponding to the provided species (and optionally keywords)
-  This is optional and **NOT** run by default. Set `--fetch_geo_accessions` to run it.
-
-> [!WARNING]
-> Due to the high heterogeneity of formats of NCBI GEO datasets, automated retrieval of expression datasets from NCBI GEO is considered **experimental**.
+- Fetch [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords). This step is run by default but is optional. Set `--skip_fetch_eatlas_accessions` to skip it.
+- Fetch NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) dataset accessions corresponding to the provided species (and optionally keywords).
+  This step is optional and **not** run by default. Set `--fetch_geo_accessions` to run it. ⚠️ Due to the heterogeneous formats of NCBI GEO datasets, the retrieval of expression datasets from NCBI GEO is considered **experimental**. ⚠️
 
 #### 2. Download data (see [usage](./conf/usage.md#3-provide-your-own-accessions))
 
 - Download [Expression Atlas](https://www.ebi.ac.uk/gxa/home) data if any
 - Download NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) data if any
 
-> [!NOTE]
-> At this stage, the datasets that have been downloaded from public databases are merged with the user datasets (provided with the `--datasets` parameter). See [usage](./conf/usage.md#4-use-your-own-expression-datasets) for more information about user datasets.
+🔌 At this stage, the datasets that have been downloaded from public databases are merged with the user datasets provided using the `--datasets` parameter. See [usage](./conf/usage.md#4-use-your-own-expression-datasets) for more information about user datasets.
 
 #### 3. ID Mapping (see [usage](./conf/usage.md#5-custom-gene-id-mapping--metadata))
 
-- Gene IDs are cleaned
-- Map gene IDS to Ensembl IDs for standardisation among datasets using [`g:Profiler`](https://biit.cs.ut.ee/gprofiler/gost) (run by default; optional)
-- Rare genes are filtered out
+- Gene IDs are cleaned.
+- Map gene IDS to Ensembl IDs using [`g:Profiler`](https://biit.cs.ut.ee/gprofiler/gost) to standardise gene IDs across datasets (run by default; optional).
+- Rare gene IDs are filtered out.
 
 #### 4. Sample filtering
 
-Samples that show too high ratios of zeros or missing values are removed from the analysis.
+Samples showing too many zeros or missing values are removed from the analysis.
 
-#### 5. Normalisation of expression
+#### 5. Normalisation of RNA-seq datasets
 
-##### Pathway A: TPM (Transcripts Per Million)
+> [!IMPORTANT]
+>
+> - Whenever possible, RNA-seq data should always be provided in their raw form.
+> - If using normalised data is unavoidable, choose data that have not been log2-transformed.
 
-- Unless provided by the user: download a reference annotation from the Ensembl FTPs ([Ensembl Genomes](https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/) or [Ensembl](https://ftp.ensembl.org/pub/current/)) or using the [NCBI Dataset API](https://api.ncbi.nlm.nih.gov/datasets/v2/)
-- Using the reference annotation, compute the length of the longest transcript for each gene
-- Normalize RNAseq raw data using TPM.
+##### Raw RNA-seq data
 
-##### Pathway B: CPM (Counts Per Million)
+- Unless provided by the user: download a reference annotation from the Ensembl FTPs ([Ensembl Genomes](https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/) or [Ensembl](https://ftp.ensembl.org/pub/current/)) or using the [NCBI Dataset API](https://api.ncbi.nlm.nih.gov/datasets/v2/).
+- Compute the length of the longest transcript for each gene.
+- Normalise the raw RNA-seq data using [GeTMM](https://link.springer.com/article/10.1186/s12859-018-2246-7).
 
-- Normalize RNAseq raw data using CPM.
+##### RNA-seq data already normalised (not recommended)
 
-#### 6. Quantile normalisation
+Already normalised RNA-seq data are converted to TPM (Transcripts Per Million).
 
-- Perform quantile normalisation on each dataset separately using [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.quantile_transform.html)
+🧮 Following normalisation, `log2` is computed on all RNA-seq counts.
 
-#### 7. Merge all data
+#### 6. Data merging & gene filtering
 
-All datasets are merged into one single dataframe.
+- All the datasets are merged into a single dataframe for each platform (RNA-seq / Microarray).
+- Genes with a too high proportion of zeros across samples on a specific platform are filtered out.
 
-#### 8. Imputation of missing values
+#### 7. Imputation of missing values
 
-Missing values are replaced by imputed values using a specific algorithm provided by [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html). The user can choose the method of imputation with the `--missing_value_imputer` parameter.
+Missing values are replaced by imputed values using [KNN Imputation](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html).
 
-> [!NOTE]
-> For better scalability, the full dataset is first clustered by similarity of genes (using the [MiniBatchKMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html) algorithm) prior to missing value imputation.
+#### 8. Scaling / Correction of batch effects
+
+##### Pathway A: ReCombat (default)
+
+Correction of batch effect is performed for each platform separately using [reComBat](https://academic.oup.com/bioinformaticsadvances/article/2/1/vbac071/6728137?login=false).
+
+##### Pathway B: Quantile normalisation
+
+In case reComBat encounters memory issues, quantile normalisation is proposed as a more scalable alternative.
 
 > [!WARNING]
-> This step takes the longest, especially when working with a large number of datasets.
+> Please note that quantile normalisation erases the internal structure of the count distributions. Consequently, reCombat is largely preferred over quantile normalisation whenever data fit in memory.
 
 #### 9. General statistics for each gene
 
-Base statistics are computed for each gene, platform-wide and for each platform separately (RNAseq and microarray).
+General statistics are computed for each gene and for each platform separately (RNAseq and microarray).
 
-#### 10. Scoring
+#### 10. Division in sections
 
-- The full list of genes is divided into multiple 'sections' based on their expression levels
-- A shortlist of candidate genes is extracted for each section based on their coefficient of variation
-- Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder)
-- Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034) (run by default; optional)
-- Compute stability score for each candidate gene
+The full list of genes is divided into multiple sections based on their expression levels. The genes with the highest expression levels are in section 1, and so on.
 
-#### 11. Reporting
+#### 11. Scoring
+
+- Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder).
+- Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034).
+- Compute stability score for each gene and for each platform.
+- Compute a global stability score for each gene considering all platforms.
+
+#### 12. Reporting
 
 - Result aggregation
 - Make [`MultiQC`](http://multiqc.info/) report
@@ -145,7 +160,7 @@ nextflow run nf-core/stableexpression \
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/running/run-pipelines#using-parameter-files).
 
-## More advanced usage
+## General usage
 
 For more specific scenarios, such as:
 
@@ -167,6 +182,10 @@ See [here](https://nf-co.re/stableexpression/usage#profiles) for more informatio
 To see the results of an example test run with a full size dataset refer to the [results](https://nf-co.re/stableexpression/results) tab on the nf-core website pipeline page.
 For more details about the output files and reports, please refer to the
 [output documentation](https://nf-co.re/stableexpression/output).
+
+## Troubleshooting
+
+In case of issues with the pipeline, please check the [troubleshooting page](./docs/troubleshooting.md) or [report a new issue](https://github.com/nf-core/stableexpression/issues).
 
 ## Support us
 

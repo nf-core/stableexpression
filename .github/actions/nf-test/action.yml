@@ -113,7 +113,7 @@ runs:
     #  with:
     #    name: output
     #    path: |
-    #      /home/runner/_work/stableexpression/stableexpression/
+    #      /home/runner/work/stableexpression/stableexpression/~/tests
     #    retention-days: 7
 
     - name: Clean up

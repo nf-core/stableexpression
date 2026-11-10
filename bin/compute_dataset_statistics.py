@@ -6,8 +6,9 @@ import argparse
 import logging
 from pathlib import Path
 
-import config
 import polars as pl
+
+import config
 from common import parse_count_table
 
 logging.basicConfig(level=logging.INFO)
@@ -23,23 +24,35 @@ KEY_TO_OUTFILE = {"skewness": "skewness.txt"}
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Compute general statistics from count data for each sample"
+        description="Compute general statistics from count data for each sample",
     )
     parser.add_argument(
-        "--counts", type=Path, dest="count_file", required=True, help="Count file"
+        "--counts",
+        type=Path,
+        dest="count_file",
+        required=True,
+        help="Count file",
     )
     return parser.parse_args()
 
 
 def compute_dataset_statistics(df: pl.DataFrame) -> dict:
+    """Compute dataset statistics from count data."""
     # sample count skewness
     skewness = df.select(pl.exclude(config.GENE_ID_COLNAME).skew()).row(0)
-    return dict(skewness=list(skewness))
+    return {
+        "skewness": list(skewness),
+    }
 
 
 def format_value(value: float) -> str:
+    """Format a float value.
+
+    Rounds a float value to 4 decimal places, or to 0 if the value is 0.
+    """
     formatted = f"{value:.4f}"
     # if the only digits are 0, replace with "0" to avoid negative zero values
     if set(formatted.replace("-", "").replace(".", "")) == {"0"}:
@@ -47,9 +60,9 @@ def format_value(value: float) -> str:
     return formatted
 
 
-def export_count_data(stats: dict):
-    """
-    Export dataset statistics to CSV files.
+def export_count_data(stats: dict) -> None:
+    """Export dataset statistics to CSV files.
+
     Write each statistic to a separate file, on a single row
     """
     for key, outfile_name in KEY_TO_OUTFILE.items():

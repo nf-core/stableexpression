@@ -18,3 +18,4 @@ corpora/
 TODO
 test/
 output/
+**/__pycache__

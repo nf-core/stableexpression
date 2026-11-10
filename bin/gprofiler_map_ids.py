@@ -7,9 +7,10 @@ import logging
 import sys
 from pathlib import Path
 
-import config
 import pandas as pd
-from gprofiler_utils import convert_ids, get_candidate_organism_identifiers, format_species_name
+from gprofiler_utils import convert_ids, get_candidate_organism_identifiers
+
+import config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -31,7 +32,8 @@ FAILURE_REASON_FILE = "failure_reason.txt"
 ##################################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser("Map IDs using g:Profiler")
     parser.add_argument(
         "--gene-ids",
@@ -41,7 +43,10 @@ def parse_args():
         help="Input file containing gene IDs",
     )
     parser.add_argument(
-        "--species", type=str, required=True, help="Species to convert IDs for"
+        "--species",
+        type=str,
+        required=True,
+        help="Species to convert IDs for",
     )
     parser.add_argument(
         "--target-db",
@@ -62,7 +67,7 @@ def parse_args():
 def main():
     args = parse_args()
 
-    with open(args.gene_id_file, "r") as fin:
+    with open(args.gene_id_file) as fin:
         gene_ids = list({line.strip() for line in fin})
 
     logger.info(f"Converting {len(gene_ids)} IDs for species {args.species} ")
@@ -84,9 +89,10 @@ def main():
     candidate_gene_metadata_df = []
 
     for organism in candidate_organism_identifiers:
-
         mapping_dict, gene_metadata_df = convert_ids(
-            gene_ids, organism, args.gprofiler_target_db
+            gene_ids,
+            organism,
+            args.gprofiler_target_db,
         )
         candidate_mapping_dicts.append(mapping_dict)
         candidate_gene_metadata_df.append(gene_metadata_df)
@@ -99,7 +105,11 @@ def main():
     # selecting the one that provides the best mapping with our gene IDs
     mapping_dict_lengths = [len(mapping_dict) for mapping_dict in candidate_mapping_dicts]
     # logging the depth of mapping for each candidate identifier
-    for organism, mapping_dict_length in zip(candidate_organism_identifiers, mapping_dict_lengths):
+    for organism, mapping_dict_length in zip(
+        candidate_organism_identifiers,
+        mapping_dict_lengths,
+        strict=True,
+    ):
         logger.info(f"Mapping size for {organism}: {mapping_dict_length}")
 
     best_mapping_index = mapping_dict_lengths.index(max(mapping_dict_lengths))
@@ -108,10 +118,10 @@ def main():
 
     logger.info(f"Chosen organism: {candidate_organism_identifiers[best_mapping_index]}")
 
-    if not mapping_dict: # no mapping of gene IDs, whatever the candidate identifier
+    if not mapping_dict:  # no mapping of gene IDs, whatever the candidate identifier
         msg = (
             f"No mapping found for {args.species} against g:Profiler target database {args.gprofiler_target_db}. "
-            + f"Example of unmapped gene IDs: {' '.join(gene_ids[:5])} "
+            f"Example of unmapped gene IDs: {' '.join(gene_ids[:5])} "
         )
         logger.error(msg)
         with open(FAILURE_REASON_FILE, "w") as fout:
@@ -130,7 +140,7 @@ def main():
             columns={
                 "index": config.ORIGINAL_GENE_ID_COLNAME,
                 0: config.GENE_ID_COLNAME,
-            }
+            },
         )
         .sort_values(by=config.ORIGINAL_GENE_ID_COLNAME)
     )
@@ -142,9 +152,12 @@ def main():
 
     # dropping duplicates and keeping the first occurence
     gene_metadata_df.drop_duplicates(
-        subset=[config.GENE_ID_COLNAME], keep="first"
+        subset=[config.GENE_ID_COLNAME],
+        keep="first",
     ).sort_values(by=config.GENE_ID_COLNAME).to_csv(
-        METADATA_OUTFILE, index=False, header=True
+        METADATA_OUTFILE,
+        index=False,
+        header=True,
     )
 
 

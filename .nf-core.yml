@@ -13,6 +13,7 @@ lint:
     - .github/PULL_REQUEST_TEMPLATE.md
     - .github/workflows/branch.yml
     - .github/workflows/linting.yml
+    - .gitignore
   nextflow_config:
     - params.input
   template_strings:

@@ -63,8 +63,15 @@ nextflow_process {
 
     }
 
-    test("Ensembl organisms - Vitis vinifera") {
 
+    /*
+    // NOTE: this test cannot be included in the CI as it may lead to unstable results
+    // this test is dedicated to testing the download of an annotation from NCBI
+    // fetching annotations from NCBI is considered a fallback when a appropriate annotation from Ensembl cannot be found
+    // this feature is experimental / unstable
+    // only uncomment for local testing
+    test("Ensembl organisms - Vitis vinifera") {
+        tag 'download_vitis_vinifera_annotation'
         when {
             process {
                 """
@@ -77,7 +84,7 @@ nextflow_process {
         then {
             assert process.success
         }
-
     }
+    */
 
 }

@@ -34,10 +34,22 @@ Finally, you may want to check by yourself on [NCBI GEO](https://www.ncbi.nlm.ni
 Alternatively, some public websites contain expression datasets that may be suitable for the pipeline, such as:
 
 - [Bgee](https://www.bgee.org/)
+- [Medicago Expression Atlas](https://lipm-browsers.toulouse.inra.fr/pub/expressionAtlas/app/mtgeav3/)
 
 ## Not enough memory
 
-The pipeline limits the number of downloaded datasets to a certain number in order to limit RAM usage, especially for `homo sapiens`.
+<details markdown="1">
+<summary>You used `apptainer` / `singularity` profile</summary>
+
+Starting from [Nextflow 26.08.0-edge](https://github.com/nextflow-io/nextflow/blob/master/CHANGELOG.md#version-26080-edge---20-aug-2026), new config flags are available:
+- `apptainers.resourceLimits = true`
+- `singularity.resourceLimits = true`
+
+In case you lanched the pipeline with the local executor (ie. not on a HPC nor on the Cloud), you can force `apptainer` / `singularity` to pass module `cpus` and `memory` to the underlying containers by setting either of these flags in your config flag. Caution: this is considered an unstable behaviour (it is the reason it is still opt-in)
+
+</details>
+
+In addition the pipeline limits the number of downloaded datasets to a certain number in order to limit RAM usage, especially for `homo sapiens`.
 
 However, on small computers, the limit may be too permissive and lead to RAM overhead. You can reduce the number of datasets downloaded by setting the `--random_sampling_size` to a lower value.
 
@@ -49,9 +61,14 @@ To reduce the RAM overhead, the pipeline selects randomly a certain number of da
 
 > A seed is also set in order to make the runs reproducible. You can change the subset of chosen datasets by changing the `--random_sampling_seed`.
 
-## The pipeline failed to find a genome annotation for the specified species
+## The pipeline failed to find a genome annotation for the specified species + the set of gene IDs from g:Profiler
 
-If you know the length of the longest cDNA for each gene, you can provide gene lengths yourself with the `--gene_length` flag (see [Custom gene ID mapping / metadata / length](usage.md#5-custom-gene-id-mapping--metadata)). In case you do not have access to gene length, TPM normalisation cannot be formed. A fallback is to use CPM normalisation by setting `--normalisation_method cpm`. It will introduce a small bias towards long genes, but this should not result in big changes.
+The pipeline may fail to fetch an appropriate genome annotation for the species of interest due to transient server issues. It is also possible that no genome annotation is available in Ensembl nor in NCBI for your specieis of interest and your set of gene IDs. In this case, please [create an Issue on Github](https://github.com/nf-core/stableexpression/issues).
+
+However, if you already have a genome annotation (local or URL), you can provide it using `--gff`. In addition, if you know the length of the longest cDNA for each gene, you can provide gene lengths directly with the `--gene_length` parameter (see [Custom gene ID mapping / metadata / length](usage.md#5-custom-gene-id-mapping--metadata)).
+
+In case you do not have access to gene length, GeTMM normalisation cannot be performed. A fallback is to use quantile normalisation by setting `--quantile_normalisation`. This is a harsher normalisation, and it will introduce a small bias towards long genes, but it should provide consistent candidates as RT-qPCR reference genes anyway.
+
 
 ## Java heap space
 

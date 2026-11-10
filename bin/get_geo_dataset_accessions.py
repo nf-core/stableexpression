@@ -27,28 +27,18 @@ from tqdm import tqdm
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# set a custom writable directory before any Entrez operations
-# mandatory for running the script in an apptainer container
-# Entrez.Parser.Parser.directory("/tmp/biopython")
-
 ALLOWED_PLATFORMS = ["rnaseq", "microarray"]
 
 ACCESSION_OUTFILE_NAME = "accessions.txt"
 SPECIES_DATASETS_OUTFILE_NAME = "geo_all_datasets.metadata.tsv"
 REJECTED_DATASETS_OUTFILE_NAME = "geo_rejected_datasets.metadata.tsv"
-# WRONG_SPECS_DATASETS_METADATA_OUTFILE_NAME = "geo_wrong_platform_moltype_datasets.metadata.tsv"
-# WRONG_KEYWORDS_DATASETS_METADATA_OUTFILE_NAME = "geo_wrong_keywords_datasets.metadata.tsv"
-# PLATFORM_NOT_AVAILABLE_DATASETS_METADATA_OUTFILE_NAME = "platform_not_available_datasets.metadata.tsv"
-# GENE_ID_MAPPING_ISSUES_DATASETS_METADATA_OUTFILE_NAME = "gene_id_mapping_issues_datasets.metadata.tsv"
 SELECTED_DATASETS_OUTFILE_NAME = "geo_selected_datasets.metadata.tsv"
 
 ENTREZ_QUERY_MAX_RESULTS = 9999
 ENTREZ_EMAIL = "stableexpression@nfcore.com"
 PLATFORM_METADATA_CHUNKSIZE = 2000
 
-NCBI_API_BASE_URL = (
-    "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={accession}"
-)
+NCBI_API_BASE_URL = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc={accession}"
 STOP_RETRY_AFTER_DELAY = 600
 
 NB_PROBE_IDS_TO_PARSE = 1000
@@ -78,11 +68,11 @@ Path(PLATFORM_SOFT_TMPDIR).mkdir(exist_ok=True)
 
 
 class GeoDatasetNothingFoundError(Exception):
-    pass
+    """Raise when no GEO Datasets are found for a given species."""
 
 
-class GeoPlatformDataTableNotFound(Exception):
-    pass
+class GeoPlatformDataTableNotFoundError(Exception):
+    """Raise when no data table is found in GEO platform file."""
 
 
 ##################################################################
@@ -92,7 +82,8 @@ class GeoPlatformDataTableNotFound(Exception):
 ##################################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser("Get GEO Datasets accessions")
     parser.add_argument(
         "--species",
@@ -107,7 +98,10 @@ def parse_args():
         help="Keywords to search for in datasets description",
     )
     parser.add_argument(
-        "--platform", type=str, help="Platform type", choices=ALLOWED_PLATFORMS
+        "--platform",
+        type=str,
+        help="Platform type",
+        choices=ALLOWED_PLATFORMS,
     )
     parser.add_argument(
         "--exclude-accessions-in",
@@ -128,7 +122,11 @@ def parse_args():
         help="Random sampling seed",
     )
     parser.add_argument(
-        "--cpus", type=int, dest="nb_cpus", required=True, help="Number of CPUs"
+        "--cpus",
+        type=int,
+        dest="nb_cpus",
+        required=True,
+        help="Number of CPUs",
     )
     parser.add_argument(
         "--accessions",
@@ -150,9 +148,12 @@ def parse_args():
     retry_error_callback=(lambda _: {}),
 )
 def send_request_to_entrez_esearch(query: str) -> dict:
+    """Send a request to Entrez esearch API and return the response as a dictionary."""
     Entrez.email = ENTREZ_EMAIL
     with Entrez.esearch(
-        db="gds", term=query, retmax=ENTREZ_QUERY_MAX_RESULTS
+        db="gds",
+        term=query,
+        retmax=ENTREZ_QUERY_MAX_RESULTS,
     ) as handle:
         return Entrez.read(handle)
 
@@ -164,10 +165,13 @@ def send_request_to_entrez_esearch(query: str) -> dict:
     retry_error_callback=(lambda _: []),
 )
 def send_request_to_entrez_esummary(ids: list[str]) -> list[dict]:
+    """Send a request to Entrez esummary API and return the response as a list of dictionaries."""
     Entrez.email = ENTREZ_EMAIL
     ids_str = ",".join(ids)
     with Entrez.esummary(
-        db="gds", id=ids_str, retmax=ENTREZ_QUERY_MAX_RESULTS
+        db="gds",
+        id=ids_str,
+        retmax=ENTREZ_QUERY_MAX_RESULTS,
     ) as handle:
         return Entrez.read(handle)
 
@@ -179,6 +183,11 @@ def send_request_to_entrez_esummary(ids: list[str]) -> list[dict]:
     retry_error_callback=(lambda _: None),
 )
 def send_request_to_ncbi_api(accession: str) -> httpx.Response | None:
+    """Send request to NCBI API and return response.
+
+    If we get connection issues or 500 -> 509 server errors,
+    we stop immediately for this accession (return None).
+    """
     url = NCBI_API_BASE_URL.format(accession=accession)
     server_error = False
     response = None
@@ -194,17 +203,16 @@ def send_request_to_ncbi_api(accession: str) -> httpx.Response | None:
             if str(response.status_code).startswith("5"):  # error 500 -> 509
                 server_error = True
                 raise err
-            else:
-                logger.error(
-                    f"Error {response.status_code} while sending request to NCBI: {err}"
-                )
-                raise err
+            logger.error(
+                f"Error {response.status_code} while sending request to NCBI: {err}",
+            )
+            raise err
 
     # if we get connection issues or 500 -> 509 server errors
     # we stop immediately for this accession (return None)
     if server_error:
         logger.critical(
-            f"Server error while sending request to NCBI for accession {accession}"
+            f"Server error while sending request to NCBI for accession {accession}",
         )
 
     return response
@@ -216,7 +224,14 @@ def send_request_to_ncbi_api(accession: str) -> httpx.Response | None:
     before_sleep=before_sleep_log(logger, logging.WARNING),
     retry_error_callback=(lambda _: None),
 )
-def download_file_at_url(url: str, output_file: Path):
+def download_file_at_url(url: str, output_file: Path) -> None:
+    """Download a file from a URL to a given path.
+
+    Args:
+        url (str): The URL of the file to download.
+        output_file (Path): The path to save the downloaded file.
+
+    """
     urlretrieve(url, output_file)
 
 
@@ -226,7 +241,7 @@ def download_file_at_url(url: str, output_file: Path):
 
 
 def chunk_list(lst: list, chunksize: int) -> list:
-    """Splits a list into chunks of a given size.
+    """Split a list into chunks of a given size.
 
     Args:
         lst (list): The list to split.
@@ -234,20 +249,20 @@ def chunk_list(lst: list, chunksize: int) -> list:
 
     Returns:
         list: A list of chunks, where each chunk is a list of len(chunksize).
+
     """
     return [lst[i : i + chunksize] for i in range(0, len(lst), chunksize)]
 
 
 def fetch_geo_datasets_for_species(species: str) -> list[dict]:
-    """
-    Fetch GEO datasets (GSE series) for a given species
+    """Fetch GEO datasets (GSE series) for a given species.
 
     Args:
         species (str): Scientific name of the species (e.g. "Homo sapiens").
+
     """
     dataset_types = [
-        f'"{experiment_type}"[DataSet Type]'
-        for experiment_type in GEO_EXPERIMENT_TYPE_TO_PLATFORM
+        f'"{experiment_type}"[DataSet Type]' for experiment_type in GEO_EXPERIMENT_TYPE_TO_PLATFORM
     ]
     formatted_dataset_type = "(" + " OR ".join(dataset_types) + ")"
 
@@ -288,11 +303,7 @@ def fetch_geo_datasets_for_species(species: str) -> list[dict]:
 
     # keeping only series datasets (just a double check here)
     # and removing superseries (they are just containers of series that are also contained here)
-    return [
-        r
-        for r in results
-        if "GSE" in r["Accession"] and r["summary"] != SUPERSERIES_SUMMARY
-    ]
+    return [r for r in results if "GSE" in r["Accession"] and r["summary"] != SUPERSERIES_SUMMARY]
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -301,10 +312,15 @@ def fetch_geo_datasets_for_species(species: str) -> list[dict]:
 
 
 def format_species(species: str) -> str:
+    """Format species name to be used in the database.
+
+    Example: "Homo sapiens" -> "homo_sapiens"
+    """
     return "_".join(species.lower().split(" "))
 
 
 def format_platform_name(platform_name: str) -> str:
+    """Format platform name to be used in the database."""
     return platform_name.replace("_", "").replace("-", "").lower()
 
 
@@ -314,18 +330,19 @@ def format_platform_name(platform_name: str) -> str:
 
 
 def download_dataset_metadata(ftp_link: str, accession: str) -> Path | None:
+    """Download dataset metadata from GEO FTP server."""
     filename = f"miniml/{accession}_family.xml.tgz"
     ftp_url = ftp_link + filename
     output_file = Path(MINIML_TMPDIR) / f"{accession}.tar.gz"
     download_file_at_url(ftp_url, output_file)
     if output_file.exists():
         return output_file
-    else:
-        logger.error(f"Failed to download dataset metadata for accession: {accession}")
-        return None
+    logger.error(f"Failed to download dataset metadata for accession: {accession}")
+    return None
 
 
 def parse_dataset_metadata(file: Path, accession: str) -> dict | None:
+    """Parse dataset metadata fetched from the GEO FTP server."""
     with tarfile.open(file, "r:gz") as tar:
         file_to_read = f"{accession}_family.xml"
 
@@ -352,8 +369,16 @@ def parse_dataset_metadata(file: Path, accession: str) -> dict | None:
 
 
 def parse_characteristics(
-    characteristics: str | dict | list, stored_characteristics: list
-):
+    characteristics: str | dict | list,
+    stored_characteristics: list,
+) -> None:
+    """Parse characteristics from a characteristics dictionary or list and stores them in a list.
+
+    Args:
+        characteristics (str | dict | list): The characteristics dictionary or list.
+        stored_characteristics (list): The list to store the characteristics in.
+
+    """
     if isinstance(characteristics, str):
         stored_characteristics.append(characteristics)
     elif isinstance(characteristics, dict):
@@ -365,10 +390,10 @@ def parse_characteristics(
 
 
 def parse_interesting_metadata(
-    dataset_metadata: dict, additional_metadata: dict
+    dataset_metadata: dict,
+    additional_metadata: dict,
 ) -> dict:
-    """
-    Parses interesting metadata from a dataset metadata dictionary and additional metadata dictionary.
+    """Parse interesting metadata from a dataset metadata dictionary and additional metadata dictionary.
 
     Args:
         dataset_metadata (dict): The dataset metadata dictionary.
@@ -376,6 +401,7 @@ def parse_interesting_metadata(
 
     Returns:
         dict: The parsed interesting metadata dictionary.
+
     """
     sample_characteristics = []
     sample_library_strategies = []
@@ -384,9 +410,7 @@ def parse_interesting_metadata(
     sample_titles = []
     sample_molecule_types = []
 
-    platform_accessions = [
-        "GPL" + gpl_id for gpl_id in dataset_metadata["GPL"].split(";")
-    ]
+    platform_accessions = ["GPL" + gpl_id for gpl_id in dataset_metadata["GPL"].split(";")]
 
     experiment_types = dataset_metadata["gdsType"]
     experiment_types = (
@@ -426,7 +450,8 @@ def parse_interesting_metadata(
                     channels = [channels]
                 for channel in channels:
                     parse_characteristics(
-                        channel["Characteristics"], sample_characteristics
+                        channel["Characteristics"],
+                        sample_characteristics,
                     )
 
     return {
@@ -447,14 +472,14 @@ def parse_interesting_metadata(
 
 
 def fetch_dataset_metadata(dataset_metadata: dict) -> dict | None:
-    """
-    Parses metadata from a dataset metadata dictionary.
+    """Parse metadata from a dataset metadata dictionary.
 
     Args:
         dataset_metadata (dict): The dataset metadata dictionary.
 
     Returns:
         dict | None: The parsed metadata dictionary or None if the metadata is missing.
+
     """
     accession = dataset_metadata["Accession"]
     ftp_link = dataset_metadata["FTPLink"].replace("ftp://", "https://")
@@ -480,8 +505,13 @@ def fetch_dataset_metadata(dataset_metadata: dict) -> dict | None:
 
 
 def exclude_unwanted_accessions(
-    datasets: list[dict], excluded_accessions: list[str]
+    datasets: list[dict],
+    excluded_accessions: list[str],
 ) -> tuple[list[dict], list[dict]]:
+    """Exclude datasets that are in the excluded_accessions list.
+
+    Return the list of datasets to keep and the list of datasets to exclude.
+    """
     datasets_to_keep = []
     excluded_datasets = []
     for dataset in datasets:
@@ -493,6 +523,7 @@ def exclude_unwanted_accessions(
 
 
 def check_species_issues(parsed_species_list: list, species: str) -> str | None:
+    """Check if the species is in the list of species parsed."""
     # trying to find our species in the list of species parsed
     for parsed_species in parsed_species_list:
         if format_species(parsed_species) == format_species(species):
@@ -501,20 +532,27 @@ def check_species_issues(parsed_species_list: list, species: str) -> str | None:
 
 
 def check_molecule_type_issues(molecules_types: list) -> str | None:
+    """Check if the molecule type is in the list of allowed molecule types.
+
+    Return a string with the molecule types if the molecule type is not allowed.
+    Otherwise, return None.
+    """
     # we want only GEO series that contain only RNA molecules
     # for other series, they should be superseries contained other series that are being parsed too
     # so anyway, this would lead in duplicates
     if any(
-        [
-            molecule_type.upper() in ALLOWED_MOLECULE_TYPES
-            for molecule_type in molecules_types
-        ]
+        [molecule_type.upper() in ALLOWED_MOLECULE_TYPES for molecule_type in molecules_types],
     ):
         return None
     return f"MOLECULE TYPES: {molecules_types}"
 
 
 def check_experiment_type_issues(experiment_types: list, platform: str) -> str | None:
+    """Check if the experiment type correspond to the platform.
+
+    Return a string with the experiment types if the experiment type is not the same as the provided platform.
+    Otherwise, return None.
+    """
     for experiment_type in experiment_types:
         # if at least one experiment type is ok, we keep this dataset
         if GEO_EXPERIMENT_TYPE_TO_PLATFORM.get(experiment_type) == platform:
@@ -523,17 +561,24 @@ def check_experiment_type_issues(experiment_types: list, platform: str) -> str |
 
 
 def check_source_issues(library_sources: list) -> str | None:
+    """Check if the library source is allowed.
+
+    Return a string with the library sources if the library source is not allowed.
+    Otherwise, return None.
+    """
     # if we have no data about library sources, we just cannot infer
     if not library_sources:
         return None
-    if any(
-        library_source in ALLOWED_LIBRARY_SOURCES for library_source in library_sources
-    ):
+    if any(library_source in ALLOWED_LIBRARY_SOURCES for library_source in library_sources):
         return None
     return f"LIBRARY SOURCES: {library_sources}"
 
 
 def search_keywords(dataset: dict, keywords: list[str]) -> tuple[list, str | None]:
+    """Search for keywords in the dataset.
+
+    Return a tuple with the found keywords and an error message if no keywords were found.
+    """
     accession = dataset["accession"]
     all_searchable_fields = (
         [dataset["summary"], dataset["title"]]
@@ -547,13 +592,16 @@ def search_keywords(dataset: dict, keywords: list[str]) -> tuple[list, str | Non
         dataset["found_keywords"] = list(set(found_keywords))
         logger.info(f"Found keywords: {found_keywords} in accession {accession}")
         return found_keywords, None
-    else:
-        return [], "NO KEYWORDS_FOUND"
+    return [], "NO KEYWORDS_FOUND"
 
 
 def check_dataset(
-    dataset: dict, species: str, platform: str | None, keywords: list[str] | None
+    dataset: dict,
+    species: str,
+    platform: str | None,
+    keywords: list[str] | None,
 ) -> tuple[list, dict]:
+    """Check if a dataset is valid for the given species, platform and keywords."""
     accession = dataset["accession"]
     parsed_species_list = dataset["taxon"].split("; ")
     experiment_types = dataset["experiment_types"]
@@ -585,10 +633,7 @@ def check_dataset(
         if keyword_issue:
             issues.append(keyword_issue)
 
-    if issues:
-        rejection_dict = {accession: issues}
-    else:
-        rejection_dict = {}
+    rejection_dict = {accession: issues} if issues else {}
 
     return found_keywords, rejection_dict
 
@@ -599,26 +644,26 @@ def check_dataset(
 
 
 def fetch_geo_platform_metadata(datasets: list[dict]) -> dict:
-    """
-    Fetch data for a GEO platform
+    """Fetch metadata for GEO platforms from GEO using Entrez.
 
     Args:
-        platform_accession (str): accession of the platform
+        datasets: List of datasets to fetch metadata for.
+
+    Returns:
+        Dictionary of GEO platform metadata.
+
     """
     # unique list of platform accessions
     platform_accessions = list(
-        set(
-            [
-                platform_accession
-                for dataset in datasets
-                for platform_accession in dataset["platform_accessions"]
-            ]
-        )
+        {
+            platform_accession
+            for dataset in datasets
+            for platform_accession in dataset["platform_accessions"]
+        },
     )
     # formating query
     formatted_platform_accessions = [
-        f'"{platform_accession}"[GEO Accession]'
-        for platform_accession in platform_accessions
+        f'"{platform_accession}"[GEO Accession]' for platform_accession in platform_accessions
     ]
     platform_accessions_str = " OR ".join(formatted_platform_accessions)
     query = f'({platform_accessions_str}) AND "gpl"[Entry Type] '
@@ -641,8 +686,11 @@ def fetch_geo_platform_metadata(datasets: list[dict]) -> dict:
 
 
 def check_dataset_platforms(
-    dataset: dict, accession_to_platform_metadata: dict, species: str
+    dataset: dict,
+    accession_to_platform_metadata: dict,
+    species: str,
 ) -> dict:
+    """Check the platforms."""
     accession = dataset["accession"]
     platform_accessions = dataset["platform_accessions"]
 
@@ -666,9 +714,7 @@ def check_dataset_platforms(
 
     # checking if at least one of the platform accession is the good one
     # sample will be further filtered during download (download_geo_data.R)
-    if not any(
-        format_species(species) == format_species(taxon) for taxon in platforms_taxons
-    ):
+    if not any(format_species(species) == format_species(taxon) for taxon in platforms_taxons):
         return {accession: f"TAXON MISMATCH: {platforms_taxons}"}
 
     return {}
@@ -680,8 +726,11 @@ def check_dataset_platforms(
 
 
 def sample_experiments_randomly(
-    experiments: list[dict], sampling_size: int, seed: int
+    experiments: list[dict],
+    sampling_size: int,
+    seed: int,
 ) -> list[str]:
+    """Randomly sample experiments to reach the sampling size."""
     random.seed(seed)
     sampled_experiments = []
 
@@ -707,10 +756,9 @@ def sample_experiments_randomly(
         # if the last one was not good, it means we reached the limit of samples we can take
         if not found_experiment:
             break
-        else:
-            total_nb_samples = test_total_nb_samples
-            experiments_left.remove(experiment)
-            sampled_experiments.append(experiment)
+        total_nb_samples = test_total_nb_samples
+        experiments_left.remove(experiment)
+        sampled_experiments.append(experiment)
 
     return [exp["accession"] for exp in sampled_experiments]
 
@@ -720,16 +768,19 @@ def sample_experiments_randomly(
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-def sort_if_list(x):
+def sort_if_list(x) -> list | str:
+    """Sort a list if x is a list, otherwise return x."""
     if isinstance(x, list):
         return sorted(x)
-    else:
-        return x
+    return x
 
 
 def export_dataset_metadatas(
-    datasets: list[dict], output_file: str, clean_columns: bool = True
-):
+    datasets: list[dict],
+    output_file: str,
+    clean_columns: bool = True,
+) -> None:
+    """Export dataset metadatas to a TSV file."""
     if datasets:
         df = pd.DataFrame.from_dict(datasets)
         # all dataframe contain the column "accession"
@@ -806,7 +857,10 @@ def main():
     rejection_dict = {}
     for dataset in tqdm(augmented_datasets):
         found_keywords, issue_dict = check_dataset(
-            dataset, args.species, args.platform, args.keywords
+            dataset,
+            args.species,
+            args.platform,
+            args.keywords,
         )
         if issue_dict:
             rejection_dict |= issue_dict
@@ -830,25 +884,26 @@ def main():
             excluded_accessions = fin.read().splitlines()
         logger.info("Excluding unwanted datasets")
         checked_datasets, excluded_datasets = exclude_unwanted_accessions(
-            checked_datasets, excluded_accessions
+            checked_datasets,
+            excluded_accessions,
         )
         logger.info(
-            f"{len(checked_datasets)} datasets remaining after excluding unwanted accessions"
+            f"{len(checked_datasets)} datasets remaining after excluding unwanted accessions",
         )
 
         # adjusting random sampling size by substracting the number of excluded accessions
         if random_sampling_size:
             total_nb_excluded_samples = sum(
-                [len(dataset["sample_titles"]) for dataset in excluded_datasets]
+                [len(dataset["sample_titles"]) for dataset in excluded_datasets],
             )
             logger.info(
-                f"Subtracting {total_nb_excluded_samples} samples from random sampling size"
+                f"Subtracting {total_nb_excluded_samples} samples from random sampling size",
             )
             random_sampling_size -= total_nb_excluded_samples
             # keeping it positive (just in case)
             if random_sampling_size < 0:
                 logger.warning(
-                    f"Random sampling size is negative ({random_sampling_size}), setting it to 0"
+                    f"Random sampling size is negative ({random_sampling_size}), setting it to 0",
                 )
                 random_sampling_size = 0
 
@@ -863,7 +918,7 @@ def main():
     accession_to_platform_metadata = {}
     for selected_datasets_chunk in tqdm(checked_datasets_chunks):
         accession_to_platform_metadata |= fetch_geo_platform_metadata(
-            selected_datasets_chunk
+            selected_datasets_chunk,
         )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -894,7 +949,7 @@ def main():
         logger.warning(f"Reasons for rejection: {rejection_dict}")
 
     selected_accessions = sorted(
-        [dataset["accession"] for dataset in selected_datasets]
+        [dataset["accession"] for dataset in selected_datasets],
     )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -920,16 +975,14 @@ def main():
             args.random_sampling_seed,
         )
         logger.info(
-            f"Kept {len(selected_accessions)} experiments after random sampling"
+            f"Kept {len(selected_accessions)} experiments after random sampling",
         )
         selected_datasets = [
-            dataset
-            for dataset in selected_datasets
-            if dataset["accession"] in selected_accessions
+            dataset for dataset in selected_datasets if dataset["accession"] in selected_accessions
         ]
     else:
         logger.info(
-            f"No random sampling requested. Kept {len(selected_datasets)} datasets"
+            f"No random sampling requested. Kept {len(selected_datasets)} datasets",
         )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -949,11 +1002,12 @@ def main():
     export_dataset_metadatas(selected_datasets, SELECTED_DATASETS_OUTFILE_NAME)
 
     rejected_datasets = [
-        {"accession": accession, "reason": reason}
-        for accession, reason in rejection_dict.items()
+        {"accession": accession, "reason": reason} for accession, reason in rejection_dict.items()
     ]
     export_dataset_metadatas(
-        rejected_datasets, REJECTED_DATASETS_OUTFILE_NAME, clean_columns=False
+        rejected_datasets,
+        REJECTED_DATASETS_OUTFILE_NAME,
+        clean_columns=False,
     )
 
 

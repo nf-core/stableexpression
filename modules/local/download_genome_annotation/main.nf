@@ -1,6 +1,6 @@
 process DOWNLOAD_GENOME_ANNOTATION {
 
-    label 'process_single_cpu'
+    label 'process_medium_requirements'
 
     tag "${species}"
 

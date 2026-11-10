@@ -6,8 +6,9 @@ import argparse
 import logging
 from pathlib import Path
 
-import config
 import polars as pl
+
+import config
 from common import parse_count_table
 
 logging.basicConfig(level=logging.INFO)
@@ -16,21 +17,21 @@ logger = logging.getLogger(__name__)
 CLEANED_GENE_IDS_SUFFIX = ".gene_ids.txt"
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser("Rename gene IDs using mapped IDs")
     parser.add_argument(
-        "--count-file", type=Path, required=True, help="Input file containing counts"
+        "--count-file",
+        type=Path,
+        required=True,
+        help="Input file containing counts",
     )
     return parser.parse_args()
 
 
-def get_sorted_gene_ids(df: pl.DataFrame):
-    return (
-        df.select(config.GENE_ID_COLNAME)
-        .sort(config.GENE_ID_COLNAME)
-        .to_series()
-        .to_list()
-    )
+def get_sorted_gene_ids(df: pl.DataFrame) -> list[str]:
+    """Get sorted gene IDs from a count table."""
+    return df.select(config.GENE_ID_COLNAME).sort(config.GENE_ID_COLNAME).to_series().to_list()
 
 
 ##################################################################
@@ -47,7 +48,7 @@ def main():
 
     logger.info("Writing cleaned IDs")
     gene_ids_outfile = args.count_file.with_name(
-        args.count_file.stem + CLEANED_GENE_IDS_SUFFIX
+        args.count_file.stem + CLEANED_GENE_IDS_SUFFIX,
     )
     gene_ids = get_sorted_gene_ids(df)
 

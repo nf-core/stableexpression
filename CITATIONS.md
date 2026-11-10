@@ -26,9 +26,21 @@
 
 > Yates AD, Austine-Orimoloye O, Azov AG, Barba M, Barnes I, Barrera-Enriquez VP, et al. Ensembl 2026. Nucleic Acids Res. 2026 Jan 6;54(D1):D1053–60. doi:10.1093/nar/gkaf1239. PubMed PMID: 41296548.
 
+> [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)
+
+> Robinson MD, McCarthy DJ, Smyth GK. edgeR: a Bioconductor package for differential expression analysis of digital gene expression data. Bioinformatics. 2010 Jan 1;26(1):139-40. doi: 10.1093/bioinformatics/btp616. Pubmed PMID: 19910308.
+
+> [GeTMM](https://link.springer.com/article/10.1186/s12859-018-2246-7)
+
+> Smid M, Coebergh van den Braak RRJ, van de Werken HJG, van Riet J, van Galen A, de Weerd V, van der Vlugt-Daane M, Bril SI, Lalmahomed ZS, Kloosterman WP, Wilting SM, Foekens JA, IJzermans JNM, Martens JWN, Sieuwerts AM. Gene length corrected trimmed mean of M-values (GeTMM) processing of RNA-seq data performs similarly in intersample analyses while improving intrasample comparisons. BMC Bioinformatics. 2018 Jun 22. 19, 236 (2018). doi:10.1186/s12859-018-2246-7. PubMed PMID: 29929481.
+
 - [Scikit-learn](https://scikit-learn.org/)
 
 > Pedregosa F, Varoquaux G, Gramfort A, Michel V, Thirion B, Grisel O, Blondel M, Prettenhofer P, Weiss R, Dubourg V, Vanderplas J, Passos A, Cournapeau D, Brucher M, Perrot M, Duchesnay E. Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research. 2011;12(85):2825–30.
+
+- [reComBat](https://academic.oup.com/bioinformaticsadvances/article/2/1/vbac071/6728137?login=false)
+
+> Adamer MF, Brüningk SC, Tejada-Arranz A, Estermann F, Basler M, Borgwardt K. reComBat: batch-effect removal in large-scale multi-source gene-expression data integration. Bioinformatics Advances. 2022 Oct 6; Volume 2, Issue 1; doi:10.1093/bioadv/vbac071; PubMed PMID: 36699372.
 
 - [Normfinder](https://rdrr.io/github/dhammarstrom/generefer/man/normfinder.html)
 

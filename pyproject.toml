@@ -1,17 +1,17 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".git", "tests"]
+
 [tool.ruff.lint]
-# Avoid enforcing line-length violations (`E501`)
-ignore = ["E501"]
+select = ["ALL"]  # all coding rules; rule showing conflicts are deactivated
+ignore = ["E501"] # Avoid enforcing line-length violations (`E501`)
 
 [tool.ruff.format]
-# Use single quotes when formatting.
-quote-style = "double"
+quote-style = "double" # Use single quotes when formatting.
 indent-style = "space"
 
-[tool.basedpyright]
-reportUnusedCallResult = "none"
-reportUnknownMemberType = "none"
-reportUnknownVariableType = "none"
-reportUnknownParameterType = "none"
-reportUnknownArgumentType = "none"
-reportAny = "none"
-reportImplicitRelativeImport = "none"
+docstring-code-format = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["common", "config"]

@@ -25,14 +25,14 @@
                 ],
                 "4": [
                     [
-                        "FILTER_AND_RENAME_GENES",
+                        "FILTER_RENAME_GENE_IDS",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "5": [
                     [
-                        "FILTER_AND_RENAME_GENES",
+                        "FILTER_RENAME_GENE_IDS",
                         "polars",
                         "1.39.2"
                     ]
@@ -42,10 +42,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:09:46.615755143",
+        "timestamp": "2026-10-22T12:34:14.649776491",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.10.2"
         }
     },
     "Map Ensembl IDs": {
@@ -76,14 +76,14 @@
                 ],
                 "4": [
                     [
-                        "FILTER_AND_RENAME_GENES",
+                        "FILTER_RENAME_GENE_IDS",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "5": [
                     [
-                        "FILTER_AND_RENAME_GENES",
+                        "FILTER_RENAME_GENE_IDS",
                         "polars",
                         "1.39.2"
                     ]
@@ -98,10 +98,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:07:32.271002138",
+        "timestamp": "2026-10-22T12:34:03.431329278",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.10.2"
         }
     },
     "No valid gene": {
@@ -130,14 +130,14 @@
                 ],
                 "4": [
                     [
-                        "FILTER_AND_RENAME_GENES",
+                        "FILTER_RENAME_GENE_IDS",
                         "python",
                         "3.14.3"
                     ]
                 ],
                 "5": [
                     [
-                        "FILTER_AND_RENAME_GENES",
+                        "FILTER_RENAME_GENE_IDS",
                         "polars",
                         "1.39.2"
                     ]
@@ -147,10 +147,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-12T08:09:38.20851685",
+        "timestamp": "2026-10-22T12:34:09.122229434",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.04.0"
+            "nextflow": "26.10.2"
         }
     }
 }
