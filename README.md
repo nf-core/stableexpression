@@ -24,11 +24,14 @@
 
 **nf-core/stableexpression** is a bioinformatics pipeline that aims to identify the most stable genes in one or more expression datasets. These datasets can be downloaded from public databases such as [EBI Expression Atlas](https://www.ebi.ac.uk/gxa/home) and [NCBI GEO Datasets](https://www.ncbi.nlm.nih.gov/gds), or provided directly by the user. Both RNA-seq and microarray count datasets can be used.
 
-> [!TIP]
+> [!NOTE]
 > This pipeline is ideal for identifying the most suitable RT-qPCR reference genes for a given species.
 
+> [!TIP]
+> nf-core/stableexpression is available in the [Galaxy Toolshed](https://toolshed.g2.bx.psu.edu/repositories/ab1194062ff0759f). Ask your Galaxy administrator to install it.
+
 <p align="center">
-    <img title="Stableexpression Workflow" src="docs/images/metromap/nf_core_stableexpression.metromap.png" width=100%>
+    <img title="Stableexpression Workflow" src="docs/images/metromap/nf_core_stableexpression.metromap.drawio.png" width=100%>
 </p>
 
 The main inputs are:
@@ -43,8 +46,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 #### 1. Get accessions from public databases
 
-- Fetch [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords)
-  This step is run by default but is optional. Set `--skip_fetch_eatlas_accessions` to skip it.
+- Fetch [Expression Atlas](https://www.ebi.ac.uk/gxa/home) dataset accessions corresponding to the provided species (and optionally keywords). This step is run by default but is optional. Set `--skip_fetch_eatlas_accessions` to skip it.
 - Fetch NBCI [GEO](https://www.ncbi.nlm.nih.gov/gds) dataset accessions corresponding to the provided species (and optionally keywords).
   This step is optional and **not** run by default. Set `--fetch_geo_accessions` to run it. ⚠️ Due to the heterogeneous formats of NCBI GEO datasets, the retrieval of expression datasets from NCBI GEO is considered **experimental**. ⚠️
 
@@ -74,13 +76,14 @@ Samples showing too many zeros or missing values are removed from the analysis.
 
 - Unless provided by the user: download a reference annotation from the Ensembl FTPs ([Ensembl Genomes](https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/) or [Ensembl](https://ftp.ensembl.org/pub/current/)) or using the [NCBI Dataset API](https://api.ncbi.nlm.nih.gov/datasets/v2/).
 - Compute the length of the longest transcript for each gene.
-- Normalise the raw RNA-seq data using GeTMM [GeTMM](https://link.springer.com/article/10.1186/s12859-018-2246-7).
+- Normalise the raw RNA-seq data using [GeTMM](https://link.springer.com/article/10.1186/s12859-018-2246-7).
 
 ##### RNA-seq data already normalised (not recommended)
 
 Already normalised RNA-seq data are converted to TPM (Transcripts Per Million).
 
-📉 Following normalisation, `log2` is computed on all RNA-seq counts.
+> [!NOTE]
+> Following normalisation, `log2` is computed on all RNA-seq counts.
 
 #### 6. Data merging & gene filtering
 
@@ -101,22 +104,25 @@ Correction of batch effect is performed for each platform separately using [reCo
 
 In case reComBat encounters memory issues, quantile normalisation is proposed as a more scalable alternative.
 
-> [!NOTE]
+> [!WARNING]
 > Please note that quantile normalisation erases the internal structure of the count distributions. Consequently, reCombat is largely preferred over quantile normalisation whenever data fit in memory.
 
 #### 9. General statistics for each gene
 
 Base statistics are computed for each gene, for each platform separately (RNAseq and microarray).
 
-#### 10. Scoring
+#### 10. Division in sections
 
-- The full list of genes is divided into multiple 'sections' based on their expression levels
-- Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder)
-- Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034)
-- Compute stability score for each gene and for each platform
-- Compute a global stability score for each gene considering all platforms
+The full list of genes is divided into multiple sections based on their expression levels. The genes with the highest expression levels are in section 1, and so on.
 
-#### 11. Reporting
+#### 11. Scoring
+
+- Run optimised, scalable version of [Normfinder](https://www.moma.dk/software/normfinder).
+- Run optimised, scalable version of [Genorm](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-7-research0034).
+- Compute stability score for each gene and for each platform.
+- Compute a global stability score for each gene considering all platforms.
+
+#### 12. Reporting
 
 - Result aggregation
 - Make [`MultiQC`](http://multiqc.info/) report
@@ -148,7 +154,7 @@ nextflow run nf-core/stableexpression \
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/running/run-pipelines#using-parameter-files).
 
-## More advanced usage
+## General usage
 
 For more specific scenarios, such as:
 
@@ -156,6 +162,10 @@ For more specific scenarios, such as:
 - **using your own expression dataset(s)**
 
 please refer to the [usage documentation](https://nf-co.re/stableexpression/usage).
+
+## Guidelines for selection of RT-qPCR reference (housekeeping) genes
+
+If, like most users, your goal is to find the best candidates as references genes for your RT-qPCR experiments, read the [guidelines for the selection of RT-qPCR reference gene candidates](./docs/rt_pqc_reference_genes.md).
 
 ## Resource allocation
 
@@ -170,6 +180,10 @@ See [here](https://nf-co.re/stableexpression/usage#profiles) for more informatio
 To see the results of an example test run with a full size dataset refer to the [results](https://nf-co.re/stableexpression/results) tab on the nf-core website pipeline page.
 For more details about the output files and reports, please refer to the
 [output documentation](https://nf-co.re/stableexpression/output).
+
+## Troubleshooting
+
+In case of issues with the pipeline, please check the [troubleshooting page](./docs/troubleshooting.md) or [report a new issue](https://github.com/nf-core/stableexpression/issues).
 
 ## Support us
 

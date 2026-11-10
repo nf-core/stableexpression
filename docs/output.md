@@ -18,12 +18,12 @@ The directories listed below will be created in the results directory after the 
 
 This report is located at `reporting/multiqc_report.html` and can be opened in a browser.
 
-[MultiQC](http://multiqc.info) is a visualization tool that generates a single HTML report summarising all samples in your project. The pipeline has special steps which also allow the software versions to be reported in the MultiQC output for future traceability. For more information about how to use MultiQC reports, see <http://multiqc.info>.
+[MultiQC](http://multiqc.info) is a visualisation tool that generates a single HTML report summarising all samples in your project. The pipeline has special steps which also allow the software versions to be reported in the MultiQC output for future traceability. For more information about how to use MultiQC reports, see <http://multiqc.info>.
 
 You can view the MultiQC report by opening `multiqc_report.html` in your browser.
 
 >[!NOTE]
->Genes are divided into sections based on their mean normalised expression level. Genes in Section 1 are the most highly expressed genes while genes in last section are the least highly expressed. Users can modify the number of section (and hence the granularity of the analysis) by setting the `--nb_sections` parameter.
+>Genes are divided into sections according to their mean normalised expression level. Those in Section 1 are the most highly expressed, while those in the final section are the least. Users can adjust the number of sections (and thus the level of granularity of the analysis) by setting the `--nb_sections` parameter.
 
 >[!WARNING]
 >Be careful when setting the `--nb_sections` parameter. A value over `20` may result in a very large `multiqc_report.html`, which could be difficult to open in a browser.
@@ -39,13 +39,18 @@ For each section of genes, a table is displayed with the gene names and their st
     <img title="Gene table" src="images/multiqc/test.section_1.table.png" width=100%>
 </p>
 
-#### Gene normalised expression
+#### Gene normalised expression (disabled by default)
 
-For each section, the normalised expression values are displayed of the top 25 genes are displayed as boxplots.
+For each section, the normalised expression values for the top n genes can be displayed as boxplots.
+
+The number of genes displayed is determined by the `--multiqc_nb_genes_plotted` parameter (set to `null` by default, meaning no genes are displayed).
 
 <p align="center">
     <img title="Gene normalised expression" src="images/multiqc/test.section_1.graph.png" width=100%>
 </p>
+
+> [!NOTE]
+> From version 1.2.0 onwards, the expression boxplots have been disabled by default in order to limit the size of the Multiqc report.
 
 #### Dataset statistics
 
@@ -71,7 +76,7 @@ Proportion of missing values (genes not present but present in other samples):
 
 #### Dataset filtering
 
-For each dataset, samples displaying a too high proportion of zero values or missing values are filtered out. The filtered datasets are then used for further analysis. The report displays the proportion of samples filtered out for each dataset. Users can modify the filtering thresholds using the `--max_zero_ratio` and `--max_null_ratio` parameters respectively.
+For each dataset, samples displaying a too high proportion of zero values or missing values are filtered out. The filtered datasets are then used for further analysis. The report displays the proportion of samples filtered out for each dataset. Users can modify the filtering thresholds using the `--sample_max_zero_ratio` and `--sample_max_null_ratio` parameters respectively.
 
 Proportions of samples filtered out based on zero values:
 
@@ -168,7 +173,9 @@ python app.py
 and open your browser at `http://localhost:8080`
 
 > [!NOTE]
-> The app will try to use the port `8080` by default. If it is already in use, it will try `8081`, `8082` and so on. Check the logs to see which port it is using.
+>
+> - The app will try to use the port `8080` by default. If it is already in use, it will try `8081`, `8082` and so on. Check the logs to see which port it is using.
+> - Users can skip the build of the Dash application using the `--skip_dash_app` flag.
 
 </details>
 

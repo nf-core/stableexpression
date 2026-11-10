@@ -71,7 +71,7 @@ custom_data:
   geo_selected_experiments_metadata:
     section_name: "Selected"
     parent_id: geo
-    parent_name: "GEO dataset metadata"
+    parent_name: "GEO datasets"
     parent_description: "Information about the GEO datasets processed in the analysis"
     file_format: "tsv"
     no_violin: true
