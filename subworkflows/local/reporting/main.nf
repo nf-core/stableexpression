@@ -25,7 +25,6 @@ workflow REPORTING {
     ch_whole_gene_id_mapping
     target_genes
     target_gene_file
-    multiqc_nb_genes_plotted
     skip_dash_app
     accessions_only
     download_only
@@ -67,8 +66,7 @@ workflow REPORTING {
         ch_target_gene_list,
         ch_whole_gene_metadata.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
         ch_whole_gene_id_mapping.collect().ifEmpty([]), // 1 file - handle case where there are no mappings
-        ch_custom_content_multiqc_config_template.collect(), // 1 file
-        multiqc_nb_genes_plotted
+        ch_custom_content_multiqc_config_template.collect() // 1 file
     )
 
     ch_all_genes_summary                   = AGGREGATE_RESULTS.out.all_genes_summary

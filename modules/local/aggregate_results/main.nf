@@ -14,7 +14,6 @@ process AGGREGATE_RESULTS {
     path metadata_files
     path mapping_files
     path multiqc_config
-    val nb_genes_plotted
 
     output:
     path 'all_genes_summary.csv',                                                                               emit: all_genes_summary
@@ -26,6 +25,7 @@ process AGGREGATE_RESULTS {
     tuple val("${task.process}"), val('pyyaml'), eval('python3 -c "import yaml; print(yaml.__version__)"'),     topic: versions
 
     script:
+    def args = task.ext.args ?: ''
     def mapping_files_arg  = mapping_files   ? "--mappings " + "$mapping_files"    : ""
     def metadata_files_arg = metadata_files  ? "--metadata " + "$metadata_files"   : ""
     def target_genes_arg   = target_genes    ? "--target-genes " + "${target_genes.join(' ')}" : ""
@@ -37,7 +37,7 @@ process AGGREGATE_RESULTS {
         $mapping_files_arg \\
         $metadata_files_arg \\
         $target_genes_arg \\
-        --nb-genes-plotted $nb_genes_plotted
+        $args
     """
 
     stub:
