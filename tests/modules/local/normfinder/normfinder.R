@@ -1,11 +1,12 @@
-library(optparse)
 library(dplyr)
 library(tidyr)
-
+library(arrow)
+library(optparse)
 
 get_args <- function() {
     option_list <- list(
-        make_option("--data", type = "character")
+        make_option("--data", type = "character"),
+        make_option("--design", type = "character")
     )
 
     args <- parse_args(OptionParser(
@@ -16,7 +17,7 @@ get_args <- function() {
 }
 
 
-normfinder<-function(data, group = TRUE, ctVal=FALSE, pStabLim=0.3, sample = "sample", gene = "gene", groups = "group", cq = "cq"){
+normfinder<-function(data, group = TRUE, ctVal=FALSE, pStabLim=0.3, sample = "sample", gene = "gene", groups = "condition", cq = "cq"){
 
   # Group & sample ID
   sample_group <- unique(data[,c(sample, groups)])
@@ -82,9 +83,6 @@ normfinder<-function(data, group = TRUE, ctVal=FALSE, pStabLim=0.3, sample = "sa
       GGvar[,group] <- (a-sum(a)/(ngenes*ngenes-ngenes))/(1-2/ngenes)
     }
 
-    print("GGvar")
-    print(GGvar)
-
     #
     # Change possible negative values
     genegroupMinvar <- matrix(0, ngenes, ngr)
@@ -100,8 +98,7 @@ normfinder<-function(data, group = TRUE, ctVal=FALSE, pStabLim=0.3, sample = "sa
     #
     # Final variances
     GGvar <- ifelse(GGvar < 0, genegroupMinvar, GGvar)
-    print("GGvar")
-    print(GGvar)
+
     #
     # Old stability measure for each gene is calculated:
     #
@@ -265,18 +262,10 @@ normfinder<-function(data, group = TRUE, ctVal=FALSE, pStabLim=0.3, sample = "sa
 
 }  #####
 
-# Read the counts file
-counts <- read.csv("all_counts.normfinder.csv")
+args <- get_args()
 
-# Build design (conditions per sample)
-design <- data.frame(
-  sample = c("S1","S2","S3","S4","S5","S6"),
-  group  = c("control","treated","control","treated","control","treated")
-)
-
-# Convert counts wide → long
-library(tidyr)
-library(dplyr)
+counts <- arrow::read_parquet(args$data)
+design <- read.csv(args$design)
 
 data <- counts %>%
   tidyr::pivot_longer(
@@ -287,12 +276,8 @@ data <- counts %>%
   dplyr::rename(gene = gene_id) %>%
   dplyr::left_join(design, by = "sample")
 
-# Inspect
-#print(data)
-
 data <- as.data.frame(data)
 
-
 res = normfinder(data, ctVal=TRUE)
-print("res")
-print(res)
+print(res[[1]]["Stability"])
+write.csv(res[[1]]["Stability"], "stabilities.csv", row.names = TRUE)
