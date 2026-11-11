@@ -11,11 +11,7 @@ process GEO_GETACCESSIONS {
 
     input:
     val species
-    val keywords
-    val platform
     path excluded_accessions_file
-    val random_sampling_size
-    val random_sampling_seed
 
     output:
     path "accessions.txt",                     optional: true,                                                     emit: accessions
@@ -30,24 +26,7 @@ process GEO_GETACCESSIONS {
     tuple val("${task.process}"), val('tqdm'),      eval('python3 -c "import tqdm; print(tqdm.__version__)"'),     topic: versions
 
     script:
-    def keywords_string = keywords.split(',').collect { it.trim() }.join(' ')
-    def args = " --species $species"
-    if ( keywords_string != "" ) {
-        args += " --keywords $keywords_string"
-    }
-    if ( platform ) {
-        args += " --platform $platform"
-    }
-    if ( excluded_accessions_file ) {
-        args += " --exclude-accessions-in $excluded_accessions_file"
-    }
-    if ( random_sampling_size ) {
-        args += " --random-sampling-size $random_sampling_size"
-    }
-    if ( random_sampling_seed ) {
-        args += " --random-sampling-seed $random_sampling_seed"
-    }
-    // the folder where nltk will download data needs to be writable (necessary for singularity)
+    def args = task.ext.args ?: ''
     """
     # limiting CPU usage
     export OMP_NUM_THREADS=${task.cpus}
@@ -57,11 +36,13 @@ process GEO_GETACCESSIONS {
     export HOME=/tmp/biopython
     mkdir -p /tmp/biopython
 
+    # the folder where nltk will download data needs to be writable (necessary for singularity)
     export NLTK_DATA=\${PWD}
 
     get_geo_dataset_accessions.py \\
-        $args \\
-        --cpus ${task.cpus}
+        --species $species \\
+        --cpus ${task.cpus} \\
+        $args
     """
 
     stub:

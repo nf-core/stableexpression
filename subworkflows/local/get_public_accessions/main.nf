@@ -13,14 +13,10 @@ workflow GET_PUBLIC_ACCESSIONS {
     species
     skip_fetch_eatlas_accessions
     fetch_geo_accessions
-    platform
-    keywords
     ch_accessions
     ch_accessions_file
     ch_excluded_accessions
     ch_excluded_accessions_file
-    random_sampling_size
-    random_sampling_seed
     outdir
 
     main:
@@ -39,13 +35,7 @@ workflow GET_PUBLIC_ACCESSIONS {
 
         // getting Expression Atlas accessions given a species name and keywords
         // keywords can be an empty string
-        EXPRESSION_ATLAS(
-            species,
-            keywords,
-            platform?: [],
-            random_sampling_size?: [],
-            random_sampling_seed?: []
-        )
+        EXPRESSION_ATLAS( species )
 
         ch_fetched_eatlas_accessions = EXPRESSION_ATLAS.out.accessions.splitText()
         ch_sampling_quota            = EXPRESSION_ATLAS.out.sampling_quota
@@ -83,11 +73,7 @@ workflow GET_PUBLIC_ACCESSIONS {
         // keywords can be an empty string
         GEO(
             ch_species,
-            keywords,
-            platform?: [],
-            ch_excluded_eatlas_accessions_file,
-            random_sampling_size?: [],
-            random_sampling_seed?: []
+            ch_excluded_eatlas_accessions_file
         )
 
         ch_fetched_geo_accessions    = GEO.out.accessions.splitText()

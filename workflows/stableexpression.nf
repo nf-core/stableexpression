@@ -54,14 +54,10 @@ workflow STABLEEXPRESSION {
         species,
         params.skip_fetch_eatlas_accessions,
         params.fetch_geo_accessions,
-        params.platform,
-        params.keywords,
         params.accessions ? channel.fromList( params.accessions.tokenize(',') ) : channel.empty(),
         params.accessions_file ? channel.fromPath(params.accessions_file, checkIfExists: true) : channel.empty(),
         params.excluded_accessions ? channel.fromList( params.excluded_accessions.tokenize(',') ) : channel.empty(),
         params.excluded_accessions_file ? channel.fromPath(params.excluded_accessions_file, checkIfExists: true) : channel.empty(),
-        params.random_sampling_size,
-        params.random_sampling_seed,
         params.outdir
         )
 
@@ -101,8 +97,6 @@ workflow STABLEEXPRESSION {
             params.gprofiler_target_db,
             params.gene_id_mapping,
             params.gene_metadata,
-            params.min_occurrence_freq,
-            params.min_occurrence_quantile,
             params.outdir
         )
 

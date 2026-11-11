@@ -22,12 +22,10 @@ process DOWNLOAD_GENOME_ANNOTATION {
     tuple val("${task.process}"), val('tqdm'),   eval('python3 -c "import tqdm; print(tqdm.__version__)"'),     topic: versions
 
     script:
-    def args = task.ext.args ?: ''
     """
     download_genome_annotation.py \\
         --species ${species} \\
-        --gene-ids $gene_ids_file \\
-        $args
+        --gene-ids $gene_ids_file
     """
 
     stub:

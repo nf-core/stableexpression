@@ -11,8 +11,6 @@ process DETECT_RARE_GENE_IDS {
     path(gene_id_mapping_file)
     path(gene_id_occurrences_file)
     val(nb_datasets)
-    val(min_occurrence_frequency)
-    val(min_occurrence_quantile)
 
     output:
     path('valid_gene_ids.txt'),                                                                                       emit: valid_gene_ids
@@ -21,13 +19,13 @@ process DETECT_RARE_GENE_IDS {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
+    def args = task.ext.args ?: ''
     """
     detect_rare_gene_ids.py \\
         --occurrences $gene_id_occurrences_file \\
         --mappings $gene_id_mapping_file \\
         --nb-datasets $nb_datasets \\
-        --min-occurrence-frequency $min_occurrence_frequency \\
-        --min-occurrence-quantile $min_occurrence_quantile
+        $args
     """
 
     stub:
