@@ -188,7 +188,7 @@ def check_accession_string(accessions_str) {
 
 def check_accession_file(accession_file) {
     if ( accession_file != null ) {
-        def lines = new File(accession_file).readLines()
+        def lines = file(accession_file).readLines()
         lines.each { accession ->
             check_accession(accession)
         }
