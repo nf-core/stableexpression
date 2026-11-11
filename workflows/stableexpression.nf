@@ -162,7 +162,6 @@ workflow STABLEEXPRESSION {
             ch_normalised_counts,
             ch_non_imputed_counts,
             ch_ratio_nulls_per_sample_file,
-            params.max_null_ratio_valid_sample,
             params.nb_candidates_per_section,
             params.nb_sections,
             params.stability_score_weights,

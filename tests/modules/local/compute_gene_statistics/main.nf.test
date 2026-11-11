@@ -8,6 +8,9 @@ nextflow_process {
     test("With imputed values") {
 
         when {
+            params {
+                max_null_ratio_valid_sample = 0.2
+            }
             process {
                 """
                 input[0] = [
@@ -16,7 +19,6 @@ nextflow_process {
                     file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count2.raw.cpm.quant_norm.parquet', checkIfExists: true)
                 ]
                 input[1] = file( '$projectDir/tests/test_data/modules/compute_gene_statistics/input/ratio_nulls_per_sample.csv', checkIfExists: true)
-                input[2] = 0.2
                 """
             }
         }
