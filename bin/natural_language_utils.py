@@ -10,6 +10,7 @@ stemmer = nltk.PorterStemmer()
 
 
 def get_wordnet_pos(token: str) -> str:
+    """Map POS tag to first character lemmatize() accepts."""
     tag = nltk.pos_tag([token])[0][1][0].upper()
     tag_dict = {
         "J": wordnet.ADJ,
@@ -21,8 +22,7 @@ def get_wordnet_pos(token: str) -> str:
 
 
 def get_stemmed_tokens(sentence: str) -> list[str]:
-    """
-    Tokenize a sentence into its constituent words, and then stem each word
+    """Tokenize a sentence into its constituent words, and then stem each word.
 
     Parameters
     ----------
@@ -33,15 +33,14 @@ def get_stemmed_tokens(sentence: str) -> list[str]:
     -------
     tokens : List[str]
         The list of stemmed tokens
-    """
 
+    """
     tokens = nltk.word_tokenize(sentence)
     return [stemmer.stem(token) for token in tokens]
 
 
 def get_lemmed_tokens(sentence: str) -> list[str]:
-    """
-    Tokenize a sentence into its constituent words, and then lemmatize each word
+    """Tokenize a sentence into its constituent words, and then lemmatize each word.
 
     Parameters
     ----------
@@ -52,14 +51,14 @@ def get_lemmed_tokens(sentence: str) -> list[str]:
     -------
     tokens : List[str]
         The list of lemmatized tokens
+
     """
     tokens = nltk.word_tokenize(sentence)
     return [lemmatizer.lemmatize(token, get_wordnet_pos(token)) for token in tokens]
 
 
-def get_synonyms(word) -> set[str]:
-    """
-    Get all synonyms of a word from the wordnet database.
+def get_synonyms(word: str) -> set[str]:
+    """Get all synonyms of a word from the wordnet database.
 
     Parameters
     ----------
@@ -70,6 +69,7 @@ def get_synonyms(word) -> set[str]:
     -------
     synonyms : set
         A set of all synonyms of the word
+
     """
     synonyms = []
     for syn in wordnet.synsets(word):
@@ -79,9 +79,7 @@ def get_synonyms(word) -> set[str]:
 
 
 def get_all_candidate_target_words(sentence: str) -> list[str]:
-    """
-    Get all candidate target words from a sentence by stemming and lemmatizing the
-    tokens and getting synonyms from the wordnet database.
+    """Get all candidate target words from a sentence by stemming and lemmatizing the tokens and getting synonyms from the wordnet database.
 
     Parameters
     ----------
@@ -92,6 +90,7 @@ def get_all_candidate_target_words(sentence: str) -> list[str]:
     -------
     candidates : list
         A list of all candidate target words
+
     """
     candidates = []
     lemmatized_tokens = get_stemmed_tokens(sentence)
@@ -103,9 +102,7 @@ def get_all_candidate_target_words(sentence: str) -> list[str]:
 
 
 def word_is_in_sentence(word: str, sentence: str) -> bool:
-    """
-    Check if a word (or a stemmed version of it) is in a sentence, or if it is a
-    subword of a stemmed version of any word in the sentence.
+    """Check if a word (or a stemmed version of it) is in a sentence, or if it is a subword of a stemmed version of any word in the sentence.
 
     Parameters
     ----------
@@ -118,8 +115,9 @@ def word_is_in_sentence(word: str, sentence: str) -> bool:
     -------
     bool
         True if the word is found in the sentence, False otherwise
+
     """
-    for stemmed_word in [word] + get_stemmed_tokens(word):
+    for stemmed_word in [word, *get_stemmed_tokens(word)]:
         # testing if stemmed word is in sentence as it is
         if stemmed_word in sentence:
             return True
@@ -131,9 +129,21 @@ def word_is_in_sentence(word: str, sentence: str) -> bool:
 
 
 def keywords_in_fields(fields: list[str], keywords: list[str]) -> list[str]:
+    """Check if any of the keywords are in any of the fields.
+
+    Parameters
+    ----------
+    fields : list[str]
+        The fields to be searched
+    keywords : list[str]
+        The keywords to be searched for
+
+    Returns
+    -------
+    list[str]
+        A list of all keywords that are found in any of the fields
+
+    """
     return [
-        keyword
-        for keyword in keywords
-        for field in fields
-        if word_is_in_sentence(keyword, field)
+        keyword for keyword in keywords for field in fields if word_is_in_sentence(keyword, field)
     ]

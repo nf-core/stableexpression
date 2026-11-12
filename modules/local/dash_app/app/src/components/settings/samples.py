@@ -34,7 +34,7 @@ sample_selection_stack = dmc.Stack(
                 "shadow": "md",
                 "transitionProps": {"transition": "pop", "duration": 200},
             },
-        )
+        ),
     ],
     align="left",
     gap="xl",
@@ -64,7 +64,8 @@ sample_graph_plot_type_stack = dmc.Stack(
 boxplot_customisation_stack = dmc.Stack(
     [
         dmc.Text(
-            "Display mean / standard deviation", style=style.STACK_SUBSECTION_TITLE
+            "Display mean / standard deviation",
+            style=style.STACK_SUBSECTION_TITLE,
         ),
         dmc.SegmentedControl(
             id="sample-graph-boxmean",
@@ -90,7 +91,8 @@ boxplot_customisation_stack = dmc.Stack(
             mb=10,
         ),
         dmc.Text(
-            "Position of points relatively to boxes", style=style.STACK_SUBSECTION_TITLE
+            "Position of points relatively to boxes",
+            style=style.STACK_SUBSECTION_TITLE,
         ),
         dmc.Slider(
             id="sample-graph-pointpos",
@@ -105,7 +107,8 @@ boxplot_customisation_stack = dmc.Stack(
             mb=35,
         ),
         dmc.Text(
-            "Spreading of displayed points (jitter)", style=style.STACK_SUBSECTION_TITLE
+            "Spreading of displayed points (jitter)",
+            style=style.STACK_SUBSECTION_TITLE,
         ),
         dmc.Slider(
             id="sample-graph-jitter",
@@ -148,12 +151,13 @@ sidebar_stack = dmc.Accordion(
         dmc.AccordionItem(
             [
                 dmc.AccordionControl(
-                    "Boxplot customisation", id="boxplot_customisation_accordion_control"
+                    "Boxplot customisation",
+                    id="boxplot_customisation_accordion_control",
                 ),
                 dmc.AccordionPanel(boxplot_customisation_stack),
             ],
             value="boxplot_customisation",
-        )
+        ),
     ],
     id="sidebar-samples-items",
     style={"marginTop": "20px", "display": "none"},

@@ -7,7 +7,7 @@
                         {
                             "platform": "microarray"
                         },
-                        "all_counts.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
+                        "microarray.merged.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
                     ]
                 ],
                 "1": [
@@ -29,15 +29,15 @@
                         {
                             "platform": "microarray"
                         },
-                        "all_counts.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
+                        "microarray.merged.parquet:md5,f3234a9f680271996f806b7f0f34a11c"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:12:17.941476701",
+        "timestamp": "2026-10-05T15:26:47.946914328",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     },
     "3 files": {
@@ -48,7 +48,7 @@
                         {
                             "platform": "rnaseq"
                         },
-                        "all_counts.parquet:md5,e64b6447f373377c507ae4136228ffbb"
+                        "rnaseq.merged.parquet:md5,e64b6447f373377c507ae4136228ffbb"
                     ]
                 ],
                 "1": [
@@ -70,15 +70,15 @@
                         {
                             "platform": "rnaseq"
                         },
-                        "all_counts.parquet:md5,e64b6447f373377c507ae4136228ffbb"
+                        "rnaseq.merged.parquet:md5,e64b6447f373377c507ae4136228ffbb"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-26T09:12:09.161096289",
+        "timestamp": "2026-10-05T15:26:39.724703075",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     }
 }

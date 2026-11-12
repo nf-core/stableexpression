@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,396daa125b0f7d65a68d87e89acb6a8c"
+                        "stability_values.normfinder.parquet:md5,818157912c6129fb1e8b327cf844f4d3"
                     ]
                 ],
                 "1": [
@@ -50,15 +50,15 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,396daa125b0f7d65a68d87e89acb6a8c"
+                        "stability_values.normfinder.parquet:md5,818157912c6129fb1e8b327cf844f4d3"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-07-15T23:16:10.62712975",
+        "timestamp": "2026-11-11T23:31:36.854839798",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.10.5"
         }
     },
     "Very small dataset - Cq values": {
@@ -69,7 +69,7 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,4b862600bac58b66724a9dfe8789f8bf"
+                        "stability_values.normfinder.parquet:md5,607a56a7ed9ba742232506f3f6dbf264"
                     ]
                 ],
                 "1": [
@@ -112,15 +112,15 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.csv:md5,4b862600bac58b66724a9dfe8789f8bf"
+                        "stability_values.normfinder.parquet:md5,607a56a7ed9ba742232506f3f6dbf264"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-07-15T23:15:58.113899646",
+        "timestamp": "2026-11-11T23:31:30.086213812",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.10.5"
         }
     }
 }

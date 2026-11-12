@@ -1,5 +1,5 @@
 process AGGREGATE_RESULTS {
-    debug true
+
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
@@ -10,7 +10,6 @@ process AGGREGATE_RESULTS {
     input:
     path count_file
     path stat_score_files
-    path platform_stat_files, stageAs: "?/*"
     val target_genes
     path metadata_files
     path mapping_files
@@ -19,13 +18,14 @@ process AGGREGATE_RESULTS {
     output:
     path 'all_genes_summary.csv',                                                                               emit: all_genes_summary
     path '*most_stable_genes_summary.csv',                                                                      emit: most_stable_genes_summary
-    path '*most_stable_genes_transposed_counts.csv',                                                            emit: most_stable_genes_transposed_counts_filtered
+    path '*most_stable_genes_transposed_counts.csv', optional: true,                                            emit: most_stable_genes_transposed_counts_filtered
     path 'custom_content_multiqc_config.yaml',                                                                  emit: custom_content_multiqc_config
     tuple val("${task.process}"), val('python'), eval("python3 --version | sed 's/Python //'"),                 topic: versions
     tuple val("${task.process}"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
     tuple val("${task.process}"), val('pyyaml'), eval('python3 -c "import yaml; print(yaml.__version__)"'),     topic: versions
 
     script:
+    def args = task.ext.args ?: ''
     def mapping_files_arg  = mapping_files   ? "--mappings " + "$mapping_files"    : ""
     def metadata_files_arg = metadata_files  ? "--metadata " + "$metadata_files"   : ""
     def target_genes_arg   = target_genes    ? "--target-genes " + "${target_genes.join(' ')}" : ""
@@ -33,11 +33,11 @@ process AGGREGATE_RESULTS {
     aggregate_results.py \\
         --counts $count_file \\
         --stats-with-scores $stat_score_files \\
-        --platform-stats $platform_stat_files \\
         --multiqc-config $multiqc_config \\
         $mapping_files_arg \\
         $metadata_files_arg \\
-        $target_genes_arg
+        $target_genes_arg \\
+        $args
     """
 
     stub:
@@ -47,6 +47,5 @@ process AGGREGATE_RESULTS {
     touch stub.most_stable_genes_transposed_counts.csv
     touch custom_content_multiqc_config.yaml
     """
-
 
 }

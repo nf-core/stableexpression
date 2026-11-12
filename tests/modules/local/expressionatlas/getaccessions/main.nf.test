@@ -8,14 +8,15 @@ nextflow_process {
     test("Beta vulgaris one keyword - no platform") {
 
         when {
-
+            params{
+                platform = null
+                keywords = "leaf"
+                random_sampling_size = 100
+                random_sampling_seed = 42
+            }
             process {
                 """
                 input[0] = "beta_vulgaris"
-                input[1] = "leaf"
-                input[2] = []
-                input[3] = 100
-                input[4] = 42
                 """
             }
         }
@@ -29,14 +30,15 @@ nextflow_process {
     test("Beta vulgaris no keyword - rnaseq platform") {
 
         when {
-
+            params{
+                platform = "rnaseq"
+                keywords = ""
+                random_sampling_size = 100
+                random_sampling_seed = 42
+            }
             process {
                 """
                 input[0] = "beta_vulgaris"
-                input[1] = ""
-                input[2] = "rnaseq"
-                input[3] = 100
-                input[4] = 42
                 """
             }
         }
@@ -50,14 +52,15 @@ nextflow_process {
     test("Beta vulgaris - no experiments left after random sampling") {
 
         when {
-
+            params{
+                platform = null
+                keywords = ""
+                random_sampling_size = 1
+                random_sampling_seed = 42
+            }
             process {
                 """
                 input[0] = "beta_vulgaris"
-                input[1] = ""
-                input[2] = []
-                input[3] = 1
-                input[4] = 42
                 """
             }
         }
@@ -71,14 +74,15 @@ nextflow_process {
     test('Solanum tuberosum two keywords - microarray') {
 
         when {
-
+            params{
+                platform = "microarray"
+                keywords = "potato,phloem"
+                random_sampling_size = 10000
+                random_sampling_seed = 42
+            }
             process {
                 """
                 input[0] = "solanum_tuberosum"
-                input[1] = "potato,phloem"
-                input[2] = "microarray"
-                input[3] = 10000
-                input[4] = 42
                 """
             }
         }
@@ -95,14 +99,15 @@ nextflow_process {
     test('Solanum tuberosum no keyword') {
 
         when {
-
+            params{
+                platform = "microarray"
+                keywords = ""
+                random_sampling_size = 100
+                random_sampling_seed = 42
+            }
             process {
                 """
                 input[0] = "solanum_tuberosum"
-                input[1] = ""
-                input[2] = "microarray"
-                input[3] = 100
-                input[4] = 42
                 """
             }
         }

@@ -2,18 +2,9 @@
 
 ## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/stableexpression/usage](https://nf-co.re/stableexpression/usage)
 
-> [!WARNING]
-> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
-
-> [!TIP]
-> For setting number of CPUs and memory used by the pipeline, or for instruction on how to run it on an HPC, see the [configuration instructions](configuration.md).
-
-> [!NOTE]
-> In case of issues with the pipeline, please check the [troubleshooting page](troubleshooting.md) or [report a new issue](https://github.com/nf-core/stableexpression/issues).
-
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
-## 1. Basic run
+## Basic run
 
 This pipeline fetches Expression Atlas and GEO accessions for the provided species and downloads the corresponding data.
 
@@ -25,13 +16,7 @@ nextflow run nf-core/stableexpression \
    -resume
 ```
 
-> [!TIP]
-> It is often a good practice to run the pipeline with the `-resume` flag. See the [Nextflow documentation on caching and resuming](https://www.nextflow.io/docs/latest/cache-and-resume.html) for more information.
-
-> [!NOTE]
-> See [here](#profiles) for more information about profiles.
-
-## 2. Specific public datasets
+## Specific public datasets
 
 You can provide keywords to restrict downloaded datasets to specific conditions.
 
@@ -46,14 +31,24 @@ nextflow run nf-core/stableexpression \
 > [!NOTE]
 >
 > - Multiple keywords must be separated by commas.
-> - Please note that keywords are additive: you will get datasets that fit with **either of the provided keywords**.
-> - A dataset will be downloaded if a keyword is found in its summary or in the same of a sample.
-> - The natural language processing [`nltk`](https://www.nltk.org/) python package is used to find keywords as well as derived words. For example, the `leaf` keyword should match 'leaf', 'leaves', 'leafy', etc.
+> - Please note that keywords are additive, so you will receive datasets that match with **either of the provided keywords**.
+> - A dataset will be downloaded if a keyword is found in its summary or in the name of a sample.
+> - The natural language processing [`nltk`](https://www.nltk.org/) python package is used to find keywords as well as derived words. For example, the `leaf` keyword should match 'leaf', 'leaves', 'leafy', and so on.
 
-## 3. Provide your own accessions
+Users can also choose to download data from a specific platform (`RNA-seq` / `Microarray`) only:
 
-You may already have an idea of specific Expression Atlas / GEO accessions you want to use in the analysis.
-In this case, you can provide them directly to the pipeline.
+```bash
+nextflow run nf-core/stableexpression \
+   -profile <PROFILE> \
+   --species <SPECIES> \
+   --platform <rnaseq/microarray> \
+   --outdir <OUTDIR>
+```
+
+## Provide your own accessions
+
+You may already have specific Expression Atlas/GEO accession numbers in mind for use in the analysis.
+If so, you can provide these directly to the pipeline.
 
 ```bash
 nextflow run nf-core/stableexpression \
@@ -67,13 +62,15 @@ nextflow run nf-core/stableexpression \
    --outdir <OUTDIR>
 ```
 
-> [!WARNING]
-> If you want to download only the datasets corresponding to the accessions supplied, you must set the `--skip_fetch_eatlas_accessions` parameter.
-
 > [!NOTE]
-> In the files supplied with `--eatlas_accessions_file` or `--geo_accessions_file`, there should be one accession per line. The extension of the file does not matter.
+>
+> - To download only the datasets corresponding to the supplied accessions, set the `--skip_fetch_eatlas_accessions` parameter.
+> - The files supplied with either the `--eatlas_accessions_file` or `--geo_accessions_file` parameters should contain one accession per line. The file extension does not matter.
+> - For `homo sapiens`, the experiment `E-GTEX-8` comprises 17350 samples :exploding_head: :exploding_head: :exploding_head:... It it therefore excluded by default, but you can include it anyway by setting `--accessions E-GTEX-8`.
 
-In case you do not know which accessions you want but you would like to control precisely which datasets are included in you analysis, you may run first:
+## Fetch accessions only
+
+If you are unsure which accessions you want, but would like to control precisely which datasets are included in your analysis, you can first run:
 
 ```bash
 nextflow run nf-core/stableexpression \
@@ -83,27 +80,24 @@ nextflow run nf-core/stableexpression \
    --outdir <OUTDIR>
 ```
 
-Fetched accessions with their respective metadata will be available in `<OUTDIR>/expression_atlas/accessions/` and `<OUTDIR>/geo/accessions/`
+The list of fetched accessions with their respective metadata will be displayed in the MultiQC report, at `<OUTDIR>/reporting/multiqc_report.html`, in the sections `Expression Atlas datasets` and `GEO datasets`.
 
-> [!IMPORTANT]
-> For `homo sapiens`, the experiment `E-GTEX-8` comprises 17350 samples :exploding_head: :exploding_head: :exploding_head:... It it therefore excluded by default, but you can include it anyway by setting `--accessions E-GTEX-8`.
+## Use your own expression datasets
 
-## 4. Use your own expression datasets
-
-You can of course provide your own counts datasets / experimental designs.
+Of course, you can provide your own count datasets and experimental designs.
 
 > [!IMPORTANT]
 >
-> - To ensure all RNA-seq datasets are processed the same way, users should provide **raw counts**.
-> - If normalised counts are provided, users should apply the same normalisation process to all of them. **The prefered method is `TPM`**.
-> - Microarray data must be already normalised. When mixing your own datasets with public ones in a single run, you should use the `RMA` method in order to be compliant with Expression Atlas datasets.
+> - To ensure that all RNA-seq datasets are processed in the same way, users should provide **raw counts**.
+> - If normalised counts are provided, using the same normalisation process to all of them is recommended. The provided counts should never be log2-transformed.
+> - Microarray data must already be normalised. When combining your own datasets with public ones in a single run, you should use the RMA method to ensure compliance with Expression Atlas datasets.
 
-First, prepare a CSV samplesheet listing the different count datasets you want to use. Each row represents a specific dataset and must contain:
+First, prepare a CSV samplesheet listing the datasets you want to use. Each row represents a specific dataset and must contain the following information:
 
 | Column       | Description                                                                               |
 | ------------ | ----------------------------------------------------------------------------------------- |
 | `counts`     | Path to the count dataset (a CSV / TSV file)                                              |
-| `design`     | Path to the experimental design associated to this dataset (a CSV / TSV file)             |
+| `design`     | Path to the experimental design file associated to this dataset (a CSV / TSV file)        |
 | `platform`   | Platform used to generate the counts (`rnaseq` or `microarray`)                           |
 | `normalised` | Boolean (`true` / `false`) representing whether the counts are already normalised or not. |
 
@@ -141,12 +135,6 @@ gene_1,1,2,3
 gene_2,1,2,3
 ```
 
-> [!NOTE]
-> The first column in the counts file must contain gene IDs and can have any name (**as long as there is a comma before the name of the first count column**)
-
-> [!WARNING]
-> The count file should not have any column other than the first one (gene IDs) and the sample columns.
-
 The design should look like:
 
 ```csv title=design.csv
@@ -156,8 +144,10 @@ sample_B,condition_2
 sample_C,condition_1
 ```
 
-> [!TIP]
-> Both counts and design files can also be supplied as TSV files.
+> [!NOTE]
+>
+> - The first column in the counts file must contain gene IDs and can be given any name (**as long as a comma is placed before the name of the first count column**). The count file should only contain the first column (gene IDs) and the sample columns.
+> - Both counts and design files can also be supplied as TSV files.
 
 Now run the pipeline with:
 
@@ -170,24 +160,23 @@ nextflow run nf-core/stableexpression \
    --outdir <OUTDIR>
 ```
 
-> [!TIP]
-> The `--skip_fetch_eatlas_accessions` parameter is supplied here to show how to analyse **only your own dataset**. You may remove this parameter if you want to mix you dataset(s) with public ones.
+> [!NOTE]
+>
+> - In the example above, the `--skip_fetch_eatlas_accessions` parameter is provided to demonstrate how to analyse your own dataset only. If you want to mix your dataset(s) with public ones, you can remove this parameter.
 
 > [!IMPORTANT]
-> By default, the pipeline tries to map gene IDs to Ensembl gene IDs. **All genes that cannot be mapped are discarded from the analysis**. This ensures that all genes are named the same between datasets and allows comparing multiple datasets with each other. If you are confident that your genes have the same name between your different datasets or if you think on the contrary that your gene IDs just won't be mapped properly, you can disable this mapping by adding the `--skip_id_mapping` parameter. In such case, we recommend users to supply their own gene id mapping and gene metadata files using the `--gene_id_mapping` and `--gene_metadata` parameters respectively.
+> By default, the pipeline attempts to map gene IDs to Ensembl gene IDs. **Any genes that cannot be mapped are discarded from the analysis**. This ensures consistent gene naming across datasets, enabling comparison of multiple datasets. In case of issues with the `g:Profiler` gene ID mapping step, users can disable it using the '--skip_id_mapping' parameter. This will not have any consequences if the dataset is single or if all datasets share the same gene IDs.
 >
-> Both files are totally optional, however:
-> - a custom gene id mapping might help merging datasets properly
-> - custom gene metadata (association between gene id, gene name and gene description) will supply relevant metadata in the final MultiQC report
+> However, if multiple datasets contain different sets of gene IDs, **the pipeline results may be incorrect**, as different gene IDs that correspond to the same gene will be treated as if they came from different genes. In this case, users must supply their own gene ID mapping file using the `--gene_id_mapping` parameter. We also recommend that users provide a gene metadata file using the `--gene_metadata` parameter. This will not affect the pipeline result but will enrich the MultiQC report and help to associate a gene ID with a name and putative functions.
 >
-> See [next section](#5-custom-gene-id-mapping--metadata) for further details.
+> See the [next section](custom-gene-id-mapping--metadata) for further details.
 
 > [!TIP]
-> You can check if your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
+> You can check whether your gene IDs can be mapped using the [g:Profiler server](https://biit.cs.ut.ee/gprofiler/convert).
 
-### 5. Custom gene ID mapping / metadata
+### Custom gene ID mapping / metadata
 
-You can supply your own gene ID mapping and / or gene metadata with the `--gene_id_mapping` and `--gene_metadata` parameters respectively. The gene ID mapping file is used to map gene IDs in count table(s) (local or downloaded) to more generic IDs that will be used as a basis for subsequent steps. The gene metadata file provides additional information about the genes, such as their common name and description.
+Users can provide their own gene ID mapping and/or gene metadata using the '--gene_id_mapping' and '--gene_metadata' parameters, respectively. The gene ID mapping file maps gene IDs in the count table(s) (local or downloaded) to more generic IDs, which are used as a basis for subsequent steps. The gene metadata file provides supplementary details about the genes, such as their common name and description.
 
 Structure of the gene id mapping file:
 
@@ -220,11 +209,13 @@ ENSG1234567890,Gene A,Description of gene A
 OTHERmappedgeneID,My OTHER Gene,Another description
 ```
 
-### 6. Custom gene annotation / gene length
+### RNA-seq count normalisation
 
-For the computation of TPM values during gene expression normalisation, the knowledge of gene length is required. In the case where the species of interest does not have a public annotation, or if you are encountering network issues, you can supply directly either your own genome annotation or a file associating gene ids to gene lengths with the `--gff` and `--gene_length` parameters respectively.
+By default, raw RNA-seq counts are normalised using [GeTMM](https://link.springer.com/article/10.1186/s12859-018-2246-7), which requires the knowledge of gene length. To achieve this, the pipeline first downloads the public genome annotation that best aligns with the gene IDs present in the datasets. It then computes the length of the longest transcript for each gene. If the species of interest does not have a public annotation or if you encounter network issues, you can provide your own genome annotation or a file associating gene IDs with gene lengths directly using the `--gff` (local), `--gff_url` (remote URL) and `--gene_length` parameters, respectively.
 
-The genome annotation must be in `GFF` format and have the `.gff` extension. You can use the [`AGAT`](https://github.com/NBISweden/AGAT) package to convert other genome annotation formats to `GFF`.
+If users do not have access to genome annotations or gene lengths, they can use the `--skip_gene_length_normalisation` flag. The pipeline will then run edgeR without computing RPK normalisation. As the counts will not be normalised by length, **this will result in a bias in favor of longer genes**.
+
+The genome annotation must be in `GFF` format and have the `.gff` or `.gff3` extension. The [`AGAT`](https://github.com/NBISweden/AGAT) package can be used to convert other genome annotation formats to GFF.
 
 The gene length file must be in `CSV` or `TSV` format and have the following structure:
 
@@ -241,8 +232,7 @@ ENSG1234567890,1000
 OTHERmappedgeneID,2000
 ```
 
-
-### 7. More advanced scenarios
+### More advanced scenarios
 
 For advanced scenarios, you can see the list of available parameters in the [parameter documentation](https://nf-co.re/stableexpression/parameters).
 

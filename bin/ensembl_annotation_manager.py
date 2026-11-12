@@ -1,26 +1,17 @@
-#!/usr/bin/env python3
-
 # Written by Olivier Coen. Released under the MIT license.
 
 import logging
-import httpx
-import pandas as pd
-from typing import ClassVar
-from pathlib import Path
-
 from datetime import datetime
-from tqdm import tqdm
+from pathlib import Path
+from typing import ClassVar
 from urllib.request import urlretrieve
 
-from tenacity import (
-    before_sleep_log,
-    retry,
-    stop_after_delay,
-    wait_exponential,
-    retry_if_exception
-)
+import httpx
+import pandas as pd
 from bs4 import BeautifulSoup
 from ncbi_annotation_manager import NCBIAnnotationManager
+from tenacity import before_sleep_log, retry, retry_if_exception, stop_after_delay, wait_exponential
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.ERROR)
@@ -30,8 +21,10 @@ TIMEOUT = 600
 STOP_RETRY_AFTER_DELAY = 120
 
 ENSEMBL_API_HEADERS = {
-    "Content-type": "application/json"
+    "Content-type": "application/json",
 }
+
+MULTIPLIERS = {"K": 1024, "M": 1024**2, "G": 1024**3, "T": 1024**4, "P": 1024**5}
 
 
 ##################################################################
@@ -40,11 +33,13 @@ ENSEMBL_API_HEADERS = {
 ##################################################################
 ##################################################################
 
+
 def is_retryable(exception: BaseException) -> bool:
     """Retry everything except a 404 HTTPStatusError."""
     if isinstance(exception, httpx.HTTPStatusError):
         return exception.response.status_code != 404
     return True
+
 
 @retry(
     retry=retry_if_exception(is_retryable),
@@ -53,16 +48,14 @@ def is_retryable(exception: BaseException) -> bool:
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
 def send_get_request_to_ensembl(url: str) -> list[dict]:
-    """
-    Sends a GET request to the Ensembl API to retrieve data from the given URL.
-    """
+    """Send a GET request to the Ensembl API to retrieve data from the given URL."""
     with httpx.Client(timeout=TIMEOUT) as client:
         response = client.get(url, headers=ENSEMBL_API_HEADERS)
         if response.status_code == 200:
             response.raise_for_status()
         else:
             raise RuntimeError(
-                f"Failed to retrieve data: encountered error {response.status_code}"
+                f"Failed to retrieve data: encountered error {response.status_code}",
             )
         return response.json()
 
@@ -74,6 +67,7 @@ def send_get_request_to_ensembl(url: str) -> list[dict]:
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
 def parse_page_data(url: str) -> BeautifulSoup:
+    """Parse the HTML content of a page using BeautifulSoup."""
     with httpx.Client(timeout=TIMEOUT) as client:
         page = client.get(url)
         page.raise_for_status()
@@ -86,7 +80,9 @@ def parse_page_data(url: str) -> BeautifulSoup:
 ##################################################################
 ##################################################################
 
+
 def parse_last_modified_date(dt_string: str) -> datetime | None:
+    """Parse a date string into a datetime object."""
     try:
         return datetime.strptime(dt_string, "%Y-%m-%d %H:%M")
     except ValueError:
@@ -94,29 +90,27 @@ def parse_last_modified_date(dt_string: str) -> datetime | None:
 
 
 def parse_size(size_str: str) -> int:
-    """
-    Convert size strings like '902K', '4.1M', '5G' to bytes.
+    """Convert size strings like '902K', '4.1M', '5G' to bytes.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     size_str : str
         Size string with suffix (K, M, G, T, etc.)
 
-    Returns:
-    --------
+    Returns
+    -------
     int : size in bytes
+
     """
     size_str = size_str.strip().upper()
     # Define multipliers
-    MULTIPLIERS = {"K": 1024, "M": 1024**2, "G": 1024**3, "T": 1024**4, "P": 1024**5}
     # Check if last character is a unit
     if size_str[-1] in MULTIPLIERS:
         number = float(size_str[:-1])
         multiplier = MULTIPLIERS[size_str[-1]]
         return int(number * multiplier)
-    else:
-        # No suffix, assume it's already in bytes
-        return int(float(size_str))
+    # No suffix, assume it's already in bytes
+    return int(float(size_str))
 
 
 ##################################################################
@@ -127,6 +121,7 @@ def parse_size(size_str: str) -> int:
 
 
 class EnsemblAnnotationManager:
+    """Class to manage Ensembl annotation files."""
 
     ENSEMBL_REST_SERVER: ClassVar[str] = "https://rest.ensembl.org/"
     SPECIES_INFO_BASE_ENDPOINT: ClassVar[str] = "info/genomes/taxonomy/{species}"
@@ -141,18 +136,19 @@ class EnsemblAnnotationManager:
     }
     ENSEMBL_VERTEBRATE_DIVISION: ClassVar[str] = "EnsemblVertebrates"
 
-    ENSEMBL_GENOMES_BASE_URL: ClassVar[str] = "https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/{}/gff3/"
+    ENSEMBL_GENOMES_BASE_URL: ClassVar[str] = (
+        "https://ftp.ebi.ac.uk/ensemblgenomes/pub/current/{}/gff3/"
+    )
     ENSEMBL_VERTEBRATES_BASE_URL: ClassVar[str] = "https://ftp.ensembl.org/pub/current/gff3/"
     ENSEMBL_ORGANISMS_BASE_URL: ClassVar[str] = "https://ftp.ebi.ac.uk/pub/ensemblorganisms/"
     ENSEMBL_ORGANISMS_ANNOTATION_FILENAME: ClassVar[str] = "genes.gff3.gz"
     ENSEMBL_ORGANISMS_EXCLUDED_FOLDERS: ClassVar[list[str]] = [
-        "Parent Directory"
+        "Parent Directory",
     ]
 
     species: str
     species_taxid: int
     target_folder: Path
-
 
     def __init__(self, species: str, local_folder: str):
         self.species = species
@@ -161,11 +157,10 @@ class EnsemblAnnotationManager:
         self.species_taxid = self.get_species_taxid()
         logger.info(f"[Ensembl] :: Got species taxid: {self.species_taxid}")
 
-
-
     def get_ensembl_genomes_annotations(self) -> list[Path]:
+        """Get Ensembl Genomes annotations for the species."""
         species_info = self.get_species_info()
-        print(species_info)
+
         if len(species_info) == 0:
             raise ValueError(f"No division found for species Taxon ID {self.species_taxid}")
 
@@ -174,7 +169,10 @@ class EnsemblAnnotationManager:
         logger.info(f"[Ensembl] :: Got division: {division}")
 
         division_url = self.get_division_url(division)
-        candidate_folder_urls = self.get_ensembl_genomes_candidate_species_folders(division_url, assembly_names)
+        candidate_folder_urls = self.get_ensembl_genomes_candidate_species_folders(
+            division_url,
+            assembly_names,
+        )
 
         if not candidate_folder_urls:
             logger.error(f"[Ensembl] :: No candidate annotation folder found for {self.species}")
@@ -184,15 +182,17 @@ class EnsemblAnnotationManager:
         for folder_url in candidate_folder_urls:
             annotation_filename = self.get_annotation_file(folder_url)
             annotation_full_url = folder_url + annotation_filename
-            logger.info(f"[Ensembl] :: Found annotation URL: {annotation_full_url}.\nDownloading...")
+            logger.info(
+                f"[Ensembl] :: Found annotation URL: {annotation_full_url}.\nDownloading...",
+            )
             annotation_file = self.target_folder / annotation_filename
             self.download_file(annotation_full_url, annotation_file)
             annotation_files.append(annotation_file)
 
         return annotation_files
 
-
     def get_ensembl_organisms_annotations(self) -> list[Path]:
+        """Get Ensembl Organisms annotations for the species."""
         annotation_files = []
         species_folder_urls = self.get_ensembl_organisms_species_folders()
         for url in species_folder_urls:
@@ -200,53 +200,57 @@ class EnsemblAnnotationManager:
             for candidate_folder_url in candidate_folder_urls:
                 annotation_url = self.get_ensembl_organism_annotation_url(candidate_folder_url)
                 if annotation_url is not None:
-                    assembly_accession = candidate_folder_url.rstrip('/').split('/')[-1]
-                    annotation_file = self.target_folder / f"{assembly_accession}.{annotation_url.split('/')[-1]}"
+                    assembly_accession = candidate_folder_url.rstrip("/").split("/")[-1]
+                    annotation_file = (
+                        self.target_folder / f"{assembly_accession}.{annotation_url.split('/')[-1]}"
+                    )
                     self.download_file(annotation_url, annotation_file)
                     annotation_files.append(annotation_file)
         return annotation_files
 
-
     def get_species_taxid(self) -> int:
+        """Get the species taxid from the Ensembl REST API. If the request fails, try to get the taxid from the NCBI taxonomy."""
         try:
             return self.get_species_taxid_from_ensembl()
         except Exception as e:
             logger.error(
-                f"Could not get species taxid for species {self.species} using the Ensembl REST API: {e}.\nTrying NCBI taxonomy."
+                f"Could not get species taxid for species {self.species} using the Ensembl REST API: {e}.\nTrying NCBI taxonomy.",
             )
             return NCBIAnnotationManager.get_species_taxid(self.species)
 
-
-    def get_taxonomy_metadata(self):
+    def get_taxonomy_metadata(self) -> list[dict]:
+        """Get the taxonomy metadata for the species from the Ensembl REST API."""
         formatted_species = self.species.replace(" ", "_").lower()
-        url = self.ENSEMBL_REST_SERVER + self.TAXONOMY_NAME_ENDPOINT.format(species=formatted_species)
+        url = self.ENSEMBL_REST_SERVER + self.TAXONOMY_NAME_ENDPOINT.format(
+            species=formatted_species,
+        )
         return send_get_request_to_ensembl(url)
 
-
     def get_species_taxid_from_ensembl(self) -> int:
+        """Get the species taxid from the Ensembl REST API."""
         data: list[dict] = self.get_taxonomy_metadata()
         if len(data) == 0:
             raise ValueError(f"No species found for species {self.species}")
-        elif len(data) > 1:
+        if len(data) > 1:
             logger.warning(
-                f"Multiple species found for species {self.species}. Keeping the first one."
+                f"Multiple species found for species {self.species}. Keeping the first one.",
             )
         species_data = data[0]
         if "id" not in species_data:
             raise ValueError(
-                f"Could not find taxid for species {self.species}. Data collected: {species_data}"
+                f"Could not find taxid for species {self.species}. Data collected: {species_data}",
             )
         return species_data["id"]
 
-
-    def get_species_info(self):
+    def get_species_info(self) -> list[dict]:
+        """Get the species info from the Ensembl REST API."""
         url = self.ENSEMBL_REST_SERVER + self.SPECIES_INFO_BASE_ENDPOINT.format(
-            species=str(self.species_taxid)
+            species=str(self.species_taxid),
         )
         return send_get_request_to_ensembl(url)
 
-
     def get_species_division(self, species_info: list[dict]) -> str:
+        """Get the species division (kingdom) from the species info. This is needed to build the correct URL to download the GTF file."""
         found_divisions = list({d["division"] for d in species_info})
         # this should not happen (and if it does, it's an issue on Ensembl's side)
         if not found_divisions:
@@ -254,34 +258,39 @@ class EnsemblAnnotationManager:
         # we should never have multiple possible divisions for a single species
         # it is like if a species belonged to multiple kingdoms at the same time...
         if len(found_divisions) > 1:
-            logger.warning(f"Multiple divisions found for species Taxon ID {self.species_taxid}: {found_divisions}. Taking the first one.")
+            logger.warning(
+                f"Multiple divisions found for species Taxon ID {self.species_taxid}: {found_divisions}. Taking the first one.",
+            )
         # there should be only one division
         return found_divisions[0]
 
-
     def get_assembly_names(self, species_info: list[dict]) -> list[str]:
+        """Return the list of assembly names for the given species."""
         # taking all assembly names
         assembly_names = list({d.get("name", "") for d in species_info})
         return assembly_names
 
-
     def get_division_url(self, division: str) -> str:
-        """
+        """Get URL corresponding to the division of the given species.
+
         In Ensembl, species are separated into divisions.
         Returns the URL for the division of the given species.
         """
         # the URL is different for vertebrates
         if division == self.ENSEMBL_VERTEBRATE_DIVISION:
             return self.ENSEMBL_VERTEBRATES_BASE_URL
-        else:
-            division_folder = self.ENSEMBL_DIVISION_TO_FOLDER[division]
-            return self.ENSEMBL_GENOMES_BASE_URL.format(division_folder)
+        division_folder = self.ENSEMBL_DIVISION_TO_FOLDER[division]
+        return self.ENSEMBL_GENOMES_BASE_URL.format(division_folder)
 
+    def get_ensembl_genomes_candidate_species_folders(
+        self,
+        url: str,
+        assembly_names: list[str],
+        first_level: bool = True,
+    ) -> list[str]:
+        """Get the content of the url corresponding to the species division and parse it using BeautifulSoup.
 
-    def get_ensembl_genomes_candidate_species_folders(self, url: str, assembly_names: list[str], first_level: bool = True) -> list[str]:
-        """
-        Get the content of the url corresponding to the species division and parse it using BeautifulSoup.
-        Get all folders
+        Return the list of folders that are candidate species folders.
         """
         soup = parse_page_data(url)
         folder_urls = []
@@ -306,7 +315,11 @@ class EnsemblAnnotationManager:
                 if folder_name.startswith(self.species) or folder_name in assembly_names:
                     folder_urls.append(folder_url)
                 elif folder_name.endswith("_collection/"):
-                    collection_folder_urls += self.get_ensembl_genomes_candidate_species_folders(folder_url, assembly_names, first_level=False)
+                    collection_folder_urls += self.get_ensembl_genomes_candidate_species_folders(
+                        folder_url,
+                        assembly_names,
+                        first_level=False,
+                    )
                 else:
                     continue
 
@@ -314,19 +327,22 @@ class EnsemblAnnotationManager:
         if not folder_urls:
             # if collection folders were found at >= second level, taking those ones as fallback
             if collection_folder_urls:
-                logger.warning(f"No first-level folder found for {self.species} at {url}. Taking collection folders as fallback.")
+                logger.warning(
+                    f"No first-level folder found for {self.species} at {url}. Taking collection folders as fallback.",
+                )
                 return collection_folder_urls
-            else:
-                return []
+            return []
 
         # if first-level folders were found, keeping only those ones
         return folder_urls
 
-
     def get_ensembl_organisms_formatted_species(self) -> str:
+        """Return the species name in the format used by Ensembl Organisms.
+
+        Example: "homo sapiens" -> "Homo_sapiens"
+        """
         splitted = self.species.replace(" ", "_").split("_")
         return f"{splitted[0].capitalize()}_{splitted[1].lower()}"
-
 
     def get_ensembl_organisms_species_folders(self):
         formated_species = self.get_ensembl_organisms_formatted_species()
@@ -344,8 +360,13 @@ class EnsemblAnnotationManager:
                 folder_names.append(folder_name)
         return [f"{self.ENSEMBL_ORGANISMS_BASE_URL}{folder_name}" for folder_name in folder_names]
 
-
-    def get_ensembl_organisms_subfolder(self, url: str, accepted_folders: list[str] = [], excluded_folders: list[str] = []) -> list[str]:
+    def get_ensembl_organisms_subfolder(
+        self,
+        url: str,
+        accepted_folders: list[str] = [],
+        excluded_folders: list[str] = [],
+    ) -> list[str]:
+        """Get all subfolders of a given Ensembl Organism url."""
         soup = parse_page_data(url)
         folder_names = []
         for item in soup.find_all("tr"):
@@ -361,14 +382,20 @@ class EnsemblAnnotationManager:
             folder_names.append(folder_name)
         return [url + folder_name for folder_name in folder_names]
 
-
     def get_ensembl_organism_annotation_url(self, url: str) -> str | None:
-        first_level_folder_urls = self.get_ensembl_organisms_subfolder(url, excluded_folders=["genome", "vep"])
+        """Get the annotation URL for an Ensembl organism."""
+        first_level_folder_urls = self.get_ensembl_organisms_subfolder(
+            url,
+            excluded_folders=["genome", "vep"],
+        )
         if not first_level_folder_urls:
             return None
         second_level_folder_url = None
         for first_level_folder_url in first_level_folder_urls:
-            second_level_folder_urls = self.get_ensembl_organisms_subfolder(first_level_folder_url, accepted_folders=["geneset/"])
+            second_level_folder_urls = self.get_ensembl_organisms_subfolder(
+                first_level_folder_url,
+                accepted_folders=["geneset/"],
+            )
             if second_level_folder_urls:
                 second_level_folder_url = second_level_folder_urls[0]
                 break
@@ -379,9 +406,9 @@ class EnsemblAnnotationManager:
             return None
         return third_level_folder_urls[0] + self.ENSEMBL_ORGANISMS_ANNOTATION_FILENAME
 
-
     @staticmethod
     def get_annotation_file(url: str) -> str:
+        """Get the annotation file from the Ensembl Genomes FTP server."""
         soup = parse_page_data(url)
         file_records = []
 
@@ -408,9 +435,7 @@ class EnsemblAnnotationManager:
         df = pd.DataFrame(file_records)
 
         # keeping the biggest annotation
-        max_size_df = df.loc[
-            [df["size"].idxmax()]
-        ]  # double brackets to keep it as a DataFrame
+        max_size_df = df.loc[[df["size"].idxmax()]]  # double brackets to keep it as a DataFrame
         if len(max_size_df) == 1:
             return max_size_df["file"].iloc[0]
 
@@ -427,14 +452,14 @@ class EnsemblAnnotationManager:
             max_size_df = max_size_df[~max_size_df["file"].str.endswith("chr.gff3.gz")]
         return max_size_df["file"].iloc[0]
 
-
     @staticmethod
     @retry(
         stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
         wait=wait_exponential(multiplier=1, min=1, max=30),
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
-    def download_file(url: str, output_path: Path):
+    def download_file(url: str, output_path: Path) -> None:
+        """Download a file from a URL to a local path."""
         try:
             urlretrieve(url, str(output_path))
         except Exception as e:

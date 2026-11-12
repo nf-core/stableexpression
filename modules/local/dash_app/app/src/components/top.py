@@ -82,7 +82,9 @@ header = dmc.Grid(
     children=[
         dmc.GridCol(tabs, span=10),
         dmc.GridCol(
-            settings_button, span=2, style={"textAlign": "right", "marginTop": "20px"}
+            settings_button,
+            span=2,
+            style={"textAlign": "right", "marginTop": "20px"},
         ),
     ],
     style={"marginRight": "20px"},

@@ -9,13 +9,13 @@ import logging
 from operator import attrgetter
 from pathlib import Path
 
-import config
 import polars as pl
+
+import config
+from common import get_count_columns
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-ALL_COUNTS_PARQUET_OUTFILENAME = "all_counts.parquet"
 
 
 #####################################################
@@ -25,10 +25,23 @@ ALL_COUNTS_PARQUET_OUTFILENAME = "all_counts.parquet"
 #####################################################
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Merge count datasets")
     parser.add_argument(
-        "--counts", type=str, dest="count_files", required=True, help="Count files"
+        "--counts",
+        type=Path,
+        nargs="+",
+        dest="count_files",
+        required=True,
+        help="Count files",
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        dest="outfile",
+        required=True,
+        help="Output file",
     )
     return parser.parse_args()
 
@@ -44,6 +57,7 @@ def get_lazyframes(files: list[Path]) -> list[pl.LazyFrame]:
 
 
 def get_columns(lf: pl.LazyFrame) -> list[str]:
+    """Get the column names of a LazyFrame."""
     return lf.collect_schema().names()
 
 
@@ -51,8 +65,7 @@ def handle_duplicate_columns(lfs: list[pl.LazyFrame]) -> list[pl.LazyFrame]:
     """Rename duplicate columns accross all LazyFrames to ensure consistency."""
     all_columns = [col for lf in lfs for col in get_columns(lf)]
     duplicate_columns = {
-        col for col in all_columns
-        if all_columns.count(col) > 1 and col != config.GENE_ID_COLNAME
+        col for col in all_columns if all_columns.count(col) > 1 and col != config.GENE_ID_COLNAME
     }
     for duplicate_column in duplicate_columns:
         counter = 1
@@ -63,13 +76,8 @@ def handle_duplicate_columns(lfs: list[pl.LazyFrame]) -> list[pl.LazyFrame]:
     return lfs
 
 
-def get_count_columns(lf: pl.LazyFrame) -> list[str]:
-    return [col for col in get_columns(lf) if col != config.GENE_ID_COLNAME]
-
-
 def reproducible_hash(lf: pl.LazyFrame) -> str:
-    """
-    Return a deterministic MD5 hash for a lazyframe.
+    """Return a deterministic MD5 hash for a lazyframe.
 
     Steps:
     1. Convert the tuple (and any nested structures) to a canonical JSON string.
@@ -93,9 +101,7 @@ def reproducible_hash(lf: pl.LazyFrame) -> str:
 
 
 def scan_counts(files: list[Path]) -> list[pl.LazyFrame]:
-    """
-    Get all count data from a list of files.
-    """
+    """Get all count data from a list of files."""
     logger.info("Parsing counts")
     # sorting them by file name to ensure consistent order between runs
     files.sort(key=attrgetter("name"))
@@ -111,9 +117,7 @@ def scan_counts(files: list[Path]) -> list[pl.LazyFrame]:
 
 
 def collect_all_gene_ids(lfs: list[pl.LazyFrame]) -> pl.DataFrame:
-    """
-    Collect all gene IDs from a list of lazyframes.
-    """
+    """Collect all gene IDs from a list of lazyframes."""
     logger.info("Getting the full list of gene IDs")
     gene_id_set = set()
     for lf in lfs:
@@ -123,14 +127,18 @@ def collect_all_gene_ids(lfs: list[pl.LazyFrame]) -> pl.DataFrame:
 
 
 def make_tmp_sorted_dataframes(
-    lfs: list[pl.LazyFrame], gene_id_df: pl.DataFrame
+    lfs: list[pl.LazyFrame],
+    gene_id_df: pl.DataFrame,
 ) -> list[Path]:
+    """Create temporary parquet files for each lazyframe, joined with the reference list of gene IDs, and finally sorted by gene ID."""
     tmp_files = []
     for i, lf in enumerate(lfs):
         # perform left join from gene ids so that all dataframes can be compared row-wise
         # removing the gene id column for now
         df = gene_id_df.join(
-            lf.collect(), on=config.GENE_ID_COLNAME, how="left"
+            lf.collect(),
+            on=config.GENE_ID_COLNAME,
+            how="left",
         ).select(pl.exclude(config.GENE_ID_COLNAME))
         outfile = Path(f"tmp.{i}.parquet")
         df.write_parquet(outfile)
@@ -138,17 +146,17 @@ def make_tmp_sorted_dataframes(
     return tmp_files
 
 
-def clean_counts(lf: pl.LazyFrame):
-    """
-    The config.GENE_ID_COLNAME column is cast
-    to String, and all other columns are cast to Float32.
+def clean_counts(lf: pl.LazyFrame) -> pl.LazyFrame:
+    """Clean the merged lazyframe by casting columns to appropriate types and removing genes with all null values.
+
+    The config.GENE_ID_COLNAME column is cast to String, and all other columns are cast to Float32.
     """
     logger.info("Cleaning merged lazyframe")
     # casting count columns to Float32
     # casting gene id column to String
     lf = lf.select(
         [pl.col(config.GENE_ID_COLNAME).cast(pl.String)]
-        + [pl.col(column).cast(pl.Float32) for column in get_count_columns(lf)]
+        + [pl.col(column).cast(pl.Float32) for column in get_count_columns(lf)],
     )
     # replacing nans with nulls
     lf = lf.fill_nan(None)
@@ -156,16 +164,15 @@ def clean_counts(lf: pl.LazyFrame):
     return lf.filter(~pl.all_horizontal(pl.exclude(config.GENE_ID_COLNAME).is_null()))
 
 
-
 #####################################################
 # EXPORT
 #####################################################
 
 
-def export_data(lf: pl.LazyFrame):
+def export_data(lf: pl.LazyFrame, outfile: Path) -> None:
     """Export gene expression data."""
-    logger.info(f"Exporting normalised counts to: {ALL_COUNTS_PARQUET_OUTFILENAME}")
-    lf.sink_parquet(ALL_COUNTS_PARQUET_OUTFILENAME)
+    logger.info(f"Exporting normalised counts to: {outfile}")
+    lf.sink_parquet(outfile)
 
 
 #####################################################
@@ -179,7 +186,7 @@ def main():
     args = parse_args()
 
     # parsing count files
-    count_files = [Path(file) for file in args.count_files.split(" ")]
+    count_files = [Path(file) for file in args.count_files]
     logger.info(f"Merging {len(count_files)} count files")
 
     lfs = scan_counts(count_files)
@@ -196,13 +203,13 @@ def main():
 
     # these files are ready to be merged directly through horizontal concatenation
     # setting strict=True requires all DataFrames to be the same height, raising an error if not.
-    merged_lf = pl.concat([gene_id_df.lazy()] + lfs, how="horizontal", strict=True)
+    merged_lf = pl.concat([gene_id_df.lazy(), *lfs], how="horizontal", strict=True)
 
     # performing some cleaning / formating operations
     merged_lf = clean_counts(merged_lf)
 
     # exporting merged data in streaming mode
-    export_data(merged_lf)
+    export_data(merged_lf, args.outfile)
 
     # cleaning up tmp files
     for tmp_file in tmp_files:

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Written by Olivier Coen. Released under the MIT license.
 
 import logging
@@ -35,7 +33,7 @@ NCBI_GENOME_DOWNLOAD_HEADERS = {
     "content-type": "application/json",
 }
 NCBI_GENOME_DOWNLOAD_BASE_DATA = {
-    "include_annotation_type": ["GENOME_GFF", "GENOME_GTF"]
+    "include_annotation_type": ["GENOME_GFF", "GENOME_GTF"],
 }
 DOWNLOADED_FILENAME = "ncbi_dataset.zip"
 
@@ -54,7 +52,8 @@ STOP_RETRY_AFTER_DELAY = 120
     wait=wait_exponential(multiplier=1, min=1, max=30),
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
-def send_request_to_ncbi_taxonomy(data: dict):
+def send_request_to_ncbi_taxonomy(data: dict) -> dict:
+    """Send a request to the NCBI Taxonomy API."""
     url = NCBI_DATASET_API_URL + NCBI_TAXONOMY_ENDPOINT
     with httpx.Client() as client:
         response = client.post(url, headers=NCBI_BASE_HEADERS, json=data)
@@ -67,12 +66,17 @@ def send_request_to_ncbi_taxonomy(data: dict):
     wait=wait_exponential(multiplier=1, min=1, max=30),
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
-def send_request_to_ncbi_genome_report(taxid: str | int):
+def send_request_to_ncbi_genome_report(taxid: str | int) -> dict:
+    """Send a request to the NCBI Genome Report API."""
     url = NCBI_DATASET_API_URL + NCBI_GENOME_REPORT_BASE_ENDPOINT.format(
-        taxid=str(taxid)
+        taxid=str(taxid),
     )
     with httpx.Client() as client:
-        response = client.get(url, headers=NCBI_BASE_HEADERS)
+        response = client.get(
+            url,
+            params=NCBI_GENOME_REPORT_API_PARAMS,
+            headers=NCBI_BASE_HEADERS,
+        )
         response.raise_for_status()
         return response.json()
 
@@ -82,14 +86,15 @@ def send_request_to_ncbi_genome_report(taxid: str | int):
     wait=wait_exponential(multiplier=1, min=1, max=30),
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
-def send_request_to_ncbi_genome_download(genome_accession: str):
+def send_request_to_ncbi_genome_download(genome_accession: str) -> Path:
+    """Send a request to the NCBI Genome Download API."""
     url = NCBI_DATASET_API_URL + NCBI_GENOME_DOWNLOAD_ENDPOINT
     data = NCBI_GENOME_DOWNLOAD_BASE_DATA | {"accessions": [genome_accession]}
     with httpx.Client() as client:
         response = client.post(
             url,
             headers=NCBI_BASE_HEADERS,
-            json=data
+            json=data,
         )
         response.raise_for_status()
         # write response content to file
@@ -107,6 +112,7 @@ def send_request_to_ncbi_genome_download(genome_accession: str):
 
 
 class NCBIAnnotationManager:
+    """Class to handle NCBI annotation data."""
 
     species: str
     species_taxid: int
@@ -118,9 +124,9 @@ class NCBIAnnotationManager:
         logger.info(f"[NCBI] :: Getting reference genome reports for taxid: {self.species_taxid}")
         self.reports = self.get_assembly_reports()
 
-
     @staticmethod
     def get_species_taxid(species: str) -> int:
+        """Get the taxid for a species."""
         formatted_species = species.replace("_", " ").lower()
         data = {"taxons": [formatted_species]}
         result = send_request_to_ncbi_taxonomy(data)
@@ -131,13 +137,20 @@ class NCBIAnnotationManager:
             raise ValueError(f"Could not find taxonomy results for species {species}")
         return int(metadata["taxonomy"]["tax_id"])
 
-
-    def get_assembly_reports(self):
+    def get_assembly_reports(self) -> list[dict]:
+        """Get the assembly reports for a species."""
         result = send_request_to_ncbi_genome_report(self.species_taxid)
         return result.get("reports", [])
 
+    def get_sorted_reference_genome_reports(
+        self,
+        reference_only: bool = False,
+        refseq_only: bool = False,
+    ) -> list[dict]:
+        """Get the reference genome reports for a species, sorted by assembly statistics.
 
-    def get_sorted_reference_genome_reports(self, reference_only: bool = False, refseq_only: bool = False) -> list[dict]:
+        The best assembly is the first element of the returned list.
+        """
         # selecting genome annotated as 'reference'
         reference_reports = self.reports
         if reference_only:
@@ -162,24 +175,28 @@ class NCBIAnnotationManager:
             reverse=True,
         )
 
-
     @staticmethod
     def download_genome_annotation(genome_accession: str) -> Path:
+        """Download genome annotation from NCBI."""
         download_archive = send_request_to_ncbi_genome_download(genome_accession)
         if not download_archive.exists():
             raise FileNotFoundError(
-                f"Downloaded file not found for accession {genome_accession}"
+                f"Downloaded file not found for accession {genome_accession}",
             )
         return download_archive
 
-
     @staticmethod
     def extract_annotation_file_from_archive(archive: Path, accession: str, folder: Path) -> Path:
+        """Extract annotation file from the provided archive.
+
+        Searches first for a file with suffix .gff, then .gtf.
+        Raises an error if no annotation file is found.
+        """
         logger.info(f"Extracting annotation file from archive {archive}")
         with zipfile.ZipFile(archive, "r") as zip_ref:
             for file in zip_ref.namelist():
-                if file.endswith(('.gff', '.gtf')):
-                    zip_ref.extract(file, path='.')
+                if file.endswith((".gff", ".gtf")):
+                    zip_ref.extract(file, path=".")
 
         valid_files = list(Path().cwd().glob(f"ncbi_dataset/data/{accession}/*.gff"))
         if not valid_files:
@@ -189,7 +206,7 @@ class NCBIAnnotationManager:
 
         if len(valid_files) > 1:
             logger.warning(
-                f"Multiple annotation files found for accession {accession}. Taking the first one"
+                f"Multiple annotation files found for accession {accession}. Taking the first one",
             )
 
         folder.mkdir(parents=True, exist_ok=True)
@@ -197,7 +214,9 @@ class NCBIAnnotationManager:
         downloaded_file = valid_files[0]
         shutil.move(downloaded_file, annotation_file)
 
-        logger.info(f"Annotation file for accession {accession} saved to {annotation_file}. Removing archive and extracted folder")
+        logger.info(
+            f"Annotation file for accession {accession} saved to {annotation_file}. Removing archive and extracted folder",
+        )
         shutil.rmtree("ncbi_dataset")
         archive.unlink()
 

@@ -14,7 +14,7 @@ data_manager = DataManager()
 
 def get_selected_rows(selected_genes: list[str]) -> list[dict]:
     return data_manager.all_genes_stat_df.filter(
-        data_manager.all_genes_stat_df["gene_id"].is_in(selected_genes)
+        data_manager.all_genes_stat_df["gene_id"].is_in(selected_genes),
     ).to_dicts()
 
 
@@ -29,7 +29,9 @@ def register_callbacks():
         # prevent_initial_call=True,
     )
     def update_gene_stored_data(
-        selected_genes: list[str], table_selected_rows: list[dict], stored_data: dict
+        selected_genes: list[str],
+        table_selected_rows: list[dict],
+        stored_data: dict,
     ) -> dict:
         if ctx.triggered_id == "gene-stats-table":
             # updating selected genes
@@ -45,7 +47,7 @@ def register_callbacks():
 
         # deleting stored data for genes not anymore in the selected list
         for stored_gene in list(
-            stored_data.keys()
+            stored_data.keys(),
         ):  # we need to copy the list of keys before changing the dict
             if stored_gene not in selected_genes:
                 del stored_data[stored_gene]
@@ -101,7 +103,7 @@ def register_callbacks():
                     customdata=gene_data["samples"],
                     hovertemplate="Sample: %{customdata}<br>Normalised count: %{x}<br><extra></extra>",
                     showlegend=False,
-                )
+                ),
             )
 
         fig.update_layout(xaxis=dict(range=[0, 1]), yaxis=dict(ticklabelstandoff=10))
