@@ -1,0 +1,33 @@
+{
+    "Solanum tuberosum": {
+        "content": [
+            {
+                "0": [
+                    "gene_transcript_lengths.csv:md5,10ad63bda906c141a24d4e6ac6c3c0cc"
+                ],
+                "1": [
+                    [
+                        "COMPUTE_GENE_TRANSCRIPT_LENGTHS",
+                        "python",
+                        "3.13.7"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_GENE_TRANSCRIPT_LENGTHS",
+                        "pandas",
+                        "2.3.3"
+                    ]
+                ],
+                "csv": [
+                    "gene_transcript_lengths.csv:md5,10ad63bda906c141a24d4e6ac6c3c0cc"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-18T11:20:37.091619937",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}

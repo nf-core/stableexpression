@@ -5,9 +5,221 @@ nextflow_pipeline {
     tag "pipeline"
 
     test("-profile test") {
+        tag "test"
 
         when {
             params {
+                species = 'prunus persica'
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/prunus_persica/Prunus_persica.Prunus_persica_NCBIv2.63.gff3.gz'
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+
+            // checking that the gene summary file keeps the same number of rows, columns
+            // and that some specific genes have the expected values
+            def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
+            with( path(gene_summary_file).csv ) {
+                assert rowCount == 22484
+                assert columnCount == 27
+            }
+            def table = path(gene_summary_file).csv.table
+            with( table ) {
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSRNA050004025")).doubleColumn("global_stability_score").get(0) == 0.036
+                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G169400")).doubleColumn("global_stability_score").get(0) == 0.231
+                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G195800")).doubleColumn("global_stability_score").get(0) == 0.064
+            }
+
+        }
+    }
+
+    test("-profile test_datasets_dsim") {
+        tag "test_datasets_dsim"
+
+        when {
+            params {
+                species = 'drosophila simulans'
+                datasets = "${projectDir}/tests/test_data/workflows/drosophila_simulans/samplesheet.yaml"
+                skip_fetch_eatlas_accessions = true
+                skip_id_mapping = true
+                target_genes = "FBgn0268332"
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-62/metazoa/gff3/drosophila_simulans/Drosophila_simulans.ASM75419v3.62.gff3.gz'
+                nb_sections = 20
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+
+            // checking that the gene summary file keeps the same number of rows, columns
+            // and that some specific genes have the expected values
+            def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
+            with( path(gene_summary_file).csv ) {
+                assert rowCount == 14936
+                assert columnCount == 24
+            }
+            def table = path(gene_summary_file).csv.table
+            // the candidate genes used in publications must have the expected stability scores
+            with( table ) {
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0182068")).doubleColumn("global_stability_score").get(0) == 0.092
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0186743")).doubleColumn("global_stability_score").get(0) == 0.082
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0194689")).doubleColumn("global_stability_score").get(0) == 0.086
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0181924")).doubleColumn("global_stability_score").get(0) == 0.073
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0193626")).doubleColumn("global_stability_score").get(0) == 0.065
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0184651")).doubleColumn("global_stability_score").get(0) == 0.142
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0196300")).doubleColumn("global_stability_score").get(0) == 0.092
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0185678")).doubleColumn("global_stability_score").get(0) == 0.069
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0188440")).doubleColumn("global_stability_score").get(0) == 0.124
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0189846")).doubleColumn("global_stability_score").get(0) == 0.084
+            }
+
+        }
+    }
+
+    test("-profile test_dataset_mus_musculus") {
+        tag "test_dataset_mus_musculus"
+
+        when {
+            params {
+                species = 'mus musculus'
+                nb_sections = 1
+                nb_candidates_per_section = 1000
+                datasets = "https://raw.githubusercontent.com/nf-core/test-datasets/stableexpression/test_data/mus_musculus/samplesheet.yaml"
+                skip_fetch_eatlas_accessions = true
+                gff_url = 'https://ftp.ensembl.org/pub/release-116/gff3/mus_musculus/Mus_musculus.GRCm39.116.gff3.gz'
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+
+            // checking that the gene summary file keeps the same number of rows, columns
+            // and that some specific genes have the expected values
+            def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
+            with( path(gene_summary_file).csv ) {
+                assert rowCount == 839
+                assert columnCount == 27
+            }
+            def table = path(gene_summary_file).csv.table
+            with( table ) {
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000000305")).doubleColumn("global_stability_score").get(0) == 0.18
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000034187")).doubleColumn("global_stability_score").get(0) == 0.046
+            }
+
+        }
+    }
+
+    test("-profile test_two_platforms") {
+        tag "test_two_platforms"
+
+        when {
+            params {
+                species = "arabidopsis_thaliana"
+                accessions = 'E-GEOD-28223,E-GEOD-34655,E-GEOD-58856,E-TABM-919'
+                skip_fetch_eatlas_accessions = true
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            // stable_name: All files + folders in ${params.outdir}/ with a stable name
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_path: All files in ${params.outdir}/ with stable content
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    // pipeline versions.yml file for multiqc from which Nextflow ve== 0.074900rsion is removed because we test pipelines on multiple Nextflow versions
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    // All stable path name, with a relative path
+                    stable_name,
+                    // All files with stable contents
+                    stable_path
+                ).match() }
+            )
+
+            // checking that the gene summary file keeps the same number of rows, columns
+            // and that some specific genes have the expected values
+            def gene_summary_file = "${params.outdir}/reporting/all_genes_summary.csv"
+            with( path(gene_summary_file).csv ) {
+                assert rowCount == 26346
+                assert columnCount == 51
+            }
+            def table = path(gene_summary_file).csv.table
+            with( table ) {
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT1G01010")).doubleColumn("global_stability_score").get(0) == 0.505
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G23260")).doubleColumn("global_stability_score").get(0) == 0.48
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G50920")).doubleColumn("global_stability_score").get(0) == 0.122
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G41320")).doubleColumn("global_stability_score").get(0) == 3.203
+            }
+
+        }
+    }
+
+    test("-profile test_all_public_data_and_minimal_custom_dataset") {
+        tag "test_all_public_data_and_minimal_custom_dataset"
+
+        when {
+            params {
+                species = 'beta vulgaris'
+                keywords = "leaf"
+                fetch_geo_accessions = true
+                datasets = "https://raw.githubusercontent.com/nf-core/test-datasets/stableexpression/test_data/sampled/beta_vulgaris/samplesheet.csv"
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/beta_vulgaris/Beta_vulgaris.RefBeet-1.2.2.63.gff3.gz'
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+
+    test("-profile test_accessions_only") {
+        tag "test_accessions_only"
+
+        when {
+            params {
+                species = 'arabidopsis lyrata'
+                accessions_only = true
+                platform = 'rnaseq'
                 outdir = "$outputDir"
             }
         }
@@ -30,4 +242,166 @@ nextflow_pipeline {
             )
         }
     }
+
+    test("-profile test_download_only") {
+        tag "test_download_only"
+
+        when {
+            params {
+                species = 'aspergillus fumigatus'
+                download_only = true
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/fungi/gff3/aspergillus_fumigatus/Aspergillus_fumigatus.GCA000002655v1.63.gff3.gz'
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            // stable_path: All files + folders in ${params.outdir}/ with a stable path (including file name)
+            def stable_path = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_content: All files in ${params.outdir}/ with stable content
+            def stable_content = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assert workflow.success
+            assertAll(
+                { assert snapshot(
+                    // pipeline versions.yml file for multiqc from which Nextflow version is removed because we test pipelines on multiple Nextflow versions
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    // All stable path name, with a relative path
+                    stable_path,
+                    // All files with stable contents
+                    stable_content
+                ).match() }
+            )
+        }
+    }
+
+    test("-profile test_one_accession_low_gene_count") {
+        tag "test_one_accession_low_gene_count"
+
+        when {
+            params {
+                species = 'arabidopsis thaliana'
+                accessions = "E-GEOD-51720"
+                skip_fetch_eatlas_accessions = true
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/arabidopsis_thaliana/Arabidopsis_thaliana.TAIR10.63.gff3.gz'
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+
+    test("-profile test_skip_id_mapping") {
+        tag "test_skip_id_mapping"
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                datasets = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/samplesheet.csv"
+                skip_id_mapping = true
+                nb_sections = 1
+                skip_fetch_eatlas_accessions = true
+                gff_url = 'https://ftp.ebi.ac.uk/ensemblgenomes/pub/release-63/plants/gff3/solanum_tuberosum/Solanum_tuberosum.SolTub_3.0.63.gff3.gz'
+                skip_dash_app = true
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+
+    test("-profile test_dataset_custom_mapping_and_gene_length") {
+        tag "test_dataset_custom_mapping_and_gene_length"
+
+        when {
+            params {
+                species = 'solanum tuberosum'
+                datasets = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/samplesheet.csv"
+                skip_id_mapping = true
+                skip_fetch_eatlas_accessions = true
+                gene_id_mapping = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/mapping.csv"
+                gene_metadata = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/metadata.csv"
+                gene_length = "${projectDir}/tests/test_data/workflows/sampled/solanum_tuberosum/gene_lengths.csv"
+                quantile_normalisation = true
+                skip_dash_app = true
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+
+    test("-profile test_included_and_excluded_accessions") {
+        tag "test_included_and_excluded_accessions"
+
+        when {
+            params {
+                species = "solanum tuberosum"
+                accessions = "E-MTAB-552"
+                excluded_accessions = "E-MTAB-4251,E-MTAB-552"
+                accessions_file = "${projectDir}/tests/test_data/workflows/misc/accessions_to_include.txt"
+                excluded_accessions_file = "${projectDir}/tests/test_data/workflows/misc/excluded_accessions.txt"
+                quantile_normalisation = true
+                min_occurrence_quantile = 0.15
+                min_occurrence_freq = 0.08
+                gene_max_zero_ratio = 0.7
+                sample_max_zero_ratio = 0.8
+                sample_max_null_ratio = 0.85
+                max_null_ratio_valid_sample = 0.7
+                nb_candidates_per_section = 250
+                multiqc_nb_genes_plotted = 10
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            // stable_name: All files + folders in ${params.outdir}/ with a stable name
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_path: All files in ${params.outdir}/ with stable content
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    // pipeline versions.yml file for multiqc from which Nextflow ve== 0.074900rsion is removed because we test pipelines on multiple Nextflow versions
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_stableexpression_software_mqc_versions.yml"),
+                    // All stable path name, with a relative path
+                    stable_name,
+                    // All files with stable contents
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+
 }

@@ -1,0 +1,136 @@
+{
+    "Accessions file + Excluded accessions file": {
+        "content": [
+            {
+                "0": [
+                    "E-ENAD-2",
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-MTAB-8187",
+                    "E-PROT-138"
+                ],
+                "1": [
+                    [
+                        "expression_atlas",
+                        "accessions.txt:md5,81c007792b56c5ca06d9981f45925679"
+                    ]
+                ],
+                "accessions": [
+                    "E-ENAD-2",
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-MTAB-8187",
+                    "E-PROT-138"
+                ],
+                "raw_accessions": [
+                    [
+                        "expression_atlas",
+                        "accessions.txt:md5,81c007792b56c5ca06d9981f45925679"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-06-21T12:41:15.538843522",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "No GEO + accessions provided": {
+        "content": [
+            {
+                "0": [
+                    "E-ENAD-2",
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-MTAB-8187",
+                    "E-PROT-138"
+                ],
+                "1": [
+                    [
+                        "expression_atlas",
+                        "accessions.txt:md5,81c007792b56c5ca06d9981f45925679"
+                    ]
+                ],
+                "accessions": [
+                    "E-ENAD-2",
+                    "E-GEOD-61690",
+                    "E-MTAB-552",
+                    "E-MTAB-8187",
+                    "E-PROT-138"
+                ],
+                "raw_accessions": [
+                    [
+                        "expression_atlas",
+                        "accessions.txt:md5,81c007792b56c5ca06d9981f45925679"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-06-21T12:41:01.620484397",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "Fetch eatlas accessions without keywords": {
+        "content": [
+            {
+                "0": [
+                    "E-ENAD-2",
+                    "E-MTAB-8187"
+                ],
+                "1": [
+                    [
+                        "expression_atlas",
+                        "accessions.txt:md5,81c007792b56c5ca06d9981f45925679"
+                    ]
+                ],
+                "accessions": [
+                    "E-ENAD-2",
+                    "E-MTAB-8187"
+                ],
+                "raw_accessions": [
+                    [
+                        "expression_atlas",
+                        "accessions.txt:md5,81c007792b56c5ca06d9981f45925679"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-06-21T12:40:48.348557707",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "With samplling size": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    [
+                        "expression_atlas",
+                        "accessions.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "accessions": [
+                    
+                ],
+                "raw_accessions": [
+                    [
+                        "expression_atlas",
+                        "accessions.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-06-21T12:41:29.203229925",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    }
+}

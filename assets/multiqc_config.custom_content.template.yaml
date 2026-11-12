@@ -1,0 +1,579 @@
+custom_data:
+  ranked_most_stable_genes_summary_template:
+    section_name: "Most stable genes"
+    file_format: "csv"
+    no_violin: true
+    description: "Expression descriptive statistics of all genes, ranked by stability. Genes are sorted by stability score - from the most stable to the least stable."
+    plot_type: "table"
+    pconfig:
+      col1_header: "Gene ID"
+      sort_rows: false
+    headers:
+      gene_id:
+        title: "Gene ID"
+      rank:
+        title: "Rank"
+        description: Global rank of the gene based on the global stability score
+        scale: "RdYlGn-rev"
+        cond_formatting_rules:
+          between_fourth_and_tenth:
+            - eq: 4
+            - eq: 5
+            - eq: 6
+            - eq: 7
+            - eq: 8
+            - eq: 9
+            - eq: 10
+          third:
+            - eq: 3
+          second:
+            - eq: 2
+          first:
+            - eq: 1
+      global_stability_score:
+        title: "Global stability score"
+        description: "Global (cross-platform) stability score : the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+      name:
+        title: "Gene name"
+      description:
+        title: "Gene description"
+      original_gene_ids:
+        title: "Original gene IDs"
+        description: Original gene IDs as stated in the input (provided or downloaded) datasets
+
+      stability_score.rnaseq.normalised:
+        title: "Normalised stability score [RNA-seq]"
+        description: "Z-score ntability score corresponding to the RNA-seq platform: the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+      stability_score.microarray.normalised:
+        title: "Normalised stability score [Microarray]"
+        description: "Z-score normalised stability score corresponding to the Microarray platform: the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+      stability_score_std:
+        title: "Stability score dispersion"
+        description: "Standard deviation of the stability scores across platforms"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+      nb_null_stability_scores:
+        title: "Number of null stability scores"
+        description: "Number of null stability scores across platforms"
+        scale: "RdYlGn-rev"
+
+      rank.rnaseq:
+        title: "Rank [RNA-seq]"
+        description: Rank of the gene based on the RNA-seq stability score
+        scale: "RdYlGn-rev"
+        cond_formatting_rules:
+          between_fourth_and_tenth:
+            - eq: 4
+            - eq: 5
+            - eq: 6
+            - eq: 7
+            - eq: 8
+            - eq: 9
+            - eq: 10
+          third:
+            - eq: 3
+          second:
+            - eq: 2
+          first:
+            - eq: 1
+      rank.microarray:
+        title: "Rank [Microarray]"
+        description: Rank of the gene based on the Microarray stability score
+        scale: "RdYlGn-rev"
+        cond_formatting_rules:
+          between_fourth_and_tenth:
+            - eq: 4
+            - eq: 5
+            - eq: 6
+            - eq: 7
+            - eq: 8
+            - eq: 9
+            - eq: 10
+          third:
+            - eq: 3
+          second:
+            - eq: 2
+          first:
+            - eq: 1
+
+      stability_score.rnaseq:
+        title: "Stability score [RNA-seq]"
+        description: "Stability score corresponding to the RNA-seq platform: the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+      stability_score.microarray:
+        title: "Stability score [Microarray]"
+        description: "Stability score corresponding to the RNA-seq platform: the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+
+      normfinder_stability_value_normalised.rnaseq:
+        title: "Normalised Normfinder score [RNA-seq]"
+        description: Normalised (among candidate genes) stability value as computed by Normfinder [RNA-seq only].
+        format: "{:,.6f}"
+        scale: "PRGn-rev"
+      genorm_m_measure_normalised.rnaseq:
+        title: "Normalised Genorm score [RNA-seq]"
+        description: Normalised (among candidate genes) M-measure as computed by Genorm [RNA-seq only].
+        format: "{:,.6f}"
+        scale: "PRGn-rev"
+      coefficient_of_variation_normalised.rnaseq:
+        title: "Normalised CV [RNA-seq]"
+        description: Normalised (among candidate genes) coefficient of variation ( std(expression) / mean(expression) ) across all samples [RNA-seq only].
+        format: "{:,.6f}"
+        scale: "PRGn-rev"
+      robust_coefficient_of_variation_median_normalised.rnaseq:
+        title: "Normalised RCVm [RNA-seq]"
+        description: Normalised (among candidate genes) robust coefficient of variation on median of the expression across all samples [RNA-seq only].
+        format: "{:,.4f}"
+        scale: "PRGn-rev"
+      ratio_nulls_in_valid_samples.rnaseq:
+        title: "Ratio null values (valid samples) [RNA-seq]"
+        description: Ratio of samples in which the gene is not represented, excluding samples with particularly low overall gene count [RNA-seq only].
+
+      stability_score.microarray:
+        title: "Stability score [Microarray]"
+        description: "Stability score corresponding to the Microarray platform: the lower, the better"
+        format: "{:,.6f}"
+        scale: "RdYlGn-rev"
+      normfinder_stability_value_normalised.microarray:
+        title: "Normalised Normfinder score [Microarray]"
+        description: Normalised (among candidate genes) stability value as computed by Normfinder [Microarray only].
+        format: "{:,.6f}"
+        scale: "PRGn-rev"
+      genorm_m_measure_normalised.microarray:
+        title: "Normalised Genorm score [Microarray]"
+        description: Normalised (among candidate genes) M-measure as computed by Genorm [Microarray only].
+        format: "{:,.6f}"
+        scale: "PRGn-rev"
+      coefficient_of_variation_normalised.microarray:
+        title: "Normalised CV [Microarray]"
+        description: Normalised (among candidate genes) coefficient of variation ( std(expression) / mean(expression) ) across all samples [Microarray only].
+        format: "{:,.6f}"
+        scale: "PRGn-rev"
+      robust_coefficient_of_variation_median_normalised.microarray:
+        title: "Normalised RCVm [Microarray]"
+        description: Normalised (among candidate genes) robust coefficient of variation on median of the expression across all samples [Microarray only].
+        format: "{:,.4f}"
+        scale: "PRGn-rev"
+      ratio_nulls_in_valid_samples.microarray:
+        title: "Ratio null values (valid samples) [Microarray]"
+        description: Ratio of samples in which the gene is not represented, excluding samples with particularly low overall gene count [Microarray only].
+
+      normfinder_stability_value.rnaseq:
+        title: "Normfinder stability value [RNA-seq]"
+        description: Stability value as computed by Normfinder [RNA-seq only].
+        format: "{:,.6f}"
+      genorm_m_measure.rnaseq:
+        title: "Genorm M-measure [RNA-seq]"
+        description: M-measure as computed by Genorm [RNA-seq only].
+        format: "{:,.6f}"
+      coefficient_of_variation.rnaseq:
+        title: "CV [RNA-seq]"
+        description: Coefficient of variation ( std(expression) / mean(expression) ) across all samples [RNA-seq only].
+        format: "{:,.6f}"
+      robust_coefficient_of_variation_median.rnaseq:
+        title: "RCVm [RNA-seq]"
+        description: Robust coefficient of variation on median of the expression across all samples [RNA-seq only].
+        format: "{:,.4f}"
+      mean.rnaseq:
+        title: "Average [RNA-seq]"
+        description: Average normalised expression across all samples [RNA-seq only].
+        format: "{:,.4f}"
+      standard_deviation.rnaseq:
+        title: "Standard deviation [RNA-seq]"
+        description: Standard deviation of the normalised expression across all samples [RNA-seq only].
+        format: "{:,.6f}"
+      median.rnaseq:
+        title: "Median [RNA-seq]"
+        description: Median normalised expression across all samples [RNA-seq only].
+        format: "{:,.4f}"
+      median_absolute_deviation.rnaseq:
+        title: "MAD [RNA-seq]"
+        description: Median absolute deviation of the normalised expression across all samples [RNA-seq only].
+        format: "{:,.4f}"
+      expression_level_quantile.rnaseq:
+        title: "Quantile of expression level [RNA-seq]"
+        description: "Quantile of the average normalised expression level across all samples (compared to the whole pool of genes) [RNA-seq only]."
+        max: 99
+        min: 0
+        scale: PRGn-rev
+
+      normfinder_stability_value.microarray:
+        title: "Normfinder stability value [Microarray]"
+        description: Stability value as computed by Normfinder [Microarray only].
+        format: "{:,.6f}"
+      genorm_m_measure.microarray:
+        title: "Genorm M-measure [Microarray]"
+        description: M-measure as computed by Genorm [Microarray only].
+        format: "{:,.6f}"
+      coefficient_of_variation.microarray:
+        title: "CV [Microarray]"
+        description: Coefficient of variation ( std(expression) / mean(expression) ) across all samples [Microarray only].
+        format: "{:,.6f}"
+      robust_coefficient_of_variation_median.microarray:
+        title: "RCVm [Microarray]"
+        description: Robust coefficient of variation on median of the expression across all samples [Microarray only].
+        format: "{:,.4f}"
+      mean.microarray:
+        title: "Average [Microarray]"
+        description: Average normalised expression across all samples [Microarray only].
+        format: "{:,.4f}"
+      standard_deviation.microarray:
+        title: "Standard deviation [Microarray]"
+        description: Standard deviation of the normalised expression across all samples [Microarray only].
+        format: "{:,.6f}"
+      median.microarray:
+        title: "Median [Microarray]"
+        description: Median normalised expression across all samples [Microarray only].
+        format: "{:,.4f}"
+      median_absolute_deviation.microarray:
+        title: "MAD [Microarray]"
+        description: Median absolute deviation of the normalised expression across all samples [Microarray only].
+        format: "{:,.4f}"
+      expression_level_quantile.microarray:
+        title: "Quantile of expression level [Microarray]"
+        description: "Quantile of the average normalised expression level across all samples (compared to the whole pool of genes) [Microarray only]."
+        max: 99
+        min: 0
+        scale: PRGn-rev
+
+  expr_distrib_most_stable_genes_template:
+    section_name: "Normalised count distributions [PLATFORM]"
+    file_format: "csv"
+    pconfig:
+      sort_samples: false
+      xlab: Expression
+      ylab: Gene
+    description: "Distribution of normalised gene expression (after x -> log(2x +1) transformation) across samples for the most stable genes [PLATFORM only]. Only the NB_GENES most stable genes are shown and genes are ranked from the most stable to the least stable."
+    plot_type: "boxplot"
+
+  skewness:
+    section_name: "Count skewness"
+    parent_id: stats
+    parent_name: "Statistics"
+    parent_description: "Various statistics at the gene or sample level"
+    file_format: "csv"
+    pconfig:
+      sort_samples: false
+      #xmin: 0
+      #xmax: 1
+      xlab: Skewness
+      ylab: Dataset
+    description: Distribution of count skewness across samples, displayed dataset per dataset.
+    plot_type: "boxplot"
+
+  ratio_zeros:
+    section_name: "Proportion of zeros"
+    parent_id: stats
+    parent_name: "Statistics"
+    parent_description: "Various statistics at the gene or sample level"
+    file_format: "csv"
+    pconfig:
+      sort_samples: false
+      #xmin: 0
+      #xmax: 1
+      xlab: Proportion of zeros
+      ylab: Dataset
+    description: Distribution of zeros across samples, displayed dataset per dataset.
+    plot_type: "boxplot"
+
+  ratio_nulls:
+    section_name: "Proportion of missing values"
+    parent_id: stats
+    parent_name: "Statistics"
+    parent_description: "Various statistics at the gene or sample level"
+    file_format: "csv"
+    pconfig:
+      sort_samples: false
+      #xmin: 0
+      #xmax: 1
+      xlab: Proportion of null values
+      ylab: Dataset
+    description: Distribution of missing values (including genes not present) across samples, displayed dataset per dataset.
+    plot_type: "boxplot"
+
+  null_values_filter:
+    section_name: "Filter on null values"
+    parent_id: filtering
+    parent_name: "Sample filtering"
+    parent_description: "Proportion of samples filtered out, relatively to the the variable observed"
+    file_format: "csv"
+    pconfig:
+      sort_samples: true
+      tt_decimals: 0
+      cpswitch: false # show the 'Counts / Percentages' switch
+      cpswitch_c_active: true # show counts per default
+      stacking: "relative"
+    description: Effect of filter on ratio of null (missing) values
+    categories:
+      kept:
+        name: "Nb samples kept"
+        color: "#2ABF96"
+      rejected:
+        name: "Nb samples rejected"
+        color: "#38B4F2"
+    plot_type: "barplot"
+
+  zero_values_filter:
+    section_name: "Filter on zero values"
+    parent_id: filtering
+    parent_name: "Sample filtering"
+    parent_description: "Proportion of samples filtered out, relatively to the the variable observed"
+    file_format: "csv"
+    pconfig:
+      sort_samples: true
+      tt_decimals: 0
+      cpswitch: false # show the 'Counts / Percentages' switch
+      cpswitch_c_active: true # show counts per default
+      stacking: "relative"
+    description: Effect of filter on ratio of zero values
+    categories:
+      kept:
+        name: "Nb samples kept"
+        color: "#2ABF96"
+      rejected:
+        name: "Nb samples rejected"
+        color: "#38B4F2"
+    plot_type: "barplot"
+
+  id_mapping_stats:
+    section_name: "Gene ID mapping statistics"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "csv"
+    pconfig:
+      sort_samples: true
+      tt_decimals: 0
+      cpswitch: true # show the 'Counts / Percentages' switch
+      cpswitch_c_active: true # show counts per default
+      stacking: "relative"
+    description: Statistics of gene ID mapping, dataset per dataset
+    categories:
+      final:
+        name: "Nb final gene IDs"
+        color: "#2ABF96"
+      merged:
+        name: "Nb gene IDs merged with other IDs"
+        color: "#38B4F2"
+      not_valid:
+        name: "Nb rare gene IDs removed"
+        color: "#F2C038"
+      unmapped:
+        name: "Nb unmapped gene IDs"
+        color: "#E3224A"
+    plot_type: "barplot"
+
+  total_gene_id_occurrence_quantiles:
+    section_name: "Distribution of gene ID occurrence quantiles"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "csv"
+    pconfig:
+      categories: true
+    #ymax: 1.1
+    #ymin: -0.1
+    #y_lines:
+    #  - value: 1
+    #    color: "#ff0000"
+    #    width: 2
+    #   dash: "dash"
+    #   label: "Threshold"
+    description: Quantiles of the total number of occurrences of gene IDs across all datasets. Quantile values were sorted from greatest to least.
+    plot_type: "linegraph"
+    helptext: Gene IDs can be present or absent in the datasets. For each gene ID, the total number of occurrences across all datasets was calculated and quantile values were computed from these totals.
+
+  eatlas_selected_experiments_metadata:
+    section_name: "Selected"
+    parent_id: eatlas
+    parent_name: "Expression Atlas datasets"
+    parent_description: "Information about the Expression Atlas datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    description: Metadata of selected Expression Atlas datasets corresponding to the provided species (and optionally the provided keywords)
+    plot_type: "table"
+
+  eatlas_all_experiments_metadata:
+    section_name: "All datasets"
+    parent_id: eatlas
+    parent_name: "Expression Atlas datasets"
+    parent_description: "Information about the Expression Atlas datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    description: Metadata of all Expression Atlas datasets corresponding to the provided species
+    plot_type: "table"
+
+  eatlas_failure_reasons:
+    section_name: "Failure reasons"
+    parent_id: eatlas
+    parent_name: "Expression Atlas datasets"
+    parent_description: "Information about the Expression Atlas datasets processed in the analysis"
+    file_format: "csv"
+    no_violin: true
+    description: Reasons of failure during download of Expression Atlas datasets
+    plot_type: "table"
+
+  eatlas_warning_reasons:
+    section_name: "Warnings"
+    parent_id: eatlas
+    parent_name: "Expression Atlas datasets"
+    parent_description: "Information about the Expression Atlas datasets processed in the analysis"
+    file_format: "csv"
+    no_violin: true
+    description: Warnings during download of Expression Atlas datasets
+    plot_type: "table"
+
+  geo_selected_experiments_metadata:
+    section_name: "Selected"
+    parent_id: geo
+    parent_name: "GEO dataset metadata"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    description: Metadata of selected GEO datasets corresponding to the provided species (and optionally the provided keywords)
+    plot_type: "table"
+
+  geo_all_experiments_metadata:
+    section_name: "All datasets"
+    parent_id: geo
+    parent_name: "GEO datasets"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    description: Metadata of all GEO datasets corresponding to the provided species
+    plot_type: "table"
+
+  geo_rejected_experiments_metadata:
+    section_name: "Rejected GEO datasets"
+    parent_id: geo
+    parent_name: "GEO datasets"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "tsv"
+    no_violin: true
+    description: Metadata of all GEO datasets which were rejected
+    plot_type: "table"
+
+  geo_failure_reasons:
+    section_name: "Failure reasons"
+    parent_id: geo
+    parent_name: "GEO datasets"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "csv"
+    no_violin: true
+    description: Reasons of failure during download of GEO datasets
+    plot_type: "table"
+
+  geo_warning_reasons:
+    section_name: "Warnings"
+    parent_id: geo
+    parent_name: "GEO datasets"
+    parent_description: "Information about the GEO datasets processed in the analysis"
+    file_format: "csv"
+    no_violin: true
+    description: Warnings during download of GEO datasets
+    plot_type: "table"
+
+  id_cleaning_failure_reasons:
+    section_name: "Gene ID cleaning failure reasons"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "tsv"
+    no_violin: true
+    description: Reasons of failure during gene ID cleaning
+    plot_type: "table"
+
+  renaming_warning_reasons:
+    section_name: "Gene renaming warning reasons"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "tsv"
+    no_violin: true
+    description: Reasons of warning during gene ID renaming. You can further investigate ID mapping issues on the g:Profiler website at https://biit.cs.ut.ee/gprofiler/convert
+    plot_type: "table"
+
+  renaming_failure_reasons:
+    section_name: "Gene renaming failure reasons"
+    parent_id: idmapping
+    parent_name: "ID mapping"
+    parent_description: "Information about the ID mapping"
+    file_format: "tsv"
+    no_violin: true
+    description: Reasons of failure during gene ID renaming
+    plot_type: "table"
+
+  normalisation_failure_reasons:
+    section_name: "Failure reasons"
+    parent_id: normalisation
+    parent_name: "Normalisation"
+    parent_description: "Information about the normalisation"
+    file_format: "tsv"
+    no_violin: true
+    description: Reasons of failure during Normalisation (DESeq2 or edgeR)
+    plot_type: "table"
+
+  normalisation_warning_reasons:
+    section_name: "Warning reasons"
+    parent_id: normalisation
+    parent_name: "Normalisation"
+    parent_description: "Information about the normalisation"
+    file_format: "tsv"
+    no_violin: true
+    description: Reasons of failure during Normalisation (DESeq2 or edgeR)
+    plot_type: "table"
+
+custom_content:
+  order:
+    - skewness
+    - ratio_zeros
+    - ratio_nulls
+    - null_values_filter
+    - zero_values_filter
+    - id_mapping_stats
+    - total_gene_id_occurrence_quantiles
+    - id_cleaning_failure_reasons
+    - renaming_warning_reasons
+    - renaming_failure_reasons
+    - normalisation_failure_reasons
+    - normalisation_warning_reasons
+
+sp:
+  ranked_most_stable_genes_summary_template:
+    fn: "*SECTION.most_stable_genes_summary.csv"
+    max_filesize: 5000000 # 5MB
+  expr_distrib_most_stable_genes_template:
+    fn: "*SECTION.PLATFORM.most_stable_genes_transposed_counts.csv"
+    max_filesize: 50000000 # 50MB
+  id_mapping_stats:
+    fn: "*id_mapping_stats.csv"
+  null_values_filter:
+    fn: "*missing_values_filter_stats.csv"
+  zero_values_filter:
+    fn: "*zero_values_filter_stats.csv"
+  total_gene_id_occurrence_quantiles:
+    fn: "*total_gene_id_occurrence_quantiles.csv"
+  skewness:
+    fn: "*skewness.transposed.csv"
+  ratio_zeros:
+    fn: "*ratio_zeros.transposed.csv"
+  ratio_nulls:
+    fn: "*ratio_nulls.transposed.csv"
+  id_cleaning_failure_reasons:
+    fn: "*id_cleaning_failure_reasons.tsv"
+  renaming_warning_reasons:
+    fn: "*renaming_warning_reasons.tsv"
+  renaming_failure_reasons:
+    fn: "*renaming_failure_reasons.tsv"
+  normalisation_failure_reasons:
+    fn: "*normalisation_failure_reasons.csv"
+  normalisation_warning_reasons:
+    fn: "*normalisation_warning_reasons.csv"

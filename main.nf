@@ -15,9 +15,12 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { STABLEEXPRESSION  } from './workflows/stableexpression'
+include { STABLEEXPRESSION        } from './workflows/stableexpression'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_stableexpression_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_stableexpression_pipeline'
+
+include { getOutputFolder         } from './subworkflows/local/utils_nfcore_stableexpression_pipeline'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -30,22 +33,28 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_stab
 workflow NFCORE_STABLEEXPRESSION {
 
     take:
-    samplesheet // channel: samplesheet read in from --input
+    input_datasets
 
     main:
 
     //
     // WORKFLOW: Run pipeline
     //
-    STABLEEXPRESSION (
-        samplesheet,
-        params.multiqc_config,
-        params.multiqc_logo,
-        params.multiqc_methods_description,
-        params.outdir,
-    )
+    STABLEEXPRESSION( input_datasets )
+
     emit:
-    multiqc_report = STABLEEXPRESSION.out.multiqc_report // channel: /path/to/multiqc_report.html
+    accessions                            = STABLEEXPRESSION.out.accessions
+    downloaded                            = STABLEEXPRESSION.out.downloaded
+    id_filtered_renamed                   = STABLEEXPRESSION.out.id_filtered_renamed
+    samples_filtered                      = STABLEEXPRESSION.out.samples_filtered
+    rnaseq_normalised                     = STABLEEXPRESSION.out.rnaseq_normalised
+    annotation                            = STABLEEXPRESSION.out.annotation
+    gene_length_file                      = STABLEEXPRESSION.out.gene_length_file
+    imputed                               = STABLEEXPRESSION.out.imputed
+    corrected                             = STABLEEXPRESSION.out.corrected
+    all_genes_summary                     = STABLEEXPRESSION.out.all_genes_summary
+    dash_app                              = STABLEEXPRESSION.out.dash_app
+    multiqc_report                        = STABLEEXPRESSION.out.multiqc_report
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,7 +74,7 @@ workflow {
         params.monochrome_logs,
         args,
         params.outdir,
-        params.input,
+        params.datasets,
         params.help,
         params.help_full,
         params.show_hidden
@@ -75,7 +84,7 @@ workflow {
     // WORKFLOW: Run main workflow
     //
     NFCORE_STABLEEXPRESSION (
-        PIPELINE_INITIALISATION.out.samplesheet
+        PIPELINE_INITIALISATION.out.input_datasets
     )
     //
     // SUBWORKFLOW: Run completion tasks
@@ -88,10 +97,103 @@ workflow {
         params.monochrome_logs,
         NFCORE_STABLEEXPRESSION.out.multiqc_report
     )
+
+    publish:
+    accessions                            = NFCORE_STABLEEXPRESSION.out.accessions
+    downloaded                            = NFCORE_STABLEEXPRESSION.out.downloaded
+    id_filtered_renamed                   = NFCORE_STABLEEXPRESSION.out.id_filtered_renamed
+    samples_filtered                      = NFCORE_STABLEEXPRESSION.out.samples_filtered
+    rnaseq_normalised                     = NFCORE_STABLEEXPRESSION.out.rnaseq_normalised
+    annotation                            = NFCORE_STABLEEXPRESSION.out.annotation
+    gene_length_file                      = NFCORE_STABLEEXPRESSION.out.gene_length_file
+    imputed                               = NFCORE_STABLEEXPRESSION.out.imputed
+    corrected                             = NFCORE_STABLEEXPRESSION.out.corrected
+    all_genes_summary                     = NFCORE_STABLEEXPRESSION.out.all_genes_summary
+    dash_app                              = NFCORE_STABLEEXPRESSION.out.dash_app
+    multiqc_report                        = NFCORE_STABLEEXPRESSION.out.multiqc_report
 }
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
+OUTPUTS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
+output {
+
+    accessions {
+        path { source, file ->
+            file >> "accessions/${source}/"
+        }
+    }
+
+    downloaded {
+        path { meta, file ->
+            file        >> getOutputFolder(meta, "0.downloaded")
+            meta.design >> getOutputFolder(meta, null)
+        }
+    }
+
+    id_filtered_renamed {
+        path { meta, file ->
+            file >> getOutputFolder(meta, "1.id_filtered_renamed")
+        }
+    }
+
+    samples_filtered {
+        path { meta, file ->
+            file >> getOutputFolder(meta, "2.samples_filtered")
+        }
+    }
+
+    rnaseq_normalised {
+        path { meta, file ->
+            file >> getOutputFolder(meta, "3.normalised")
+        }
+    }
+
+    annotation {
+        path { file ->
+            file >> "annotation/"
+        }
+    }
+
+    gene_length_file {
+        path { file ->
+            file >> "annotation/"
+        }
+    }
+
+    imputed {
+        path { _meta, file ->
+            file >> "merged_data/"
+        }
+    }
+
+    corrected {
+        path { _meta, file, design ->
+            file   >> "merged_data/"
+            design >> "merged_data/"
+        }
+    }
+
+    all_genes_summary {
+        path { file ->
+            file >> "reporting/"
+        }
+    }
+
+    dash_app {
+        path { file ->
+            file >> "reporting/"
+        }
+    }
+
+    multiqc_report {
+        path { file ->
+            file >> "reporting/"
+        }
+    }
+
+}

@@ -1,0 +1,75 @@
+nextflow_process {
+
+    name "Test Process GPROFILER_IDMAPPING"
+    script "modules/local/gprofiler/idmapping/main.nf"
+    process "GPROFILER_IDMAPPING"
+    tag "gprofiler_idmapping"
+
+    test("ENSG - Mapping found") {
+
+        when {
+            params {
+                gprofiler_target_db = "ENSG"
+            }
+            process {
+                """
+                input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/solanum_tuberosum.txt", checkIfExists: true)
+                input[1] = "Solanum tuberosum"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.mapping.size() == 1 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+
+    test("ENSG - Multiple candidate organisms") {
+
+        when {
+            params {
+                gprofiler_target_db = "ENSG"
+            }
+            process {
+                """
+                input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/canis_lupus.txt", checkIfExists: true)
+                input[1] = "canis lupus"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.mapping.size() == 1 },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+
+    test("Entrez - No mapping found") {
+
+        when {
+            params {
+                gprofiler_target_db = "ENTREZGENE"
+            }
+            process {
+                """
+                input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/gene_ids.txt", checkIfExists: true)
+                input[1] = "Solanum tuberosum"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert !process.success }
+            )
+        }
+    }
+
+}

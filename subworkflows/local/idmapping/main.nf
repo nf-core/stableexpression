@@ -1,0 +1,173 @@
+include { CLEAN_GENE_IDS                         } from '../../../modules/local/clean_gene_ids'
+include { EXTRACT_GENE_IDS                       } from '../../../modules/local/extract_gene_ids'
+include { COLLECT_ALL_GENE_IDS                   } from '../../../modules/local/collect_all_gene_ids'
+include { GPROFILER_IDMAPPING                    } from '../../../modules/local/gprofiler/idmapping'
+include { DETECT_RARE_GENE_IDS                   } from '../../../modules/local/detect_rare_gene_ids'
+include { FILTER_RENAME_GENE_IDS                 } from '../../../modules/local/filter_rename_gene_ids'
+
+/*
+========================================================================================
+    SUBWORKFLOW TO MAP GENE IDS TO COMMON IDS AMONG ALL DATASETS AND TO REMOVE RARE GENES
+========================================================================================
+*/
+
+workflow ID_MAPPING {
+
+    take:
+    ch_counts
+    species
+    skip_id_mapping
+    skip_cleaning_gene_ids
+    custom_gene_id_mapping
+    custom_gene_metadata
+    outdir
+
+    main:
+
+    ch_gene_id_mapping      = channel.empty()
+    ch_gene_metadata        = channel.empty()
+
+
+    // -----------------------------------------------------------------
+    // IN CASE OF ID MAPPING, CLEANING GENE IDS BEFOREHAND
+    // -----------------------------------------------------------------
+
+    if ( !skip_id_mapping && !skip_cleaning_gene_ids ) {
+
+        // ensuring that all gene ids are valid before mapping
+        CLEAN_GENE_IDS ( ch_counts )
+        ch_counts = CLEAN_GENE_IDS.out.counts
+
+    }
+
+    // -----------------------------------------------------------------
+    // EXTRACTING GENE IDS FROM COUNTS FILE
+    // -----------------------------------------------------------------
+
+    EXTRACT_GENE_IDS ( ch_counts )
+    ch_gene_ids = EXTRACT_GENE_IDS.out.gene_ids
+
+
+
+    if ( skip_id_mapping ) {
+
+        // -----------------------------------------------------------------
+        // MAKING FILE CONTAINING ALL GENE UNIQUE GENE IDS (ALL GENE IDS ARE VALID)
+        // -----------------------------------------------------------------
+
+        ch_valid_gene_ids = ch_gene_ids
+                                .splitText()
+                                .map { gene_id -> gene_id.trim() }
+                                .unique()
+                                .collectFile(
+                                    name: 'unique_gene_ids.txt',
+                                    newLine: true,
+                                    storeDir: "${outdir}/id_mapping/",
+                                    sort: true
+                                )
+
+    } else {
+
+        // -----------------------------------------------------------------
+        // COLLECTING ALL CLEANED GENE IDS FROM ALL DATASETS
+        // -----------------------------------------------------------------
+
+        // sorting files in order to have a consistent input and be able to retry
+        COLLECT_ALL_GENE_IDS(
+            ch_gene_ids.toSortedList { file1, file2 -> file1.name <=> file2.name }
+        )
+
+        // -----------------------------------------------------------------
+        // MAPPING THESE GENE IDS TO THE CHOSEN TARGET DB
+        // -----------------------------------------------------------------
+
+        GPROFILER_IDMAPPING(
+            COLLECT_ALL_GENE_IDS.out.unique_gene_ids,
+            species
+        )
+        ch_gene_id_mapping      = GPROFILER_IDMAPPING.out.mapping
+        ch_gene_metadata        = GPROFILER_IDMAPPING.out.metadata
+
+        // -----------------------------------------------------------------
+        // FILTERING OUT GENE IDS THAT DO NOT HAVE ENOUGH OCCURRENCES
+        // -----------------------------------------------------------------
+
+        DETECT_RARE_GENE_IDS(
+            ch_gene_id_mapping,
+            COLLECT_ALL_GENE_IDS.out.gene_id_occurrences,
+            ch_counts.count()
+        )
+
+        ch_valid_gene_ids = DETECT_RARE_GENE_IDS.out.valid_gene_ids
+                                .collectFile(
+                                    name: 'valid_gene_ids.txt',
+                                    newLine: true,
+                                    storeDir: "${outdir}/id_mapping/",
+                                    sort: true
+                                )
+
+    }
+
+    // -----------------------------------------------------------------
+    // COLLECTING GLOBAL GENE ID MAPPING AND METADATA
+    // -----------------------------------------------------------------
+
+    ch_global_gene_id_mapping = ch_gene_id_mapping
+                                    .mix(
+                                        custom_gene_id_mapping ?
+                                        channel.fromPath( custom_gene_id_mapping, checkIfExists: true ) :
+                                        channel.empty()
+                                    )
+                                    .splitCsv( header: true )
+                                    .unique()
+                                    .collectFile(
+                                        name: 'global_gene_id_mapping.csv',
+                                        seed: "original_gene_id,gene_id",
+                                        newLine: true,
+                                        storeDir: "${outdir}/id_mapping/",
+                                        sort: true
+                                    ) {
+                                        item -> "${item["original_gene_id"]},${item["gene_id"]}"
+                                    }
+
+    ch_global_gene_metadata = ch_gene_metadata
+                                .mix(
+                                    custom_gene_metadata ?
+                                    channel.fromPath( custom_gene_metadata, checkIfExists: true ) :
+                                    channel.empty()
+                                )
+                                .splitCsv( header: true )
+                                .unique()
+                                .collectFile(
+                                    name: 'global_gene_metadata.csv',
+                                    seed: "gene_id,name,description",
+                                    newLine: true,
+                                    storeDir: "${outdir}/id_mapping/",
+                                    sort: true
+                                ) {
+                                    item -> "${item["gene_id"]},${item["name"]},${item["description"]}"
+                                }
+
+    // -----------------------------------------------------------------
+    // RENAMING GENE IDS IN ALL COUNT DATASETS (ONLY IF NECESSARY)
+    // -----------------------------------------------------------------
+
+    if ( !skip_id_mapping || custom_gene_id_mapping ) {
+
+        FILTER_RENAME_GENE_IDS(
+            ch_counts,
+            ch_global_gene_id_mapping.first(),
+            ch_valid_gene_ids.collect()
+        )
+        ch_counts = FILTER_RENAME_GENE_IDS.out.counts
+
+    }
+
+
+    emit:
+    counts          = ch_counts
+    mapping         = ch_global_gene_id_mapping
+    metadata        = ch_global_gene_metadata
+    valid_gene_ids  = ch_valid_gene_ids
+
+}

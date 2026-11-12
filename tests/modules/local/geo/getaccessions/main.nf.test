@@ -1,0 +1,77 @@
+nextflow_process {
+
+    name "Test Process GEO_GETACCESSIONS"
+    script "modules/local/geo/getaccessions/main.nf"
+    process "GEO_GETACCESSIONS"
+    tag "geo_getaccession"
+
+    test("Beta vulgaris - exclude two accessions") {
+
+        when {
+            params{
+                platform = null
+                keywords = ""
+                random_sampling_size = 100
+                random_sampling_seed = 42
+            }
+            process {
+                """
+                input[0] = "beta_vulgaris"
+                input[1] = file( '$projectDir/tests/test_data/modules/geo/exclude_one_geo_accession.txt', checkIfExists: true )
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+    test("Beta vulgaris - leaf / microarray") {
+
+        when {
+            params{
+                platform = "microarray"
+                keywords = "leaf"
+                random_sampling_size = 100
+                random_sampling_seed = 42
+            }
+            process {
+                """
+                input[0] = "beta_vulgaris"
+                input[1] = []
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+    test("Beta vulgaris - leaf / microarray") {
+
+        when {
+            params{
+                platform = "microarray"
+                keywords = "leaf"
+                random_sampling_size = 100
+                random_sampling_seed = 42
+            }
+            process {
+                """
+                input[0] = "beta_vulgaris"
+                input[1] = []
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+}

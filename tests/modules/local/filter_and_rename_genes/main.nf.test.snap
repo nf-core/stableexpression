@@ -1,0 +1,156 @@
+{
+    "Custom mapping - TSV": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    [
+                        "test",
+                        "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e"
+                    ]
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "test",
+                        "0",
+                        "0",
+                        "3",
+                        "0"
+                    ]
+                ],
+                "4": [
+                    [
+                        "FILTER_RENAME_GENE_IDS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "FILTER_RENAME_GENE_IDS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-10-22T12:34:14.649776491",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.2"
+        }
+    },
+    "Map Ensembl IDs": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.ensembl_ids.renamed.parquet:md5,240e4ecc8be3610bdf182c48f78426e2"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "test",
+                        "2",
+                        "1",
+                        "1",
+                        "0"
+                    ]
+                ],
+                "4": [
+                    [
+                        "FILTER_RENAME_GENE_IDS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "FILTER_RENAME_GENE_IDS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "dataset": "test"
+                        },
+                        "counts.ensembl_ids.renamed.parquet:md5,240e4ecc8be3610bdf182c48f78426e2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-22T12:34:03.431329278",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.2"
+        }
+    },
+    "No valid gene": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    [
+                        "test",
+                        "failure_reason.txt:md5,0eea8256c81d0362f3f10979ab2de23e"
+                    ]
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "test",
+                        "0",
+                        "0",
+                        "3",
+                        "0"
+                    ]
+                ],
+                "4": [
+                    [
+                        "FILTER_RENAME_GENE_IDS",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "FILTER_RENAME_GENE_IDS",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "counts": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-10-22T12:34:09.122229434",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.2"
+        }
+    }
+}

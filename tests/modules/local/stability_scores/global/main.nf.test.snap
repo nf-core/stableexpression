@@ -1,0 +1,64 @@
+{
+    "One platform - custom weights": {
+        "content": [
+            {
+                "0": [
+                    "section_1.stats_with_scores.parquet:md5,b51aa6bfa13842086e3f429b36382722"
+                ],
+                "1": [
+                    [
+                        "GLOBAL_STABILITY_SCORE",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "GLOBAL_STABILITY_SCORE",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats_with_stability_scores": [
+                    "section_1.stats_with_scores.parquet:md5,b51aa6bfa13842086e3f429b36382722"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-26T10:20:13.232688754",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.2"
+        }
+    },
+    "Two platforms - default weights": {
+        "content": [
+            {
+                "0": [
+                    "section_1.stats_with_scores.parquet:md5,d8cabd5d92237a9d74bdf9670a3bd6e3"
+                ],
+                "1": [
+                    [
+                        "GLOBAL_STABILITY_SCORE",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "GLOBAL_STABILITY_SCORE",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats_with_stability_scores": [
+                    "section_1.stats_with_scores.parquet:md5,d8cabd5d92237a9d74bdf9670a3bd6e3"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-25T18:41:28.912342001",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.2"
+        }
+    }
+}

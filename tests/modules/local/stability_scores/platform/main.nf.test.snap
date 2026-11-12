@@ -1,0 +1,84 @@
+{
+    "Null weights for cv and rvcm": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "null.section_1.stats_with_scores.parquet:md5,7d4c0726f46173adabf56fc27f316919"
+                    ]
+                ],
+                "1": [
+                    [
+                        "PLATFORM_STABILITY_SCORE",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "PLATFORM_STABILITY_SCORE",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats_with_stability_scores": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "null.section_1.stats_with_scores.parquet:md5,7d4c0726f46173adabf56fc27f316919"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-11-11T23:07:32.064738671",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.5"
+        }
+    },
+    "Normal weights": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "null.section_1.stats_with_scores.parquet:md5,f655c066a598ad590441f9b3e9e90d7e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "PLATFORM_STABILITY_SCORE",
+                        "python",
+                        "3.14.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "PLATFORM_STABILITY_SCORE",
+                        "polars",
+                        "1.39.2"
+                    ]
+                ],
+                "stats_with_stability_scores": [
+                    [
+                        {
+                            "section": "section_1"
+                        },
+                        "null.section_1.stats_with_scores.parquet:md5,f655c066a598ad590441f9b3e9e90d7e"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-11-11T23:07:26.426710777",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.5"
+        }
+    }
+}
