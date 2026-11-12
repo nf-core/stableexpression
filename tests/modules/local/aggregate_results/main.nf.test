@@ -8,6 +8,9 @@ nextflow_process {
     test("Without targets") {
 
         when {
+            params {
+                 multiqc_nb_genes_plotted = 10
+            }
             process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
@@ -19,7 +22,6 @@ nextflow_process {
                 input[3] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
                 input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
                 input[5] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
-                input[6] = 10
                 """
             }
         }
@@ -36,6 +38,9 @@ nextflow_process {
     test("With valid target genes") {
 
         when {
+            params {
+                 multiqc_nb_genes_plotted = 1
+            }
             process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
@@ -47,7 +52,6 @@ nextflow_process {
                 input[3] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
                 input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
                 input[5] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
-                input[6] = 1
                 """
             }
         }
@@ -64,6 +68,9 @@ nextflow_process {
     test("One invalid target gene - no metadata") {
 
         when {
+            params {
+                 multiqc_nb_genes_plotted = 20
+            }
             process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
@@ -75,7 +82,6 @@ nextflow_process {
                 input[3] = []
                 input[4] = file( '$projectDir/tests/test_data/modules/aggregate_results/mapping.csv', checkIfExists: true)
                 input[5] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
-                input[6] = 20
                 """
             }
         }
@@ -92,6 +98,9 @@ nextflow_process {
     test("One section - no mapping") {
 
         when {
+            params {
+                 multiqc_nb_genes_plotted = 0
+            }
             process {
                 """
                 input[0] = file( '$projectDir/tests/test_data/modules/dataset_statistics/input/count.raw.cpm.quant_norm.parquet', checkIfExists: true)
@@ -100,7 +109,6 @@ nextflow_process {
                 input[3] = file( '$projectDir/tests/test_data/modules/aggregate_results/metadata.csv', checkIfExists: true)
                 input[4] = []
                 input[5] = file( '$projectDir/assets/multiqc_config.custom_content.template.yaml', checkIfExists: true)
-                input[6] = 0
                 """
             }
         }

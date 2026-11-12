@@ -11,7 +11,6 @@ process FILTER_GENES {
 
     input:
     tuple val(meta), path(count_file)
-    val max_zero_ratio
 
     output:
     tuple val(meta), path("*.genes_filtered.parquet"),                                                          emit: counts
@@ -20,10 +19,11 @@ process FILTER_GENES {
     tuple val("${task.process}"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
+    def args = task.ext.args ?: ''
     """
     filter_genes.py \\
         --counts $count_file \\
-        --max-zero-ratio $max_zero_ratio
+        $args
 
     NB_KEPT_GENES=\$(cat nb_kept_genes.csv)
     NB_REJECTED_GENES=\$(cat nb_rejected_genes.csv)

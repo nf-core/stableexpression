@@ -1,11 +1,11 @@
 process GPROFILER_IDMAPPING {
     label 'process_medium_requirements'
 
-    tag "${species} IDs to ${gprofiler_target_db}"
+    tag "$species"
 
     errorStrategy {
         if (task.exitStatus == 100 ) {
-            log.error("Could not map gene IDs to ${gprofiler_target_db} database.")
+            log.error("Could not map gene IDs.")
             'terminate'
         } else if (task.exitStatus in ((130..145) + 104 + 175) && task.attempt <= 10) { // OOM & related errors; should be retried as long as memory does not fit
             sleep(Math.pow(2, task.attempt) * 200 as long)
@@ -26,7 +26,6 @@ process GPROFILER_IDMAPPING {
     input:
     path gene_id_file
     val species
-    val gprofiler_target_db
 
     output:
     path('mapped_gene_ids.csv'),                                                                                emit: mapping
@@ -36,11 +35,12 @@ process GPROFILER_IDMAPPING {
     tuple val("${task.process}"), val('httpx'),  eval('python3 -c "import httpx; print(httpx.__version__)"'),   topic: versions
 
     script:
+    def args = task.ext.args ?: ''
     """
     gprofiler_map_ids.py \\
         --gene-ids $gene_id_file \\
         --species "$species" \\
-        --target-db "$gprofiler_target_db"
+        $args
     """
 
     stub:

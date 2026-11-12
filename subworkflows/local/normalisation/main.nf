@@ -22,7 +22,6 @@ workflow NORMALISATION {
     species
     ch_valid_gene_ids
     skip_gene_length_normalisation
-    gene_max_zero_ratio
     quantile_normalisation
     gff_file
     gff_url
@@ -77,10 +76,7 @@ workflow NORMALISATION {
     // FILTER OUT GENES DISPLAYING A TOO HIGH PROPORTIONS OF ZEROS
     // -----------------------------------------------------------------
 
-    FILTER_GENES(
-        ch_counts_merged_by_platform,
-        gene_max_zero_ratio
-    )
+    FILTER_GENES( ch_counts_merged_by_platform )
 
     ch_filtered_counts = FILTER_GENES.out.counts
 

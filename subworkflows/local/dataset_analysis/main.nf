@@ -15,8 +15,6 @@ workflow DATASET_ANALYSIS {
     take:
     ch_counts
     ch_valid_gene_ids
-    sample_max_zero_ratio
-    sample_max_null_ratio
     outdir
 
     main:
@@ -33,9 +31,7 @@ workflow DATASET_ANALYSIS {
 
     FILTER_SAMPLES (
         ch_counts,
-        ch_valid_gene_ids.collect(),
-        sample_max_null_ratio,
-        sample_max_zero_ratio
+        ch_valid_gene_ids.collect()
     )
 
     // -----------------------------------------------------------------

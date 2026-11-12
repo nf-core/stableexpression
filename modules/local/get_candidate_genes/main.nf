@@ -12,7 +12,6 @@ process GET_CANDIDATE_GENES {
     input:
     tuple val(meta), path(count_file), path(stat_file)
     path section_file
-    val nb_candidates_per_section
 
     output:
     tuple val(meta), path('section_*.candidate_counts.parquet'),                                                      emit: section_counts
@@ -21,13 +20,13 @@ process GET_CANDIDATE_GENES {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
-    nb_candidates_per_section_arg = nb_candidates_per_section == 'none' ? "" : "--nb-candidates-per-section $nb_candidates_per_section"
+    def args = task.ext.args ?: ''
     """
     get_candidate_genes.py \\
         --counts $count_file \\
         --stats $stat_file \\
         --sections $section_file \\
-        $nb_candidates_per_section_arg
+        $args
     """
 
     stub:

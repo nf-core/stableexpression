@@ -53,8 +53,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--keywords",
         type=str,
-        nargs="*",
-        help="Keywords to search for in experiment description",
+        help="Keywords to search for in experiment description (comma separated)",
+        default=""
     )
     parser.add_argument(
         "--platform",
@@ -461,6 +461,8 @@ def format_species_name(species: str) -> str:
 def main():
     args = parse_args()
 
+    keywords = [keyword.strip() for keyword in args.keywords.split(",")]
+
     results = None
     selected_accessions = []
     selected_experiments = []
@@ -471,7 +473,6 @@ def main():
 
     # Getting arguments
     species_name = format_species_name(args.species)
-    keywords = args.keywords
 
     logger.info("Getting all Expression Atlas experiments")
     experiments = get_eatlas_experiments()

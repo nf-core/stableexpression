@@ -1,5 +1,5 @@
 {
-    "With Genorm": {
+    "Null weights for cv and rvcm": {
         "content": [
             {
                 "0": [
@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.parquet:md5,6e76e6671c1932c9497bd9b16756ef97"
+                        "null.section_1.stats_with_scores.parquet:md5,7d4c0726f46173adabf56fc27f316919"
                     ]
                 ],
                 "1": [
@@ -29,18 +29,18 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.parquet:md5,6e76e6671c1932c9497bd9b16756ef97"
+                        "null.section_1.stats_with_scores.parquet:md5,7d4c0726f46173adabf56fc27f316919"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-31T14:48:30.761798001",
+        "timestamp": "2026-11-11T23:07:32.064738671",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.5"
         }
     },
-    "Without Genorm": {
+    "Normal weights": {
         "content": [
             {
                 "0": [
@@ -48,7 +48,7 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.parquet:md5,76d3b07aa56f81af9808470a46b49e9e"
+                        "null.section_1.stats_with_scores.parquet:md5,f655c066a598ad590441f9b3e9e90d7e"
                     ]
                 ],
                 "1": [
@@ -70,15 +70,15 @@
                         {
                             "section": "section_1"
                         },
-                        "null.section_1.stats_with_scores.parquet:md5,76d3b07aa56f81af9808470a46b49e9e"
+                        "null.section_1.stats_with_scores.parquet:md5,f655c066a598ad590441f9b3e9e90d7e"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-31T14:48:40.331732095",
+        "timestamp": "2026-11-11T23:07:26.426710777",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.5"
         }
     }
 }

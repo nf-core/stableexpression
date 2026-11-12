@@ -94,8 +94,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--keywords",
         type=str,
-        nargs="*",
-        help="Keywords to search for in datasets description",
+        help="Keywords to search for in datasets description (comma separated)",
+        default=""
     )
     parser.add_argument(
         "--platform",
@@ -811,6 +811,8 @@ def export_dataset_metadatas(
 def main():
     args = parse_args()
 
+    keywords = [keyword.strip() for keyword in args.keywords.split(",")]
+
     random_sampling_size = args.random_sampling_size
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -860,7 +862,7 @@ def main():
             dataset,
             args.species,
             args.platform,
-            args.keywords,
+            keywords,
         )
         if issue_dict:
             rejection_dict |= issue_dict

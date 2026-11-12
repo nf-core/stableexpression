@@ -18,12 +18,6 @@ workflow STABILITY_SCORING {
     ch_platform_counts_design // [ meta, count_file, design]
     ch_non_imputed_counts // [ meta, count_file]
     ch_ratio_nulls_per_sample_file
-    max_null_ratio_valid_sample
-    nb_candidates_per_section
-    nb_sections
-    stability_score_weights
-    stability_score_std_penalty_weight
-    stability_score_null_penalty_weight
     outdir
 
     main:
@@ -37,8 +31,7 @@ workflow STABILITY_SCORING {
 
     COMPUTE_GENE_STATISTICS(
         ch_platform_counts.join( ch_non_imputed_counts ),
-        ch_ratio_nulls_per_sample_file.collect(),
-        max_null_ratio_valid_sample
+        ch_ratio_nulls_per_sample_file.collect()
     )
     ch_stats = COMPUTE_GENE_STATISTICS.out.stats
 
@@ -65,8 +58,7 @@ workflow STABILITY_SCORING {
 
     MAKE_SECTIONS(
         ch_stats.map { _meta, file -> file }.collect(),
-        ch_nb_samples_per_platform_file.first(),
-        nb_sections
+        ch_nb_samples_per_platform_file.first()
     )
 
     ch_sections = MAKE_SECTIONS.out.sections
@@ -77,8 +69,7 @@ workflow STABILITY_SCORING {
 
     GET_CANDIDATE_GENES(
         ch_platform_counts.join( ch_stats ),
-        ch_sections,
-        nb_candidates_per_section ?: 'none'
+        ch_sections
     )
 
     ch_candidate_gene_counts = splitBySection( GET_CANDIDATE_GENES.out.section_counts )
@@ -111,10 +102,7 @@ workflow STABILITY_SCORING {
                                         .join( ch_section_stats.map { meta, file -> [ "${meta.platform}_${meta.section}", file] } )
                                         .map { _key, meta, file1, file2, file3 -> [ meta, file1, file2, file3 ] }
 
-    PLATFORM_STABILITY_SCORE (
-        ch_platform_stability_score_input,
-        stability_score_weights
-    )
+    PLATFORM_STABILITY_SCORE( ch_platform_stability_score_input )
 
     ch_platform_stats_with_stability_scores = PLATFORM_STABILITY_SCORE.out.stats_with_stability_scores
 
@@ -129,9 +117,7 @@ workflow STABILITY_SCORING {
 
     GLOBAL_STABILITY_SCORE(
         ch_global_stability_score_input,
-        ch_nb_samples_per_platform_file.first(),
-        stability_score_std_penalty_weight,
-        stability_score_null_penalty_weight
+        ch_nb_samples_per_platform_file.first()
     )
 
     emit:

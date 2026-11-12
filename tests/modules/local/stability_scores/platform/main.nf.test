@@ -3,10 +3,14 @@ nextflow_process {
     name "Test Process PLATFORM_STABILITY_SCORE"
     script "modules/local/stability_scores/platform/main.nf"
     process "PLATFORM_STABILITY_SCORE"
+    tag "platform_stability_score"
 
-    test("With Genorm") {
+    test("Normal weights") {
 
         when {
+            params {
+                stability_score_weights = "0.4,0.4,0.1,0.1"
+            }
             process {
                 """
                 input[0] = [
@@ -15,7 +19,6 @@ nextflow_process {
                     file( '$projectDir/tests/test_data/modules/stability_scores/input/genorm.m_measures.parquet', checkIfExists: true),
                     file( '$projectDir/tests/test_data/modules/stability_scores/input/stats_all_genes.parquet', checkIfExists: true),
                 ]
-                input[1] = "0.8,0.1,0.1,0.1"
                 """
             }
         }
@@ -29,18 +32,20 @@ nextflow_process {
 
     }
 
-    test("Without Genorm") {
+    test("Null weights for cv and rvcm") {
 
         when {
+            params {
+                stability_score_weights = "0.4,0.4,0,0.0"
+            }
             process {
                 """
                 input[0] = [
                     [section: "section_1"],
                     file( '$projectDir/tests/test_data/modules/stability_scores/input/stability_values.normfinder.parquet', checkIfExists: true),
-                    [],
+                    file( '$projectDir/tests/test_data/modules/stability_scores/input/genorm.m_measures.parquet', checkIfExists: true),
                     file( '$projectDir/tests/test_data/modules/stability_scores/input/stats_all_genes.parquet', checkIfExists: true),
                 ]
-                input[1] = "0.8,0.1,0.1,0.1"
                 """
             }
         }

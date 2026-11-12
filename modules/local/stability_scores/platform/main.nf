@@ -10,7 +10,6 @@ process PLATFORM_STABILITY_SCORE {
 
     input:
     tuple val(meta), path(normfinder_stability_file), path(genorm_stability_file), path(section_stat_file)
-    val stability_score_weights
 
     output:
     tuple val(meta), path("*.stats_with_scores.parquet"),                                                             emit: stats_with_stability_scores
@@ -18,14 +17,14 @@ process PLATFORM_STABILITY_SCORE {
     tuple val("${task.process}"), val('polars'),   eval('python3 -c "import polars; print(polars.__version__)"'),     topic: versions
 
     script:
-    def genorm_stability_file_arg = genorm_stability_file ? "--genorm-stability $genorm_stability_file" : ""
+    def args = task.ext.args ?: ''
     """
     compute_platform_stability_score.py \\
         --platform ${meta.platform} \\
         --stats $section_stat_file \\
-        --weights "$stability_score_weights" \\
         --normfinder-stability $normfinder_stability_file \\
-        $genorm_stability_file_arg
+        --genorm-stability $genorm_stability_file \\
+        $args
 
     mv stats_with_scores.parquet ${meta.platform}.${meta.section}.stats_with_scores.parquet
     """

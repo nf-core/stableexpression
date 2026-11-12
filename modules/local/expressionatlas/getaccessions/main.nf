@@ -11,10 +11,6 @@ process EXPRESSIONATLAS_GETACCESSIONS {
 
     input:
     val species
-    val keywords
-    val platform
-    val random_sampling_size
-    val random_sampling_seed
 
     output:
     path "accessions.txt",                    optional: true,                                                   emit: accessions
@@ -28,20 +24,7 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     tuple val("${task.process}"), val('pandas'), eval('python3 -c "import pandas; print(pandas.__version__)"'), topic: versions
 
     script:
-    def keywords_string = keywords.split(',').collect { it.trim() }.join(' ')
-    def args = " --species $species"
-    if ( keywords_string != "" ) {
-        args += " --keywords $keywords_string"
-    }
-    if ( platform ) {
-        args += " --platform $platform"
-    }
-    if ( random_sampling_size ) {
-        args += " --random-sampling-size $random_sampling_size"
-    }
-    if ( random_sampling_seed ) {
-        args += " --random-sampling-seed $random_sampling_seed"
-    }
+    def args = task.ext.args ?: ''
     """
     # limiting CPU usage
     export OMP_NUM_THREADS=${task.cpus}
@@ -50,8 +33,9 @@ process EXPRESSIONATLAS_GETACCESSIONS {
     export NLTK_DATA=\${PWD}
 
     get_eatlas_accessions.py \\
-        $args \\
-        --cpus ${task.cpus}
+        --species $species \\
+        --cpus ${task.cpus} \\
+        $args
 
     SAMPLING_QUOTA=\$(cat sampling_quota.txt)
     """

@@ -18,11 +18,8 @@ workflow ID_MAPPING {
     species
     skip_id_mapping
     skip_cleaning_gene_ids
-    gprofiler_target_db
     custom_gene_id_mapping
     custom_gene_metadata
-    min_occurrence_freq
-    min_occurrence_quantile
     outdir
 
     main:
@@ -86,8 +83,7 @@ workflow ID_MAPPING {
 
         GPROFILER_IDMAPPING(
             COLLECT_ALL_GENE_IDS.out.unique_gene_ids,
-            species,
-            gprofiler_target_db
+            species
         )
         ch_gene_id_mapping      = GPROFILER_IDMAPPING.out.mapping
         ch_gene_metadata        = GPROFILER_IDMAPPING.out.metadata
@@ -99,9 +95,7 @@ workflow ID_MAPPING {
         DETECT_RARE_GENE_IDS(
             ch_gene_id_mapping,
             COLLECT_ALL_GENE_IDS.out.gene_id_occurrences,
-            ch_counts.count(),
-            min_occurrence_freq,
-            min_occurrence_quantile
+            ch_counts.count()
         )
 
         ch_valid_gene_ids = DETECT_RARE_GENE_IDS.out.valid_gene_ids

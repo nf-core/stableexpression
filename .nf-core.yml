@@ -18,6 +18,7 @@ lint:
     - params.input
   template_strings:
     - tests/test_data/modules/genorm/compute_m_measure/input/std.1.2.parquet
+  multiqc_config: false
 nf_core_version: 4.2.1
 repository_type: pipeline
 template:
