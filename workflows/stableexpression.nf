@@ -94,7 +94,6 @@ workflow STABLEEXPRESSION {
             species,
             params.skip_id_mapping,
             params.skip_cleaning_gene_ids,
-            params.gprofiler_target_db,
             params.gene_id_mapping,
             params.gene_metadata,
             params.outdir
@@ -115,8 +114,6 @@ workflow STABLEEXPRESSION {
         DATASET_ANALYSIS(
             ch_counts,
             ch_valid_gene_ids,
-            params.sample_max_null_ratio,
-            params.sample_max_zero_ratio,
             params.outdir
         )
 
@@ -132,7 +129,6 @@ workflow STABLEEXPRESSION {
             species,
             ch_valid_gene_ids,
             params.skip_gene_length_normalisation,
-            params.gene_max_zero_ratio,
             params.quantile_normalisation,
             params.gff,
             params.gff_url,
@@ -156,11 +152,6 @@ workflow STABLEEXPRESSION {
             ch_normalised_counts,
             ch_non_imputed_counts,
             ch_ratio_nulls_per_sample_file,
-            params.nb_candidates_per_section,
-            params.nb_sections,
-            params.stability_score_weights,
-            params.stability_score_std_penalty_weight,
-            params.stability_score_null_penalty_weight,
             params.outdir
         )
 

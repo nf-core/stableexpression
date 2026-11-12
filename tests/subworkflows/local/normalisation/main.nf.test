@@ -6,9 +6,12 @@ nextflow_workflow {
     tag "subworkflow_normalisation"
     tag "subworkflow"
 
-    test("GeTMM - KNN imputation") {
+    test("Should not fail") {
 
         when {
+            params {
+                gene_max_zero_ratio = 0.8
+            }
             workflow {
                 """
                 input[0] = channel.of(
@@ -25,12 +28,11 @@ nextflow_workflow {
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = false
-                input[4] = 0.8
-                input[5] = false
+                input[4] = false
+                input[5] = null
                 input[6] = null
                 input[7] = null
-                input[8] = null
-                input[9] ="$outputDir"
+                input[8] ="$outputDir"
                 """
             }
         }
@@ -47,6 +49,9 @@ nextflow_workflow {
     test("No gene length normalisation") {
 
         when {
+            params {
+                gene_max_zero_ratio = 0.8
+            }
             workflow {
                 """
                 input[0] = channel.of(
@@ -72,12 +77,11 @@ nextflow_workflow {
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = true
-                input[4] = 0.8
-                input[5] = false
+                input[4] = false
+                input[5] = null
                 input[6] = null
                 input[7] = null
-                input[8] = null
-                input[9] ="$outputDir"
+                input[8] ="$outputDir"
                 """
             }
         }
@@ -94,6 +98,9 @@ nextflow_workflow {
     test("Microarray only - quantile normalisation to normal distribution") {
 
         when {
+            params {
+                gene_max_zero_ratio = 0.8
+            }
             workflow {
                 """
                 input[0] = channel.of(
@@ -110,12 +117,11 @@ nextflow_workflow {
                 input[1] = "solanum_tuberosum"
                 input[2] = channel.fromPath( '$projectDir/tests/test_data/workflows/sampled/solanum_tuberosum/valid_gene_ids.txt', checkIfExists: true )
                 input[3] = false
-                input[4] = 0.8
-                input[5] = true
+                input[4] = true
+                input[5] = null
                 input[6] = null
                 input[7] = null
-                input[8] = null
-                input[9] ="$outputDir"
+                input[8] ="$outputDir"
                 """
             }
         }

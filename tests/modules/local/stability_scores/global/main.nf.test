@@ -8,6 +8,10 @@ nextflow_process {
     test("Two platforms - default weights") {
 
         when {
+            params {
+                stability_score_std_penalty_weight = 0.7
+                stability_score_null_penalty_weight = 3
+            }
             process {
                 """
                 input[0] = [
@@ -18,8 +22,6 @@ nextflow_process {
                     ]
                 ]
                 input[1] = file( '$projectDir/tests/test_data/modules/stability_scores/platform/nb_samples_per_platform.csv', checkIfExists: true)
-                input[2] = 0.7
-                input[3] = 3
                 """
             }
         }
@@ -36,6 +38,10 @@ nextflow_process {
     test("One platform - custom weights") {
 
         when {
+            params {
+                stability_score_std_penalty_weight = 1.5
+                stability_score_null_penalty_weight = 0.5
+            }
             process {
                 """
                 input[0] = [
@@ -43,8 +49,6 @@ nextflow_process {
                     file( '$projectDir/tests/test_data/modules/stability_scores/platform/rnaseq.section_1.stats_with_scores.parquet', checkIfExists: true)
                 ]
                 input[1] = file( '$projectDir/tests/test_data/modules/stability_scores/platform/nb_samples_per_platform.csv', checkIfExists: true)
-                input[2] = 1.5
-                input[3] = 0.5
                 """
             }
         }

@@ -18,7 +18,6 @@ workflow ID_MAPPING {
     species
     skip_id_mapping
     skip_cleaning_gene_ids
-    gprofiler_target_db
     custom_gene_id_mapping
     custom_gene_metadata
     outdir
@@ -84,8 +83,7 @@ workflow ID_MAPPING {
 
         GPROFILER_IDMAPPING(
             COLLECT_ALL_GENE_IDS.out.unique_gene_ids,
-            species,
-            gprofiler_target_db
+            species
         )
         ch_gene_id_mapping      = GPROFILER_IDMAPPING.out.mapping
         ch_gene_metadata        = GPROFILER_IDMAPPING.out.metadata

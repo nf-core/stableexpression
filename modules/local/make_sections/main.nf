@@ -10,7 +10,6 @@ process MAKE_SECTIONS {
     input:
     path(stat_files, stageAs: "?/*")
     path nb_samples_per_platform_file
-    val nb_sections
 
     output:
     path('sections.csv'),                                                                                       emit: sections
@@ -18,11 +17,12 @@ process MAKE_SECTIONS {
     tuple val("${task.process}"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
+    def args = task.ext.args ?: ''
     """
     make_sections.py \\
         --stats $stat_files \\
         --nb-samples-per-platform $nb_samples_per_platform_file \\
-        --nb-sections $nb_sections
+        $args
     """
 
     stub:

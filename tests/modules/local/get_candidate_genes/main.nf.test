@@ -8,7 +8,9 @@ nextflow_process {
     test("Should not fail") {
 
         when {
-
+            params {
+                nb_candidates_per_section = 20
+            }
             process {
                 """
                 input[0] = [
@@ -17,7 +19,6 @@ nextflow_process {
                     file('$projectDir/tests/test_data/modules/get_candidate_genes/stats_all_genes.parquet', checkIfExists: true)
                 ]
                 input[1] = file('$projectDir/tests/test_data/modules/candidate_genes/sections.csv', checkIfExists: true)
-                input[2] = 20
                 """
             }
         }
@@ -34,7 +35,9 @@ nextflow_process {
     test("Nb sections & candidates per section lower than total nb genes") {
 
         when {
-
+            params {
+                nb_candidates_per_section = 3
+            }
             process {
                 """
                 input[0] = [
@@ -43,7 +46,6 @@ nextflow_process {
                     file('$projectDir/tests/test_data/modules/get_candidate_genes/stats_all_genes.parquet', checkIfExists: true)
                 ]
                 input[1] = file('$projectDir/tests/test_data/modules/candidate_genes/sections.csv', checkIfExists: true)
-                input[2] = 3
                 """
             }
         }
@@ -60,7 +62,9 @@ nextflow_process {
     test("No candidate genes") {
 
         when {
-
+            params {
+                nb_candidates_per_section = null
+            }
             process {
                 """
                 input[0] = [
@@ -69,7 +73,6 @@ nextflow_process {
                     file('$projectDir/tests/test_data/modules/get_candidate_genes/stats_all_genes.parquet', checkIfExists: true)
                 ]
                 input[1] = file('$projectDir/tests/test_data/modules/candidate_genes/sections.csv', checkIfExists: true)
-                input[2] = 'none'
                 """
             }
         }

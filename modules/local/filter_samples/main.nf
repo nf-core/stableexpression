@@ -12,8 +12,6 @@ process FILTER_SAMPLES {
     input:
     tuple val(meta), path(count_file)
     path valid_gene_ids
-    val max_null_ratio
-    val max_zero_ratio
 
     output:
     tuple val(meta), path("*.filtered.parquet"), optional: true,                                                emit: counts
@@ -25,12 +23,12 @@ process FILTER_SAMPLES {
     tuple val("${task.process}"), val('polars'), eval('python3 -c "import polars; print(polars.__version__)"'), topic: versions
 
     script:
+    def args = task.ext.args ?: ''
     """
     filter_samples.py \\
         --counts $count_file \\
         --valid-gene-ids $valid_gene_ids \\
-        --max-null-ratio $max_null_ratio \\
-        --max-zero-ratio $max_zero_ratio
+        $args
 
     NB_REJECTED_SAMPLES=\$(cat nb_rejected_samples.csv)
     NB_KEPT_SAMPLES=\$(cat nb_kept_samples.csv)

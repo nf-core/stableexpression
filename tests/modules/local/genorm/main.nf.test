@@ -3,6 +3,7 @@ nextflow_process {
     name "Test Process GENORM"
     script "modules/local/genorm/main.nf"
     process "GENORM"
+    tag "genorm"
 
     test("Should not fail") {
 

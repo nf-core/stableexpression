@@ -7,7 +7,7 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.parquet:md5,fb19cbcfd726ca29557933db40d5625a"
+                        "stability_values.normfinder.parquet:md5,818157912c6129fb1e8b327cf844f4d3"
                     ]
                 ],
                 "1": [
@@ -50,15 +50,15 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.parquet:md5,fb19cbcfd726ca29557933db40d5625a"
+                        "stability_values.normfinder.parquet:md5,818157912c6129fb1e8b327cf844f4d3"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-31T14:31:12.703850056",
+        "timestamp": "2026-11-11T23:31:36.854839798",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.5"
         }
     },
     "Very small dataset - Cq values": {
@@ -69,7 +69,7 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.parquet:md5,9d166f6178c2fb3005c5bf742ba461db"
+                        "stability_values.normfinder.parquet:md5,607a56a7ed9ba742232506f3f6dbf264"
                     ]
                 ],
                 "1": [
@@ -112,15 +112,15 @@
                         {
                             "section": "section_1"
                         },
-                        "stability_values.normfinder.parquet:md5,9d166f6178c2fb3005c5bf742ba461db"
+                        "stability_values.normfinder.parquet:md5,607a56a7ed9ba742232506f3f6dbf264"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-31T14:00:43.727906244",
+        "timestamp": "2026-11-11T23:31:30.086213812",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.5"
         }
     }
 }

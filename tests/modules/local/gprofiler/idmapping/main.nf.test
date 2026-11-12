@@ -8,12 +8,13 @@ nextflow_process {
     test("ENSG - Mapping found") {
 
         when {
-
+            params {
+                gprofiler_target_db = "ENSG"
+            }
             process {
                 """
                 input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/solanum_tuberosum.txt", checkIfExists: true)
                 input[1] = "Solanum tuberosum"
-                input[2] = "ENSG"
                 """
             }
         }
@@ -30,12 +31,13 @@ nextflow_process {
     test("ENSG - Multiple candidate organisms") {
 
         when {
-
+            params {
+                gprofiler_target_db = "ENSG"
+            }
             process {
                 """
                 input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/canis_lupus.txt", checkIfExists: true)
                 input[1] = "canis lupus"
-                input[2] = "ENSG"
                 """
             }
         }
@@ -52,12 +54,13 @@ nextflow_process {
     test("Entrez - No mapping found") {
 
         when {
-
+            params {
+                gprofiler_target_db = "ENTREZGENE"
+            }
             process {
                 """
                 input[0] = file("$projectDir/tests/test_data/modules/idmapping/gene_ids/gene_ids.txt", checkIfExists: true)
                 input[1] = "Solanum tuberosum"
-                input[2] = "ENTREZGENE"
                 """
             }
         }
