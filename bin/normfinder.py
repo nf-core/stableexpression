@@ -372,7 +372,7 @@ class NormFinder:
                 candidate_indices = np.arange(self.n_genes)
         return candidate_indices
 
-    def compute_stability_scoring(self) -> tuple[pl.DataFrame, list[tuple[str, str, float]]]:
+    def compute_stability_scoring(self) -> pl.DataFrame:
         """Compute stability scores for all genes, and the candidate gene pairs."""
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # UNBIASED INTRAGROUP VARIANCE
@@ -436,27 +436,6 @@ class NormFinder:
                 axis=0,
             )  # mean over groups
 
-            # GroupDif: 2 * max_g |d_ig| (as in the official output)
-            group_dif = 2.0 * nanmax(np.abs(intergroup_residuals), axis=1)
-            # GroupSD: pooled common intragroup standard deviation
-            group_sd = np.sqrt(
-                nansum(
-                    (n_samples_per_group[:, None] - 1.0) * intragroup_variances,
-                    axis=0,
-                )
-                / (np.sum(n_samples_per_group) - self.n_groups),
-            )
-
-            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            # BEST TWO-GENE COMBINATION (equation 1.10)
-            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            gene_pairs = self._pair_analysis_multiple_groups(
-                intergroup_residuals,
-                intragroup_variances,
-                n_samples_per_group,
-                gamma,
-                stability_values,
-            )
         else:
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # ONE GROUP ONLY: stability value is the GroupSD
@@ -466,21 +445,15 @@ class NormFinder:
                 self._single_group_variance(self.expression_matrix),
             )
             stability_values = gene_standard_deviations
-            group_dif = np.zeros(self.n_genes)
-            group_sd = gene_standard_deviations
-
-            gene_pairs = self._pair_analysis_single_group(gene_standard_deviations)
 
         result = pl.DataFrame(
             {
                 config.GENE_ID_COLNAME: self.genes,
                 config.NORMFINDER_STABILITY_VALUE_COLNAME: stability_values,
-                "group_dif": group_dif,
-                "group_sd": group_sd,
             },
         ).sort(config.NORMFINDER_STABILITY_VALUE_COLNAME)
 
-        return result, gene_pairs
+        return result
 
     def _pair_analysis_multiple_groups(
         self,
@@ -619,12 +592,6 @@ def parse_args() -> argparse.Namespace:
         required=True,
         help="Design file",
     )
-    parser.add_argument(
-        "--export-pairs",
-        action="store_true",
-        dest="export_pairs",
-        help="Whether to export the two-gene combination stability values",
-    )
     return parser.parse_args()
 
 
@@ -664,18 +631,10 @@ def main():
     )
 
     normfinder = NormFinder(count_lf, design_df)
-    stabilities, gene_pairs = normfinder.compute_stability_scoring()
+    stabilities = normfinder.compute_stability_scoring()
 
     logger.info(f"Stability values:\n{stabilities}")
     export_stability(stabilities)
-
-    if gene_pairs and args.export_pairs:
-        best_pair = gene_pairs[0]
-        logger.info(
-            f"Best two-gene combination: {best_pair[0]} + {best_pair[1]} "
-            f"(combined stability: {best_pair[2]:.4f})",
-        )
-    export_pairs(gene_pairs)
 
 
 if __name__ == "__main__":

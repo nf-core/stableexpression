@@ -35,9 +35,9 @@ nextflow_pipeline {
             }
             def table = path(gene_summary_file).csv.table
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSRNA050004025")).doubleColumn("global_stability_score").get(0) == 0.017
-                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G169400")).doubleColumn("global_stability_score").get(0) == 0.183
-                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G195800")).doubleColumn("global_stability_score").get(0) == 0.021
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSRNA050004025")).doubleColumn("global_stability_score").get(0) == 0.036
+                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G169400")).doubleColumn("global_stability_score").get(0) == 0.231
+                assert table.where(table.stringColumn("gene_id").isEqualTo("PRUPE_1G195800")).doubleColumn("global_stability_score").get(0) == 0.064
             }
 
         }
@@ -80,16 +80,16 @@ nextflow_pipeline {
             def table = path(gene_summary_file).csv.table
             // the candidate genes used in publications must have the expected stability scores
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0182068")).doubleColumn("global_stability_score").get(0) == 0.068
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0186743")).doubleColumn("global_stability_score").get(0) == 0.056
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0194689")).doubleColumn("global_stability_score").get(0) == 0.064
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0181924")).doubleColumn("global_stability_score").get(0) == 0.046
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0193626")).doubleColumn("global_stability_score").get(0) == 0.066
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0184651")).doubleColumn("global_stability_score").get(0) == 0.095
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0196300")).doubleColumn("global_stability_score").get(0) == 0.07
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0185678")).doubleColumn("global_stability_score").get(0) == 0.062
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0188440")).doubleColumn("global_stability_score").get(0) == 0.090
-                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0189846")).doubleColumn("global_stability_score").get(0) == 0.059
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0182068")).doubleColumn("global_stability_score").get(0) == 0.092
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0186743")).doubleColumn("global_stability_score").get(0) == 0.082
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0194689")).doubleColumn("global_stability_score").get(0) == 0.086
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0181924")).doubleColumn("global_stability_score").get(0) == 0.073
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0193626")).doubleColumn("global_stability_score").get(0) == 0.065
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0184651")).doubleColumn("global_stability_score").get(0) == 0.142
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0196300")).doubleColumn("global_stability_score").get(0) == 0.092
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0185678")).doubleColumn("global_stability_score").get(0) == 0.069
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0188440")).doubleColumn("global_stability_score").get(0) == 0.124
+                assert table.where(table.stringColumn("gene_id").isEqualTo("FBgn0189846")).doubleColumn("global_stability_score").get(0) == 0.084
             }
 
         }
@@ -131,7 +131,7 @@ nextflow_pipeline {
             }
             def table = path(gene_summary_file).csv.table
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000000305")).doubleColumn("global_stability_score").get(0) == 0.180
+                assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000000305")).doubleColumn("global_stability_score").get(0) == 0.18
                 assert table.where(table.stringColumn("gene_id").isEqualTo("ENSMUSG00000034187")).doubleColumn("global_stability_score").get(0) == 0.046
             }
 
@@ -176,10 +176,10 @@ nextflow_pipeline {
             }
             def table = path(gene_summary_file).csv.table
             with( table ) {
-                assert table.where(table.stringColumn("gene_id").isEqualTo("AT1G01010")).doubleColumn("global_stability_score").get(0) == 0.441
-                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G23260")).doubleColumn("global_stability_score").get(0) == 0.479
-                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G50920")).doubleColumn("global_stability_score").get(0) == 0.076
-                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G41320")).doubleColumn("global_stability_score").get(0) == 3.228
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT1G01010")).doubleColumn("global_stability_score").get(0) == 0.505
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G23260")).doubleColumn("global_stability_score").get(0) == 0.48
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G50920")).doubleColumn("global_stability_score").get(0) == 0.122
+                assert table.where(table.stringColumn("gene_id").isEqualTo("AT5G41320")).doubleColumn("global_stability_score").get(0) == 3.203
             }
 
         }
@@ -375,8 +375,9 @@ nextflow_pipeline {
                 quantile_normalisation = true
                 min_occurrence_quantile = 0.15
                 min_occurrence_freq = 0.08
-                max_zero_ratio = 0.8
-                max_null_ratio = 0.85
+                gene_max_zero_ratio = 0.7
+                sample_max_zero_ratio = 0.8
+                sample_max_null_ratio = 0.85
                 max_null_ratio_valid_sample = 0.7
                 nb_candidates_per_section = 250
                 multiqc_nb_genes_plotted = 10
