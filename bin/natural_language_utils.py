@@ -1,7 +1,6 @@
 import logging
 import os
 from pathlib import Path
-import re
 import xml.etree.ElementTree as ET
 import nltk
 import httpx
@@ -221,13 +220,13 @@ def get_mesh_descendant_terms(
     term_to_ids, id_to_terms, id_to_trees, id_to_preferred = get_mesh_indexes()
     keyword = keyword.lower()
 
-    # ── step 1: which records does the keyword refer to? ──
     # strict pass: records whose PREFERRED name is the keyword
     root_ids = {
         record_id
         for record_id, preferred in id_to_preferred.items()
         if preferred == keyword
     }
+
     # fallback pass: records where the keyword is only an entry term
     if not root_ids:
         root_ids = term_to_ids.get(keyword, set())
@@ -335,19 +334,6 @@ def get_derivational_roots(word: str) -> frozenset[str]:
 
 
 @lru_cache
-def get_field_vocabulary(field: str) -> frozenset[str]:
-    """All WordNet vocabulary reachable from a field: lemmas, base forms, synonyms and derivational roots of every token."""
-    vocab = set()
-    for token in get_lemmas(field):
-        if not token.isalpha():  # skip punctuation and IDs like "BM-MSC-M1"
-            continue
-        for base in get_morphy_forms(token):
-            vocab |= get_synonyms(base)
-            vocab |= get_derivational_roots(base)
-    return frozenset(vocab)
-
-
-@lru_cache
 def get_hypernym_lemmas(word: str) -> frozenset[str]:
     """All lemma names of all hypernyms (transitively) of a word.
 
@@ -379,7 +365,8 @@ def get_keyword_forms(keyword: str) -> frozenset[str]:
     return frozenset(forms)
 
 
-def keywords_in_fields(fields, keywords):
+def keywords_in_fields(fields: list[str], keywords: list[str]) -> dict[str, list[str]]:
+    """Return a dict of keywords and the fields that contain them."""
     matched = defaultdict(set)
     for kw in keywords:
 
@@ -387,27 +374,13 @@ def keywords_in_fields(fields, keywords):
         kw_forms = get_keyword_forms(kw)
         for field in fields:
 
-            # direct prose match: keyword or its lemma appears in the field text
-            prose_match = [form for form in kw_forms if form in field.lower()]
-            if prose_match:
-                logger.info(f"Prose match ({kw} -> {field}). Forms: {prose_match} / {field.lower()}")
-                matched[kw].add(field)
-                continue
-
-            # lexical match: keyword form EQUALS a field lemma or synonym (no substring)
-            field_vocab = get_field_vocabulary(field)   # lemmas + synonyms of field tokens
-            if kw_forms & field_vocab:  # intersection
-                logger.info(f"Vocabulary match ({kw} -> {field}): {set(kw_forms & field_vocab)}")
-                matched[kw].add(field)
-                continue
-
             # "is-a" match: a field word is a kind of the keyword ("carcinoma" is a "cancer")
             field_isa_vocab = set()
             for token in get_lemmas(field):
                 if token.isalpha():
                     field_isa_vocab |= get_hypernym_lemmas(token)
-            if kw_forms & field_isa_vocab:
-                logger.info(f"'Is-a kind of' match ({kw} -> {field}): {set(kw_forms & field_isa_vocab)}")
+            if field_isa_vocab & kw_forms:
+                logger.info(f"'Is-a kind of' match ({kw} -> {field}) ({field_isa_vocab & kw_forms})")
                 matched[kw].add(field)
 
     return {kw: sorted(v) for kw, v in matched.items()}

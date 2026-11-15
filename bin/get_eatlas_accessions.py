@@ -8,7 +8,7 @@ import random
 import asyncio
 
 import httpx
-import pandas as pd
+import csv
 from natural_language_utils import keywords_in_fields
 from tenacity import (
     before_sleep_log,
@@ -88,6 +88,11 @@ def parse_args() -> argparse.Namespace:
         dest="random_sampling_seed",
         type=int,
         help="Random sampling seed",
+    )
+    parser.add_argument(
+        "--accessions",
+        type=str,
+        help="[For dev purposes / testing: provide directly accessions (separated by commas) and try to get their metadata]",
     )
     return parser.parse_args()
 
@@ -474,6 +479,57 @@ def format_species_name(species: str) -> str:
     return species.replace("_", " ").capitalize().strip()
 
 
+def write_dicts_to_csv(
+    list_of_dicts: list[dict],
+    output_file: str,
+    separator: str = ",",
+    write_header: bool = True,
+) -> None:
+    """Write a list of dictionaries to a delimited text file.
+
+    Parameters
+    ----------
+    list_of_dicts : list[dict]
+        The rows to write. Dictionaries may have heterogeneous keys:
+        missing keys are written as empty cells, and keys absent from
+        the first row are appended as extra columns.
+    output_file : Path
+        The output file path.
+    separator : str
+        The cell separator
+    write_header : bool
+        Whether to write a header line with the column names.
+
+    Raises
+    ------
+    ValueError
+        If the list is empty, or the separator is not a single character.
+
+    """
+    if not list_of_dicts:
+        raise ValueError("Cannot write an empty list: no columns.")
+
+    # column names: keys of the first row, plus any key appearing only
+    # in later rows (heterogeneous dicts get a full set of columns)
+    fieldnames = list(list_of_dicts[0].keys())
+    for row in list_of_dicts[1:]:
+        for key in row:
+            if key not in fieldnames:
+                fieldnames.append(key)
+
+    with open(output_file, "w", newline="", encoding="utf-8") as fout:
+        writer = csv.DictWriter(
+            fout,
+            fieldnames=fieldnames,
+            delimiter=separator,
+            restval="",                     # missing keys -> empty cell
+            extrasaction="ignore",          # safety net, shouldn't trigger given the union above
+        )
+        if write_header:
+            writer.writeheader()
+        writer.writerows(list_of_dicts)
+
+
 # -------------------------------------------------------------------------
 # MAIN
 # -------------------------------------------------------------------------
@@ -482,7 +538,7 @@ def format_species_name(species: str) -> str:
 def main():
     args = parse_args()
 
-    keywords = [keyword.strip() for keyword in args.keywords.split(",")]
+    keywords = [keyword.strip() for keyword in args.keywords.split(",") if keyword.strip()]
 
     selected_accessions = []
     selected_experiments = []
@@ -502,8 +558,19 @@ def main():
     species_experiments = get_species_experiments(all_experiments, species_name)
     logger.info(f"Found {len(species_experiments)} experiments for species {species_name}")
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # FOR DEV PURPOSES / TESTING: RESTRICT TO SPECIFIC ACCESSIONS
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if args.accessions:
+        logger.info(f"Keeping only accessions {args.accessions}")
+        dev_accessions = args.accessions.split(",")
+        species_experiments = [d for d in species_experiments if d["experimentAccession"] in dev_accessions]
+        logger.info(f"Kept {len(species_experiments)} datasets for dev / testing purposes")
+
     logger.info("Filtering experiments based on platform")
     platform_experiments = filter_by_platform(species_experiments, args.platform)
+    logger.info(f"{len(platform_experiments)} experiments passed filter")
 
     logger.info("Fetching and parsing metadata of experiments")
     experiment_details = asyncio.run(parse_details_of_all_experiments(platform_experiments))
@@ -524,7 +591,7 @@ def main():
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     sampling_status = "ok"
-    if args.random_sampling_size is not None and args.random_sampling_seed is not None:
+    if selected_accessions and args.random_sampling_size is not None and args.random_sampling_seed is not None:
         selected_accession_to_nb_samples = [
             {
                 "accession": exp_dict["accession"],
@@ -533,9 +600,6 @@ def main():
             for exp_dict in experiments
             if exp_dict["accession"] in selected_accessions
         ]
-
-        nb_samples_df = pd.DataFrame.from_dict(selected_accession_to_nb_samples)
-        nb_samples_df.to_csv("selected_accession_to_nb_samples.csv", index=False)
 
         logger.info("Sampling experiments randomly")
         selected_accessions, sampling_quota_reached = sample_experiments_randomly(
@@ -576,24 +640,22 @@ def main():
         logger.info(
             f"Writing metadata of selected experiments to {SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME}",
         )
-        df = pd.DataFrame.from_dict(selected_experiments)
-        df.to_csv(
+        write_dicts_to_csv(
+            selected_experiments,
             SELECTED_EXPERIMENTS_METADATA_OUTFILE_NAME,
-            sep="\t",
-            index=False,
-            header=True,
+            separator="\t",
+            write_header=True,
         )
 
     if rejected_experiments:
         logger.info(
             f"Writing metadata of rejected species experiments to {REJECTED_EXPERIMENTS_METADATA_OUTFILE_NAME}",
         )
-        df = pd.DataFrame.from_dict(rejected_experiments)
-        df.to_csv(
+        write_dicts_to_csv(
+            rejected_experiments,
             REJECTED_EXPERIMENTS_METADATA_OUTFILE_NAME,
-            sep="\t",
-            index=False,
-            header=True,
+            separator="\t",
+            write_header=True,
         )
 
 

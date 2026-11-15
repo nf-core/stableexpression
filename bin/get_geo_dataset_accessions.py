@@ -849,7 +849,7 @@ def export_dataset_metadatas(
 def main():
     args = parse_args()
 
-    keywords = [keyword.strip() for keyword in args.keywords.split(",")]
+    keywords = [keyword.strip() for keyword in args.keywords.split(",") if keyword.strip()]
 
     random_sampling_size = args.random_sampling_size
 
