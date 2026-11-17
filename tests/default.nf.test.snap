@@ -57,9 +57,9 @@
                     "R": "4.5.3 (2026-03-11)",
                     "httpx": "0.28.1",
                     "nltk": "3.9.2",
-                    "pandas": "3.0.1",
-                    "python": "3.14.3",
-                    "pyyaml": "6.0.3"
+                    "python": "3.12.16",
+                    "scispacy": "0.6.2",
+                    "sentence_transformers": "6.3.0"
                 },
                 "EXTRACT_GENE_IDS": {
                     "polars": "1.39.2",
@@ -252,7 +252,7 @@
                 "skewness.csv:md5,74b1a511e3a0438a04c5c894260274d8"
             ]
         ],
-        "timestamp": "2026-11-12T08:19:17.97446047",
+        "timestamp": "2026-11-17T08:23:45.815779564",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.5"
@@ -562,9 +562,9 @@
                 "EXPRESSION_ATLAS": {
                     "httpx": "0.28.1",
                     "nltk": "3.9.2",
-                    "pandas": "3.0.1",
-                    "python": "3.14.3",
-                    "pyyaml": "6.0.3"
+                    "python": "3.12.16",
+                    "scispacy": "0.6.2",
+                    "sentence_transformers": "6.3.0"
                 },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.2.0"
@@ -586,10 +586,10 @@
                 "accessions.txt:md5,b63b86661ce5d73c1c95436ebaf146a1"
             ]
         ],
-        "timestamp": "2026-06-22T10:24:08.211692046",
+        "timestamp": "2026-11-17T08:18:23.911404199",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.10.5"
         }
     },
     "-profile test_one_accession_low_gene_count": {
@@ -823,9 +823,9 @@
                     "R": "4.5.3 (2026-03-11)",
                     "httpx": "0.28.1",
                     "nltk": "3.9.2",
-                    "pandas": "3.0.1",
-                    "python": "3.14.3",
-                    "pyyaml": "6.0.3"
+                    "python": "3.12.16",
+                    "scispacy": "0.6.2",
+                    "sentence_transformers": "6.3.0"
                 },
                 "Workflow": {
                     "nf-core/stableexpression": "v1.2.0"
@@ -856,10 +856,10 @@
                 "E_MTAB_5309_rnaseq.design.csv:md5,2556c1fd31b15eda7e4bbe042c83cc39"
             ]
         ],
-        "timestamp": "2026-10-16T16:04:05.915995349",
+        "timestamp": "2026-11-17T08:19:14.365019712",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.2"
+            "nextflow": "26.10.5"
         }
     },
     "-profile test_all_public_data_and_minimal_custom_dataset": {
@@ -945,7 +945,7 @@
             ],
             [
                 "accessions.txt:md5,76e5e3af7c72eac7a1993a2bd75b4d1a",
-                "accessions.txt:md5,63a651d9df354aef24400cebe56dd5ec",
+                "accessions.txt:md5,5e5555d739fe6cd92503ae40509ca8ef",
                 "gene_transcript_lengths.csv:md5,458c7dfd3598bdcbcb6ceb76ccba189f",
                 "nb_samples_per_platform.csv:md5,03cb600896a9524f41ecb805d7c7dceb",
                 "rnaseq.whole_design.csv:md5,fbd18d011d7d855452e5a30a303afcbf",
@@ -963,10 +963,10 @@
                 "ratio_nulls_per_sample.csv:md5,be115e6d6c5ed7b7206891ebaa0f7a67",
                 "ratio_zeros.csv:md5,96bbe4bd2d4c29ab5701588132af9684",
                 "skewness.csv:md5,d5e7be1d063115c4489618ad711ddd73",
-                "geo_warning_reasons.csv:md5,dbbc71e929cf78f07a341ade39cb366b"
+                "geo_warning_reasons.csv:md5,2fff12b013a0a94d3f4d5c9149bf6437"
             ]
         ],
-        "timestamp": "2026-11-12T07:51:29.816809272",
+        "timestamp": "2026-11-17T08:17:37.742910531",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.5"

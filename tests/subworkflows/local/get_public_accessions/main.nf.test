@@ -12,7 +12,7 @@ nextflow_workflow {
             params {
                 species = 'beta vulgaris'
                 skip_fetch_eatlas_accessions = false
-                fetch_geo_accessions = false
+                fetch_geo_accessions = true
                 platform = null
                 keywords = ""
                 accessions = ""
@@ -95,7 +95,7 @@ nextflow_workflow {
             params {
                 species = 'beta vulgaris'
                 skip_fetch_eatlas_accessions = false
-                fetch_geo_accessions = false
+                fetch_geo_accessions = true
                 platform = null
                 keywords = ""
                 accessions = "E-MTAB-552,E-GEOD-61690 ,E-PROT-138"
@@ -130,16 +130,16 @@ nextflow_workflow {
 
     }
 
-    test("With samplling size") {
+    test("Reduced sampling size") {
 
         when {
 
             params {
                 species = 'beta vulgaris'
                 skip_fetch_eatlas_accessions = false
-                fetch_geo_accessions = false
+                fetch_geo_accessions = true
                 platform = null
-                keywords = ""
+                keywords = "leaf,root"
                 accessions = ""
                 accessions_file = null
                 excluded_accessions = ""
