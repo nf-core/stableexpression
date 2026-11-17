@@ -5,9 +5,10 @@ process GEO_GETACCESSIONS {
     tag "${species}"
 
     conda "${moduleDir}/environment.yml"
+    // NOTE: images were built using the wave cli, which does not allow getting the https URL for singularity containers
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e8/e8be45bdbe57d56f7d452513c4799a878fdfeb2f8ff8351f1c02ee99627dc50e/data':
-        'community.wave.seqera.io/library/biopython_httpx_nltk_pandas_pruned:f692df8e1f55b14b' }"
+        'oras://community.wave.seqera.io/library/python_httpx_tenacity_nltk_pruned:5abbf76aa66ff963':
+        'community.wave.seqera.io/library/python_httpx_tenacity_nltk_pruned:8fae761ed7b56b59' }"
 
     input:
     val species
@@ -18,12 +19,13 @@ process GEO_GETACCESSIONS {
     path "geo_selected_datasets.metadata.tsv", optional: true,                                                     topic: geo_selected_datasets
     path "geo_all_datasets.metadata.tsv",      optional: true,                                                     topic: geo_all_datasets
     path "geo_rejected_datasets.metadata.tsv", optional: true,                                                     topic: geo_rejected_datasets
-    tuple val("${task.process}"), val('python'),    eval("python3 --version | sed 's/Python //'"),                 topic: versions
-    tuple val("${task.process}"), val('httpx'),     eval('python3 -c "import httpx; print(httpx.__version__)"'),   topic: versions
-    tuple val("${task.process}"), val('nltk'),      eval('python3 -c "import nltk; print(nltk.__version__)"'),     topic: versions
-    tuple val("${task.process}"), val('pandas'),    eval('python3 -c "import pandas; print(pandas.__version__)"'), topic: versions
-    tuple val("${task.process}"), val('biopython'), eval('python3 -c "import Bio; print(Bio.__version__)"'),       topic: versions
-    tuple val("${task.process}"), val('tqdm'),      eval('python3 -c "import tqdm; print(tqdm.__version__)"'),     topic: versions
+    tuple val("${task.process}"), val('python'),                eval("python3 --version | sed 's/Python //'"),                                          topic: versions
+    tuple val("${task.process}"), val('httpx'),                 eval('python3 -c "import httpx; print(httpx.__version__)"'),                            topic: versions
+    tuple val("${task.process}"), val('nltk'),                  eval('python3 -c "import nltk; print(nltk.__version__)"'),                              topic: versions
+    tuple val("${task.process}"), val('biopython'),             eval('python3 -c "import Bio; print(Bio.__version__)"'),                                topic: versions
+    tuple val("${task.process}"), val('tqdm'),                  eval('python3 -c "import tqdm; print(tqdm.__version__)"'),                              topic: versions
+    tuple val("${task.process}"), val('sentence_transformers'), eval('python3 -c "import sentence_transformers as st_tfm; print(st_tfm.__version__)"'), topic: versions
+    tuple val("${task.process}"), val('scispacy'),              eval('python3 -c "import scispacy; print(scispacy.__version__)"'),                      topic: versions
 
     script:
     def args = task.ext.args ?: ''
@@ -39,8 +41,12 @@ process GEO_GETACCESSIONS {
     # the folder where nltk will download data needs to be writable (necessary for singularity)
     export NLTK_DATA=\${PWD}
 
-    # the folder where to download the mesh XML file
+    # the folders where to store files & models
     export MESH_FOLDER=\${PWD}/mesh
+    export SENTENCE_TRANSFORMERS_HOME=\${PWD}/sentence_transformers_cache
+
+    # necessary to avoid errors with huggingface
+    export HF_HUB_DISABLE_XET=1
 
     get_geo_dataset_accessions.py \\
         --species $species \\

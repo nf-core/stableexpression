@@ -12,10 +12,9 @@ from multiprocessing import Pool
 from pathlib import Path
 
 import httpx
-import pandas as pd
 import xmltodict
 from Bio import Entrez
-from natural_language_utils import keywords_in_fields
+from natural_language_utils import keywords_in_fields, write_dicts_to_csv
 from tenacity import (
     before_sleep_log,
     retry,
@@ -285,7 +284,7 @@ async def download_dataset_metadata(
 
 
 async def fetch_all_dataset_metadata(datasets: list[dict], nb_cpus: int) -> list[dict]:
-    # ── phase 1: async downloads, I/O-bound ──
+    # async downloads
     semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
     downloaded = []
     async with httpx.AsyncClient(timeout=360.0) as client:
@@ -297,8 +296,6 @@ async def fetch_all_dataset_metadata(datasets: list[dict], nb_cpus: int) -> list
                 if result is not None:
                     downloaded.append(result)
 
-    # ── phase 2: parsing in a Pool, CPU-bound ──
-    # exiting the async context closes the client; we're now free to use processes
     augmented = []
     with Pool(processes=nb_cpus) as pool, tqdm(total=len(downloaded), desc="parsing metadata") as pbar:
             for result in pool.imap_unordered(parse_downloaded_metadata, downloaded):
@@ -629,6 +626,8 @@ def search_keywords(dataset: dict, keywords: list[str]) -> tuple[dict, str | Non
         + dataset["sample_descriptions"]
         + dataset["sample_titles"]
     )
+    # casting all fields to string
+    all_searchable_fields = [str(field) for field in all_searchable_fields]
     found_keywords = keywords_in_fields(all_searchable_fields, keywords)
     # only returning experiments if found keywords
     if found_keywords:
@@ -657,8 +656,9 @@ def check_dataset(
         issues.append(issue)
 
     # checking platform
-    if (platform is not None) and (issue := check_experiment_type_issues(experiment_types, platform)):
-        issues.append(issue)
+    if platform is not None:
+        if issue := check_experiment_type_issues(experiment_types, platform):
+            issues.append(issue)
 
     # checking that library sources fit
     if issue := check_source_issues(library_sources):
@@ -821,24 +821,29 @@ def export_dataset_metadatas(
     clean_columns: bool = True,
 ) -> None:
     """Export dataset metadatas to a TSV file."""
-    if datasets:
-        df = pd.DataFrame.from_dict(datasets)
-        # all dataframe contain the column "accession"
-        # sorting by accessions to ensure that outputs are reproducible
-        df.sort_values(by="accession", inplace=True)
-        for col in df.columns:
-            df[col] = df[col].apply(sort_if_list)
-        # cleaning columns so that MultiQC can parse them
-        if clean_columns:
-            for col in df.columns:
-                df[col] = df[col].astype(str).str.replace("\n", "")
-                df[col] = df[col].astype(str).str.replace("\t", "")
-        df.to_csv(
-            output_file,
-            sep="\t",
-            index=False,
-            header=True,
-        )
+    if not datasets:
+        return
+
+    # sorting by accession to ensure that outputs are reproducible
+    datasets = sorted(datasets, key=lambda d: d["accession"])
+
+    # apply sort_if_list to every value
+    for row in datasets:
+        for key, value in row.items():
+            row[key] = sort_if_list(value)
+
+    # cleaning cells so that MultiQC can parse them
+    if clean_columns:
+        for row in datasets:
+            for key, value in row.items():
+                row[key] = str(value).replace("\n", "").replace("\t", "")
+
+    write_dicts_to_csv(
+        datasets,
+        output_file,
+        separator="\t",
+        write_header=True,
+    )
 
 
 # -------------------------------------------------------------------------
@@ -899,7 +904,7 @@ def main():
                 dataset["found_keywords"] = found_keywords
             checked_datasets.append(dataset)
 
-    logger.info(f"Validated {len(checked_datasets)} datasets")
+    logger.info(f"Validated {len(checked_datasets)} datasets ({len(checked_datasets) / len(augmented_datasets):.1%})")
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # EXCLUDING UNWANTED ACCESSIONS
@@ -993,9 +998,6 @@ def main():
             }
             for dataset in selected_datasets
         ]
-
-        nb_samples_df = pd.DataFrame.from_dict(selected_accession_to_nb_samples)
-        nb_samples_df.to_csv("selected_accession_to_nb_samples.csv", index=False)
 
         logger.info("Sampling experiments randomly")
         selected_accessions = sample_experiments_randomly(

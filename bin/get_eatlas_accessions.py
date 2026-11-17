@@ -8,8 +8,7 @@ import random
 import asyncio
 
 import httpx
-import csv
-from natural_language_utils import keywords_in_fields
+from natural_language_utils import keywords_in_fields, write_dicts_to_csv
 from tenacity import (
     before_sleep_log,
     retry,
@@ -477,57 +476,6 @@ def sample_experiments_randomly(
 def format_species_name(species: str) -> str:
     """Format species name for Expression Atlas."""
     return species.replace("_", " ").capitalize().strip()
-
-
-def write_dicts_to_csv(
-    list_of_dicts: list[dict],
-    output_file: str,
-    separator: str = ",",
-    write_header: bool = True,
-) -> None:
-    """Write a list of dictionaries to a delimited text file.
-
-    Parameters
-    ----------
-    list_of_dicts : list[dict]
-        The rows to write. Dictionaries may have heterogeneous keys:
-        missing keys are written as empty cells, and keys absent from
-        the first row are appended as extra columns.
-    output_file : Path
-        The output file path.
-    separator : str
-        The cell separator
-    write_header : bool
-        Whether to write a header line with the column names.
-
-    Raises
-    ------
-    ValueError
-        If the list is empty, or the separator is not a single character.
-
-    """
-    if not list_of_dicts:
-        raise ValueError("Cannot write an empty list: no columns.")
-
-    # column names: keys of the first row, plus any key appearing only
-    # in later rows (heterogeneous dicts get a full set of columns)
-    fieldnames = list(list_of_dicts[0].keys())
-    for row in list_of_dicts[1:]:
-        for key in row:
-            if key not in fieldnames:
-                fieldnames.append(key)
-
-    with open(output_file, "w", newline="", encoding="utf-8") as fout:
-        writer = csv.DictWriter(
-            fout,
-            fieldnames=fieldnames,
-            delimiter=separator,
-            restval="",                     # missing keys -> empty cell
-            extrasaction="ignore",          # safety net, shouldn't trigger given the union above
-        )
-        if write_header:
-            writer.writeheader()
-        writer.writerows(list_of_dicts)
 
 
 # -------------------------------------------------------------------------

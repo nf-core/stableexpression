@@ -5,7 +5,7 @@ exclude = [".git", "tests"]
 
 [tool.ruff.lint]
 select = ["ALL"]  # all coding rules; rule showing conflicts are deactivated
-ignore = ["E501", "S311", "G004", "PTH123", "EM101"]
+ignore = ["E501", "S311", "G004", "PTH123", "EM101", "FURB122"]
 
 [tool.ruff.format]
 quote-style = "double" # Use single quotes when formatting.
