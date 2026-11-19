@@ -1015,13 +1015,6 @@
                     "polars": "1.39.2",
                     "python": "3.14.3"
                 },
-                "DOWNLOAD_GENOME_ANNOTATION": {
-                    "bs4": "4.14.3",
-                    "httpx": "0.28.1",
-                    "pandas": "3.0.1",
-                    "python": "3.14.3",
-                    "tqdm": "4.67.3"
-                },
                 "EDGER_LOG2": {
                     "R": "4.5.3 (2026-03-11)",
                     "edgeR": "4.8.2"
@@ -1111,8 +1104,6 @@
             [
                 "annotation",
                 "annotation/gene_transcript_lengths.csv",
-                "annotation/selected",
-                "annotation/selected/Arabidopsis_thaliana.TAIR10.63.gff3.gz",
                 "design",
                 "design/microarray.whole_design.csv",
                 "design/nb_samples_per_platform.csv",
@@ -1212,7 +1203,6 @@
             ],
             [
                 "gene_transcript_lengths.csv:md5,06b4612031f4f300a6d67f36e7625492",
-                "Arabidopsis_thaliana.TAIR10.63.gff3.gz:md5,ee02d70eb655f0440af19a3f3f40b15c",
                 "microarray.whole_design.csv:md5,836b1358617de4ac0539742dbb8f5990",
                 "nb_samples_per_platform.csv:md5,aebaeee3d2cd7a23c8bdc992259a90cd",
                 "rnaseq.whole_design.csv:md5,0f2607a17ec31200939b7fcd4332c0a4",
@@ -1238,10 +1228,10 @@
                 "skewness.csv:md5,eabb41efffbf916775a0138314aea461"
             ]
         ],
-        "timestamp": "2026-11-12T07:50:09.949722303",
+        "timestamp": "2026-11-19T15:01:21.077550871",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.5"
+            "nextflow": "26.10.4"
         }
     },
     "-profile test_dataset_mus_musculus": {
