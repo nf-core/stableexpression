@@ -103,7 +103,6 @@ nextflow_process {
 
     }
 
-
     test('Homo sapiens with two keywords') {
 
         when {
