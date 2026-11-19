@@ -45,6 +45,13 @@ process EXPRESSIONATLAS_GETACCESSIONS {
         $args
 
     SAMPLING_QUOTA=\$(cat sampling_quota.txt)
+
+    # removing nltk folders
+    rm -rf \${PWD}/corpora \${PWD}/taggers \${PWD}/tokenizers
+    # removing Mesh data
+    rm -rf \$MESH_FOLDER
+    # removing sentence transformers cache
+    rm -rf \$SENTENCE_TRANSFORMERS_HOME
     """
 
     stub:
