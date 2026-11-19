@@ -51,7 +51,7 @@ jobs:
         env:
           NFT_VER: ${{ env.NFT_VER }}
         with:
-          max_shards: 10
+          max_shards: 12 # increased due to disk space issues
 
       - name: debug
         run: |
