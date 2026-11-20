@@ -285,7 +285,7 @@ workflow REPORTING {
     ch_multiqc_files = channel.empty()
                         .mix( ch_most_stable_genes_summary.collect() )                          // single item
                         .mix( ch_most_stable_genes_transposed_counts.collect() )                // single item
-                        .mix( channel.topic('eatlas_all_datasets').collect() )                  // single item
+                        .mix( channel.topic('eatlas_rejected_datasets').collect() )             // single item
                         .mix( channel.topic('eatlas_selected_datasets').collect() )             // single item
                         .mix( channel.topic('geo_all_datasets').collect() )                     // single item
                         .mix( channel.topic('geo_selected_datasets').collect() )                // single item

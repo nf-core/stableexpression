@@ -7,12 +7,25 @@
                     "E-GEOD-61690",
                     "E-MTAB-552",
                     "E-MTAB-8187",
-                    "E-PROT-138"
+                    "E-PROT-138",
+                    "GSE107627",
+                    "GSE114968",
+                    "GSE135555",
+                    "GSE205413",
+                    "GSE269454",
+                    "GSE281272",
+                    "GSE55951",
+                    "GSE79526",
+                    "GSE92859"
                 ],
                 "1": [
                     [
                         "expression_atlas",
                         "accessions.txt:md5,81c007792b56c5ca06d9981f45925679"
+                    ],
+                    [
+                        "geo",
+                        "accessions.txt:md5,a850f625a78be7b4b10ce08a5b638e23"
                     ]
                 ],
                 "accessions": [
@@ -20,20 +33,33 @@
                     "E-GEOD-61690",
                     "E-MTAB-552",
                     "E-MTAB-8187",
-                    "E-PROT-138"
+                    "E-PROT-138",
+                    "GSE107627",
+                    "GSE114968",
+                    "GSE135555",
+                    "GSE205413",
+                    "GSE269454",
+                    "GSE281272",
+                    "GSE55951",
+                    "GSE79526",
+                    "GSE92859"
                 ],
                 "raw_accessions": [
                     [
                         "expression_atlas",
                         "accessions.txt:md5,81c007792b56c5ca06d9981f45925679"
+                    ],
+                    [
+                        "geo",
+                        "accessions.txt:md5,a850f625a78be7b4b10ce08a5b638e23"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-21T12:41:15.538843522",
+        "timestamp": "2026-11-13T12:29:14.411423997",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.10.5"
         }
     },
     "No GEO + accessions provided": {
@@ -78,33 +104,59 @@
             {
                 "0": [
                     "E-ENAD-2",
-                    "E-MTAB-8187"
+                    "E-MTAB-8187",
+                    "GSE107627",
+                    "GSE114968",
+                    "GSE135555",
+                    "GSE205413",
+                    "GSE269454",
+                    "GSE281272",
+                    "GSE55951",
+                    "GSE79526",
+                    "GSE92859"
                 ],
                 "1": [
                     [
                         "expression_atlas",
                         "accessions.txt:md5,81c007792b56c5ca06d9981f45925679"
+                    ],
+                    [
+                        "geo",
+                        "accessions.txt:md5,a850f625a78be7b4b10ce08a5b638e23"
                     ]
                 ],
                 "accessions": [
                     "E-ENAD-2",
-                    "E-MTAB-8187"
+                    "E-MTAB-8187",
+                    "GSE107627",
+                    "GSE114968",
+                    "GSE135555",
+                    "GSE205413",
+                    "GSE269454",
+                    "GSE281272",
+                    "GSE55951",
+                    "GSE79526",
+                    "GSE92859"
                 ],
                 "raw_accessions": [
                     [
                         "expression_atlas",
                         "accessions.txt:md5,81c007792b56c5ca06d9981f45925679"
+                    ],
+                    [
+                        "geo",
+                        "accessions.txt:md5,a850f625a78be7b4b10ce08a5b638e23"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-06-21T12:40:48.348557707",
+        "timestamp": "2026-11-13T12:28:35.488305462",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.10.5"
         }
     },
-    "With samplling size": {
+    "Reduced sampling size": {
         "content": [
             {
                 "0": [
@@ -127,10 +179,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-06-21T12:41:29.203229925",
+        "timestamp": "2026-11-13T12:29:25.625533209",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.10.5"
         }
     }
 }

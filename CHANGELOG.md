@@ -16,7 +16,8 @@ Important refactoring of the normalisation process.
 ### `Changed`
 
 - [#59] All raw RNA-seq counts now undergo [GeTMM](https://link.springer.com/article/10.1186/s12859-018-2246-7) normalisation. RNA(seq data already normalised are converted to TPM.
-- Instead of quantile normalisation, correction of batch effect is now performed using [reComBat](https://academic.oup.com/bioinformaticsadvances/article/2/1/vbac071/6728137?login=false) by default
+- Instead of quantile normalisation, correction of batch effect is now performed using [reComBat](https://academic.oup.com/bioinformaticsadvances/article/2/1/vbac071/6728137?login=false) by default.
+- Improved the detection of keywords in the experiment properties for the `EXPRESSIONATLAS_GETACCESSIONS` and `GEO_GETACCESSIONS` modules.
 - `nb_candidates_per_section` now defaults to `null`, meaning that all genes are kept as candidates for subsequent analyses. This improves the precision of stability scores.
 - Replaced the `genorm` subworkflow by a single module, wrapper a highly optimised implementation of Genorm.
 - Updated the metromap.

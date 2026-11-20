@@ -3,19 +3,19 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
+import asyncio
 import logging
 import random
+import shutil
 import tarfile
-from functools import partial
 from multiprocessing import Pool
 from pathlib import Path
-from urllib.request import urlretrieve
 
+import anyio
 import httpx
-import pandas as pd
 import xmltodict
 from Bio import Entrez
-from natural_language_utils import keywords_in_fields
+from natural_language_utils import keywords_in_fields, write_dicts_to_csv
 from tenacity import (
     before_sleep_log,
     retry,
@@ -26,6 +26,17 @@ from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.getLogger("httpx").setLevel(logging.ERROR)
+
+# ----------------------------------------
+# HTTPX
+# ----------------------------------------
+
+MAX_CONCURRENT_REQUESTS = 20
+STOP_AFTER_DELAY = 60 * 30
+TIMEOUT = 60 * 10 # timeout of 10 minutes since the EBI may take a while to respond
+
+# ----------------------------------------
 
 ALLOWED_PLATFORMS = ["rnaseq", "microarray"]
 
@@ -95,7 +106,7 @@ def parse_args() -> argparse.Namespace:
         "--keywords",
         type=str,
         help="Keywords to search for in datasets description (comma separated)",
-        default=""
+        default="",
     )
     parser.add_argument(
         "--platform",
@@ -199,14 +210,14 @@ def send_request_to_ncbi_api(accession: str) -> httpx.Response | None:
     else:
         try:
             response.raise_for_status()
-        except Exception as err:
+        except Exception:
             if str(response.status_code).startswith("5"):  # error 500 -> 509
                 server_error = True
-                raise err
-            logger.error(
-                f"Error {response.status_code} while sending request to NCBI: {err}",
+                raise
+            logger.exception(
+                f"Error {response.status_code} while sending request to NCBI",
             )
-            raise err
+            raise
 
     # if we get connection issues or 500 -> 509 server errors
     # we stop immediately for this accession (return None)
@@ -217,6 +228,10 @@ def send_request_to_ncbi_api(accession: str) -> httpx.Response | None:
 
     return response
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ASYNC FUNCTIONS
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 @retry(
     stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
@@ -224,21 +239,76 @@ def send_request_to_ncbi_api(accession: str) -> httpx.Response | None:
     before_sleep=before_sleep_log(logger, logging.WARNING),
     retry_error_callback=(lambda _: None),
 )
-def download_file_at_url(url: str, output_file: Path) -> None:
-    """Download a file from a URL to a given path.
+async def download_file_at_url(
+    client: httpx.AsyncClient,
+    url: str,
+    output_file: Path,
+) -> Path | None:
+    """Download a file from a URL to a given path (streamed).
 
     Args:
-        url (str): The URL of the file to download.
-        output_file (Path): The path to save the downloaded file.
+        client: The httpx client to use.
+        url: The URL to download from.
+        output_file: The path to write the file to.
+
+    Returns:
+        The path to the downloaded file, or None if the download failed.
 
     """
-    urlretrieve(url, output_file)
+    async with client.stream("GET", url) as response:
+        response.raise_for_status()
+        # use anyio.open_file instead of open to support async file operations
+        async with await anyio.open_file(output_file, "wb") as fout:
+            async for chunk in response.aiter_bytes():
+                await fout.write(chunk)
+    return output_file
+
+
+async def download_dataset_metadata(
+    client: httpx.AsyncClient,
+    semaphore: asyncio.Semaphore,
+    dataset_metadata: dict,
+) -> tuple[dict, Path] | None:
+    """Download the MiniML tarball for one dataset. No parsing here."""
+    accession = dataset_metadata["Accession"]
+    ftp_link = dataset_metadata["FTPLink"].replace("ftp://", "https://")
+    ftp_url = ftp_link + f"miniml/{accession}_family.xml.tgz"
+    output_file = Path(MINIML_TMPDIR) / f"{accession}.tar.gz"
+
+    try:
+        async with semaphore:
+            await download_file_at_url(client, ftp_url, output_file)
+    except httpx.HTTPStatusError as exc:
+        logger.warning(f"Skipping {accession}: download failed ({exc.response.status_code})")
+        return None
+    return dataset_metadata, output_file
+
+
+async def fetch_all_dataset_metadata(datasets: list[dict], nb_cpus: int) -> list[dict]:
+    # async downloads
+    semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
+    downloaded = []
+    async with httpx.AsyncClient(timeout=360.0) as client:
+        tasks = [download_dataset_metadata(client, semaphore, d) for d in datasets]
+        with tqdm(total=len(tasks), desc="downloading metadata") as pbar:
+            for finished in asyncio.as_completed(tasks):
+                pbar.update()
+                result = await finished
+                if result is not None:
+                    downloaded.append(result)
+
+    augmented = []
+    with Pool(processes=nb_cpus) as pool, tqdm(total=len(downloaded), desc="parsing metadata") as pbar:
+            for result in pool.imap_unordered(parse_downloaded_metadata, downloaded):
+                pbar.update()
+                if result is not None:
+                    augmented.append(result)
+    return augmented
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # GEO DATASETS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 def chunk_list(lst: list, chunksize: int) -> list:
     """Split a list into chunks of a given size.
@@ -325,20 +395,19 @@ def format_platform_name(platform_name: str) -> str:
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# GET METADATA
+# PARSING
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-def download_dataset_metadata(ftp_link: str, accession: str) -> Path | None:
-    """Download dataset metadata from GEO FTP server."""
-    filename = f"miniml/{accession}_family.xml.tgz"
-    ftp_url = ftp_link + filename
-    output_file = Path(MINIML_TMPDIR) / f"{accession}.tar.gz"
-    download_file_at_url(ftp_url, output_file)
-    if output_file.exists():
-        return output_file
-    logger.error(f"Failed to download dataset metadata for accession: {accession}")
-    return None
+def parse_downloaded_metadata(downloaded: tuple[dict, Path]) -> dict | None:
+    """Parse dataset metadata fetched from the GEO FTP server."""
+    dataset_metadata, path = downloaded
+    accession = dataset_metadata["Accession"]
+    additional_metadata = parse_dataset_metadata(path, accession)
+    if additional_metadata is None:
+        logger.warning(f"Skipping {accession} as additional metadata is missing")
+        return None
+    return extract_interesting_metadata(dataset_metadata, additional_metadata)
 
 
 def parse_dataset_metadata(file: Path, accession: str) -> dict | None:
@@ -389,11 +458,11 @@ def parse_characteristics(
             parse_characteristics(c, stored_characteristics)
 
 
-def parse_interesting_metadata(
+def extract_interesting_metadata(
     dataset_metadata: dict,
     additional_metadata: dict,
 ) -> dict:
-    """Parse interesting metadata from a dataset metadata dictionary and additional metadata dictionary.
+    """Extract interesting metadata from a dataset metadata dictionary and additional metadata dictionary.
 
     Args:
         dataset_metadata (dict): The dataset metadata dictionary.
@@ -471,34 +540,6 @@ def parse_interesting_metadata(
     }
 
 
-def fetch_dataset_metadata(dataset_metadata: dict) -> dict | None:
-    """Parse metadata from a dataset metadata dictionary.
-
-    Args:
-        dataset_metadata (dict): The dataset metadata dictionary.
-
-    Returns:
-        dict | None: The parsed metadata dictionary or None if the metadata is missing.
-
-    """
-    accession = dataset_metadata["Accession"]
-    ftp_link = dataset_metadata["FTPLink"].replace("ftp://", "https://")
-    downloaded_file = download_dataset_metadata(ftp_link, accession)
-    if downloaded_file is None:
-        logger.warning(f"Skipping {accession} as metadata download failed")
-        return None
-
-    additional_metadata = parse_dataset_metadata(downloaded_file, accession)
-
-    # if we could not get additional metadata, we lack too much information to conclude
-    if additional_metadata is None:
-        logger.warning(f"Skipping {accession} as additional metadata is missing")
-        return None
-
-    # parsing interesting information in all available metadata
-    return parse_interesting_metadata(dataset_metadata, additional_metadata)
-
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # METADATA TESTS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -541,7 +582,7 @@ def check_molecule_type_issues(molecules_types: list) -> str | None:
     # for other series, they should be superseries contained other series that are being parsed too
     # so anyway, this would lead in duplicates
     if any(
-        [molecule_type.upper() in ALLOWED_MOLECULE_TYPES for molecule_type in molecules_types],
+        molecule_type.upper() in ALLOWED_MOLECULE_TYPES for molecule_type in molecules_types
     ):
         return None
     return f"MOLECULE TYPES: {molecules_types}"
@@ -574,7 +615,7 @@ def check_source_issues(library_sources: list) -> str | None:
     return f"LIBRARY SOURCES: {library_sources}"
 
 
-def search_keywords(dataset: dict, keywords: list[str]) -> tuple[list, str | None]:
+def search_keywords(dataset: dict, keywords: list[str]) -> tuple[dict, str | None]:
     """Search for keywords in the dataset.
 
     Return a tuple with the found keywords and an error message if no keywords were found.
@@ -586,13 +627,14 @@ def search_keywords(dataset: dict, keywords: list[str]) -> tuple[list, str | Non
         + dataset["sample_descriptions"]
         + dataset["sample_titles"]
     )
+    # casting all fields to string
+    all_searchable_fields = [str(field) for field in all_searchable_fields]
     found_keywords = keywords_in_fields(all_searchable_fields, keywords)
     # only returning experiments if found keywords
     if found_keywords:
-        dataset["found_keywords"] = list(set(found_keywords))
         logger.info(f"Found keywords: {found_keywords} in accession {accession}")
         return found_keywords, None
-    return [], "NO KEYWORDS_FOUND"
+    return {}, "NO KEYWORDS_FOUND"
 
 
 def check_dataset(
@@ -600,7 +642,7 @@ def check_dataset(
     species: str,
     platform: str | None,
     keywords: list[str] | None,
-) -> tuple[list, dict]:
+) -> tuple[dict, dict]:
     """Check if a dataset is valid for the given species, platform and keywords."""
     accession = dataset["accession"]
     parsed_species_list = dataset["taxon"].split("; ")
@@ -627,7 +669,7 @@ def check_dataset(
     if issue := check_molecule_type_issues(molecules_types):
         issues.append(issue)
 
-    found_keywords = []
+    found_keywords = {}
     if keywords:
         found_keywords, keyword_issue = search_keywords(dataset, keywords)
         if keyword_issue:
@@ -641,7 +683,6 @@ def check_dataset(
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # GEO PLATFORMS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 def fetch_geo_platform_metadata(datasets: list[dict]) -> dict:
     """Fetch metadata for GEO platforms from GEO using Entrez.
@@ -781,37 +822,40 @@ def export_dataset_metadatas(
     clean_columns: bool = True,
 ) -> None:
     """Export dataset metadatas to a TSV file."""
-    if datasets:
-        df = pd.DataFrame.from_dict(datasets)
-        # all dataframe contain the column "accession"
-        # sorting by accessions to ensure that outputs are reproducible
-        df.sort_values(by="accession", inplace=True)
-        for col in df.columns:
-            df[col] = df[col].apply(sort_if_list)
-        # cleaning columns so that MultiQC can parse them
-        if clean_columns:
-            for col in df.columns:
-                df[col] = df[col].astype(str).str.replace("\n", "")
-                df[col] = df[col].astype(str).str.replace("\t", "")
-        df.to_csv(
-            output_file,
-            sep="\t",
-            index=False,
-            header=True,
-        )
+    if not datasets:
+        return
+
+    # sorting by accession to ensure that outputs are reproducible
+    datasets = sorted(datasets, key=lambda d: d["accession"])
+
+    # apply sort_if_list to every value
+    for row in datasets:
+        for key, value in row.items():
+            row[key] = sort_if_list(value)
+
+    # cleaning cells so that MultiQC can parse them
+    if clean_columns:
+        for row in datasets:
+            for key, value in row.items():
+                row[key] = str(value).replace("\n", "").replace("\t", "")
+
+    write_dicts_to_csv(
+        datasets,
+        output_file,
+        separator="\t",
+        write_header=True,
+    )
 
 
-##################################################################
-##################################################################
+# -------------------------------------------------------------------------
 # MAIN
-##################################################################
-##################################################################
+# -------------------------------------------------------------------------
 
 
 def main():
     args = parse_args()
 
-    keywords = [keyword.strip() for keyword in args.keywords.split(",")]
+    keywords = [keyword.strip() for keyword in args.keywords.split(",") if keyword.strip()]
 
     random_sampling_size = args.random_sampling_size
 
@@ -838,17 +882,7 @@ def main():
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info(f"Parsing metadata for {len(datasets)} datasets")
-    augmented_datasets = []
-    with (
-        Pool(processes=args.nb_cpus) as p,
-        tqdm(total=len(datasets)) as pbar,
-    ):
-        for result in p.imap_unordered(fetch_dataset_metadata, datasets):
-            pbar.update()
-            pbar.refresh()
-            if result is None:
-                continue
-            augmented_datasets.append(result)
+    augmented_datasets = asyncio.run(fetch_all_dataset_metadata(datasets, args.nb_cpus))
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # VALIDATING DATASETS
@@ -871,7 +905,7 @@ def main():
                 dataset["found_keywords"] = found_keywords
             checked_datasets.append(dataset)
 
-    logger.info(f"Validated {len(checked_datasets)} datasets")
+    logger.info(f"Validated {len(checked_datasets)} datasets ({len(checked_datasets) / len(augmented_datasets):.1%})")
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # EXCLUDING UNWANTED ACCESSIONS
@@ -928,16 +962,15 @@ def main():
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     logger.info(f"Checking each platform for {len(checked_datasets)} datasets")
-    func = partial(
-        check_dataset_platforms,
-        accession_to_platform_metadata=accession_to_platform_metadata,
-        species=args.species,
-    )
     selected_datasets = []
     # resetting selecting datasets
     for dataset in tqdm(checked_datasets):
         accession = dataset["accession"]
-        issue_dict = func(dataset)
+        issue_dict = check_dataset_platforms(
+            dataset,
+            accession_to_platform_metadata,
+            species=args.species,
+        )
         if issue_dict:
             if accession in rejection_dict:  # should not happen but in case
                 rejection_dict[accession] += issue_dict[accession]
@@ -966,9 +999,6 @@ def main():
             }
             for dataset in selected_datasets
         ]
-
-        nb_samples_df = pd.DataFrame.from_dict(selected_accession_to_nb_samples)
-        nb_samples_df.to_csv("selected_accession_to_nb_samples.csv", index=False)
 
         logger.info("Sampling experiments randomly")
         selected_accessions = sample_experiments_randomly(
@@ -1011,6 +1041,13 @@ def main():
         REJECTED_DATASETS_OUTFILE_NAME,
         clean_columns=False,
     )
+
+    logger.info("Deleting unselected annotations")
+    for folder in [MINIML_TMPDIR, PLATFORM_SOFT_TMPDIR]:
+        if Path(folder).is_dir():
+            shutil.rmtree(folder)
+
+    logger.info("Done!")
 
 
 if __name__ == "__main__":

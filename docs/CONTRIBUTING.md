@@ -67,14 +67,14 @@ Once you have made your changes, run the pipeline with nf-test to test them loca
 For additional information, use the `--verbose` flag to view the Nextflow console log output.
 
 ```bash
-nf-test test --tag test --profile +docker --verbose
+nf-test test --profile docker
 ```
 
 If you have added new functionality, ensure you update the test assertions in the `.nf.test` files in the `tests/` directory.
 Update the snapshots with the following command:
 
 ```bash
-nf-test test --tag test --profile +docker --verbose --update-snapshots
+nf-test test --profile docker --update-snapshots
 ```
 
 When you create a pull request with changes, GitHub Actions will run automatic tests.
@@ -179,7 +179,3 @@ nf-core pipelines bump-version --nextflow . <min_nf_version>
 #### Images and figures guidelines
 
 If you update images or graphics, follow the nf-core [style guidelines](https://nf-co.re/docs/community/brand/workflow-schematics).
-
-## Pipeline specific contribution guidelines
-
-<!-- TODO nf-core: Add any pipeline specific contribution guidelines here, such as coding styles, procedures, checklists etc. -->

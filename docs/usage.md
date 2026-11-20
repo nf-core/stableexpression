@@ -18,13 +18,14 @@ nextflow run nf-core/stableexpression \
 
 ## Specific public datasets
 
-You can provide keywords to restrict downloaded datasets to specific conditions.
+When fetching experiment accessions from Expression Atlas and / or GEO Datasets, users can provide keywords to restrict the fetched accessions to specific conditions.
 
 ```bash
 nextflow run nf-core/stableexpression \
    -profile <PROFILE> \
    --species <SPECIES> \
-   --keywords <KEYWORDS (examples: "leaf" / "flower,stress")>
+   --keywords <KEYWORDS (examples: "leaf" / "flower,stress")> \
+   [--fetch_geo_accessions] \
    --outdir <OUTDIR>
 ```
 
@@ -33,7 +34,7 @@ nextflow run nf-core/stableexpression \
 > - Multiple keywords must be separated by commas.
 > - Please note that keywords are additive, so you will receive datasets that match with **either of the provided keywords**.
 > - A dataset will be downloaded if a keyword is found in its summary or in the name of a sample.
-> - The natural language processing [`nltk`](https://www.nltk.org/) python package is used to find keywords as well as derived words. For example, the `leaf` keyword should match 'leaf', 'leaves', 'leafy', and so on.
+> - Natural language processing (using [`nltk`](https://www.nltk.org/), [`scispacy`](https://allenai.github.io/scispacy/) or [`sentence_transfomers`](https://www.sbert.net/)) is performed to find keywords using lexical + semantic similarity. For example, the `leaf` keyword should match 'leaf', 'leaves', 'leafy', and so on.
 
 Users can also choose to download data from a specific platform (`RNA-seq` / `Microarray`) only:
 
@@ -66,7 +67,6 @@ nextflow run nf-core/stableexpression \
 >
 > - To download only the datasets corresponding to the supplied accessions, set the `--skip_fetch_eatlas_accessions` parameter.
 > - The files supplied with either the `--eatlas_accessions_file` or `--geo_accessions_file` parameters should contain one accession per line. The file extension does not matter.
-> - For `homo sapiens`, the experiment `E-GTEX-8` comprises 17350 samples :exploding_head: :exploding_head: :exploding_head:... It it therefore excluded by default, but you can include it anyway by setting `--accessions E-GTEX-8`.
 
 ## Fetch accessions only
 
@@ -77,6 +77,7 @@ nextflow run nf-core/stableexpression \
    -profile <PROFILE> \
    --species <SPECIES> \
    --accessions_only \
+   [--fetch_geo_accessions] \
    --outdir <OUTDIR>
 ```
 

@@ -24,6 +24,36 @@ nextflow_process {
 
         then {
             assert process.success
+            def accessions = file(process.out.accessions.get(0)).readLines()
+            def expected_accessions = ['GSE107627', 'GSE114968', 'GSE205413', 'GSE269454', 'GSE55951', 'GSE79526']
+            assert expected_accessions.each { acc -> accessions.contains(acc) }
+
+        }
+
+    }
+
+    test("Beta vulgaris - leaf / microarray") {
+
+        when {
+            params{
+                platform = "microarray"
+                keywords = ""
+                random_sampling_size = 100
+                random_sampling_seed = 42
+            }
+            process {
+                """
+                input[0] = "beta_vulgaris"
+                input[1] = []
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            def accessions = file(process.out.accessions.get(0)).readLines()
+            def expected_accessions = ['GSE55951']
+            assert expected_accessions.each { acc -> accessions.contains(acc) }
         }
 
     }
@@ -47,29 +77,8 @@ nextflow_process {
 
         then {
             assert process.success
-        }
-
-    }
-
-    test("Beta vulgaris - leaf / microarray") {
-
-        when {
-            params{
-                platform = "microarray"
-                keywords = "leaf"
-                random_sampling_size = 100
-                random_sampling_seed = 42
-            }
-            process {
-                """
-                input[0] = "beta_vulgaris"
-                input[1] = []
-                """
-            }
-        }
-
-        then {
-            assert process.success
+            def accessions = file(process.out.accessions.get(0)).readLines()
+            assert accessions.size() == 0
         }
 
     }
