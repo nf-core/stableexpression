@@ -281,6 +281,11 @@ def main():
     outfile = outdir / selected_annotation.name
     shutil.move(selected_annotation, outfile)
 
+    logger.info("Deleting unselected annotations")
+    for folder in [ENSEMBL_ANNOTATION_LOCAL_FOLDER, NCBI_ANNOTATION_LOCAL_FOLDER]:
+        if Path(folder).is_dir():
+            shutil.rmtree(folder)
+
     logger.info("Done")
 
 

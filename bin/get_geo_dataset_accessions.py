@@ -8,6 +8,7 @@ import random
 import tarfile
 import asyncio
 import anyio
+import shutil
 from multiprocessing import Pool
 from pathlib import Path
 
@@ -1040,6 +1041,13 @@ def main():
         REJECTED_DATASETS_OUTFILE_NAME,
         clean_columns=False,
     )
+
+    logger.info("Deleting unselected annotations")
+    for folder in [MINIML_TMPDIR, PLATFORM_SOFT_TMPDIR]:
+        if Path(folder).is_dir():
+            shutil.rmtree(folder)
+
+    logger.info("Done!")
 
 
 if __name__ == "__main__":
