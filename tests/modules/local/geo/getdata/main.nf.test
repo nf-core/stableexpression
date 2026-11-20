@@ -28,7 +28,7 @@ nextflow_process {
         }
     }
 
-    /*
+
     test("Accession does not exist") {
         when {
 
@@ -52,7 +52,6 @@ nextflow_process {
         }
 
     }
-    */
 
     test("Drosophila simulans - Only one sample among several") {
 
