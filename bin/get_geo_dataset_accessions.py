@@ -3,15 +3,15 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
+import asyncio
 import logging
 import random
-import tarfile
-import asyncio
-import anyio
 import shutil
+import tarfile
 from multiprocessing import Pool
 from pathlib import Path
 
+import anyio
 import httpx
 import xmltodict
 from Bio import Entrez
@@ -106,7 +106,7 @@ def parse_args() -> argparse.Namespace:
         "--keywords",
         type=str,
         help="Keywords to search for in datasets description (comma separated)",
-        default=""
+        default="",
     )
     parser.add_argument(
         "--platform",

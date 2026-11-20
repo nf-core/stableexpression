@@ -18,19 +18,19 @@ Environment: MESH_FOLDER must point to a folder for the MeSH
 descriptor file (downloaded once, ~17 MB).
 """
 
-import importlib.util
-import tarfile
-import tempfile
-import sys
 import csv
+import gzip
+import importlib.util
 import logging
 import os
-from collections import defaultdict
-from functools import lru_cache
-from pathlib import Path
+import sys
+import tarfile
+import tempfile
 import xml.etree.ElementTree as ET
+from collections import defaultdict
+from functools import cache, lru_cache
+from pathlib import Path
 
-import gzip
 import httpx
 import nltk
 from nltk.corpus import wordnet
@@ -122,7 +122,7 @@ def get_cache_folder(env_var_name: str) -> Path:
 @retry(
     stop=stop_after_delay(STOP_RETRY_AFTER_DELAY),
     wait=wait_exponential(multiplier=1, min=1, max=30),
-    before_sleep=before_sleep_log(logger, logging.WARNING)
+    before_sleep=before_sleep_log(logger, logging.WARNING),
 )
 def download_if_not_exists(url: str, target_folder: Path) -> Path:
     """Download the MeSH descriptor file to the target path."""
@@ -308,7 +308,7 @@ def _is_under_node(tree_number: str, node: str) -> bool:
     return tree_number == node or tree_number.startswith(node + ".")
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_mesh_descendant_terms(
     keyword: str,
     max_depth: int | None = MESH_EXPLOSION_DEPTH,
@@ -536,6 +536,7 @@ def lexical_keywords_in_fields(
     -------
     dict[str, set[str]]
         For each matched keyword, the set of matching fields.
+
     """
     matched = defaultdict(set)
     for kw in keywords:
@@ -582,6 +583,7 @@ def get_keyword_embeddings(keywords: tuple[str, ...]):
     tuple[tuple[str, ...], torch.Tensor]
         The input tuple (echoed back so callers iterate over the aligned
         names) and the normalized embeddings, one row per keyword.
+
     """
     embeddings = get_embedder().encode(
         list(keywords),
@@ -648,6 +650,7 @@ def semantic_keywords_in_fields(
     -------
     dict[str, set[str]]
         For each matched keyword, the set of matching fields.
+
     """
     if not fields or not keywords:
         return {}

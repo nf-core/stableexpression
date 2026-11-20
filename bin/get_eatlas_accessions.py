@@ -3,9 +3,9 @@
 # Written by Olivier Coen. Released under the MIT license.
 
 import argparse
+import asyncio
 import logging
 import random
-import asyncio
 
 import httpx
 from natural_language_utils import keywords_in_fields, write_dicts_to_csv
@@ -68,7 +68,7 @@ def parse_args() -> argparse.Namespace:
         "--keywords",
         type=str,
         help="Keywords to search for in experiment description (comma separated)",
-        default=""
+        default="",
     )
     parser.add_argument(
         "--platform",
